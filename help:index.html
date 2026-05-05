@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヘルプ｜使い方ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff8f3;
+    --card: #ffffff;
+    --primary: #ff8fa3;
+    --primary-soft: #ffe1e8;
+    --accent: #7ad0c2;
+    --accent-soft: #d8f1ec;
+    --info: #b3a4d4;
+    --info-soft: #ece3f5;
+    --text: #3d3a38;
+    --sub: #9a9590;
+    --border: #f3e6dc;
+    --shadow: 0 6px 20px rgba(180, 140, 120, 0.10);
+    --shadow-hover: 0 10px 28px rgba(180, 140, 120, 0.18);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 500;
+    line-height: 1.7;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 40px 30px;
+  }
+
+  /* ヘッダー */
+  .hero {
+    text-align: center;
+    padding: 32px 24px 36px;
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--accent-soft) 100%);
+    border-radius: 24px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .hero p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--sub);
+  }
+  .hero .icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+  }
+
+  /* 題目リスト */
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .topic-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    background: var(--card);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+  }
+  .topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+  .topic-card .topic-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .topic-card.alt .topic-icon {
+    background: var(--accent-soft);
+  }
+  .topic-card.info .topic-icon {
+    background: var(--info-soft);
+  }
+  .topic-card.pdf .topic-icon {
+    background: #fef0f0;
+  }
+  .topic-card.print .topic-icon {
+    background: #f0f1f3;
+  }
+  .topic-card.share .topic-icon {
+    background: #eef4f9;
+  }
+  .topic-card .topic-text {
+    flex: 1;
+  }
+  .topic-card h3 {
+    margin: 0 0 2px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .topic-card h3 .sub-title {
+    display: block;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--sub);
+    margin-top: 2px;
+  }
+  .topic-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--sub);
+  }
+  .topic-card .topic-arrow {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--primary);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 600;
+  }
+  .topic-card.alt .topic-arrow {
+    color: var(--accent);
+  }
+  .topic-card.info .topic-arrow {
+    color: var(--info);
+  }
+  .topic-card.pdf .topic-arrow {
+    color: #c08080;
+  }
+  .topic-card.print .topic-arrow {
+    color: #8a929a;
+  }
+  .topic-card.share .topic-arrow {
+    color: #6f95b8;
+  }
+
+  /* 詳細セクション */
+  .topic-detail {
+    display: none;
+  }
+  .topic-detail.active {
+    display: block;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .back-btn:hover {
+    background: var(--primary-soft);
+    transform: translateX(-3px);
+  }
+
+  section {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 32px 32px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 26px;
+    padding-bottom: 18px;
+    border-bottom: 2px dashed var(--border);
+  }
+  .section-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .section-icon.alt {
+    background: var(--accent-soft);
+  }
+  .section-icon.info {
+    background: var(--info-soft);
+  }
+  .section-icon.pdf {
+    background: #fef0f0;
+  }
+  .section-icon.print {
+    background: #f0f1f3;
+  }
+  .section-icon.share {
+    background: #eef4f9;
+  }
+  h2 {
+    margin: 0;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  h2 .sub-title {
+    display: block;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--sub);
+    margin-top: 3px;
+  }
+
+  h3.sub-head {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 26px 0 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  h3.sub-head .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 18px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  h3.sub-head .badge.android {
+    background: var(--accent-soft);
+    color: #4ba596;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+
+  /* ステップリスト */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+  .steps li {
+    position: relative;
+    padding: 12px 16px 12px 56px;
+    margin-bottom: 10px;
+    background: var(--bg);
+    border-radius: 14px;
+    font-size: 14px;
+    counter-increment: step;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .steps.android li::before {
+    color: #4ba596;
+    border-color: var(--accent);
+  }
+  .steps.pdf-color li::before {
+    color: #804a52;
+    border-color: #c08080;
+  }
+  .steps.print-color li::before {
+    color: #525860;
+    border-color: #8a929a;
+  }
+  .steps.share-color li::before {
+    color: #355a7a;
+    border-color: #6f95b8;
+  }
+
+  .steps li strong {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .steps.android li strong {
+    color: #4ba596;
+  }
+  .steps.pdf-color li strong {
+    color: #804a52;
+  }
+  .steps.print-color li strong {
+    color: #525860;
+  }
+  .steps.share-color li strong {
+    color: #355a7a;
+  }
+
+  /* 注意ボックス */
+  .note {
+    margin: 16px 0;
+    padding: 13px 18px;
+    background: #fff7ec;
+    border-left: 4px solid #f5b86c;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .note .label {
+    font-weight: 700;
+    color: #d68a3a;
+    margin-right: 8px;
+  }
+
+  /* 機種変更 */
+  .transfer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  /* 場面別カード（こんなときに使えます） */
+  .scene-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .scene-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    min-width: 0;
+  }
+  .scene-card .scene-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .scene-card .scene-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .scene-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .scene-card p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.5;
+  }
+
+  /* ボタン説明カード（ツールバーの使い方） */
+  .btn-help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .btn-help-card {
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid;
+    min-width: 0;
+  }
+  .btn-help-card .btn-help-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .btn-help-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: inherit;
+  }
+  .btn-help-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: inherit;
+  }
+  .btn-help-card.pdf { background: #fef0f0; border-color: #f0c8c8; color: #804a52; }
+  .btn-help-card.print { background: #f0f1f3; border-color: #c8cdd4; color: #525860; }
+  .btn-help-card.share { background: #eef4f9; border-color: #c5d8ea; color: #355a7a; }
+  .btn-help-card.json { background: #f5f1e8; border-color: #d8cdaa; color: #6b5a3d; }
+  .btn-help-card .inline-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* スタイル説明 */
+  .style-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  .style-card {
+    padding: 18px 20px;
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    min-width: 0;
+  }
+  .style-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--text);
+  }
+  .style-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--sub);
+  }
+  .transfer-card {
+    padding: 22px 20px;
+    border-radius: 18px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    min-width: 0;
+  }
+  .transfer-card .stage {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #ffffff;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .transfer-card.new .stage {
+    background: var(--accent);
+  }
+  .transfer-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  .transfer-card .steps li {
+    background: #ffffff;
+    font-size: 13px;
+  }
+
+  /* 一覧表示 / 詳細表示の切り替え */
+  body.detail-mode .hero {
+    display: none;
+  }
+  body.detail-mode .topic-list {
+    display: none;
+  }
+
+  /* 幅が狭くなったときのレイアウト調整（スマホ・タブレット） */
+  @media (max-width: 720px) {
+    .wrap {
+      padding: 24px 16px 24px;
+    }
+    .hero {
+      padding: 26px 16px 28px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: 22px;
+    }
+    .hero p {
+      font-size: 13px;
+    }
+    .hero .icon {
+      font-size: 34px;
+    }
+    section {
+      padding: 22px 18px 22px;
+      border-radius: 18px;
+    }
+    .section-head {
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+    }
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+    h2 {
+      font-size: 19px;
+    }
+    h2 .sub-title {
+      font-size: 12px;
+    }
+    h3.sub-head {
+      font-size: 16px;
+      margin: 22px 0 12px;
+    }
+    h3.sub-head .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+    }
+    p {
+      font-size: 14px;
+    }
+    .steps li {
+      padding: 11px 14px 11px 50px;
+      font-size: 13px;
+    }
+    .steps li::before {
+      width: 28px;
+      height: 28px;
+      left: 12px;
+      font-size: 13px;
+    }
+    .transfer-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .transfer-card {
+      padding: 18px 16px;
+    }
+    .transfer-card h4 {
+      font-size: 15px;
+    }
+    .transfer-card .steps li {
+      font-size: 12px;
+    }
+    .scene-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .scene-card {
+      padding: 11px 14px;
+      gap: 10px;
+    }
+    .scene-card .scene-icon {
+      font-size: 22px;
+    }
+    .scene-card h4 {
+      font-size: 14px;
+    }
+    .scene-card p {
+      font-size: 12px;
+    }
+    .btn-help-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .btn-help-card {
+      padding: 14px 16px;
+    }
+    .btn-help-card .btn-help-icon {
+      font-size: 22px;
+    }
+    .btn-help-card h4 {
+      font-size: 15px;
+    }
+    .btn-help-card p {
+      font-size: 12px;
+    }
+    .style-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .style-card {
+      padding: 14px 16px;
+    }
+    .style-card h4 {
+      font-size: 14px;
+    }
+    .style-card p {
+      font-size: 12px;
+    }
+    .topic-card {
+      padding: 14px 16px;
+      gap: 12px;
+    }
+    .topic-card .topic-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+    .topic-card h3 {
+      font-size: 15px;
+    }
+    .topic-card h3 .sub-title {
+      font-size: 11px;
+    }
+    .topic-card p {
+      font-size: 12px;
+    }
+    .topic-card .topic-arrow {
+      font-size: 18px;
+    }
+    .note {
+      padding: 11px 14px;
+      font-size: 12px;
+    }
+    .back-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+  }
+
+  /* フッター */
+  footer {
+    text-align: center;
+    padding: 40px 20px 30px;
+    font-size: 10px;
+    color: var(--sub);
+    opacity: 0.7;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <div class="hero">
+    <div class="icon">📖</div>
+    <h1>ヘルプ・使い方ガイド</h1>
+    <p>知りたい項目をタップしてください</p>
+  </div>
+
+  <!-- 題目リスト -->
+  <div class="topic-list" id="topicList">
+
+    <div class="topic-card" data-target="home-screen">
+      <div class="topic-icon">📱</div>
+      <div class="topic-text">
+        <h3>ホーム画面への追加方法</h3>
+        <p>iPhone・Androidからアプリのように起動できるようにする</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card pdf" data-target="pdf-export">
+      <div class="topic-icon">📄</div>
+      <div class="topic-text">
+        <h3>PDF出力方法</h3>
+        <p>表示中の内容をPDFファイルとして保存する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card print" data-target="print">
+      <div class="topic-icon">🖨</div>
+      <div class="topic-text">
+        <h3>印刷方法</h3>
+        <p>表示中の内容をプリンターで印刷する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card share" data-target="share">
+      <div class="topic-icon">🔗</div>
+      <div class="topic-text">
+        <h3>共有方法</h3>
+        <p>このアプリのURLを他の人に共有する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card alt" data-target="data-transfer">
+      <div class="topic-icon">💾</div>
+      <div class="topic-text">
+        <h3>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h3>
+        <p>定期的にバックアップを取る／機種変更で引き継ぐ／別の端末でも使う</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <!-- 新しい項目を追加するときは、上と同じ形式でここにコピーしてください
+    <div class="topic-card" data-target="任意のID">
+      <div class="topic-icon">✨</div>
+      <div class="topic-text">
+        <h3>題目</h3>
+        <p>説明文</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+    -->
+
+  </div>
+
+  <!-- 詳細: ホーム画面追加 -->
+  <div class="topic-detail" id="home-screen">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon">📱</div>
+        <h2>ホーム画面への追加方法</h2>
+      </div>
+
+      <p>本アプリをホーム画面に追加すると、アプリのようにすぐ起動できます。お使いの端末を選んで手順をご確認ください。</p>
+
+      <h3 class="sub-head">📝 操作手順（iPhone）<span class="badge">iOS / Safari・Chrome</span></h3>
+      <ol class="steps">
+        <li><strong>Safari</strong> または <strong>Chrome</strong> でこのページを開きます。</li>
+        <li><strong>共有ボタン</strong>（□から↑が出ているアイコン）をタップします。<br><span style="font-size: 11px; color: var(--sub);">※ Safariは画面下、Chromeはアドレスバー右にあります</span></li>
+        <li>メニューを下にスクロールし、<strong>「ホーム画面に追加」</strong> をタップします。</li>
+        <li>アプリ名を確認して、右上の <strong>「追加」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>Chrome の「ホーム画面に追加」機能は iOS 16.4 以降で利用できます。iPhone・iPad の OS バージョンが古い場合は Safari からの追加をおすすめします。
+      </div>
+
+      <h3 class="sub-head">📝 操作手順（Android）<span class="badge android">Android / Chrome</span></h3>
+      <ol class="steps android">
+        <li><strong>Chrome</strong> でこのページを開きます。</li>
+        <li>画面右上の <strong>メニューボタン</strong>（縦に点が3つ並んだアイコン ⋮）をタップします。</li>
+        <li>メニューから <strong>「ホーム画面に追加」</strong> または <strong>「アプリをインストール」</strong> を選びます。</li>
+        <li>名前を確認して <strong>「追加」</strong> または <strong>「インストール」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>機種やブラウザのバージョンによって表示が少し異なる場合があります。「ホーム画面」「インストール」のいずれかの言葉を探してみてください。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: データバックアップ・復元 -->
+  <div class="topic-detail" id="data-transfer">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon alt">💾</div>
+        <h2>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h2>
+      </div>
+
+      <p>本アプリのデータはお使いの端末内に保存されています。<strong>JSONファイル</strong>を使ってデータを保存・復元できます。</p>
+
+      <!-- 場面別の説明 -->
+      <h3 class="sub-head">📌 こんなときに使えます</h3>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">🗓️</div>
+          <div class="scene-text">
+            <h4>定期的なバックアップ</h4>
+            <p>こまめに保存して安心</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">📱</div>
+          <div class="scene-text">
+            <h4>機種変更のとき</h4>
+            <p>新端末にデータを引き継ぐ</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">🔄</div>
+          <div class="scene-text">
+            <h4>別の端末でも使う</h4>
+            <p>同じデータを複数端末で</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作手順 -->
+      <h3 class="sub-head">📝 操作手順</h3>
+
+      <div class="transfer-grid">
+        <div class="transfer-card">
+          <span class="stage">バックアップ</span>
+          <h4>データを保存する（エクスポート）</h4>
+          <ol class="steps">
+            <li>本アプリを開きます。</li>
+            <li>ページ最下部のツールバーを表示します。</li>
+            <li><strong>📤 エクスポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「出力」）</span>をタップします。</li>
+            <li>JSONファイルが保存されます。メールやクラウド（Google Drive・iCloudなど）に保存しておくと安心です。</li>
+          </ol>
+        </div>
+
+        <div class="transfer-card new">
+          <span class="stage">復元</span>
+          <h4>データを読み込む（インポート）</h4>
+          <ol class="steps android">
+            <li>本アプリを開きます。</li>
+            <li>ページ最下部のツールバーを表示します。</li>
+            <li><strong>📥 インポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「読込」）</span>をタップします。</li>
+            <li>保存しておいたJSONファイルを選んで読み込みます。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>JSONファイルは大切なデータです。クラウドや別の場所にもバックアップを取っておくことをおすすめします。機種変更の際は、新端末にインポートが完了するまで旧端末のデータは消さないでください。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>インポートを行うと、現在のデータが上書きされます。心配な場合は、先に現在のデータをエクスポートしておきましょう。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: PDF出力方法 -->
+  <div class="topic-detail" id="pdf-export">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon pdf">📄</div>
+        <h2>PDF出力方法</h2>
+      </div>
+
+      <p>表示中の内容をPDFファイルとして保存できます。保存したPDFはメールやクラウドに共有・印刷などに使えます。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps pdf-color">
+        <li>ページ最下部のツールバーから <strong>📄 PDF出力</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「PDF」）</span>をタップします。</li>
+        <li>印刷ダイアログが開きます。</li>
+        <li>出力先（プリンター選択）で <strong>「PDFとして保存」</strong> を選びます。<br><span style="font-size: 11px; color: var(--sub);">※ 端末によって「PDFに保存」「PDFで保存」など表記が異なります</span></li>
+        <li>保存場所を選んで <strong>「保存」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>iPhoneでは保存後「ファイル」アプリ、Androidでは「Files」や「Drive」などから保存したPDFを確認できます。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>用紙サイズを変えると見え方が変わります。A4・B5など、お好みに合わせて選んでください。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: 印刷方法 -->
+  <div class="topic-detail" id="print">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon print">🖨</div>
+        <h2>印刷方法</h2>
+      </div>
+
+      <p>表示中の内容をプリンターで印刷できます。あらかじめ端末がプリンターと接続されている必要があります。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps print-color">
+        <li>ページ最下部のツールバーから <strong>🖨 印刷</strong> ボタンをタップします。</li>
+        <li>印刷ダイアログが開きます。</li>
+        <li>使用する <strong>プリンター</strong> を選びます。</li>
+        <li>必要に応じて部数・用紙サイズなどを設定します。</li>
+        <li><strong>「印刷」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>事前にプリンターの電源と接続をご確認ください。スマホからの印刷には、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは <strong>クラウド印刷</strong> 対応プリンターが必要です。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>プリンターがない環境では、代わりに <strong>📄 PDF出力</strong>（小スクエア版では「PDF」）でPDFに保存し、後で印刷することもできます。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: 共有方法 -->
+  <div class="topic-detail" id="share">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon share">🔗</div>
+        <h2>共有方法</h2>
+      </div>
+
+      <p>このアプリのURLを、LINEやメール・SNSなどで他の人に共有できます。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps share-color">
+        <li>ページ最下部のツールバーから <strong>🔗 共有</strong> ボタンをタップします。</li>
+        <li>共有メニュー（共有シート）が開きます。</li>
+        <li>共有したい <strong>アプリや相手</strong> を選んだら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>パソコンなど共有メニューに対応していない環境では、代わりに <strong>URLが自動でクリップボードにコピー</strong> されます。そのままメールやチャットに貼り付けてご利用ください。
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>共有されるのは<strong>アプリのURL</strong>です。あなたの入力したデータは共有されません。データを引き継ぎたい場合は <strong>💾 データのバックアップ・復元方法</strong> をご利用ください。
+      </div>
+    </section>
+  </div>
+
+  <!-- フッター -->
+  <footer>
+    © 2026 enu(エヌ) All rights reserved.
+  </footer>
+
+</div>
+
+<script>
+  // 題目カードのクリックイベント
+  document.querySelectorAll('.topic-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var targetId = card.getAttribute('data-target');
+      showDetail(targetId);
+    });
+  });
+
+  // 詳細を表示
+  function showDetail(id) {
+    document.body.classList.add('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+    }
+    try {
+      history.pushState({ topic: id }, '', '#' + id);
+    } catch (e) {
+      // サンドボックス等でpushStateが使えない環境では何もしない
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 一覧へもどる
+  function showList() {
+    document.body.classList.remove('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    try {
+      history.pushState({ topic: null }, '', window.location.pathname);
+    } catch (e) {
+      // サンドボックス等でpushStateが使えない環境では何もしない
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ブラウザの戻るボタンに対応
+  window.addEventListener('popstate', function(e) {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        showDetailNoHistory(hash);
+      } else {
+        document.body.classList.remove('detail-mode');
+        document.querySelectorAll('.topic-detail').forEach(function(el) {
+          el.classList.remove('active');
+        });
+      }
+    } catch (e) {
+      // サンドボックス環境では無視
+    }
+  });
+
+  function showDetailNoHistory(id) {
+    document.body.classList.add('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+    }
+  }
+
+  // ページ読み込み時、URLにハッシュがあればその詳細を開く
+  window.addEventListener('DOMContentLoaded', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        showDetailNoHistory(hash);
+      }
+    } catch (e) {
+      // サンドボックス環境では無視
+    }
+  });
+</script>
+
+</body>
+</html>
