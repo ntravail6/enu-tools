@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勘定科目検索ツール</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Favicon (SVG inline) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FAF7F2'/><text x='50' y='50' font-size='62' text-anchor='middle' dominant-baseline='central'>🧮</text></svg>">
+
+<!-- PWA / iOS meta -->
+<meta name="theme-color" content="#FAF7F2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="勘定科目検索">
+<style>
+:root {
+  --bg: #FAF7F2;
+  --card: #FFFFFF;
+  --ink: #2C2A26;
+  --accent: #4A6FA5;
+  --accent-deep: #3D5C8A;
+  --accent-soft: #E8EEF6;
+  --sub: #8C8678;
+  --line: #E5DFD3;
+  --line-soft: #F0EBE0;
+  --ok: #5A8F69;
+  --ok-soft: #E8F1EA;
+  --caution: #C99A2E;
+  --caution-soft: #FAF1DC;
+  --gray-status: #8C8678;
+  --gray-soft: #ECEAE3;
+  --pink: #E66B7A;
+  --shadow: 0 2px 8px rgba(44, 42, 38, 0.06);
+  --shadow-modal: 0 20px 60px rgba(44, 42, 38, 0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+button, input, select, textarea {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  color: var(--ink);
+}
+
+button { cursor: pointer; }
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.page-wrapper {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+@media (max-width: 650px) {
+  .page-wrapper { padding: 16px; }
+}
+
+/* === Header === */
+header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 8px 0 4px;
+}
+
+.app-title {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.app-subtitle {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  font-size: 0.75rem;
+  color: var(--sub);
+  margin-top: 6px;
+}
+
+@media (max-width: 650px) {
+  .app-title { font-size: 1.25rem; }
+  .app-subtitle { font-size: 0.7rem; }
+}
+
+/* === Card === */
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  border: 1px solid var(--line-soft);
+}
+
+@media (max-width: 650px) {
+  .card { padding: 16px; border-radius: 12px; }
+}
+
+/* 補助カード（比較ガイド・FAQ）は影を弱めてメリハリを出す */
+.card.card-soft {
+  box-shadow: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  line-height: 1.3;
+}
+
+/* === Toolbar === */
+.search-toolbar { display: flex; flex-direction: column; gap: 12px; }
+
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: var(--bg);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-box input:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--sub);
+  pointer-events: none;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-row > * { flex: 1; min-width: 140px; }
+
+.industry-select {
+  padding: 11px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  font-size: 0.88rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.filing-toggle {
+  display: flex;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
+}
+
+.filing-toggle button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  color: var(--sub);
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.filing-toggle button.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* === History chips === */
+.history-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.history-label {
+  font-size: 0.72rem;
+  color: var(--sub);
+  margin-right: 2px;
+}
+
+.chip {
+  padding: 4px 11px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: 0.76rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chip:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-deep); }
+
+.chip-clear {
+  font-size: 0.7rem;
+  color: var(--sub);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  margin-left: 4px;
+  padding: 4px 4px;
+}
+
+/* === My accounts === */
+.my-accounts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.my-account-pill {
+  padding: 6px 12px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  font-size: 0.82rem;
+  color: var(--accent-deep);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.my-account-pill:hover { background: var(--accent); color: #fff; }
+
+/* === Status badges === */
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 11px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  position: relative;
+  cursor: help;
+}
+.badge-ok { background: var(--ok-soft); color: var(--ok); }
+.badge-caution { background: var(--caution-soft); color: var(--caution); }
+.badge-gray { background: var(--gray-soft); color: var(--gray-status); }
+
+.badge[data-tooltip]:hover::after,
+.badge.show-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 400;
+  white-space: nowrap;
+  max-width: 220px;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.5;
+}
+
+.filing-mark {
+  display: inline-block;
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 4px;
+  vertical-align: middle;
+  font-weight: 700;
+}
+.filing-blue-only { background: #DDE9F7; color: #2D5DA0; }
+
+/* === Table === */
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.account-table th {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 2px solid var(--line);
+  font-size: 0.75rem;
+  color: var(--sub);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.account-table td {
+  padding: 13px 8px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+
+.account-table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.account-table tbody tr:hover {
+  background: var(--bg);
+}
+
+.account-table tbody tr.locked {
+  opacity: 0.45;
+}
+
+.account-name {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.account-reading {
+  font-size: 0.7rem;
+  color: var(--sub);
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.account-category {
+  font-size: 0.7rem;
+  color: var(--sub);
+  margin-top: 4px;
+}
+
+.bookmark-btn {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  padding: 4px 6px;
+  color: #D5CFC0;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.bookmark-btn:hover { color: var(--pink); transform: scale(1.15); }
+.bookmark-btn.active { color: var(--pink); }
+
+.copy-btn {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 0.7rem;
+  color: var(--sub);
+  margin-left: 6px;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.copy-btn.copied { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
+
+/* === Cards (mobile) === */
+.account-cards { display: none; flex-direction: column; gap: 10px; }
+
+.account-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s;
+}
+
+.account-card:active { transform: scale(0.99); }
+.account-card.locked { opacity: 0.45; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.card-examples {
+  font-size: 0.74rem;
+  color: var(--sub);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+@media (max-width: 650px) {
+  .account-table { display: none; }
+  .account-cards { display: flex; }
+}
+
+/* === Comparison guide === */
+.comparison-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.comparison-item summary {
+  padding: 13px 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg);
+  list-style: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+}
+
+.comparison-item summary::-webkit-details-marker { display: none; }
+.comparison-item summary::before {
+  content: "▶";
+  display: inline-block;
+  font-size: 0.65rem;
+  transition: transform 0.2s;
+  color: var(--accent);
+}
+
+.comparison-item[open] summary::before { transform: rotate(90deg); }
+
+.comparison-content {
+  padding: 16px;
+  background: #fff;
+  border-top: 1px solid var(--line-soft);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.comparison-table th, .comparison-table td {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.comparison-table th {
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-weight: 700;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.comparison-table td:first-child {
+  font-weight: 700;
+  color: var(--accent-deep);
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+@media (max-width: 650px) {
+  .comparison-table { font-size: 0.76rem; }
+  .comparison-table th, .comparison-table td { padding: 7px 8px; }
+}
+
+.comparison-tip {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--ok-soft);
+  border-left: 3px solid var(--ok);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* === FAQ === */
+.faq-item {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.faq-item:last-child { border-bottom: none; }
+
+.faq-item summary {
+  padding: 13px 4px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  list-style: none;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before {
+  content: "Q.";
+  color: var(--accent);
+  font-weight: 700;
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+}
+
+.faq-content {
+  padding: 0 4px 14px 22px;
+  font-size: 0.84rem;
+  color: var(--ink);
+  line-height: 1.7;
+  position: relative;
+}
+
+.faq-content::before {
+  content: "A.";
+  color: var(--ok);
+  font-weight: 700;
+  position: absolute;
+  left: 4px;
+  top: 0;
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+}
+
+/* === Summary bar === */
+.summary-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--sub);
+  padding: 10px 4px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#summaryCount strong { color: var(--accent); font-weight: 700; }
+
+/* === Modal === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 42, 38, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.active { display: flex; animation: fadeIn 0.18s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 16px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  position: relative;
+  box-shadow: var(--shadow-modal);
+  animation: slideUp 0.22s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 650px) {
+  .modal { padding: 22px; border-radius: 14px; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--sub);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover { background: var(--bg); color: var(--ink); }
+
+.modal-header {
+  margin-bottom: 18px;
+  padding-right: 36px;
+}
+
+.modal h2 {
+  font-size: 1.3rem;
+  color: var(--accent-deep);
+  margin-bottom: 4px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-reading {
+  font-size: 0.78rem;
+  color: var(--sub);
+  margin-top: 2px;
+}
+
+.modal-meta-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.modal-section { margin-bottom: 20px; }
+.modal-section:last-child { margin-bottom: 0; }
+
+.modal-section h3 {
+  font-size: 0.82rem;
+  color: var(--accent-deep);
+  margin-bottom: 8px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  font-weight: 700;
+}
+
+.modal-section ul { list-style: none; padding: 0; }
+
+.modal-section li {
+  padding: 5px 0 5px 16px;
+  position: relative;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.modal-section li::before {
+  content: "・";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.modal-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pill-link {
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  padding: 5px 11px;
+  border-radius: 13px;
+  font-size: 0.78rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pill-link:hover { background: var(--accent); color: #fff; }
+
+.note-block {
+  background: var(--caution-soft);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: var(--ink);
+  border-left: 3px solid var(--caution);
+  line-height: 1.6;
+}
+
+.recommend-block {
+  background: var(--ok-soft);
+  border-left-color: var(--ok);
+}
+
+.lock-notice {
+  background: var(--gray-soft);
+  border-left: 3px solid var(--gray-status);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--ink);
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  line-height: 1.55;
+}
+
+/* === Footer === */
+.toolbar-bottom-spacer { margin-bottom: 6px; }
+
+.footer-wrapper {
+  margin-top: 4px;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+}
+
+.copyright {
+  text-align: center;
+  font-size: 10px;
+  color: var(--sub);
+  opacity: 0.7;
+  padding-top: 16px;
+  padding-bottom: 24px;
+  letter-spacing: 0.04em;
+}
+
+.empty {
+  text-align: center;
+  color: var(--sub);
+  padding: 36px 0;
+  font-size: 0.85rem;
+}
+
+.empty-icon { font-size: 2rem; opacity: 0.5; margin-bottom: 8px; }
+
+/* === Notice cards === */
+.notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.notice-wrap{width:100%}
+.notice-wrap.is-mini{width:auto}
+.notice-wrap > .notice{display:flex}
+.notice-wrap > .notice-mini{display:none}
+.notice-wrap.is-mini > .notice{display:none}
+.notice-wrap.is-mini > .notice-mini{display:inline-flex}
+.notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.notice .body{flex:1;min-width:0}
+.notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.notice .close-btn:hover{opacity:1}
+.notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+.notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.notice-trade,.notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.notice-help .help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.notice-help .help-link:hover{color:#1f2c1c}
+
+/* === Action toolbar === */
+.fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
+.fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+.btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
+.btn-card .icon{font-size:1.3rem;line-height:1}
+.btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
+
+/* === Print === */
+@media print{
+  .toolbar,.toast,.notice-area,.modal-overlay,.search-toolbar{display:none !important}
+  .print-hide{display:none !important}
+  body{background:#fff !important}
+  .card{box-shadow:none !important;border:1px solid #ddd !important;break-inside:avoid;page-break-inside:avoid}
+  header{margin-bottom:12px}
+  .summary-bar{border-bottom:1px solid #ccc;padding-bottom:6px}
+}
+
+/* === Sticky search card === */
+.sticky-search{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 4px 14px rgba(44, 42, 38, 0.10);
+  /* スクロール中もコンテンツが透けないように背景固定 */
+  background: var(--card);
+}
+@media (max-width: 650px){
+  /* モバイルではコンパクト化（スクロール中の専有面積を削減） */
+  .sticky-search{
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .sticky-search .search-toolbar{ gap: 8px; }
+  .sticky-search .search-box input{
+    padding: 10px 12px 10px 38px;
+    font-size: 0.9rem;
+  }
+  .sticky-search .industry-select,
+  .sticky-search .filing-toggle button{
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+}
+/* スマホで sticky 中、画面端まで詰めて視認性アップ（任意の演出） */
+@supports (position: sticky){
+  .sticky-search{
+    transition: box-shadow .18s ease;
+  }
+}
+
+/* === Toast (new spec) === */
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<header>
+  <div class="app-title">🧮 勘定科目検索ツール</div>
+  <div class="app-subtitle">個人事業主のための実用ツール</div>
+</header>
+
+<div class="notice-area">
+    <div class="notice-wrap" data-notice-id="info">
+        <div class="notice notice-info">
+            <span class="icon">💾</span>
+            <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+            <button type="button" class="close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="warn">
+        <div class="notice notice-warn">
+            <span class="icon">⚠️</span>
+            <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
+            <button type="button" class="close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="disclaim">
+        <div class="notice notice-disclaim">
+            <span class="icon">🚨</span>
+            <span class="body"><strong>本ツールは情報提供を目的としており、税務相談ではありません。</strong>判定は一般的な目安であり、個別事案は税理士または所轄税務署にご相談ください。</span>
+            <button type="button" class="close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="date">
+        <div class="notice notice-date">
+            <span class="icon">📅</span>
+            <span class="body">掲載情報は <strong>2026年5月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
+            <button type="button" class="close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="notice-mini notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="help">
+        <div class="notice notice-help">
+            <span class="icon">📚</span>
+            <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
+            <button type="button" class="close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="card print-hide sticky-search">
+  <div class="search-toolbar">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+      <input type="text" id="searchInput" placeholder="例：電車代、Zoom、コワーキング、ノート…" autocomplete="off">
+    </div>
+    <div class="filter-row">
+      <select class="industry-select" id="industrySelect" aria-label="業種">
+        <option value="all">🏷 全業種</option>
+        <optgroup label="知識労働">
+          <option value="designer">🎨 デザイナー</option>
+          <option value="engineer">💻 エンジニア</option>
+          <option value="writer">✍️ ライター</option>
+          <option value="consultant">💼 コンサル</option>
+          <option value="teacher">📚 講師</option>
+        </optgroup>
+        <optgroup label="クリエイター">
+          <option value="video_creator">🎬 動画クリエイター</option>
+          <option value="photographer">📷 カメラマン</option>
+          <option value="illustrator">🖌 イラストレーター</option>
+        </optgroup>
+        <optgroup label="物販・EC">
+          <option value="handmade_ec">🛍 ハンドメイド／EC物販</option>
+          <option value="resale">👕 古着・転売</option>
+        </optgroup>
+        <optgroup label="美容・健康">
+          <option value="beauty">💅 美容師／ネイリスト</option>
+          <option value="fitness">🧘 ヨガ・フィットネス</option>
+          <option value="therapist">💆 整体・鍼灸</option>
+        </optgroup>
+      </select>
+      <div class="filing-toggle" role="group" aria-label="申告方式">
+        <button data-filing="blue">青色申告</button>
+        <button data-filing="white">白色申告</button>
+      </div>
+    </div>
+    <div class="history-chips" id="historyChips" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- My accounts (bookmarks) -->
+<div class="card" id="myAccountsCard" style="display:none;">
+  <div class="section-title">⭐ マイ科目</div>
+  <div class="my-accounts-list" id="myAccountsList"></div>
+</div>
+
+<!-- Account list -->
+<div class="card">
+  <div class="section-title">📋 勘定科目一覧</div>
+  
+  <div class="summary-bar">
+    <span id="summaryCount">全0件中 0件表示</span>
+    <span id="summaryBookmark">マイ科目 0件</span>
+  </div>
+  
+  <table class="account-table" aria-label="勘定科目一覧">
+    <thead>
+      <tr>
+        <th>科目名</th>
+        <th>判定</th>
+        <th style="width:80px;"></th>
+      </tr>
+    </thead>
+    <tbody id="accountTableBody"></tbody>
+  </table>
+  
+  <div class="account-cards" id="accountCards"></div>
+  
+  <div class="empty" id="emptyMessage" style="display:none;">
+    <div class="empty-icon">🔎</div>
+    該当する科目が見つかりませんでした
+  </div>
+</div>
+
+<!-- Comparison guide -->
+<div class="card card-soft">
+  <div class="section-title">🔄 紛らわしい科目の比較ガイド</div>
+  <div id="comparisonList"></div>
+</div>
+
+<!-- FAQ -->
+<div class="card card-soft toolbar-bottom-spacer">
+  <div class="section-title">💡 この科目で迷ったら</div>
+  <div id="faqList"></div>
+</div>
+
+<div class="toolbar">
+    <button class="btn-card fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
+    <button class="btn-card fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
+    <button class="btn-card fc-share" id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
+    <button class="btn-card fc-json"  id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
+    <button class="btn-card fc-json"  id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+</div>
+
+<div class="footer-wrapper">
+  <div class="footer-divider"></div>
+  <div class="copyright">© 2026 enu(エヌ) All rights reserved.</div>
+</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent" role="dialog" aria-modal="true">
+    <button class="modal-close" onclick="closeModal()" aria-label="閉じる">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// データ定義
+// ============================================
+const accounts = [
+  {
+    id: "travel", name: "旅費交通費", reading: "りょひこうつうひ", category: "経費",
+    keywords: ["電車代","電車","タクシー","バス","新幹線","Suica","ICOCA","Pasmo","出張","駐車場","ガソリン代","高速料金","飛行機","宿泊費","ホテル","出張費","パーキング"],
+    examples: ["クライアント訪問の電車代","出張の宿泊費","取材先までの交通費","セミナー参加の往復電車代","コインパーキング代"],
+    status: "ok", statusNote: "一般に業務目的の移動費として計上されることが多い科目です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["communication","vehicle"],
+    recommendation: "業務での移動費に一般的に使われる科目です"
+  },
+  {
+    id: "communication", name: "通信費", reading: "つうしんひ", category: "経費",
+    keywords: ["電話","携帯","スマホ","Wi-Fi","インターネット","プロバイダ","切手","郵便","ハガキ","クラウド","Zoom","Slack","Chatwork","Discord","サーバー","ドメイン","レンタルサーバー","Dropbox"],
+    examples: ["携帯電話料金","自宅Wi-Fi（家事按分）","切手・ハガキ代","Zoom有料プラン","レンタルサーバー代","ドメイン更新料"],
+    status: "caution", statusNote: "一般にプライベート兼用は家事按分が必要とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["supplies","rent"],
+    recommendation: "通信に関わる支出に一般的に使われる科目です"
+  },
+  {
+    id: "supplies", name: "消耗品費", reading: "しょうもうひんひ", category: "経費",
+    keywords: ["ノート","ペン","文房具","ティッシュ","電池","USBメモリ","ケーブル","用紙","インク","トナー","名刺","10万円未満","パソコン","プリンタ","マウス","キーボード"],
+    examples: ["10万円未満のノートPC","文房具一式","USBハブ・ケーブル","印刷用紙・インク","デスク周り小物"],
+    status: "ok", statusNote: "一般に1点10万円未満が目安とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    amountRule: { min: 0, max: 99999 },
+    related: ["office_supplies","equipment"],
+    recommendation: "一般に10万円未満で1年以内に消費するものが対象とされます"
+  },
+  {
+    id: "office_supplies", name: "事務用品費", reading: "じむようひんひ", category: "経費",
+    keywords: ["文房具","ペン","ノート","クリップ","ホチキス","ファイル","封筒","バインダー","付箋","コピー用紙"],
+    examples: ["文房具一式","クリアファイル","ホチキスの針","封筒","ボールペン・付箋"],
+    status: "ok", statusNote: "一般に消耗品費との区別は任意で、継続使用がポイントとされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["supplies"]
+  },
+  {
+    id: "entertainment", name: "接待交際費", reading: "せったいこうさいひ", category: "経費",
+    keywords: ["接待","飲み会","食事会","お土産","中元","歳暮","香典","慶弔","ギフト","飲食","会食","贈答品","お祝い"],
+    examples: ["取引先との会食","お中元・お歳暮","取引先への香典","取引先への手土産","紹介者への謝礼食事"],
+    status: "caution", statusNote: "一般に業務関連性が求められ、プライベート飲食は対象外とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["meeting","welfare"],
+    recommendation: "一般に取引先に関わる飲食・贈答に使われる科目です"
+  },
+  {
+    id: "meeting", name: "会議費", reading: "かいぎひ", category: "経費",
+    keywords: ["会議","打ち合わせ","ミーティング","喫茶店","カフェ","軽食","会議室","レンタルスペース","お茶代","コーヒー"],
+    examples: ["クライアントとの打ち合わせのカフェ代","会議室レンタル料","打ち合わせ時の弁当・お茶","コワーキングのドロップイン"],
+    status: "ok", statusNote: "一般に1人5,000円以下が目安とされます（接待交際費との区別）",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["entertainment"]
+  },
+  {
+    id: "advertising", name: "広告宣伝費", reading: "こうこくせんでんひ", category: "経費",
+    keywords: ["広告","SNS広告","Google広告","Facebook広告","チラシ","看板","ホームページ制作","パンフレット","名刺","ノベルティ","プレスリリース"],
+    examples: ["SNS広告費","Google広告","ホームページ制作費","名刺印刷","チラシ・フライヤー作成"],
+    status: "ok", statusNote: "一般に事業の宣伝目的の支出として計上されます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["outsourcing"]
+  },
+  {
+    id: "outsourcing", name: "外注費", reading: "がいちゅうひ", category: "経費",
+    keywords: ["外注","業務委託","デザイン外注","ライター外注","翻訳","クラウドソーシング","ランサーズ","ココナラ","協力","業務委託費","制作委託"],
+    examples: ["ロゴデザインの外注","記事執筆の外注","翻訳の依頼","クラウドソーシングでの依頼","制作補助の業務委託"],
+    status: "caution", statusNote: "一般に給与との区別が必要で、源泉徴収が発生するケースがあります",
+    industries: ["designer","engineer","writer","consultant","video_creator","photographer","illustrator","handmade_ec","resale"],
+    filing: "both",
+    related: ["salary","fees"]
+  },
+  {
+    id: "rent", name: "地代家賃", reading: "ちだいやちん", category: "経費",
+    keywords: ["家賃","事務所","アパート","賃料","コワーキング","レンタルオフィス","駐車場月極","倉庫","シェアオフィス"],
+    examples: ["事務所家賃","コワーキングスペース月額","自宅家賃（家事按分）","月極駐車場","レンタル倉庫"],
+    status: "caution", statusNote: "自宅兼用は家事按分が必要",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["utilities","communication"]
+  },
+  {
+    id: "utilities", name: "水道光熱費", reading: "すいどうこうねつひ", category: "経費",
+    keywords: ["電気","ガス","水道","光熱費","電気代","ガス代","水道代"],
+    examples: ["事務所の電気代","自宅の電気代（家事按分）","ガス代（按分）","水道代"],
+    status: "caution", statusNote: "自宅兼用は家事按分が必要",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["rent","communication"]
+  },
+  {
+    id: "books", name: "新聞図書費", reading: "しんぶんとしょひ", category: "経費",
+    keywords: ["本","書籍","新聞","雑誌","専門書","技術書","Kindle","電子書籍","業界紙","メルマガ","note","有料記事","参考書"],
+    examples: ["業界専門書","技術書","Kindle購入","業界新聞の購読料","有料note記事","オンライン雑誌購読"],
+    status: "ok", statusNote: "一般に業務関連の知識習得目的の支出が対象とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["training"]
+  },
+  {
+    id: "training", name: "研修費", reading: "けんしゅうひ", category: "経費",
+    keywords: ["セミナー","講座","スクール","オンライン講座","Udemy","研修","勉強会","資格取得","受講料","コース"],
+    examples: ["業界セミナー参加費","Udemy講座","オンラインスクール","業務関連の資格取得講座","勉強会の参加費"],
+    status: "caution", statusNote: "一般に業務に直接関連するものが対象で、趣味的なものは対象外とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["books"]
+  },
+  {
+    id: "welfare", name: "福利厚生費", reading: "ふくりこうせいひ", category: "経費",
+    keywords: ["慰安旅行","健康診断","お茶代","社員旅行","福利厚生","従業員","食事補助"],
+    examples: ["従業員の健康診断","お茶・コーヒー代（従業員用）","従業員の慰安会","従業員の食事補助"],
+    status: "caution", statusNote: "一般に個人事業主本人の分は対象外で、従業員がいる場合に使われる科目です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["entertainment"]
+  },
+  {
+    id: "repair", name: "修繕費", reading: "しゅうぜんひ", category: "経費",
+    keywords: ["修理","修繕","メンテナンス","直す","修理代","リペア","点検"],
+    examples: ["PCの修理代","事務所の修繕","設備のメンテナンス","業務用機材の点検料"],
+    status: "ok", statusNote: "一般に資産価値を高める改良は対象外（資本的支出）とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["equipment"]
+  },
+  {
+    id: "vehicle", name: "車両費", reading: "しゃりょうひ", category: "経費",
+    keywords: ["ガソリン","車検","オイル交換","自動車税","車両保険","ETC","洗車","タイヤ"],
+    examples: ["ガソリン代","車検代","ETC料金","自動車税（事業按分）","オイル交換・洗車"],
+    status: "caution", statusNote: "一般にプライベート兼用は走行距離などで按分するとされます",
+    industries: ["consultant","teacher","video_creator","photographer"],
+    filing: "both",
+    related: ["travel","insurance"]
+  },
+  {
+    id: "insurance", name: "保険料", reading: "ほけんりょう", category: "経費",
+    keywords: ["保険","火災保険","損害保険","賠償保険","事業保険"],
+    examples: ["事務所の火災保険","損害賠償保険","業務用車両の自動車保険","フリーランス賠償責任保険"],
+    status: "caution", statusNote: "一般に国民年金・国民健康保険は対象外で、別途所得控除の扱いとされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["vehicle","taxes"]
+  },
+  {
+    id: "taxes", name: "租税公課", reading: "そぜいこうか", category: "経費",
+    keywords: ["税金","印紙","収入印紙","自動車税","固定資産税","事業税","個人事業税","商工会議所","会費"],
+    examples: ["収入印紙代","個人事業税","自動車税（事業按分）","固定資産税（事業按分）","商工会議所会費"],
+    status: "caution", statusNote: "一般に所得税・住民税は対象外で、延滞税も対象外とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["insurance"]
+  },
+  {
+    id: "depreciation", name: "減価償却費", reading: "げんかしょうきゃくひ", category: "経費",
+    keywords: ["減価償却","償却","固定資産","高額品","パソコン高額","耐用年数"],
+    examples: ["30万円以上のPC","業務用設備","業務用車両","高額機材（法定耐用年数で按分）"],
+    status: "caution", statusNote: "一般に取得価額や法定耐用年数に基づいて計算されます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    amountRule: { min: 100000, max: Infinity },
+    related: ["equipment","lump_depreciation","small_depreciation"]
+  },
+  {
+    id: "equipment", name: "工具器具備品", reading: "こうぐきぐびひん", category: "資産",
+    keywords: ["設備","備品","機器","パソコン","デスク","椅子","モニター","カメラ","業務用機器"],
+    examples: ["30万円以上のPC","業務用デスク・椅子","高額モニター","業務用カメラ機材"],
+    status: "caution", statusNote: "一般に10万円以上は減価償却の対象とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    amountRule: { min: 100000, max: Infinity },
+    related: ["depreciation","supplies"]
+  },
+  {
+    id: "lump_depreciation", name: "一括償却資産", reading: "いっかつしょうきゃくしさん", category: "資産",
+    keywords: ["一括償却","3年","10万円以上20万円未満"],
+    examples: ["15万円のPC","18万円のモニター","12万円のタブレット"],
+    status: "ok", statusNote: "一般に3年で均等償却され、青色白色を問わず利用できる制度です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    amountRule: { min: 100000, max: 199999 },
+    related: ["depreciation","small_depreciation"],
+    recommendation: "一般に10万〜20万円の物品購入時に検討される科目です"
+  },
+  {
+    id: "small_depreciation", name: "少額減価償却資産", reading: "しょうがくげんかしょうきゃくしさん", category: "資産",
+    keywords: ["少額","30万円未満","即時償却","青色特典"],
+    examples: ["25万円のPC（青色のみ）","28万円のカメラ機材","20万円のソフトウェア"],
+    status: "caution", statusNote: "一般に青色申告者のみ利用可能で、年間合計300万円までとされる制度です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "青色申告者の特典・即時経費化できる",
+    amountRule: { min: 100000, max: 299999 },
+    related: ["depreciation","lump_depreciation","equipment"],
+    recommendation: "青色申告者向けの制度で、30万円未満を即時経費化できます"
+  },
+  {
+    id: "salary", name: "給料賃金", reading: "きゅうりょうちんぎん", category: "経費",
+    keywords: ["給与","賃金","従業員","パート","アルバイト","給料"],
+    examples: ["従業員への給与","パート・アルバイト代"],
+    status: "caution", statusNote: "一般に源泉徴収が必要で、本人や生計同一の家族には別途要件があります",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    filingNote: "家族への給与は、青色なら届出により全額経費化可（専従者給与）。白色は固定額の専従者控除のみ",
+    related: ["outsourcing","family_salary"]
+  },
+  {
+    id: "fees", name: "支払手数料", reading: "しはらいてすうりょう", category: "経費",
+    keywords: ["手数料","振込手数料","銀行手数料","顧問料","紹介料","弁護士費用","税理士費用","決済手数料","Stripe","PayPal"],
+    examples: ["銀行振込手数料","税理士顧問料","弁護士費用","クレカ決済手数料","Stripe・PayPal手数料"],
+    status: "ok", statusNote: "一般に専門家への報酬は源泉徴収の対象となる場合があります",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: ["outsourcing"]
+  },
+  {
+    id: "freight", name: "荷造運賃", reading: "にづくりうんちん", category: "経費",
+    keywords: ["送料","配送","宅配便","梱包","運送","ヤマト","ゆうパック","佐川","発送"],
+    examples: ["商品発送の送料","梱包資材代","宅配便料金","クリックポスト・レターパック"],
+    status: "ok", statusNote: "一般に業務に伴う発送料金として計上されます",
+    industries: ["designer","writer","illustrator","photographer","handmade_ec","resale"],
+    filing: "both",
+    related: ["communication"]
+  },
+  {
+    id: "misc", name: "雑費", reading: "ざっぴ", category: "経費",
+    keywords: ["その他","雑費","少額","分類できない","引っ越し"],
+    examples: ["業務用引っ越し費用（少額）","クリーニング代","ゴミ処理代","神社のお祓い"],
+    status: "gray", statusNote: "一般に多用は避けたほうが良いとされ、年間総額の5%程度までが目安とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    related: [],
+    recommendation: "他に当てはまる科目がない場合に検討される科目です"
+  },
+  {
+    id: "sales", name: "売上高", reading: "うりあげだか", category: "収益",
+    keywords: ["売上","報酬","収入","入金","ギャラ","原稿料","制作費"],
+    examples: ["クライアントからの報酬","講演料","原稿料","デザイン料","制作費の入金"],
+    status: "ok", statusNote: "経費科目ではなく収益科目に分類されます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "both",
+    filingNote: "青色は発生主義（請求時点で計上）、白色は現金主義（入金時点）も認められます",
+    related: ["receivable"]
+  },
+  {
+    id: "receivable", name: "売掛金", reading: "うりかけきん", category: "資産",
+    keywords: ["売掛","未入金","請求中","入金待ち","掛売"],
+    examples: ["請求書発行済みの未入金分","月末締め翌月払いの売上"],
+    status: "ok", statusNote: "経費ではなく資産科目（債権）に分類されます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "発生主義の青色申告で重要",
+    related: ["sales","bad_debt_reserve"]
+  },
+  {
+    id: "payable", name: "買掛金", reading: "かいかけきん", category: "負債",
+    keywords: ["買掛","未払い","仕入れ未払い","掛買"],
+    examples: ["商品仕入れの未払い分","外注費の未払い"],
+    status: "ok", statusNote: "経費ではなく負債科目に分類されます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    related: ["outsourcing"]
+  },
+  {
+    id: "owner_loan_to", name: "事業主貸", reading: "じぎょうぬしかし", category: "資産",
+    keywords: ["事業主貸","個人引出","プライベート支出","生活費","国民健康保険","国民年金","所得税","住民税","引出"],
+    examples: ["事業口座から生活費を引き出した","国民健康保険料を事業口座から支払","所得税の納付","プライベート支出を事業資金で立替"],
+    status: "ok", statusNote: "経費ではなく、事業から個人へお金が流れた際の記録に使われる科目です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "一般に複式簿記の青色申告で家事関連支出を整理するために使われます",
+    related: ["owner_loan_from"]
+  },
+  {
+    id: "owner_loan_from", name: "事業主借", reading: "じぎょうぬしかり", category: "負債",
+    keywords: ["事業主借","個人立替","プライベート資金","事業外収入","還付","利息","立替"],
+    examples: ["プライベート資金で事業経費を支払","個人口座での売上入金","預金利息","税金の還付金"],
+    status: "ok", statusNote: "経費ではなく、個人から事業へお金が流れた際の記録に使われる科目です",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "一般に複式簿記の青色申告で個人資金からの立替を整理するために使われます",
+    related: ["owner_loan_to"]
+  },
+  {
+    id: "bad_debt_reserve", name: "貸倒引当金", reading: "かしだおれひきあてきん", category: "経費",
+    keywords: ["貸倒","引当金","売掛金回収","回収不能","債権","貸倒れ"],
+    examples: ["売掛金の回収不能リスクへの備え","年末売掛金残高×5.5%の繰入（一括評価）"],
+    status: "caution", statusNote: "一般に青色申告者のみ必要経費に算入できる制度とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "一括評価方式の場合、年末の売掛金等の5.5%まで計上可（金融業は3.3%）",
+    related: ["receivable"]
+  },
+  {
+    id: "family_salary", name: "専従者給与", reading: "せんじゅうしゃきゅうよ", category: "経費",
+    keywords: ["専従者","家族給与","配偶者給与","事業専従者","届出","青色専従者"],
+    examples: ["配偶者への給与","同居の親族への給与（生計同一）"],
+    status: "caution", statusNote: "一般に事前に「青色事業専従者給与に関する届出書」の提出が必要とされます",
+    industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
+    filing: "blue",
+    filingNote: "白色申告は固定額の専従者控除（配偶者86万円・その他50万円まで）のみ",
+    related: ["salary"]
+  }
+];
+
+// ============================================
+// 比較ガイド
+// ============================================
+const comparisons = [
+  {
+    title: "消耗品費 vs 事務用品費 vs 工具器具備品",
+    headers: ["科目", "金額目安", "性質", "代表例"],
+    rows: [
+      ["消耗品費", "10万円未満", "汎用的に消費するもの全般", "USBハブ、ケーブル、低額PC"],
+      ["事務用品費", "10万円未満", "事務作業用に特化", "ペン、ノート、ファイル"],
+      ["工具器具備品", "10万円以上", "減価償却対象の資産", "高額PC、業務用デスク"]
+    ],
+    tip: "消耗品費は何でも入れられる便利科目。事務用品費は分けて管理したい場合に。10万円を超えたら工具器具備品で資産計上が必要。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    title: "接待交際費 vs 会議費 vs 福利厚生費",
+    headers: ["科目", "対象", "判断ポイント", "代表例"],
+    rows: [
+      ["接待交際費", "取引先・得意先", "関係維持・接待目的", "取引先との会食、お中元"],
+      ["会議費", "取引先や同業者", "1人5,000円以下の打合せ", "カフェでの打合せ、会議の弁当"],
+      ["福利厚生費", "従業員（自分は不可）", "従業員のための支出", "健康診断、お茶代"]
+    ],
+    tip: "1人5,000円以下のシンプルな打合せは会議費でOK。豪華な会食は接待交際費。本人だけの飲食はそもそも経費にならないので注意。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    title: "旅費交通費 vs 通信費（リモート関連）",
+    headers: ["科目", "対象", "代表例"],
+    rows: [
+      ["旅費交通費", "物理的な移動", "電車代、タクシー、出張宿泊"],
+      ["通信費", "通信・回線・郵便", "Zoom有料、Wi-Fi、切手"],
+      ["（参考）会議費", "対面打合せの飲食", "カフェ代、会議室"]
+    ],
+    tip: "リモート会議のツール代は「通信費」、会場までの移動は「旅費交通費」、その場のお茶代は「会議費」。一つの打合せでも複数科目に分かれることが多い。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    title: "外注費 vs 給料賃金 vs 支払手数料",
+    headers: ["科目", "相手", "契約形態", "代表例"],
+    rows: [
+      ["外注費", "個人事業主・法人", "業務委託契約", "デザイン外注、執筆外注"],
+      ["給料賃金", "従業員", "雇用契約", "アルバイト代、パート給与"],
+      ["支払手数料", "専門家・サービス", "報酬・手数料", "税理士顧問料、振込手数料"]
+    ],
+    tip: "雇用関係があるか・指揮命令下にあるかで判断。源泉徴収の有無も変わるので税務上は重要。クラウドソーシング経由は外注費が一般的。 ※具体的なケースは税理士にご相談ください。"
+  }
+];
+
+// ============================================
+// FAQ
+// ============================================
+const faqs = [
+  {
+    q: "領収書がない場合はどうすればいい？",
+    a: "出金伝票で代替可能です。日付・支払先・金額・内容を記録しておけばOK。電車・バスなど領収書が出ない交通費は特に有効です。可能ならクレカ明細やメール控えも残しておきましょう。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    q: "自宅で仕事しているけど家賃や光熱費は経費にできる？",
+    a: "業務使用分のみ「家事按分」で経費化できます。専用スペースの面積比率や、業務時間の比率などで合理的に算出。30〜50%程度に収めるのが一般的です。継続して同じ基準で計算することが大切。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    q: "プライベートと兼用しているものはどうする？",
+    a: "利用時間や面積など合理的な基準で按分します。スマホ・PC・車両など、客観的な根拠（使用時間ログ、走行距離など）を残しておくと税務調査でも安心です。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    q: "領収書の保存期間は？",
+    a: "青色申告は7年（欠損金繰越時は10年）、白色申告も5年が原則です。電子帳簿保存法への対応も必要なので、スキャンやクラウド保存も検討を。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    q: "インボイス制度の影響を受ける科目は？",
+    a: "課税事業者の場合、外注費・接待交際費・会議費などで「適格請求書（インボイス）」の有無により仕入税額控除ができるかが変わります。取引先のインボイス番号の有無は記録しておきましょう。 ※具体的なケースは税理士にご相談ください。"
+  },
+  {
+    q: "迷ったらどうすればいい？",
+    a: "迷ったら「消耗品費」または「雑費」が無難ですが、雑費の多用は避けましょう。明らかに性質の違うものは適切な科目に分ける方が後で見返しやすく、税務署からの印象も良くなります。 ※具体的なケースは税理士にご相談ください。"
+  }
+];
+
+// ============================================
+// 状態管理
+// ============================================
+const STORAGE_KEYS = {
+  bookmarks: 'kanjo_bookmarks',
+  filing: 'kanjo_filing',
+  industry: 'kanjo_industry',
+  history: 'kanjo_history'
+};
+
+const state = {
+  query: '',
+  industry: localStorage.getItem(STORAGE_KEYS.industry) || 'all',
+  filing: localStorage.getItem(STORAGE_KEYS.filing) || 'blue',
+  bookmarks: safeParse(localStorage.getItem(STORAGE_KEYS.bookmarks), []),
+  history: safeParse(localStorage.getItem(STORAGE_KEYS.history), []),
+};
+
+function safeParse(str, fallback) {
+  try { return JSON.parse(str) || fallback; } catch(e) { return fallback; }
+}
+
+// ============================================
+// ヘルパー関数
+// ============================================
+function hiraToKata(s) {
+  return s.replace(/[\u3041-\u3096]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
+}
+function kataToHira(s) {
+  return s.replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+}
+function normalize(s) {
+  return (s || '').toLowerCase().trim();
+}
+
+function matchesSearch(account, query) {
+  if (!query) return true;
+  const q = normalize(query);
+  const qHira = kataToHira(q);
+  const qKata = hiraToKata(q);
+  const haystack = [
+    account.name,
+    account.reading,
+    ...(account.keywords || []),
+    ...(account.examples || [])
+  ].join(' ').toLowerCase();
+  return haystack.includes(q) || haystack.includes(qHira) || haystack.includes(qKata);
+}
+
+function matchesIndustry(account, industry) {
+  if (industry === 'all') return true;
+  return (account.industries || []).includes(industry);
+}
+
+function isLockedByFiling(account, filing) {
+  return account.filing === 'blue' && filing === 'white';
+}
+
+function getStatusBadge(account) {
+  const map = {
+    ok: { cls: 'badge-ok', label: '一般に可' },
+    caution: { cls: 'badge-caution', label: '要件あり' },
+    gray: { cls: 'badge-gray', label: '個別判断' }
+  };
+  const m = map[account.status] || map.ok;
+  return `<span class="badge ${m.cls}" data-tooltip="${escapeAttr(account.statusNote || '')}">${m.label}</span>`;
+}
+
+function getFilingMark(account) {
+  if (account.filing === 'blue') {
+    return '<span class="filing-mark filing-blue-only" title="青色申告のみ">青のみ</span>';
+  }
+  return '';
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s) {
+  return escapeHtml(s);
+}
+
+function findAccount(id) {
+  return accounts.find(a => a.id === id);
+}
+
+// ============================================
+// 描画: 一覧
+// ============================================
+function renderList() {
+  const tbody = document.getElementById('accountTableBody');
+  const cards = document.getElementById('accountCards');
+  const empty = document.getElementById('emptyMessage');
+  
+  const filtered = accounts.filter(a => 
+    matchesSearch(a, state.query) && matchesIndustry(a, state.industry)
+  );
+  
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    cards.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(a => renderTableRow(a)).join('');
+    cards.innerHTML = filtered.map(a => renderCard(a)).join('');
+  }
+  
+  document.getElementById('summaryCount').innerHTML = 
+    `全<strong>${accounts.length}</strong>件中 <strong>${filtered.length}</strong>件表示`;
+  document.getElementById('summaryBookmark').textContent = 
+    `マイ科目 ${state.bookmarks.length}件`;
+  
+  attachListItemListeners();
+}
+
+function renderTableRow(a) {
+  const locked = isLockedByFiling(a, state.filing);
+  const bookmarked = state.bookmarks.includes(a.id);
+  return `
+    <tr data-id="${a.id}" class="${locked ? 'locked' : ''}">
+      <td>
+        <span class="account-name">${escapeHtml(a.name)}</span>${getFilingMark(a)}
+        <span class="account-reading">${escapeHtml(a.reading)}</span>
+        <div class="account-category">区分：${escapeHtml(a.category)}</div>
+      </td>
+      <td>${getStatusBadge(a)}</td>
+      <td style="text-align:right;white-space:nowrap;">
+        <button class="copy-btn" data-copy="${escapeAttr(a.name)}" title="科目名をコピー">📋</button>
+        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
+      </td>
+    </tr>
+  `;
+}
+
+function renderCard(a) {
+  const locked = isLockedByFiling(a, state.filing);
+  const bookmarked = state.bookmarks.includes(a.id);
+  const examplePreview = (a.examples || []).slice(0, 2).join(' / ');
+  return `
+    <div class="account-card ${locked ? 'locked' : ''}" data-id="${a.id}">
+      <div class="card-header">
+        <div style="flex:1;min-width:0;">
+          <span class="account-name">${escapeHtml(a.name)}</span>${getFilingMark(a)}
+          <span class="account-reading">${escapeHtml(a.reading)}</span>
+        </div>
+        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
+      </div>
+      <div class="card-meta">
+        ${getStatusBadge(a)}
+        <span style="font-size:0.72rem;color:var(--sub);">区分：${escapeHtml(a.category)}</span>
+        <button class="copy-btn" data-copy="${escapeAttr(a.name)}" title="科目名をコピー">📋 コピー</button>
+      </div>
+      <div class="card-examples">${escapeHtml(examplePreview)}</div>
+    </div>
+  `;
+}
+
+// ============================================
+// 描画: マイ科目
+// ============================================
+function renderMyAccounts() {
+  const card = document.getElementById('myAccountsCard');
+  const list = document.getElementById('myAccountsList');
+  
+  if (state.bookmarks.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  list.innerHTML = state.bookmarks.map(id => {
+    const a = findAccount(id);
+    if (!a) return '';
+    return `<button class="my-account-pill" data-id="${a.id}">${escapeHtml(a.name)}</button>`;
+  }).join('');
+  
+  list.querySelectorAll('[data-id]').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.id));
+  });
+}
+
+// ============================================
+// 描画: 履歴チップ
+// ============================================
+function renderHistory() {
+  const wrap = document.getElementById('historyChips');
+  if (state.history.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = '<span class="history-label">📌 最近の検索：</span>' +
+    state.history.map(h => `<button class="chip" data-history="${escapeAttr(h)}">${escapeHtml(h)}</button>`).join('') +
+    `<button class="chip-clear" id="historyClear">クリア</button>`;
+  
+  wrap.querySelectorAll('[data-history]').forEach(el => {
+    el.addEventListener('click', () => {
+      const q = el.dataset.history;
+      document.getElementById('searchInput').value = q;
+      state.query = q;
+      renderList();
+    });
+  });
+  document.getElementById('historyClear').addEventListener('click', () => {
+    state.history = [];
+    saveState();
+    renderHistory();
+  });
+}
+
+function addToHistory(query) {
+  const q = (query || '').trim();
+  if (!q || q.length < 2) return;
+  state.history = [q, ...state.history.filter(x => x !== q)].slice(0, 5);
+  saveState();
+  renderHistory();
+}
+
+// ============================================
+// 描画: 比較ガイド
+// ============================================
+function renderComparisons() {
+  const wrap = document.getElementById('comparisonList');
+  wrap.innerHTML = comparisons.map((c, i) => `
+    <details class="comparison-item" ${i === 0 ? '' : ''}>
+      <summary>${escapeHtml(c.title)}</summary>
+      <div class="comparison-content">
+        <div style="overflow-x:auto;">
+        <table class="comparison-table">
+          <thead><tr>${c.headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+          <tbody>${c.rows.map(r => `<tr>${r.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+        </div>
+        <div class="comparison-tip">💡 ${escapeHtml(c.tip)}</div>
+      </div>
+    </details>
+  `).join('');
+}
+
+// ============================================
+// 描画: FAQ
+// ============================================
+function renderFaqs() {
+  const wrap = document.getElementById('faqList');
+  wrap.innerHTML = faqs.map(f => `
+    <details class="faq-item">
+      <summary>${escapeHtml(f.q)}</summary>
+      <div class="faq-content">${escapeHtml(f.a)}</div>
+    </details>
+  `).join('');
+}
+
+// ============================================
+// モーダル
+// ============================================
+function openModal(id) {
+  const a = findAccount(id);
+  if (!a) return;
+  
+  const overlay = document.getElementById('modalOverlay');
+  const body = document.getElementById('modalBody');
+  const locked = isLockedByFiling(a, state.filing);
+  const bookmarked = state.bookmarks.includes(a.id);
+  
+  body.innerHTML = `
+    <div class="modal-header">
+      <h2>${escapeHtml(a.name)}${getFilingMark(a)}</h2>
+      <div class="modal-reading">${escapeHtml(a.reading)} ／ 区分：${escapeHtml(a.category)}</div>
+      <div class="modal-meta-row">
+        ${getStatusBadge(a)}
+        <button class="copy-btn" data-copy="${escapeAttr(a.name)}">📋 科目名をコピー</button>
+        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
+      </div>
+    </div>
+    
+    ${locked ? `
+      <div class="lock-notice">
+        <span style="font-size:1rem;">🔒</span>
+        <span>この科目は<strong>青色申告</strong>でのみ利用できます。現在は白色申告モードです。</span>
+      </div>
+    ` : ''}
+    
+    <div class="modal-section">
+      <h3>📝 こんな支出が該当します</h3>
+      <ul>
+        ${(a.examples || []).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
+      </ul>
+    </div>
+    
+    ${a.statusNote ? `
+      <div class="modal-section">
+        <h3>⚠️ 経費にする際の注意点</h3>
+        <div class="note-block">${escapeHtml(a.statusNote)}</div>
+      </div>
+    ` : ''}
+    
+    ${a.filingNote ? `
+      <div class="modal-section">
+        <h3>📘 申告方式での扱い</h3>
+        <div class="note-block">${escapeHtml(a.filingNote)}</div>
+      </div>
+    ` : ''}
+    
+    ${a.recommendation ? `
+      <div class="modal-section">
+        <h3>💡 一般的な選び方の目安</h3>
+        <div class="note-block recommend-block">${escapeHtml(a.recommendation)}</div>
+      </div>
+    ` : ''}
+    
+    ${(a.related || []).length > 0 ? `
+      <div class="modal-section">
+        <h3>🔗 関連する科目</h3>
+        <div class="modal-related">
+          ${a.related.map(rid => {
+            const r = findAccount(rid);
+            return r ? `<button class="pill-link" data-related="${r.id}">${escapeHtml(r.name)}</button>` : '';
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+  
+  // バインド
+  body.querySelectorAll('[data-related]').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.related));
+  });
+  body.querySelectorAll('[data-bookmark]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBookmark(el.dataset.bookmark);
+      openModal(id); // 再描画
+    });
+  });
+  body.querySelectorAll('[data-copy]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyText(el.dataset.copy, el);
+    });
+  });
+  
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ============================================
+// 操作
+// ============================================
+function toggleBookmark(id) {
+  const idx = state.bookmarks.indexOf(id);
+  if (idx >= 0) state.bookmarks.splice(idx, 1);
+  else state.bookmarks.push(id);
+  saveState();
+  renderList();
+  renderMyAccounts();
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEYS.bookmarks, JSON.stringify(state.bookmarks));
+  localStorage.setItem(STORAGE_KEYS.filing, state.filing);
+  localStorage.setItem(STORAGE_KEYS.industry, state.industry);
+  localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(state.history));
+}
+
+function copyText(text, btn) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      toast(`「${text}」をコピーしました`);
+      if (btn) {
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1200);
+      }
+    }).catch(() => fallbackCopy(text, btn));
+  } else {
+    fallbackCopy(text, btn);
+  }
+}
+
+function fallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast(`「${text}」をコピーしました`); } catch(e) {}
+  document.body.removeChild(ta);
+  if (btn) {
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 1200);
+  }
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ============================================
+// イベントリスナー
+// ============================================
+function attachListItemListeners() {
+  // 行/カードクリック → モーダル
+  document.querySelectorAll('#accountTableBody tr[data-id]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-bookmark]') || e.target.closest('[data-copy]')) return;
+      openModal(el.dataset.id);
+    });
+  });
+  document.querySelectorAll('#accountCards .account-card').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-bookmark]') || e.target.closest('[data-copy]')) return;
+      openModal(el.dataset.id);
+    });
+  });
+  
+  // ブックマークボタン
+  document.querySelectorAll('[data-bookmark]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBookmark(el.dataset.bookmark);
+    });
+  });
+  
+  // コピーボタン
+  document.querySelectorAll('[data-copy]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyText(el.dataset.copy, el);
+    });
+  });
+}
+
+// 検索
+let searchTimer = null;
+let lastCommittedQuery = '';
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  state.query = e.target.value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    renderList();
+  }, 100);
+});
+// blur or Enter で履歴に追加
+document.getElementById('searchInput').addEventListener('blur', (e) => {
+  if (e.target.value && e.target.value !== lastCommittedQuery) {
+    addToHistory(e.target.value);
+    lastCommittedQuery = e.target.value;
+  }
+});
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    addToHistory(e.target.value);
+    lastCommittedQuery = e.target.value;
+    e.target.blur();
+  }
+});
+
+// 業種
+document.getElementById('industrySelect').addEventListener('change', (e) => {
+  state.industry = e.target.value;
+  saveState();
+  renderList();
+});
+document.getElementById('industrySelect').value = state.industry;
+
+// 申告方式
+document.querySelectorAll('.filing-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.filing = btn.dataset.filing;
+    saveState();
+    document.querySelectorAll('.filing-toggle button').forEach(b => b.classList.toggle('active', b.dataset.filing === state.filing));
+    renderList();
+  });
+});
+
+// モーダル背景クリックで閉じる
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+// Escキーで閉じる
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ============================================
+// 初期化
+// ============================================
+function init() {
+  // 申告方式の表示反映
+  document.querySelectorAll('.filing-toggle button').forEach(b => b.classList.toggle('active', b.dataset.filing === state.filing));
+  
+  renderList();
+  renderMyAccounts();
+  renderHistory();
+  renderComparisons();
+  renderFaqs();
+}
+
+init();
+
+// ============================================
+// 注意書きカード制御
+// ============================================
+const HELP_URL='https://enu-tools.pages.dev/help/';
+const HELP_OPEN_NEW_TAB=true;
+(function(){const l=document.getElementById('help-page-link');if(!l)return;l.href=HELP_URL;if(HELP_OPEN_NEW_TAB){l.target='_blank';l.rel='noopener'}})();
+const NOTICE_KEY='enu_notice_minimized';
+function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
+function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
+(function(){const l=getNoticeList();document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
+document.querySelectorAll('.notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
+document.querySelectorAll('.notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+
+// ============================================
+// アクションボタン制御
+// ============================================
+function getAppData(){
+  return {
+    version: 1,
+    app: 'kanjo-search',
+    exportedAt: new Date().toISOString(),
+    bookmarks: state.bookmarks,
+    filing: state.filing,
+    industry: state.industry,
+    history: state.history
+  };
+}
+function validateData(data){
+  if(!data || typeof data !== 'object') return false;
+  if(data.app && data.app !== 'kanjo-search') return false;
+  if(data.bookmarks !== undefined && !Array.isArray(data.bookmarks)) return false;
+  if(data.history !== undefined && !Array.isArray(data.history)) return false;
+  if(data.filing !== undefined && !['blue','white'].includes(data.filing)) return false;
+  return true;
+}
+function applyAppData(data){
+  if(Array.isArray(data.bookmarks)) state.bookmarks = data.bookmarks.slice();
+  if(data.filing) state.filing = data.filing;
+  if(data.industry) state.industry = data.industry;
+  if(Array.isArray(data.history)) state.history = data.history.slice();
+  saveState();
+  // UI 反映
+  document.getElementById('industrySelect').value = state.industry;
+  document.querySelectorAll('.filing-toggle button').forEach(b =>
+    b.classList.toggle('active', b.dataset.filing === state.filing));
+  renderList();
+  renderMyAccounts();
+  renderHistory();
+}
+function handlePrint(){window.print()}
+async function handleShare(){
+    const shareData={title:document.title,text:`${document.title} を共有します`,url:location.href};
+    if(navigator.share){try{await navigator.share(shareData)}catch(e){}}
+    else{try{await navigator.clipboard.writeText(location.href);toast('🔗 URLをコピーしました')}catch(e){toast('共有に対応していない環境です')}}
+}
+function handleExport(){
+    const data = getAppData();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const date = new Date().toISOString().slice(0,10);
+    a.download = `kanjo-search_${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('📤 JSONをダウンロードしました');
+}
+function handleImport(){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json,.json';
+    input.addEventListener('change', async e=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        try{
+            const text = await file.text();
+            const data = JSON.parse(text);
+            if(!validateData(data)) throw new Error('データ形式が違います');
+            if(!confirm('現在のデータを上書きしてインポートしますか？')) return;
+            applyAppData(data);
+            toast('📥 インポートしました');
+        }catch(err){
+            toast('⚠️ ファイルが読み込めません');
+        }
+    });
+    input.click();
+}
+document.getElementById('btn-pdf')?.addEventListener('click', handlePrint);
+document.getElementById('btn-print')?.addEventListener('click', handlePrint);
+document.getElementById('btn-share')?.addEventListener('click', handleShare);
+document.getElementById('btn-export')?.addEventListener('click', handleExport);
+document.getElementById('btn-import')?.addEventListener('click', handleImport);
+
+</script>
+
+<script>
+// ============================================
+// PWA アイコン動的生成（apple-touch-icon / manifest）
+// 背景色は body の computed style から自動取得
+// ============================================
+(function(){
+  const EMOJI = '🧮';
+  const APP_NAME = '勘定科目検索ツール';
+  const SHORT_NAME = '勘定科目検索';
+
+  function rgbToHex(rgb){
+    const m = (rgb||'').match(/\d+/g);
+    if(!m) return '#FAF7F2';
+    return '#' + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+
+  function makeIconCanvas(size, emoji, bgColor){
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const r = size * 0.2;
+    ctx.fillStyle = bgColor;
+    if(ctx.roundRect){
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, r);
+      ctx.fill();
+    } else {
+      // フォールバック（quadraticCurveで角丸描画）
+      ctx.beginPath();
+      ctx.moveTo(r,0);
+      ctx.lineTo(size-r,0);
+      ctx.quadraticCurveTo(size,0,size,r);
+      ctx.lineTo(size,size-r);
+      ctx.quadraticCurveTo(size,size,size-r,size);
+      ctx.lineTo(r,size);
+      ctx.quadraticCurveTo(0,size,0,size-r);
+      ctx.lineTo(0,r);
+      ctx.quadraticCurveTo(0,0,r,0);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // 絵文字を中央に配置
+    ctx.font = (size*0.62) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, size/2, size/2 + size*0.04);
+    return canvas;
+  }
+
+  function setup(){
+    const bg = rgbToHex(getComputedStyle(document.body).backgroundColor);
+
+    // 1. apple-touch-icon (180px)
+    try {
+      const apple = makeIconCanvas(180, EMOJI, bg);
+      const appleLink = document.createElement('link');
+      appleLink.rel = 'apple-touch-icon';
+      appleLink.sizes = '180x180';
+      appleLink.href = apple.toDataURL('image/png');
+      document.head.appendChild(appleLink);
+    } catch(e){ console.warn('apple-touch-icon生成失敗', e); }
+
+    // 2. PWA manifest (192px / 512px → Blob URL で注入)
+    try {
+      const c192 = makeIconCanvas(192, EMOJI, bg);
+      const c512 = makeIconCanvas(512, EMOJI, bg);
+      Promise.all([
+        new Promise(r => c192.toBlob(r, 'image/png')),
+        new Promise(r => c512.toBlob(r, 'image/png'))
+      ]).then(([b192, b512]) => {
+        if(!b192 || !b512) return;
+        const url192 = URL.createObjectURL(b192);
+        const url512 = URL.createObjectURL(b512);
+        const manifest = {
+          name: APP_NAME,
+          short_name: SHORT_NAME,
+          start_url: location.pathname + location.search,
+          display: 'standalone',
+          background_color: bg,
+          theme_color: bg,
+          icons: [
+            {src: url192, sizes: '192x192', type: 'image/png'},
+            {src: url512, sizes: '512x512', type: 'image/png'}
+          ]
+        };
+        const mBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+        const mUrl = URL.createObjectURL(mBlob);
+        const mLink = document.createElement('link');
+        mLink.rel = 'manifest';
+        mLink.href = mUrl;
+        document.head.appendChild(mLink);
+      });
+    } catch(e){ console.warn('manifest生成失敗', e); }
+
+    // 3. theme-color メタタグも実際の bg に同期
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if(themeMeta) themeMeta.content = bg;
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+})();
+</script>
+
+</body>
+</html>

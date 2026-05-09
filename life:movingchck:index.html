@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>引越しチェックリスト</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23F7F3EE'/%3E%3Ctext y='50' x='50' font-size='72' text-anchor='middle' dominant-baseline='central'%3E🚛%3C/text%3E%3C/svg%3E">
+
+<script>
+(function(){
+  const EMOJI='🚛',BG='#F7F3EE',RR=0.18;
+  function mkC(s){const c=document.createElement('canvas');c.width=c.height=s;const x=c.getContext('2d'),r=s*RR;x.beginPath();x.moveTo(r,0);x.lineTo(s-r,0);x.quadraticCurveTo(s,0,s,r);x.lineTo(s,s-r);x.quadraticCurveTo(s,s,s-r,s);x.lineTo(r,s);x.quadraticCurveTo(0,s,0,s-r);x.lineTo(0,r);x.quadraticCurveTo(0,0,r,0);x.closePath();x.fillStyle=BG;x.fill();x.font=`${s*0.62}px serif`;x.textAlign='center';x.textBaseline='middle';x.fillText(EMOJI,s/2,s/2);return c;}
+  const atc=document.createElement('link');atc.rel='apple-touch-icon';atc.href=mkC(180).toDataURL('image/png');document.head.appendChild(atc);
+  const icons=[192,512].map(s=>({src:mkC(s).toDataURL('image/png'),sizes:`${s}x${s}`,type:'image/png',purpose:'any maskable'}));
+  const blob=new Blob([JSON.stringify({name:'引越しチェックリスト',short_name:'引越しチェックリスト',start_url:'./',display:'standalone',background_color:BG,theme_color:BG,icons})],{type:'application/json'});
+  const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(blob);document.head.appendChild(ml);
+  ['apple-mobile-web-app-capable:yes','apple-mobile-web-app-status-bar-style:default','apple-mobile-web-app-title:引越しチェックリスト'].forEach(s=>{const[n,c]=s.split(':');const m=document.createElement('meta');m.name=n;m.content=c;document.head.appendChild(m);});
+})();
+</script>
+
+<style>
+:root{
+  --gr:#5C8A6E;--gr-l:#EDF5F0;--am:#E8904A;--am-l:#FEF3EA;
+  --bg:#F7F3EE;--card:#FFFFFF;--text:#2A2724;--sub:#897F78;
+  --bdr:#E4DDD5;--red:#D05A4A;
+  --font:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  --hi:#ffe066;--mid:#ffc078;--lo:#b2f2bb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1px solid var(--bdr);padding:12px 16px 10px}
+.hdr-inner{max-width:960px;margin:0 auto}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+.logo{font-family:var(--font);font-size:1.5rem;font-weight:700;color:var(--am);letter-spacing:.02em;white-space:nowrap}
+.logo em{color:var(--gr);font-style:normal}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* COUNTDOWN BADGE */
+.cdBadge{display:none;align-items:center;gap:5px;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;border:1px solid}
+.cdOk{background:#EDF5F0;border-color:#A8CDBA;color:#2e6b4d}
+.cdWarn{background:#FEF3EA;border-color:#E8BF9A;color:#8a4a1a}
+.cdUrgent{background:#FCEBEB;border-color:#E8C0C0;color:#803030}
+.cdSet{background:var(--bg);border-color:var(--bdr);color:var(--sub)}
+.progWrap{display:flex;align-items:center;gap:10px}
+.progBar{flex:1;height:7px;background:#EDE8E3;border-radius:4px;overflow:hidden}
+.progFill{height:100%;background:linear-gradient(90deg,var(--gr),var(--am));width:0;transition:width .4s ease}
+.progTxt{font-size:.72rem;font-weight:700;color:var(--sub);white-space:nowrap;min-width:40px;text-align:right}
+
+/* NOTICE AREA */
+.notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.notice-wrap{width:100%}
+.notice-wrap.is-mini{width:auto}
+.notice-wrap>.notice{display:flex}
+.notice-wrap>.notice-mini{display:none}
+.notice-wrap.is-mini>.notice{display:none}
+.notice-wrap.is-mini>.notice-mini{display:inline-flex}
+.notice{font-family:var(--font);border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.notice .body{flex:1;min-width:0}
+.notice .close-btn{font-family:var(--font);flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.notice .close-btn:hover{opacity:1}
+.notice-mini{font-family:var(--font);width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+.notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.notice-help .help-link{font-family:var(--font);color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.notice-help .help-link:hover{color:#1f2c1c}
+
+/* MAIN */
+/* SUBTITLE */
+.subtitle{font-size:.75rem}
+
+.main{max-width:960px;margin:0 auto;padding:16px 24px 140px}
+
+/* FILTER BAR */
+.filterBar{display:flex;gap:6px;margin-bottom:12px}
+.fltBtn{font-family:var(--font);font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid var(--bdr);background:var(--card);color:var(--sub);cursor:pointer;transition:all .15s}
+.fltBtn.active{background:var(--gr);border-color:var(--gr);color:#fff}
+
+/* ACCORDION */
+.grp{margin-bottom:9px;border-radius:12px;border:1px solid var(--bdr);background:var(--card);overflow:hidden}
+.grpHdr{padding:11px 16px;font-weight:700;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;gap:8px}
+.grpTitle{flex:1}
+.grpMeta{display:flex;align-items:center;gap:6px}
+.grpCount{font-size:.7rem;font-weight:500;color:var(--sub);background:var(--bg);padding:2px 8px;border-radius:12px}
+.grpAllBtn{font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--gr);background:transparent;color:var(--gr);cursor:pointer;white-space:nowrap}
+.grpAllBtn:hover{background:var(--gr-l)}
+.grpArr{color:var(--gr);font-size:.7rem;transition:transform .2s;flex-shrink:0}
+.grp.open .grpArr{transform:rotate(180deg)}
+.grpBody{display:none}
+.grp.open .grpBody{display:block}
+
+/* PC TABLE */
+.tblWrap{overflow-x:auto}
+.taskTbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.taskTbl th{padding:8px 14px;text-align:left;font-size:.68rem;color:var(--sub);font-weight:700;letter-spacing:.04em;border-bottom:1px solid var(--bdr);background:var(--bg)}
+.taskTbl th.col-cb,.taskTbl th.col-memo,.taskTbl th.col-del{text-align:center}
+.taskTbl td{padding:10px 14px;border-bottom:1px solid #f5f0eb;vertical-align:middle}
+.taskTbl tr.taskRow:last-of-type td{border-bottom:none}
+.taskTbl tr.done .taskName{text-decoration:line-through;opacity:.38}
+.taskTbl tr.taskRow:hover td{background:var(--gr-l);cursor:pointer}
+/* 小列：コンテンツ幅に収縮・スクリーンサイズで変動しない */
+.col-cb{width:1%;white-space:nowrap;text-align:center}
+.col-badge{width:1%;white-space:nowrap}
+.col-memo{width:1%;white-space:nowrap;text-align:center}
+.col-del{width:1%;white-space:nowrap;text-align:center}
+/* タスク列：残りの幅をすべて受け取る */
+.col-task{}
+.taskCb{width:18px;height:18px;accent-color:var(--gr);cursor:pointer;flex-shrink:0}
+.badge{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:11px;white-space:nowrap}
+.bHi{background:var(--hi);color:#5a4400}
+.bMid{background:var(--mid);color:#7a3800}
+.bLo{background:var(--lo);color:#1a5c2a}
+.taskDel{color:#ddd;font-size:1rem;background:none;border:none;cursor:pointer;padding:4px}
+.taskDel:hover{color:var(--red)}
+.memoBtn{background:none;border:none;cursor:pointer;font-size:.8rem;padding:3px 5px;color:var(--sub);opacity:.6;position:relative}
+.memoBtn:hover{opacity:1}
+.memoBtn.has-memo::after{content:'';position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:var(--gr)}
+.memoRow td{padding:0 14px 8px 48px!important;border-bottom:1px solid #f5f0eb}
+.memoTa{width:100%;font-family:var(--font);font-size:.78rem;border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;background:var(--bg);color:var(--text);resize:vertical;min-height:52px;outline:none;line-height:1.5}
+.memoTa:focus{border-color:var(--am);background:#fff}
+
+/* MOBILE CARDS */
+.cardList{display:none}
+.taskCard{display:flex;align-items:center;padding:11px 14px;border-top:1px solid #f5f0eb;gap:10px}
+.taskCard:active{background:var(--gr-l)}
+.taskCard.done .taskName{text-decoration:line-through;opacity:.38}
+.taskInfo{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.taskName{flex:1;font-size:.84rem;line-height:1.4;cursor:pointer}
+.memoCardWrap{padding:0 14px 10px 46px;border-top:none}
+
+/* 650px SWITCH */
+@media(max-width:650px){
+  .tblWrap{display:none}
+  .cardList{display:block}
+}
+
+/* TOOLBAR */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
+.btn-card{font-family:var(--font);flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
+.btn-card .icon{font-size:1.3rem;line-height:1}
+.btn-card .label{font-family:var(--font);font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+.fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
+.fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:var(--font);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ADD FORM */
+.addBar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:960px;background:var(--card);border-top:1px solid var(--bdr);padding:10px 16px;display:flex;gap:8px;z-index:100}
+.addIn{flex:1;border:1px solid var(--bdr);padding:10px 12px;border-radius:10px;font-family:var(--font);font-size:.85rem;background:var(--bg);color:var(--text);outline:none;min-width:0}
+.addIn:focus{border-color:var(--am);background:#fff}
+.addGrpSel{border:1px solid var(--bdr);padding:10px 8px;border-radius:10px;font-family:var(--font);font-size:.78rem;background:var(--bg);color:var(--sub);outline:none;cursor:pointer;flex-shrink:0}
+.addGrpSel:focus{border-color:var(--am)}
+.addBtn{padding:10px 18px;background:var(--am);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:.84rem;cursor:pointer;white-space:nowrap}
+
+/* FOOTER DIVIDER */
+.footerDivider{border:none;border-top:1px solid var(--bdr);margin:4px 0 0;width:100%}
+
+/* FOOTER */
+.footer{text-align:center;font-size:.65rem;color:var(--sub);padding:16px 0 24px;opacity:.7;letter-spacing:.06em}
+
+/* RESPONSIVE BREAKPOINTS */
+@media(min-width:651px) and (max-width:960px){
+  .main{padding-left:24px;padding-right:24px}
+  .hdr{padding-left:24px;padding-right:24px}
+  .addBar{padding-left:24px;padding-right:24px}
+}
+@media(max-width:650px){
+  .main{padding-left:16px;padding-right:16px}
+  .hdr{padding-left:16px;padding-right:16px}
+  .addBar{padding-left:16px;padding-right:16px}
+  .logo{font-size:1.25rem}
+  .subtitle{font-size:.7rem}
+}
+
+/* PRINT */
+@media print{
+  .hdr-right,.addBar,.toolbar,.toast,.notice-area,.filterBar,.grpAllBtn{display:none!important}
+  .grp{break-inside:avoid}
+  .grpBody{display:block!important}
+  .tblWrap{display:block!important}
+  .cardList{display:none!important}
+  .memoRow{display:table-row!important}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-top">
+      <div class="logo">🚛 引越し<em>チェックリスト</em></div>
+      <div class="hdr-right">
+        <div class="cdBadge cdSet" id="cdBadge" onclick="editMoveDate()" title="引越し日を設定">📅 日付設定</div>
+      </div>
+    </div>
+    <div class="progWrap">
+      <div class="progBar"><div class="progFill" id="pFill"></div></div>
+      <div class="progTxt" id="pTxt">0 / 0</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="notice-area">
+    <div class="notice-wrap" data-notice-id="info">
+      <div class="notice notice-info">
+        <span class="icon">💾</span>
+        <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+        <button type="button" class="close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="warn">
+      <div class="notice notice-warn">
+        <span class="icon">⚠️</span>
+        <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
+        <button type="button" class="close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="disclaim">
+      <div class="notice notice-disclaim">
+        <span class="icon">🚨</span>
+        <span class="body">本チェックリストは一般的な情報提供を目的としており、手続きの内容・期限等は自治体や状況により異なります。必ず各機関の公式情報をご確認ください。</span>
+        <button type="button" class="close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="date">
+      <div class="notice notice-date">
+        <span class="icon">📅</span>
+        <span class="body">掲載情報は <strong>2026年3月時点</strong> のものです。手続き内容・期限等は変更される場合があるため、最新情報は公式サイト等でご確認ください。</span>
+        <button type="button" class="close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="notice-mini notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <div class="notice-wrap" data-notice-id="help">
+      <div class="notice notice-help">
+        <span class="icon">📚</span>
+        <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
+        <button type="button" class="close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </div>
+
+  <!-- フィルターバー -->
+  <div class="filterBar">
+    <button class="fltBtn active" id="flt-all"   onclick="setFilter('all')">すべて</button>
+    <button class="fltBtn"        id="flt-undone" onclick="setFilter('undone')">未完了</button>
+    <button class="fltBtn"        id="flt-done"   onclick="setFilter('done')">完了</button>
+  </div>
+
+  <div id="groups"></div>
+
+  <div class="toolbar">
+    <button class="btn-card fc-pdf"   id="btn-pdf">  <span class="icon">📄</span><span class="label">PDF出力</span></button>
+    <button class="btn-card fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
+    <button class="btn-card fc-share" id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
+    <button class="btn-card fc-json"  id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
+    <button class="btn-card fc-json"  id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+  </div>
+
+  <hr class="footerDivider">
+  <div class="footer">© 2026 enu(エヌ) All rights reserved.</div>
+</div>
+
+<div class="addBar">
+  <input class="addIn" id="addIn" type="text" placeholder="新しい項目を追加...">
+  <select class="addGrpSel" id="addGrp">
+    <option value="pre">引越し前</option>
+    <option value="day">当日</option>
+    <option value="post">引越し後</option>
+    <option value="cus">自由追加</option>
+  </select>
+  <button class="addBtn" onclick="addCustom()">追加</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ STORAGE KEYS ═══ */
+const SK_DEF='move_def_v2', SK_CUS='move_cus_v2', SK_MEMO='move_memos', SK_DATE='move_date';
+
+/* ═══ MASTER DATA ═══ */
+const DEFS=[
+  {g:'pre',n:'引越し業者を予約する',p:'hi'},
+  {g:'pre',n:'新居の電気を申し込む',p:'hi'},
+  {g:'pre',n:'新居のガスを申し込む',p:'hi'},
+  {g:'pre',n:'新居の水道を申し込む',p:'hi'},
+  {g:'pre',n:'インターネット回線を手配する',p:'hi'},
+  {g:'pre',n:'郵便物の転送申請（旧住所から）',p:'mid'},
+  {g:'pre',n:'転出届を提出する（旧住所の市区町村）',p:'hi'},
+  {g:'pre',n:'不用品の処分・リサイクル手配',p:'mid'},
+  {g:'pre',n:'梱包資材を揃える',p:'mid'},
+  {g:'pre',n:'荷造りを始める',p:'mid'},
+  {g:'pre',n:'貴重品・重要書類を別にまとめる',p:'hi'},
+  {g:'day',n:'電気・水道が使えることを確認',p:'hi'},
+  {g:'day',n:'ガス開栓（立ち会い）',p:'hi'},
+  {g:'day',n:'家具・家電の動作確認',p:'mid'},
+  {g:'day',n:'旧居の清掃・鍵の返却',p:'hi'},
+  {g:'day',n:'荷解きの優先度を決めて着手',p:'mid'},
+  {g:'post',n:'転入届を提出する（新住所の市区町村）',p:'hi'},
+  {g:'post',n:'マイナンバーカードの住所変更',p:'hi'},
+  {g:'post',n:'健康保険・年金の住所変更',p:'hi'},
+  {g:'post',n:'運転免許証の住所変更',p:'hi'},
+  {g:'post',n:'銀行・クレジットカードの住所変更',p:'mid'},
+  {g:'post',n:'通販サイトの住所変更',p:'lo'},
+  {g:'post',n:'各種サブスクの住所変更',p:'lo'},
+  {g:'post',n:'家財保険の新居への切り替え',p:'mid'},
+  {g:'post',n:'勤務先・学校への住所変更届',p:'mid'},
+  {g:'post',n:'ゴミ収集日・分別ルールを確認',p:'mid'},
+];
+
+const GRPS=[
+  {id:'pre',  emoji:'📦',label:'引越し前（〜前日）'},
+  {id:'day',  emoji:'🚛',label:'引越し当日・翌日'},
+  {id:'post', emoji:'📋',label:'引越し後（14日〜1ヶ月以内）'},
+  {id:'cus',  emoji:'✏️',label:'自由追加項目'},
+];
+
+/* ═══ STATE ═══ */
+let defDone={}, customs=[], openGs=new Set(['pre','day','post','cus']);
+let defMemos={};
+let filterMode='all';
+
+/* ═══ LOAD / SAVE ═══ */
+function load(){
+  try{
+    const d=localStorage.getItem(SK_DEF);
+    const c=localStorage.getItem(SK_CUS);
+    const m=localStorage.getItem(SK_MEMO);
+    if(d) defDone=JSON.parse(d);
+    if(c){const p=JSON.parse(c);customs=p.tasks||[];openGs=new Set(p.open||['pre','day','post','cus']);}
+    if(m) defMemos=JSON.parse(m);
+  }catch(e){}
+  loadMoveDate();
+  render();
+}
+function save(){
+  localStorage.setItem(SK_DEF,JSON.stringify(defDone));
+  localStorage.setItem(SK_CUS,JSON.stringify({tasks:customs,open:[...openGs]}));
+  localStorage.setItem(SK_MEMO,JSON.stringify(defMemos));
+}
+
+/* ═══ HELPERS ═══ */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function badgeHTML(p,isCus){
+  if(isCus) return '<span class="badge bMid">追加</span>';
+  const map={hi:['bHi','高'],mid:['bMid','中'],lo:['bLo','低']};
+  const[cls,lbl]=map[p]||['bLo','低'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+/* ═══ FILTER ═══ */
+function setFilter(mode){
+  filterMode=mode;
+  document.querySelectorAll('.fltBtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('flt-'+mode).classList.add('active');
+  render();
+}
+function visibleByFilter(done){
+  if(filterMode==='undone') return !done;
+  if(filterMode==='done')   return done;
+  return true;
+}
+
+/* ═══ RENDER ═══ */
+function render(){
+  let tot=DEFS.length+customs.length, done=0;
+  DEFS.forEach((_,i)=>{if(defDone[i]) done++;});
+  customs.forEach(t=>{if(t.done) done++;});
+  document.getElementById('pFill').style.width=(tot>0?done/tot*100:0)+'%';
+  document.getElementById('pTxt').textContent=done+' / '+tot;
+
+  let html='';
+  GRPS.forEach(g=>{
+    const open=openGs.has(g.id), isCus=(g.id==='cus');
+    let tRows=[], cCards=[], cnt=0, doneG=0;
+
+    if(isCus){
+      // customs where g==='cus' or no g field
+      customs.forEach((t,i)=>{
+        if(t.g && t.g!=='cus') return;
+        cnt++;
+        if(t.done) doneG++;
+        if(!visibleByFilter(t.done)) return;
+        const dn=t.done?' done':'';
+        const hasMemo=!!(t.memo||'').trim();
+        const memoId=`memo-card-cus-${i}`;
+        tRows.push(buildDefRow(null,i,'cus',t.done,t.n,null,true,hasMemo,t.memo||''));
+        cCards.push(`<div class="taskCard${dn}">
+          <input type="checkbox" class="taskCb" ${t.done?'checked':''} onclick="toggleCus(${i});" onchange="toggleCus(${i})">
+          <div class="taskInfo"><span class="taskName" onclick="toggleCus(${i})">${esc(t.n)}</span>${badgeHTML(null,true)}</div>
+          <button class="memoBtn${hasMemo?' has-memo':''}" onclick="toggleMemoCard('${memoId}')" title="メモ">📝</button>
+          <button class="taskDel" onclick="delCus(${i})">×</button>
+        </div>
+        <div class="memoCardWrap" id="${memoId}" style="display:none">
+          <textarea class="memoTa" placeholder="メモ..." oninput="saveCusMemo(${i},this.value)">${esc(t.memo||'')}</textarea>
+        </div>`);
+      });
+    } else {
+      // DEF tasks for this group
+      const gDefs=DEFS.map((d,i)=>({...d,idx:i})).filter(d=>d.g===g.id);
+      gDefs.forEach(d=>{
+        cnt++;
+        if(defDone[d.idx]) doneG++;
+        if(!visibleByFilter(defDone[d.idx])) return;
+        const dn=defDone[d.idx]?' done':'';
+        const hasMemo=!!(defMemos[d.idx]||'').trim();
+        const memoId=`memo-card-def-${d.idx}`;
+        tRows.push(buildDefRow(d.idx,null,'def',defDone[d.idx],d.n,d.p,false,hasMemo,defMemos[d.idx]||''));
+        cCards.push(`<div class="taskCard${dn}">
+          <input type="checkbox" class="taskCb" ${defDone[d.idx]?'checked':''} onclick="toggleDef(${d.idx});" onchange="toggleDef(${d.idx})">
+          <div class="taskInfo"><span class="taskName" onclick="toggleDef(${d.idx})">${esc(d.n)}</span>${badgeHTML(d.p,false)}</div>
+          <button class="memoBtn${hasMemo?' has-memo':''}" onclick="toggleMemoCard('${memoId}')" title="メモ">📝</button>
+        </div>
+        <div class="memoCardWrap" id="${memoId}" style="display:none">
+          <textarea class="memoTa" placeholder="メモ..." oninput="saveDefMemo(${d.idx},this.value)">${esc(defMemos[d.idx]||'')}</textarea>
+        </div>`);
+      });
+      // Custom tasks assigned to this group
+      customs.forEach((t,i)=>{
+        if(t.g!==g.id) return;
+        cnt++;
+        if(t.done) doneG++;
+        if(!visibleByFilter(t.done)) return;
+        const dn=t.done?' done':'';
+        const hasMemo=!!(t.memo||'').trim();
+        const memoId=`memo-card-cus-${i}`;
+        tRows.push(buildDefRow(null,i,'cus',t.done,t.n,null,true,hasMemo,t.memo||''));
+        cCards.push(`<div class="taskCard${dn}">
+          <input type="checkbox" class="taskCb" ${t.done?'checked':''} onclick="toggleCus(${i});" onchange="toggleCus(${i})">
+          <div class="taskInfo"><span class="taskName" onclick="toggleCus(${i})">${esc(t.n)}</span>${badgeHTML(null,true)}</div>
+          <button class="memoBtn${hasMemo?' has-memo':''}" onclick="toggleMemoCard('${memoId}')" title="メモ">📝</button>
+          <button class="taskDel" onclick="delCus(${i})">×</button>
+        </div>
+        <div class="memoCardWrap" id="${memoId}" style="display:none">
+          <textarea class="memoTa" placeholder="メモ..." oninput="saveCusMemo(${i},this.value)">${esc(t.memo||'')}</textarea>
+        </div>`);
+      });
+    }
+
+    const badge=cnt>0?`<span class="grpCount">${doneG}/${cnt}</span>`:'';
+    const allDoneNow=(cnt>0&&doneG===cnt);
+    const allBtn=`<button class="grpAllBtn" onclick="event.stopPropagation();allDone('${g.id}')">${allDoneNow?'全解除':'全完了'}</button>`;
+    html+=`<div class="grp${open?' open':''}">
+      <div class="grpHdr" onclick="toggleG('${g.id}')">
+        <span class="grpTitle">${g.emoji} ${g.label}</span>
+        <div class="grpMeta">${badge}${cnt>0?allBtn:''}</div>
+        <span class="grpArr">▼</span>
+      </div>
+      <div class="grpBody">
+        <div class="tblWrap"><table class="taskTbl">
+          <colgroup>
+            <col class="col-cb"><col class="col-task"><col class="col-badge"><col class="col-memo"><col class="col-del">
+          </colgroup>
+          <thead><tr>
+            <th class="col-cb"></th>
+            <th class="col-task">タスク</th>
+            <th class="col-badge">優先度</th>
+            <th class="col-memo">メモ</th>
+            <th class="col-del"></th>
+          </tr></thead>
+          <tbody>${tRows.join('')}</tbody>
+        </table></div>
+        <div class="cardList">${cCards.join('')}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('groups').innerHTML=html;
+}
+
+function buildDefRow(defIdx,cusIdx,type,isDone,name,priority,isCus,hasMemo,memoVal){
+  const dn=isDone?' done':'';
+  const onToggle=type==='def'?`toggleDef(${defIdx})`:`toggleCus(${cusIdx})`;
+  const onMemo=type==='def'?`saveDefMemo(${defIdx},this.value)`:`saveCusMemo(${cusIdx},this.value)`;
+  const memoRowId=type==='def'?`memo-tbl-def-${defIdx}`:`memo-tbl-cus-${cusIdx}`;
+  const delBtn=isCus?`<button class="taskDel" onclick="delCus(${cusIdx})">×</button>`:'';
+  return `<tr class="taskRow${dn}" onclick="${onToggle}">
+    <td class="col-cb"><input type="checkbox" class="taskCb" ${isDone?'checked':''} onclick="event.stopPropagation();" onchange="${onToggle}"></td>
+    <td class="col-task"><span class="taskName">${esc(name)}</span></td>
+    <td class="col-badge">${badgeHTML(priority,isCus)}</td>
+    <td class="col-memo"><button class="memoBtn${hasMemo?' has-memo':''}" onclick="event.stopPropagation();toggleMemoTbl('${memoRowId}')" title="メモ">📝</button></td>
+    <td class="col-del">${delBtn}</td>
+  </tr>
+  <tr class="memoRow" id="${memoRowId}" style="display:none">
+    <td colspan="5" style="padding:0 14px 8px 48px;border-bottom:1px solid #f5f0eb">
+      <textarea class="memoTa" placeholder="メモを入力..." oninput="event.stopPropagation();${onMemo}">${esc(memoVal)}</textarea>
+    </td>
+  </tr>`;
+}
+
+/* ═══ TOGGLE MEMO ROWS ═══ */
+function toggleMemoTbl(id){
+  const el=document.getElementById(id); if(!el) return;
+  el.style.display=el.style.display==='none'?'table-row':'none';
+  if(el.style.display!=='none') el.querySelector('.memoTa')?.focus();
+}
+function toggleMemoCard(id){
+  const el=document.getElementById(id); if(!el) return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display!=='none') el.querySelector('.memoTa')?.focus();
+}
+
+/* ═══ SAVE MEMOS ═══ */
+function saveDefMemo(idx,val){
+  defMemos[idx]=val;
+  // update dot indicator without full re-render
+  document.querySelectorAll(`[onclick*="memo-tbl-def-${idx}"], [onclick*="memo-card-def-${idx}"]`).forEach(b=>{
+    b.classList.toggle('has-memo',!!(val||'').trim());
+  });
+  save();
+}
+function saveCusMemo(idx,val){
+  if(customs[idx]) customs[idx].memo=val;
+  document.querySelectorAll(`[onclick*="memo-tbl-cus-${idx}"], [onclick*="memo-card-cus-${idx}"]`).forEach(b=>{
+    b.classList.toggle('has-memo',!!(val||'').trim());
+  });
+  save();
+}
+
+/* ═══ TOGGLE TASKS ═══ */
+function toggleDef(i){defDone[i]=!defDone[i];save();render();}
+function toggleCus(i){customs[i].done=!customs[i].done;save();render();}
+function delCus(i){customs.splice(i,1);save();render();}
+function toggleG(id){openGs.has(id)?openGs.delete(id):openGs.add(id);save();render();}
+
+/* ═══ ALL DONE ═══ */
+function allDone(gid){
+  const isCus=(gid==='cus');
+  // collect items and check current state
+  let allComplete=true;
+  if(isCus){
+    customs.forEach(t=>{if(!t.g||t.g==='cus'){if(!t.done) allComplete=false;}});
+    const setTo=!allComplete;
+    customs.forEach(t=>{if(!t.g||t.g==='cus') t.done=setTo;});
+  } else {
+    const gDefs=DEFS.map((d,i)=>({...d,idx:i})).filter(d=>d.g===gid);
+    gDefs.forEach(d=>{if(!defDone[d.idx]) allComplete=false;});
+    const setTo=!allComplete;
+    gDefs.forEach(d=>{defDone[d.idx]=setTo;});
+    // also customs in this group
+    customs.forEach(t=>{if(t.g===gid) t.done=setTo;});
+  }
+  save();render();
+}
+
+/* ═══ ADD CUSTOM ═══ */
+function addCustom(){
+  const inp=document.getElementById('addIn');
+  const grp=document.getElementById('addGrp').value;
+  const v=(inp.value||'').trim(); if(!v) return;
+  customs.push({n:v,done:false,memo:'',g:grp});
+  openGs.add(grp);
+  inp.value='';
+  save();render();
+  setTimeout(()=>{
+    const target=document.querySelector(`.grp[data-gid="${grp}"]`) || document.querySelectorAll('.grp')[GRPS.findIndex(g=>g.id===grp)];
+    if(target) target.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },100);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('addIn').addEventListener('keydown',e=>{if(e.key==='Enter') addCustom();});
+});
+
+/* ═══ COUNTDOWN ═══ */
+function loadMoveDate(){
+  const d=localStorage.getItem(SK_DATE);
+  updateCountdown(d);
+}
+function editMoveDate(){
+  const cur=localStorage.getItem(SK_DATE)||'';
+  const v=prompt('引越し日を入力してください（例：2026-08-01）\n空欄にすると削除します',cur);
+  if(v===null) return;
+  if(v.trim()===''){localStorage.removeItem(SK_DATE);updateCountdown(null);return;}
+  localStorage.setItem(SK_DATE,v.trim());
+  updateCountdown(v.trim());
+}
+function updateCountdown(dateStr){
+  const badge=document.getElementById('cdBadge');
+  if(!dateStr){
+    badge.className='cdBadge cdSet';
+    badge.innerHTML='📅 日付設定';
+    badge.style.display='flex';
+    return;
+  }
+  const diff=Math.ceil((new Date(dateStr)-new Date())/86400000);
+  const cls=diff<=7?'cdUrgent':diff<=14?'cdWarn':'cdOk';
+  badge.className=`cdBadge ${cls}`;
+  badge.innerHTML=diff>0?`📅 あと <strong>${diff}</strong> 日`
+                 :diff===0?'📅 <strong>今日！</strong>'
+                 :`📅 <strong>${Math.abs(diff)}</strong> 日前`;
+  badge.style.display='flex';
+}
+
+/* ═══ NOTICE SYSTEM ═══ */
+const HELP_URL='https://enu-tools.pages.dev/help/';
+(function(){
+  const l=document.getElementById('help-page-link');
+  if(l){l.href=HELP_URL;l.target='_blank';l.rel='noopener';}
+  const NOTICE_KEY='enu_notice_minimized';
+  function getNL(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
+  function saveNL(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
+  const nl=getNL();
+  document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(w=>{if(nl.includes(w.dataset.noticeId))w.classList.add('is-mini');});
+  document.querySelectorAll('.notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{
+    const w=b.closest('.notice-wrap'),i=w.dataset.noticeId;
+    w.classList.add('is-mini');const l=getNL();if(!l.includes(i)){l.push(i);saveNL(l);}
+  }));
+  document.querySelectorAll('.notice-mini').forEach(m=>m.addEventListener('click',()=>{
+    const w=m.closest('.notice-wrap'),i=w.dataset.noticeId;
+    w.classList.remove('is-mini');saveNL(getNL().filter(x=>x!==i));
+  }));
+})();
+
+/* ═══ TOOLBAR ═══ */
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+function getAppData(){return{defDone,customs,defMemos};}
+function validateData(d){return d&&typeof d==='object'&&('defDone' in d||'customs' in d);}
+function applyAppData(d){defDone=d.defDone||{};customs=d.customs||[];defMemos=d.defMemos||{};save();render();}
+
+async function handleShare(){
+  const sd={title:document.title,text:`${document.title} を共有します`,url:location.href};
+  if(navigator.share){try{await navigator.share(sd);}catch(e){}}
+  else{try{await navigator.clipboard.writeText(location.href);toast('🔗 URLをコピーしました');}
+       catch(e){toast('共有に対応していない環境です');}}
+}
+function handleExport(){
+  const blob=new Blob([JSON.stringify(getAppData(),null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`引越しチェック_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);toast('📤 JSONをダウンロードしました');
+}
+function handleImport(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='application/json,.json';
+  input.addEventListener('change',async e=>{
+    const file=e.target.files[0];if(!file) return;
+    try{
+      const data=JSON.parse(await file.text());
+      if(!validateData(data)) throw new Error();
+      if(!confirm('現在のデータを上書きしてインポートしますか？')) return;
+      applyAppData(data);toast('📥 インポートしました');
+    }catch(err){toast('⚠️ ファイルが読み込めません');}
+  });
+  input.click();
+}
+document.getElementById('btn-pdf')   ?.addEventListener('click',()=>window.print());
+document.getElementById('btn-print') ?.addEventListener('click',()=>window.print());
+document.getElementById('btn-share') ?.addEventListener('click',handleShare);
+document.getElementById('btn-export')?.addEventListener('click',handleExport);
+document.getElementById('btn-import')?.addEventListener('click',handleImport);
+
+load();
+</script>
+</body>
+</html>

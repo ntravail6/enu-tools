@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カフェ経費判定</title>
+
+    <!-- favicon (SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23f5f0eb'/><text x='16' y='24' font-size='20' text-anchor='middle'>☕</text></svg>">
+
+    <!-- PWA / ホーム画面追加 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="カフェ経費判定">
+    <link rel="apple-touch-icon" id="apple-touch-icon">
+    <link rel="manifest" id="pwa-manifest">
+
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --rose:   #c0666a;
+            --rose-l: #f3d0d2;
+            --rose-bg:#fff8f8;
+            --ink:    #1e1e1e;
+            --muted:  #7a7a7a;
+            --sub:    #aaa9a8;
+            --line:   #e8e2dd;
+            --ok-bg:  #e8f5ec;
+            --ok-fg:  #1f6e36;
+            --ng-bg:  #fde9e9;
+            --ng-fg:  #b52929;
+            --radius: 14px;
+            --shadow: 0 8px 32px rgba(0,0,0,0.07);
+        }
+
+        body {
+            font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+            background: #f5f0eb;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 0 16px 48px;
+        }
+
+        /* ─── outer shell ─── */
+        .notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+        .notice-wrap{width:100%}
+        .notice-wrap.is-mini{width:auto}
+        .notice-wrap > .notice{display:flex}
+        .notice-wrap > .notice-mini{display:none}
+        .notice-wrap.is-mini > .notice{display:none}
+        .notice-wrap.is-mini > .notice-mini{display:inline-flex}
+        .notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+        .notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+        .notice .body{flex:1;min-width:0}
+        .notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+        .notice .close-btn:hover{opacity:1}
+        .notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+        .notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+        .notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+        .notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+        .notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+        .notice-trade,.notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+        .notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+        .notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+        .notice-help .help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+        .notice-help .help-link:hover{color:#1f2c1c}
+        .notice strong{font-weight:700}
+        /* ─── 履歴 ─── */
+        .log-area{display:flex;flex-direction:column;gap:8px;margin-top:16px;margin-bottom:6px}
+        .log-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--ink)}
+        .log-item .log-date{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;color:var(--sub);flex-shrink:0}
+        .log-item .log-cat{font-weight:700;flex-shrink:0;color:var(--rose)}
+        .log-item .log-memo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+        .log-item .log-amt{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-weight:700;flex-shrink:0}
+        .log-del{background:none;border:none;cursor:pointer;color:var(--rose);opacity:0.45;font-size:.85rem;padding:0 2px;flex-shrink:0;transition:opacity .15s}
+        .log-del:hover{opacity:1}
+        .log-total{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:.78rem;margin-top:2px}
+        .log-total .total-label{color:var(--muted)}
+        .log-total .total-val{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-weight:700;color:var(--ink)}
+        .log-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+        .filter-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;font-weight:700;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;transition:.15s}
+        .filter-btn.active{background:var(--rose);color:#fff;border-color:var(--rose)}
+        .retry-btn{flex:1;padding:13px;background:#fff;color:var(--muted);border:1.5px solid var(--line);border-radius:10px;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.15s}
+        .retry-btn:hover{background:var(--rose-bg);color:var(--rose);border-color:var(--rose-l)}
+        .btn-row{display:flex;gap:8px;margin-top:0}
+        .footer{text-align:center;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:0.625rem;color:var(--sub);opacity:0.7;letter-spacing:0.14em;margin-top:18px;padding-bottom:4px;}
+        /* ─── toolbar ─── */
+        .fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+        .fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
+        .fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+        .fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+        .btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
+        .btn-card .icon{font-size:1.3rem;line-height:1}
+        .btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+        .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
+        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+        @media print{.toolbar,.toast,.notice-area{display:none !important}}
+
+        .shell {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 76px 16px 0;
+            box-sizing: border-box;
+        }
+
+        /* ─── 650〜960px ─── */
+        @media (min-width: 650px) {
+            body { padding: 0 0 56px; }
+            .shell { padding: 82px 24px 0; }
+            .header-title { font-size: 1.5rem; }
+            .header-sub { font-size: 0.75rem; }
+        }
+
+        /* ─── 960px超 ─── */
+        @media (min-width: 960px) {
+            body { padding: 0 0 64px; }
+            .shell { padding: 86px 32px 0; }
+            .step-body { padding: 32px 32px 28px; }
+            .choice-btn { font-size: 0.92rem; padding: 15px 18px; }
+        }
+
+        /* ─── header (固定) ─── */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: #f5f0eb;
+            border-bottom: 1px solid var(--line);
+            padding: 10px 24px 8px;
+            text-align: center;
+        }
+        .header-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .header-title {
+            font-family: 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.01em;
+            margin-bottom: 2px;
+        }
+        .header-title span { color: var(--ink); }
+        .header-sub {
+            font-size: 0.7rem;
+            color: var(--sub);
+            letter-spacing: 0.1em;
+            font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+        }
+        /* ヘッダー高さ分のオフセット（スマホ） */
+
+        /* ─── progress bar ─── */
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding: 0 2px;
+        }
+        .prog-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--line);
+            transition: background 0.35s, transform 0.35s;
+            flex-shrink: 0;
+        }
+        .prog-dot.done { background: var(--rose-l); }
+        .prog-dot.active { background: var(--rose); transform: scale(1.4); }
+        .prog-line { flex: 1; height: 2px; background: var(--line); border-radius: 2px; }
+        .prog-line.done { background: var(--rose-l); }
+
+        /* ─── card ─── */
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* ─── step panel ─── */
+        .step-body {
+            padding: 28px 24px 24px;
+        }
+
+        /* ─── question area ─── */
+        .step { display: none; }
+        .step.active {
+            display: block;
+            animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-num {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--rose);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .q-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        /* ─── choice buttons ─── */
+        .choices { display: flex; flex-direction: column; gap: 9px; }
+        .choice-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--ink);
+            text-align: left;
+            transition: border-color 0.18s, background 0.18s, transform 0.12s;
+        }
+        .choice-btn:hover {
+            border-color: var(--rose-l);
+            background: var(--rose-bg);
+        }
+        .choice-btn:active { transform: scale(0.98); }
+        .choice-btn .icon {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: var(--rose-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* ─── back link ─── */
+        .back-link {
+            display: none;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+        }
+        .back-link:hover { color: var(--rose); }
+        .back-link.visible { display: block; }
+
+        /* ─── result ─── */
+        #result-step { display: none; }
+        #result-step.active {
+            display: block;
+            animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            margin-bottom: 10px;
+        }
+        .badge-ok { background: var(--ok-bg); color: var(--ok-fg); }
+        .badge-ng { background: var(--ng-bg); color: var(--ng-fg); }
+
+        .result-cat {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+        .result-tip {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        /* ─── form fields ─── */
+        .field-group { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+        .field-wrap { position: relative; }
+        .field-wrap label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .field-wrap input {
+            width: 100%;
+            padding: 10px 13px;
+            border: 1.5px solid var(--line);
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.18s;
+            background: #fafafa;
+        }
+        .field-wrap input:focus { border-color: var(--rose); background: #fff; }
+
+        /* ─── submit btn ─── */
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--rose);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.18s, transform 0.12s;
+        }
+        .submit-btn:hover { background: #b05559; }
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn .arrow { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<!-- 固定ヘッダー -->
+<header class="site-header">
+    <div class="header-label">Café Expense Check</div>
+    <div class="header-title">カフェ経費&thinsp;<span>判定</span></div>
+    <div class="header-sub">個人事業主向け</div>
+</header>
+
+<div class="shell">
+
+    <!-- notice-area -->
+    <div class="notice-area">
+        <div class="notice-wrap" data-notice-id="info">
+            <div class="notice notice-info">
+                <span class="icon">💾</span>
+                <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+                <button type="button" class="close-btn" aria-label="最小化">×</button>
+            </div>
+            <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+        </div>
+        <div class="notice-wrap" data-notice-id="warn">
+            <div class="notice notice-warn">
+                <span class="icon">⚠️</span>
+                <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
+                <button type="button" class="close-btn" aria-label="最小化">×</button>
+            </div>
+            <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+        </div>
+        <div class="notice-wrap" data-notice-id="disclaim">
+            <div class="notice notice-disclaim">
+                <span class="icon">🚨</span>
+                <span class="body">本ツールの判定は一般的な目安です。実際の経費処理は社内規定や税法により異なるため、税理士にご確認ください。</span>
+                <button type="button" class="close-btn" aria-label="最小化">×</button>
+            </div>
+            <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+        </div>
+        <div class="notice-wrap" data-notice-id="date">
+            <div class="notice notice-date">
+                <span class="icon">📅</span>
+                <span class="body">掲載情報は <strong>2026年3月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
+                <button type="button" class="close-btn" aria-label="最小化">×</button>
+            </div>
+            <button type="button" class="notice-mini notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+        </div>
+        <div class="notice-wrap" data-notice-id="help">
+            <div class="notice notice-help">
+                <span class="icon">📚</span>
+                <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
+                <button type="button" class="close-btn" aria-label="最小化">×</button>
+            </div>
+            <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+        </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-wrap" id="progress">
+        <div class="prog-dot active" id="pd0"></div>
+        <div class="prog-line" id="pl0"></div>
+        <div class="prog-dot" id="pd1"></div>
+        <div class="prog-line" id="pl1"></div>
+        <div class="prog-dot" id="pd2"></div>
+        <div class="prog-line" id="pl2"></div>
+        <div class="prog-dot" id="pd3"></div>
+    </div>
+
+    <!-- card -->
+    <div class="card">
+
+        <!-- step body -->
+        <div class="step-body">
+
+            <!-- Q1: 誰と -->
+            <div id="q1" class="step active">
+                <div class="q-num">Step 1 / 4</div>
+                <div class="q-text">誰と飲食しましたか？</div>
+                <div class="choices">
+                    <button class="choice-btn" onclick="goStep('q_alone', 1)">
+                        <span class="icon">🧍</span>ひとりで
+                    </button>
+                    <button class="choice-btn" onclick="goStep('q_guest', 1)">
+                        <span class="icon">🤝</span>客先・取引先
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q alone: 目的 -->
+            <div id="q_alone" class="step">
+                <div class="q-num">Step 2 / 4</div>
+                <div class="q-text">目的は何ですか？</div>
+                <div class="choices">
+                    <button class="choice-btn" onclick="finish('private', 2)">
+                        <span class="icon">🏠</span>私用
+                    </button>
+                    <button class="choice-btn" onclick="goStep('q_work', 2)">
+                        <span class="icon">💼</span>仕事
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q work: 内容 -->
+            <div id="q_work" class="step">
+                <div class="q-num">Step 3 / 4</div>
+                <div class="q-text">仕事の内容は？</div>
+                <div class="choices">
+                    <button class="choice-btn" onclick="finish('study', 3)">
+                        <span class="icon">🔬</span>研究・視察
+                    </button>
+                    <button class="choice-btn" onclick="goStep('q_order', 3)">
+                        <span class="icon">🖥️</span>ひとり仕事
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q order: 注文 -->
+            <div id="q_order" class="step">
+                <div class="q-num">Step 4 / 4</div>
+                <div class="q-text">注文内容は？</div>
+                <div class="choices">
+                    <button class="choice-btn" onclick="finish('drink', 4)">
+                        <span class="icon">☕</span>飲み物
+                    </button>
+                    <button class="choice-btn" onclick="finish('food', 4)">
+                        <span class="icon">🍱</span>食べ物
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q guest: 目的 -->
+            <div id="q_guest" class="step">
+                <div class="q-num">Step 2 / 4</div>
+                <div class="q-text">内容は何でしたか？</div>
+                <div class="choices">
+                    <button class="choice-btn" onclick="finish('mtg', 2)">
+                        <span class="icon">📋</span>打合せ・ミーティング
+                    </button>
+                    <button class="choice-btn" onclick="finish('high', 2)">
+                        <span class="icon">🥂</span>接待・慰労
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div id="result-step">
+                <div id="result-badge-wrap"></div>
+                <div id="result-cat" class="result-cat"></div>
+                <div id="result-tip" class="result-tip"></div>
+                <div class="field-group">
+                    <div class="field-wrap">
+                        <label>店名・メモ</label>
+                        <input type="text" id="memo" placeholder="例）〇〇レストラン">
+                    </div>
+                    <div class="field-wrap">
+                        <label>金額（円）</label>
+                        <input type="number" id="amt" placeholder="例）3500">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="submit-btn" style="flex:1;" onclick="saveData()">
+                        保存する <span class="arrow">→</span>
+                    </button>
+                    <button class="retry-btn" onclick="resetToStart()">もう一度判定</button>
+                </div>
+            </div>
+
+            <!-- back btn -->
+            <button class="back-link" id="back-btn" onclick="goBack()">← やり直す</button>
+
+        </div><!-- /step-body -->
+    </div><!-- /card -->
+
+    <!-- 履歴 -->
+    <div id="log-area"></div>
+
+    <!-- toolbar -->
+    <div class="toolbar">
+        <button class="btn-card fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
+        <button class="btn-card fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
+        <button class="btn-card fc-share"  id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
+        <button class="btn-card fc-json"   id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
+        <button class="btn-card fc-json"   id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+    </div>
+
+    <!-- footer -->
+    <div class="footer">© 2026 enu(エヌ) All rights reserved.</div>
+
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let history = [];   // stack of step ids
+    let cur = {};
+
+    const STEPS = ['q1','q_alone','q_work','q_order','q_guest'];
+    const backBtn = document.getElementById('back-btn');
+
+    function showStep(id) {
+        // hide all
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('result-step').classList.remove('active');
+
+        if (id === 'result') {
+            document.getElementById('result-step').classList.add('active');
+        } else {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+        }
+    }
+
+    function updateProgress(stepIdx) {
+        for (let i = 0; i <= 3; i++) {
+            const dot = document.getElementById('pd'+i);
+            dot.classList.remove('active','done');
+            if (i < stepIdx)  dot.classList.add('done');
+            if (i === stepIdx) dot.classList.add('active');
+        }
+        for (let i = 0; i <= 2; i++) {
+            const line = document.getElementById('pl'+i);
+            line.classList.toggle('done', i < stepIdx);
+        }
+    }
+
+    function goStep(id, progressIdx) {
+        history.push({ step: getCurrentStep(), progress: progressIdx - 1 });
+        showStep(id);
+        updateProgress(progressIdx);
+        backBtn.classList.add('visible');
+    }
+
+    function getCurrentStep() {
+        const active = document.querySelector('.step.active');
+        if (active) return active.id;
+        if (document.getElementById('result-step').classList.contains('active')) return 'result';
+        return 'q1';
+    }
+
+    function goBack() {
+        if (history.length === 0) return;
+        const prev = history.pop();
+        showStep(prev.step);
+        updateProgress(prev.progress);
+        document.getElementById('result-step').classList.remove('active');
+        if (history.length === 0) backBtn.classList.remove('visible');
+    }
+
+    function finish(type, progressIdx) {
+        history.push({ step: getCurrentStep(), progress: progressIdx - 1 });
+
+        const map = {
+            private:  { ok: false, cat: '経費不可',               tip: '私用は経費計上できません' },
+            study:    { ok: true,  cat: '雑費（研究費・取材費も可）', tip: 'レシートの裏に視察・取材の目的を記載しておきましょう' },
+            drink:    { ok: true,  cat: '雑費',                   tip: 'レシートの裏にいつ・何の仕事をしたか記載しておきましょう' },
+            food:     { ok: false, cat: '経費不可',               tip: '食事代は生活費とみなされ原則NG。飲み物と食事は領収書を分けてもらいましょう' },
+            mtg:      { ok: true,  cat: '会議費',                  tip: '誰と・何の打合せかをレシートの裏に記載。雑費・接待交際費でも可' },
+            high:     { ok: true,  cat: '接待交際費',              tip: '相手の氏名・会社名・目的をレシートの裏に記載しておきましょう' },
+        };
+        cur = map[type] || {};
+
+        const badgeWrap = document.getElementById('result-badge-wrap');
+        badgeWrap.innerHTML = cur.ok
+            ? `<span class="result-badge badge-ok">✓ 経費OK</span>`
+            : `<span class="result-badge badge-ng">✕ 経費NG</span>`;
+
+        document.getElementById('result-cat').textContent = cur.cat;
+        document.getElementById('result-tip').textContent = cur.tip;
+
+        showStep('result');
+        updateProgress(4);
+        backBtn.classList.add('visible');
+    }
+
+    let currentFilter = '全て';
+
+    function getCategories(logs) {
+        const cats = [...new Set(logs.map(l => l.c))];
+        return cats;
+    }
+
+    function renderLogs() {
+        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+        const area = document.getElementById('log-area');
+        if (logs.length === 0) { area.innerHTML = ''; return; }
+
+        const cats = getCategories(logs);
+        const filtered = currentFilter === '全て' ? logs : logs.filter(l => l.c === currentFilter);
+        const total = filtered.reduce((s, l) => s + Number(l.a), 0);
+
+        const filterHTML = `<div class="log-filter">
+            ${['全て', ...cats].map(c => `
+                <button class="filter-btn ${c === currentFilter ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>
+            `).join('')}
+        </div>`;
+
+        const itemsHTML = filtered.map((l, i) => {
+            const realIndex = logs.indexOf(l);
+            return `<div class="log-item">
+                <span class="log-date">${l.d}</span>
+                <span class="log-cat">${l.c}</span>
+                <span class="log-memo">${l.m}</span>
+                <span class="log-amt">¥${Number(l.a).toLocaleString()}</span>
+                <button class="log-del" onclick="deleteLog(${realIndex})" title="削除">🗑</button>
+            </div>`;
+        }).join('');
+
+        area.innerHTML = `<div class="log-area">
+            ${filterHTML}
+            ${itemsHTML}
+            <div class="log-total">
+                <span class="total-label">${currentFilter === '全て' ? '合計' : currentFilter + ' 合計'}</span>
+                <span class="total-val">¥${total.toLocaleString()}</span>
+            </div>
+        </div>`;
+    }
+
+    function setFilter(cat) {
+        currentFilter = cat;
+        renderLogs();
+    }
+
+    function deleteLog(index) {
+        if (!confirm('この記録を削除しますか？')) return;
+        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+        logs.splice(index, 1);
+        localStorage.setItem('logs_mail', JSON.stringify(logs));
+        if (currentFilter !== '全て') {
+            const remaining = logs.filter(l => l.c === currentFilter);
+            if (remaining.length === 0) currentFilter = '全て';
+        }
+        renderLogs();
+        toast('🗑 削除しました');
+    }
+
+    function resetToStart() {
+        history = [];
+        showStep('q1');
+        updateProgress(0);
+        backBtn.classList.remove('visible');
+        document.getElementById('memo').value = '';
+        document.getElementById('amt').value = '';
+    }
+
+    function saveData() {
+        const a = document.getElementById('amt').value;
+        const m = document.getElementById('memo').value || '未入力';
+        if (!a) { alert('金額を入力してください'); return; }
+        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+        logs.unshift({ d: new Date().toLocaleDateString(), a, m, c: cur.cat });
+        localStorage.setItem('logs_mail', JSON.stringify(logs));
+        document.getElementById('memo').value = '';
+        document.getElementById('amt').value = '';
+        renderLogs();
+        toast('💾 保存しました');
+    }
+
+    // ページ読み込み時に履歴を表示
+    renderLogs();
+
+    // ─── notice minimize ───
+    const HELP_URL = 'https://enu-tools.pages.dev/help/';
+    const HELP_OPEN_NEW_TAB = true;
+    (function(){const l=document.getElementById('help-page-link');if(!l)return;l.href=HELP_URL;if(HELP_OPEN_NEW_TAB){l.target='_blank';l.rel='noopener'}})();
+    const NOTICE_KEY = 'enu_notice_minimized';
+    function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
+    function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
+    (function(){const l=getNoticeList();document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
+    document.querySelectorAll('.notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
+    document.querySelectorAll('.notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+
+    // ─── toolbar ───
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+    async function handleShare(){
+        const shareData={title:document.title,text:`${document.title} を共有します`,url:location.href};
+        if(navigator.share){try{await navigator.share(shareData)}catch(e){}}
+        else{try{await navigator.clipboard.writeText(location.href);toast('🔗 URLをコピーしました')}catch(e){toast('共有に対応していない環境です')}}
+    }
+    function handlePrint(){ window.print(); }
+    document.getElementById('btn-pdf')?.addEventListener('click', handlePrint);
+    document.getElementById('btn-print')?.addEventListener('click', handlePrint);
+    document.getElementById('btn-share')?.addEventListener('click', handleShare);
+
+    function getAppData(){ return JSON.parse(localStorage.getItem('logs_mail') || '[]'); }
+    function validateData(d){ return Array.isArray(d); }
+    function applyAppData(d){ localStorage.setItem('logs_mail', JSON.stringify(d)); renderLogs(); }
+
+    function handleExport(){
+        const data = getAppData();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `カフェ経費判定_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a); URL.revokeObjectURL(url);
+        toast('📤 JSONをダウンロードしました');
+    }
+    function handleImport(){
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'application/json,.json';
+        input.addEventListener('change', async e => {
+            const file = e.target.files[0]; if(!file) return;
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                if(!validateData(data)) throw new Error('データ形式が違います');
+                if(!confirm('現在のデータを上書きしてインポートしますか？')) return;
+                applyAppData(data);
+                toast('📥 インポートしました');
+            } catch(err) { toast('⚠️ ファイルが読み込めません'); }
+        });
+        input.click();
+    }
+    document.getElementById('btn-export')?.addEventListener('click', handleExport);
+    document.getElementById('btn-import')?.addEventListener('click', handleImport);
+
+    // ─── PWA icons ───
+    (function(){
+        const BG = '#f5f0eb';
+        const EMOJI = '☕';
+        const SIZES = [192, 512];
+
+        function makeCanvas(size) {
+            const c = document.createElement('canvas');
+            c.width = c.height = size;
+            const ctx = c.getContext('2d');
+            const r = size * 0.18;
+            ctx.beginPath();
+            ctx.moveTo(r, 0);
+            ctx.arcTo(size, 0, size, size, r);
+            ctx.arcTo(size, size, 0, size, r);
+            ctx.arcTo(0, size, 0, 0, r);
+            ctx.arcTo(0, 0, size, 0, r);
+            ctx.closePath();
+            ctx.fillStyle = BG;
+            ctx.fill();
+            ctx.font = `${size * 0.58}px serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(EMOJI, size / 2, size / 2 * 1.05);
+            return c;
+        }
+
+        // apple-touch-icon (180px)
+        const appleCanvas = makeCanvas(180);
+        document.getElementById('apple-touch-icon').href = appleCanvas.toDataURL('image/png');
+
+        // PWA manifest with icons
+        const icons = SIZES.map(s => {
+            const url = makeCanvas(s).toDataURL('image/png');
+            return { src: url, sizes: `${s}x${s}`, type: 'image/png', purpose: 'any maskable' };
+        });
+        const manifest = {
+            name: 'カフェ経費判定',
+            short_name: 'カフェ経費判定',
+            start_url: location.href,
+            display: 'standalone',
+            background_color: BG,
+            theme_color: BG,
+            icons
+        };
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+    })();
+</script>
+</body>
+</html>
