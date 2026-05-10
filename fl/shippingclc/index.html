@@ -6,21 +6,32 @@
   <title>送料計算シミュレーター</title>
 
   <!-- ── Favicon (SVG inline) ── -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23fdf8f8'/%3E%3Ctext y='.9em' font-size='85' text-anchor='middle' x='50'%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23fdf8f8'/%3E%3Ctext x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central' font-family='Apple Color Emoji%2CSegoe UI Emoji%2CNoto Color Emoji%2CTwemoji Mozilla%2Csans-serif'%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E">
 
   <!-- ── PWA / Apple Touch Icon (Canvas生成) ── -->
   <script>
   (function(){
-    const EMOJI   = '\u{1F4E6}';
-    const BG      = '#fdf8f8';
+    const EMOJI   = '📦';
     const APPNAME = '送料計算シミュレーター';
     const SHORT   = '送料計算';
+
+    // 背景色をCSS変数から動的取得
+    const BG = (function(){
+      try {
+        const v = getComputedStyle(document.documentElement)
+                    .getPropertyValue('--bg-soft').trim();
+        return v || '#fdf8f8';
+      } catch(e) { return '#fdf8f8'; }
+    })();
+
+    // start_url / scope をパスから動的算出
+    const pathname = location.pathname.replace(/\/[^/]*$/, '/') || '/';
 
     function makeCanvas(size){
       const c   = document.createElement('canvas');
       c.width   = size; c.height = size;
       const ctx = c.getContext('2d');
-      const r   = size * 0.18;
+      const r   = size * 0.22;  // 角丸22%
       ctx.beginPath();
       ctx.moveTo(r,0); ctx.lineTo(size-r,0);
       ctx.quadraticCurveTo(size,0,size,r);
@@ -32,19 +43,13 @@
       ctx.quadraticCurveTo(0,0,r,0);
       ctx.closePath();
       ctx.fillStyle = BG; ctx.fill();
-      ctx.font = size*0.62+'px serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(EMOJI, size/2, size/2*1.05);
+      ctx.font = `${size*0.62}px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif`;
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(EMOJI, size/2, size/2 + size*0.025);  // 視覚中心補正
       return c;
     }
 
-    // apple-touch-icon 180px
-    const appleLink = document.createElement('link');
-    appleLink.rel  = 'apple-touch-icon';
-    appleLink.href = makeCanvas(180).toDataURL('image/png');
-    document.head.appendChild(appleLink);
-
-    // PWA manifest
     function dataURLtoBlob(d){
       const [h,b] = d.split(',');
       const mime  = h.match(/:(.*?);/)[1];
@@ -53,22 +58,43 @@
       for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
       return new Blob([arr],{type:mime});
     }
+
+    // apple-touch-icon 180px
+    const appleLink = document.createElement('link');
+    appleLink.rel   = 'apple-touch-icon';
+    appleLink.href  = makeCanvas(180).toDataURL('image/png');
+    document.head.appendChild(appleLink);
+
+    // PWA manifest（192px・512px × any・maskable の4エントリ）
+    const i192 = dataURLtoBlob(makeCanvas(192).toDataURL('image/png'));
+    const i512 = dataURLtoBlob(makeCanvas(512).toDataURL('image/png'));
     const manifest = {
-      name: APPNAME, short_name: SHORT,
-      start_url: './', display: 'standalone',
-      background_color: BG, theme_color: BG,
-      icons:[
-        {src:URL.createObjectURL(dataURLtoBlob(makeCanvas(192).toDataURL('image/png'))),sizes:'192x192',type:'image/png'},
-        {src:URL.createObjectURL(dataURLtoBlob(makeCanvas(512).toDataURL('image/png'))),sizes:'512x512',type:'image/png'}
+      name:             APPNAME,
+      short_name:       SHORT,
+      start_url:        pathname,
+      scope:            pathname,
+      display:          'standalone',
+      orientation:      'portrait',
+      background_color: BG,
+      theme_color:      BG,
+      icons: [
+        { src:URL.createObjectURL(i192), sizes:'192x192', type:'image/png', purpose:'any' },
+        { src:URL.createObjectURL(i192), sizes:'192x192', type:'image/png', purpose:'maskable' },
+        { src:URL.createObjectURL(i512), sizes:'512x512', type:'image/png', purpose:'any' },
+        { src:URL.createObjectURL(i512), sizes:'512x512', type:'image/png', purpose:'maskable' },
       ]
     };
     const mLink = document.createElement('link');
     mLink.rel   = 'manifest';
-    mLink.href  = URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
+    mLink.href  = URL.createObjectURL(
+                    new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'})
+                  );
     document.head.appendChild(mLink);
 
-    const meta = document.createElement('meta');
-    meta.name = 'theme-color'; meta.content = BG;
+    // theme-color meta
+    const meta   = document.createElement('meta');
+    meta.name    = 'theme-color';
+    meta.content = BG;
     document.head.appendChild(meta);
   })();
   </script>
