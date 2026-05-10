@@ -6,7 +6,7 @@
 <title>内見ノート</title>
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <!-- ── FAVICON & PWA ── -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23F0EBE2'/><text x='16' y='24' font-size='22' text-anchor='middle'>🏠</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23F0EBE2'/><text x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central' font-family='Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif'>🏠</text></svg>">
 <link rel="apple-touch-icon" id="apple-touch-icon">
 <link rel="manifest" id="pwa-manifest">
 <meta name="theme-color" content="#4E7A62">
@@ -1096,50 +1096,90 @@ load();
 <!-- ── PWA ICON GENERATION ── -->
 <script>
 (function(){
-  const EMOJI='🏠';
-  const BG='#F0EBE2';
-  const THEME='#4E7A62';
-  const NAME='内見ノート';
+  const EMOJI = '🏠';
+  const NAME  = '内見ノート';
+
+  // --bg を CSS変数から動的取得、取れなければフォールバック
+  const rawBG = getComputedStyle(document.documentElement)
+                  .getPropertyValue('--bg').trim();
+  const BG    = rawBG || '#F0EBE2';
+
+  // start_url / scope をパスから動的算出
+  const path     = location.pathname.replace(/\/[^/]*$/, '/') || '/';
+  const startUrl = location.pathname;
+
+  // SVG favicon の背景色も同期
+  const svgFav = document.querySelector('link[rel="icon"]');
+  if(svgFav){
+    const enc = BG.replace('#','%23');
+    svgFav.href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='${enc}'/><text x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central' font-family='Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif'>${EMOJI}</text></svg>`;
+  }
+
+  // meta theme-color も合わせる
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if(themeMeta) themeMeta.content = BG;
+
+  const EMOJI_FONT = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
 
   function makeIcon(size){
-    const r=Math.round(size*0.22);
-    const c=document.createElement('canvas');
-    c.width=size;c.height=size;
-    const ctx=c.getContext('2d');
+    const r   = Math.round(size * 0.22);
+    const c   = document.createElement('canvas');
+    c.width   = size;
+    c.height  = size;
+    const ctx = c.getContext('2d');
+
+    // 角丸背景
     ctx.beginPath();
-    ctx.moveTo(r,0);
-    ctx.arcTo(size,0,size,size,r);
-    ctx.arcTo(size,size,0,size,r);
-    ctx.arcTo(0,size,0,0,r);
-    ctx.arcTo(0,0,size,0,r);
+    ctx.moveTo(r, 0);
+    ctx.arcTo(size, 0,    size, size, r);
+    ctx.arcTo(size, size, 0,    size, r);
+    ctx.arcTo(0,    size, 0,    0,    r);
+    ctx.arcTo(0,    0,    size, 0,    r);
     ctx.closePath();
-    ctx.fillStyle=BG;ctx.fill();
-    ctx.font=`${Math.round(size*0.58)}px serif`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(EMOJI,size/2,size/2+size*0.02);
+    ctx.fillStyle = BG;
+    ctx.fill();
+
+    // 絵文字（font-size 62%、Y補正 2.5%）
+    ctx.font          = `${Math.round(size * 0.62)}px ${EMOJI_FONT}`;
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'middle';
+    ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
+
     return c;
   }
 
-  const appleEl=document.getElementById('apple-touch-icon');
-  if(appleEl) appleEl.href=makeIcon(180).toDataURL('image/png');
+  // apple-touch-icon（180px）
+  const appleEl = document.getElementById('apple-touch-icon');
+  if(appleEl) appleEl.href = makeIcon(180).toDataURL('image/png');
 
-  const c192=makeIcon(192);
-  const c512=makeIcon(512);
-  c192.toBlob(b192=>{
-    const u192=URL.createObjectURL(b192);
-    c512.toBlob(b512=>{
-      const u512=URL.createObjectURL(b512);
-      const manifest={
-        name:NAME,short_name:NAME,
-        start_url:'.',display:'standalone',
-        background_color:BG,theme_color:THEME,
-        icons:[
-          {src:u192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
-          {src:u512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
+  // PWA manifest（any / maskable を別エントリで登録）
+  const c192 = makeIcon(192);
+  const c512 = makeIcon(512);
+
+  c192.toBlob(b192 => {
+    const u192 = URL.createObjectURL(b192);
+    c512.toBlob(b512 => {
+      const u512 = URL.createObjectURL(b512);
+      const manifest = {
+        name:             NAME,
+        short_name:       NAME,
+        start_url:        startUrl,
+        scope:            path,
+        display:          'standalone',
+        orientation:      'portrait',
+        background_color: BG,
+        theme_color:      BG,
+        icons: [
+          { src: u192, sizes: '192x192', type: 'image/png', purpose: 'any'       },
+          { src: u192, sizes: '192x192', type: 'image/png', purpose: 'maskable'  },
+          { src: u512, sizes: '512x512', type: 'image/png', purpose: 'any'       },
+          { src: u512, sizes: '512x512', type: 'image/png', purpose: 'maskable'  },
         ]
       };
-      const mEl=document.getElementById('pwa-manifest');
-      if(mEl) mEl.href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/json'}));
+      const mEl = document.getElementById('pwa-manifest');
+      if(mEl) mEl.href = URL.createObjectURL(
+        new Blob([JSON.stringify(manifest)], { type: 'application/json' })
+      );
     });
   });
 })();
