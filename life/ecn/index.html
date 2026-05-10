@@ -449,14 +449,11 @@
         const APP_ICON   = '📞';
         const APP_NAME   = '緊急連絡先リスト';
         const SHORT_NAME = '緊急連絡先';
+        const EMOJI_FONT = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
 
-        // body の背景色を CSS から読み取って hex 化
-        function rgbToHex(rgb) {
-            const m = (rgb || '').match(/\d+/g);
-            if (!m || m.length < 3) return '#f5f3ef';
-            return '#' + m.slice(0, 3).map(n => parseInt(n).toString(16).padStart(2, '0')).join('');
-        }
-        const BG = rgbToHex(getComputedStyle(document.body).backgroundColor);
+        // CSS変数 --bg を getComputedStyle で取得（取れない場合のフォールバック付き）
+        const cssBg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+        const BG    = cssBg || '#f5f3ef';
 
         // theme-color メタタグを注入
         let themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -467,15 +464,15 @@
         }
         themeMeta.content = BG;
 
-        // SVG favicon (data URI で inline 埋め込み)
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${BG}"/><text x="50%" y="54%" font-size="44" text-anchor="middle" dominant-baseline="central">${APP_ICON}</text></svg>`;
+        // SVG favicon (data URI で inline 埋め込み・viewBox 100×100、font-size 68)
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="${BG}"/><text x="50%" y="50%" font-size="68" text-anchor="middle" dominant-baseline="central" font-family="${EMOJI_FONT.replace(/"/g, "'")}">${APP_ICON}</text></svg>`;
         const faviconLink = document.createElement('link');
         faviconLink.rel  = 'icon';
         faviconLink.type = 'image/svg+xml';
         faviconLink.href = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
         document.head.appendChild(faviconLink);
 
-        // Canvas でアイコン生成（角丸＋絵文字中央配置）
+        // Canvas でアイコン生成（角丸 22%・絵文字中央＋Y補正 +2.5%）
         function makeIcon(size) {
             const canvas = document.createElement('canvas');
             canvas.width  = size;
@@ -491,10 +488,10 @@
             ctx.arcTo(0, 0, r, 0, r);
             ctx.closePath();
             ctx.fill();
-            ctx.font = `${Math.round(size * 0.62)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla","EmojiOne Color",sans-serif`;
+            ctx.font = `${Math.round(size * 0.62)}px ${EMOJI_FONT}`;
             ctx.textAlign    = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(APP_ICON, size / 2, size / 2 + size * 0.03);
+            ctx.fillText(APP_ICON, size / 2, size / 2 + size * 0.025);
             return canvas;
         }
 
@@ -505,24 +502,30 @@
         appleLink.href  = makeIcon(180).toDataURL('image/png');
         document.head.appendChild(appleLink);
 
-        // PWA マニフェスト（192px・512px PNG を Blob URL で注入、display: standalone）
+        // start_url / scope を location.pathname から動的算出（サブパス対応）
+        const dirPath = location.pathname.replace(/[^/]*$/, '');
+
+        // PWA マニフェスト（192px・512px、purpose: any & maskable 両方登録）
         Promise.all([192, 512].map(size => new Promise(resolve => {
             makeIcon(size).toBlob(blob => {
                 resolve({ size, url: URL.createObjectURL(blob) });
             }, 'image/png');
         }))).then(icons => {
+            const iconEntries = [];
+            icons.forEach(i => {
+                iconEntries.push({ src: i.url, sizes: `${i.size}x${i.size}`, type: 'image/png', purpose: 'any' });
+                iconEntries.push({ src: i.url, sizes: `${i.size}x${i.size}`, type: 'image/png', purpose: 'maskable' });
+            });
             const manifest = {
                 name: APP_NAME,
                 short_name: SHORT_NAME,
                 display: 'standalone',
+                orientation: 'portrait',
                 background_color: BG,
                 theme_color: BG,
-                start_url: location.pathname,
-                icons: icons.map(i => ({
-                    src: i.url,
-                    sizes: `${i.size}x${i.size}`,
-                    type: 'image/png'
-                }))
+                start_url: dirPath,
+                scope: dirPath,
+                icons: iconEntries
             };
             const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
             const manifestLink = document.createElement('link');
