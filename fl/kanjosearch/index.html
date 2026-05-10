@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- Favicon (SVG inline) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FAF7F2'/><text x='50' y='50' font-size='62' text-anchor='middle' dominant-baseline='central'>🧮</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FAF7F2'/><text x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central'>🧮</text></svg>">
 
 <!-- PWA / iOS meta -->
 <meta name="theme-color" content="#FAF7F2">
@@ -2052,7 +2052,7 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
-    const r = size * 0.2;
+    const r = size * 0.22;
     ctx.fillStyle = bgColor;
     if(ctx.roundRect){
       ctx.beginPath();
@@ -2077,12 +2077,26 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
     ctx.font = (size*0.62) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(emoji, size/2, size/2 + size*0.04);
+    ctx.fillText(emoji, size/2, size/2 + size*0.025);
     return canvas;
   }
 
+  function getBgColor(){
+    // CSS変数 --bg を優先取得
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    if(v){
+      return v.startsWith('#') ? v.toUpperCase() : rgbToHex(v);
+    }
+    // フォールバック1: body の computed background-color
+    const bodyBg = getComputedStyle(document.body).backgroundColor;
+    const fromBody = rgbToHex(bodyBg);
+    if(fromBody && fromBody !== '#000000') return fromBody;
+    // フォールバック2: ハードコード値
+    return '#FAF7F2';
+  }
+
   function setup(){
-    const bg = rgbToHex(getComputedStyle(document.body).backgroundColor);
+    const bg = getBgColor();
 
     // 1. apple-touch-icon (180px)
     try {
@@ -2105,16 +2119,22 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
         if(!b192 || !b512) return;
         const url192 = URL.createObjectURL(b192);
         const url512 = URL.createObjectURL(b512);
+        // start_url / scope を pathname から動的算出（サブパス対応）
+        const dir = location.pathname.replace(/[^/]*$/, '') || '/';
         const manifest = {
           name: APP_NAME,
           short_name: SHORT_NAME,
-          start_url: location.pathname + location.search,
+          start_url: dir,
+          scope: dir,
           display: 'standalone',
+          orientation: 'portrait',
           background_color: bg,
           theme_color: bg,
           icons: [
-            {src: url192, sizes: '192x192', type: 'image/png'},
-            {src: url512, sizes: '512x512', type: 'image/png'}
+            {src: url192, sizes: '192x192', type: 'image/png', purpose: 'any'},
+            {src: url192, sizes: '192x192', type: 'image/png', purpose: 'maskable'},
+            {src: url512, sizes: '512x512', type: 'image/png', purpose: 'any'},
+            {src: url512, sizes: '512x512', type: 'image/png', purpose: 'maskable'}
           ]
         };
         const mBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
