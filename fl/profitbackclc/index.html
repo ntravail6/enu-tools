@@ -6,8 +6,8 @@
   <meta name="format-detection" content="telephone=no">
   <title>逆引き価格計算シミュレーター</title>
 
-  <!-- ── Favicon (SVG inline data URI) ── -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f0f7fc'/><text y='.9em' font-size='78' x='50%' dominant-baseline='middle' text-anchor='middle' dy='0.05em'>🔁</text></svg>">
+  <!-- ── Favicon (SVG inline data URI・DOMContentLoaded後に動的設定) ── -->
+  <link rel="icon" type="image/svg+xml" id="svg-favicon-link">
 
   <!-- ── apple-touch-icon & PWA manifest (Canvas生成) ── -->
   <link rel="apple-touch-icon" id="apple-touch-icon-link">
@@ -15,21 +15,43 @@
   <meta name="apple-mobile-web-app-capable"          content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title"            content="逆引き計算">
-  <meta name="theme-color"                           content="#f0f7fc">
+  <meta name="theme-color" id="theme-color-meta"     content="#f0f7fc">
 
   <script>
-  (function(){
-    const EMOJI   = '🔁';
-    const BG      = '#f0f7fc';
-    const RADIUS  = 0.18; // 角丸比率
+  document.addEventListener('DOMContentLoaded', function(){
+    const EMOJI       = '🔁';
+    const FALLBACK_BG = '#f0f7fc';
+    const EMOJI_FONT  = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+    const RADIUS      = 0.22;  // 角丸 22%
 
+    /* CSS変数 --bg-soft から背景色を動的取得 */
+    const BG = (getComputedStyle(document.documentElement)
+      .getPropertyValue('--bg-soft') || '').trim() || FALLBACK_BG;
+
+    /* theme-color meta を動的更新 */
+    const tcMeta = document.getElementById('theme-color-meta');
+    if (tcMeta) tcMeta.content = BG;
+
+    /* SVG favicon: viewBox 100×100, font-size 68, dominant-baseline="central" */
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">`
+      + `<rect width="100" height="100" rx="22" fill="${BG}"/>`
+      + `<text x="50" y="50" font-size="68" text-anchor="middle"`
+      + ` dominant-baseline="central">${EMOJI}</text></svg>`;
+    const favEl = document.getElementById('svg-favicon-link');
+    if (favEl) favEl.href = 'data:image/svg+xml,' + encodeURIComponent(svgStr);
+
+    /* Canvas アイコン生成
+       font-size = size × 62%
+       Y座標 = size/2 + size × 2.5%（絵文字の視覚中心補正）
+    */
     function makeIcon(size){
-      const c  = document.createElement('canvas');
-      c.width  = size;
-      c.height = size;
+      const c   = document.createElement('canvas');
+      c.width   = size;
+      c.height  = size;
       const ctx = c.getContext('2d');
       const r   = size * RADIUS;
-      // 角丸背景
+
+      /* 角丸背景（透明部分なし） */
       ctx.beginPath();
       ctx.moveTo(r, 0);
       ctx.lineTo(size - r, 0);
@@ -43,38 +65,52 @@
       ctx.closePath();
       ctx.fillStyle = BG;
       ctx.fill();
-      // 絵文字
-      ctx.font      = (size * 0.58) + 'px serif';
-      ctx.textAlign = 'center';
+
+      /* 絵文字（中央配置・視覚中心補正） */
+      ctx.font         = `${size * 0.62}px ${EMOJI_FONT}`;
+      ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(EMOJI, size / 2, size / 2);
+      ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
       return c;
     }
 
-    // apple-touch-icon (180px)
+    /* apple-touch-icon (180px) */
     const apple = makeIcon(180);
     const appleEl = document.getElementById('apple-touch-icon-link');
-    if(appleEl) appleEl.href = apple.toDataURL('image/png');
+    if (appleEl) appleEl.href = apple.toDataURL('image/png');
 
-    // PWA manifest
+    /* PWA manifest
+       icons: 192px・512px × purpose any/maskable の4アイコン
+       start_url / scope を location.pathname から動的算出
+    */
     const i192 = makeIcon(192);
     const i512 = makeIcon(512);
+
+    const dir = location.pathname.endsWith('/')
+      ? location.pathname
+      : location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+
     const manifest = {
       name:             '逆引き価格計算シミュレーター',
       short_name:       '逆引き計算',
-      start_url:        './',
+      start_url:        dir,
+      scope:            dir,
       display:          'standalone',
+      orientation:      'portrait',
       background_color: BG,
       theme_color:      BG,
       icons: [
-        { src: i192.toDataURL('image/png'), sizes: '192x192', type: 'image/png' },
-        { src: i512.toDataURL('image/png'), sizes: '512x512', type: 'image/png' }
+        { src: i192.toDataURL('image/png'), sizes: '192x192', type: 'image/png', purpose: 'any'       },
+        { src: i192.toDataURL('image/png'), sizes: '192x192', type: 'image/png', purpose: 'maskable'  },
+        { src: i512.toDataURL('image/png'), sizes: '512x512', type: 'image/png', purpose: 'any'       },
+        { src: i512.toDataURL('image/png'), sizes: '512x512', type: 'image/png', purpose: 'maskable'  },
       ]
     };
-    const blob   = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const mfEl   = document.getElementById('pwa-manifest-link');
-    if(mfEl) mfEl.href = URL.createObjectURL(blob);
-  })();
+
+    const blob  = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const mfEl  = document.getElementById('pwa-manifest-link');
+    if (mfEl) mfEl.href = URL.createObjectURL(blob);
+  });
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
