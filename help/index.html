@@ -60,8 +60,9 @@
     .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
 
     /* enuTools Toolbar */
-    .enu-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;align-items:center}
-    .enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+    .enu-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+    @media (max-width:600px){.enu-toolbar{grid-template-columns:repeat(2,1fr)}}
+    .enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
     .enu-btn-card:hover{transform:translateY(-1px)}
     .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
     .enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
@@ -70,7 +71,7 @@
     .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
 
     /* Toast */
-    .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+    .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
     .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
     /* ===== Share Module v4 ===== */
@@ -114,6 +115,10 @@
     .enu-share-btn { padding:10px; border:1px solid #E0DAD0; background:#fff; border-radius:8px; font-size:.78rem; font-weight:700; color:#2C2A24; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
     .enu-share-btn:hover { transform:translateY(-1px); }
     .enu-share-btn--primary { grid-column:span 2; color:#fff; border:none; padding:12px; }
+    .enu-share-btn--span2 { grid-column:span 2; }
+    .enu-share-btn--ig { background:linear-gradient(135deg,#fde4ec,#f3d9e9); border-color:#e8b5d0; color:#8e2367; }
+    .enu-share-btn--ig:hover { background:linear-gradient(135deg,#fce0eb,#eecde3) !important; border-color:#d490b5 !important; color:#6b1850 !important; }
+    .enu-share-modal[data-mode="normal"] #enu-share-instagram { display:none; }
     .enu-share-modal[data-mode="normal"] .enu-share-btn--primary { background:linear-gradient(135deg,#6ba4d8,#4a7fb5); }
     .enu-share-modal[data-mode="normal"] .enu-share-btn:hover { border-color:#6ba4d8; color:#1f4d80; }
     .enu-share-modal[data-mode="normal"] .enu-share-btn--primary:hover { color:#fff; opacity:.94; }
@@ -134,15 +139,15 @@
     </header>
 
     <!-- ============================================
-         注意書きカード 全9パターン
+         注意書きカード 全パターン
          ============================================ -->
     <section class="section">
-      <h2 class="section-title">📋 注意書きカード（全9パターン）</h2>
-      <p class="section-desc">×ボタンで丸アイコンに最小化、丸アイコンクリックで復帰します</p>
+      <h2 class="section-title">📋 注意書きカード一覧</h2>
+      <p class="section-desc">×ボタンで最小化、丸アイコンクリックで復帰。タグでストレージ方式・アプリ種別を表示しています</p>
 
-      <!-- ローカル保存用 -->
+      <!-- 💾 ローカル保存時のみ -->
       <div class="pattern-group">
-        <span class="group-title">💾 ローカル保存時に使用</span>
+        <span class="group-title">💾 ローカル保存時のみ</span>
 
         <div class="pattern-label">Pattern ① 💾 ローカル保存案内 <span class="tag">local</span></div>
         <div class="enu-notice-area">
@@ -153,60 +158,92 @@
         </div>
         <p class="pattern-note">スカイブルー / データがローカル保存であることを安心系で伝える</p>
 
-        <div class="pattern-label">Pattern ② ⚠️ データ消失リスクの注意 <span class="tag">local</span></div>
+        <div class="pattern-label">Pattern ② ⚠️ データ消失リスクの注意（iOS Safari追記版） <span class="tag">local</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="warn">
-            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードではデータが引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>重要なデータは「📤 エクスポート」ボタンからバックアップを取ることをおすすめします。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="注意を表示">⚠️</button>
           </div>
         </div>
-        <p class="pattern-note">アンバー / 消失リスクとJSONバックアップ推奨を伝える</p>
+        <p class="pattern-note">アンバー / 消失リスク・iOS Safariの自動消去・JSONバックアップ推奨</p>
+
+        <div class="pattern-label">Pattern ⑧ 🌐 オフライン動作OK <span class="tag">local</span></div>
+        <div class="enu-notice-area">
+          <div class="enu-notice-wrap" data-notice-id="offline-local">
+            <div class="enu-notice enu-notice-info"><span class="enu-icon">🌐</span><span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、データの追加・編集が可能です。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <button type="button" class="enu-notice-mini enu-notice-mini-info" title="オフライン動作を表示">🌐</button>
+          </div>
+        </div>
+        <p class="pattern-note">スカイブルー / オフラインでも使えることを安心系で伝える</p>
       </div>
 
-      <!-- Google保存用 -->
+      <!-- ☁️ Google保存時のみ -->
       <div class="pattern-group">
-        <span class="group-title">☁️ Google保存時に使用</span>
+        <span class="group-title">☁️ Google保存時のみ</span>
 
         <div class="pattern-label">Pattern ①' ☁️ Googleドライブ保存案内 <span class="tag">google</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="info-cloud">
-            <div class="enu-notice enu-notice-info"><span class="enu-icon">☁️</span><span class="enu-body">データはお客様ご自身のGoogleドライブに自動保存されます。Googleスプレッドシート形式なので、いつでも直接開いて確認・編集することができます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-info"><span class="enu-icon">☁️</span><span class="enu-body">データはお客様ご自身のGoogleドライブに自動保存されます。お客様のGoogleアカウントから、いつでも直接開いて確認・編集することができます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-info" title="案内を表示">☁️</button>
           </div>
         </div>
-        <p class="pattern-note">スカイブルー / Google保存・Sheets形式で開けることを案内</p>
+        <p class="pattern-note">スカイブルー / お客様自身のGoogleドライブに保存されることを案内（保存形式に依存しない汎用表現）</p>
 
         <div class="pattern-label">Pattern ②' ⚠️ Google連携・別端末の注意 <span class="tag">google</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="warn-cloud">
-            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">Googleアカウントの連携を解除した場合、アプリから保存先シートへのアクセスができなくなります（データ自体はGoogleドライブに残ります）。別端末からも同じGoogleアカウントでログインすれば継続利用できます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">Googleアカウントの連携を解除した場合、アプリから保存先ファイルへのアクセスができなくなります（データ自体はGoogleドライブに残ります）。別端末からも同じGoogleアカウントでログインすれば継続利用できます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="注意を表示">⚠️</button>
           </div>
         </div>
         <p class="pattern-note">アンバー / 連携解除時の挙動と別端末利用の説明</p>
 
-        <div class="pattern-label">Pattern ⑦ 🔒 プライバシー <span class="tag">google</span></div>
+        <div class="pattern-label">Pattern ⑦ 🔒 プライバシー（理由追加版） <span class="tag">google</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="privacy-cloud">
-            <div class="enu-notice enu-notice-privacy"><span class="enu-icon">🔒</span><span class="enu-body">運営者はお客様のデータを閲覧できません。データの保管・管理はお客様のGoogleアカウント内で完結します。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-privacy"><span class="enu-icon">🔒</span><span class="enu-body">本アプリはお客様のGoogleアカウントに直接アクセスする仕組みで、運営者のサーバーを経由しません。そのため運営者はお客様のデータを閲覧できません。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-privacy" title="プライバシーを表示">🔒</button>
           </div>
         </div>
-        <p class="pattern-note">ミントグリーン / 運営者がデータを閲覧できないことを明示</p>
+        <p class="pattern-note">ミントグリーン / 「なぜ閲覧できないか」の理由とともに明示</p>
+
+        <div class="pattern-label">Pattern ⑧' 📶 通信必須 <span class="tag">google</span></div>
+        <div class="enu-notice-area">
+          <div class="enu-notice-wrap" data-notice-id="offline-cloud">
+            <div class="enu-notice enu-notice-warn"><span class="enu-icon">📶</span><span class="enu-body">データの保存・同期には常時インターネット接続が必要です。電波の弱い場所では保存に失敗することがあります。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="通信必須を表示">📶</button>
+          </div>
+        </div>
+        <p class="pattern-note">アンバー / 通信が必須であることの注意</p>
       </div>
 
-      <!-- 全アプリ共通 -->
+      <!-- 🌐 すべてのアプリで使う -->
       <div class="pattern-group">
-        <span class="group-title">🌐 全アプリ共通</span>
+        <span class="group-title">🌐 すべてのアプリで使う</span>
 
         <div class="pattern-label">Pattern ③ 🚨 免責事項（本文はアプリごとに書き換え） <span class="tag">common</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="disclaim">
-            <div class="enu-notice enu-notice-disclaim"><span class="enu-icon">🚨</span><span class="enu-body">本ツールの内容は一般的な目安です。実際の判断はご自身の環境・規定でご確認ください。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-disclaim"><span class="enu-icon">🚨</span><span class="enu-body">本アプリのご利用により生じた損失や不利益について、運営者は責任を負いかねます。ご利用は自己責任でお願いします。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" title="免責事項を表示">🚨</button>
           </div>
         </div>
-        <p class="pattern-note">ローズ / アプリの一般的な免責文（全アプリ必須）</p>
+        <p class="pattern-note">ローズ / 一般的な免責文。④（取引系）を使う場合はこちらは不要</p>
+
+        <div class="pattern-label">Pattern ⑥ 📚 ヘルプ導線 <span class="tag">common</span></div>
+        <div class="enu-notice-area">
+          <div class="enu-notice-wrap" data-notice-id="help">
+            <div class="enu-notice enu-notice-help"><span class="enu-icon">📚</span><span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <button type="button" class="enu-notice-mini enu-notice-mini-help" title="ヘルプを表示">📚</button>
+          </div>
+        </div>
+        <p class="pattern-note">セージグリーン / ヘルプページへのリンク埋め込み</p>
+      </div>
+
+      <!-- 🎯 アプリによる（オプション） -->
+      <div class="pattern-group">
+        <span class="group-title">🎯 アプリによる（必要なときだけ使う）</span>
 
         <div class="pattern-label">Pattern ④ 🚨 取引・計算結果の免責 <span class="tag">trade</span></div>
         <div class="enu-notice-area">
@@ -215,25 +252,16 @@
             <button type="button" class="enu-notice-mini enu-notice-mini-trade" title="取引の免責を表示">🚨</button>
           </div>
         </div>
-        <p class="pattern-note">ローズ（③と同色）/ 計算・取引系アプリでのみ使用</p>
+        <p class="pattern-note">ローズ（③と同色）/ 計算・取引系アプリで使用（③の代わり・両方入れない）</p>
 
         <div class="pattern-label">Pattern ⑤ 📅 情報の時点 <span class="tag">date</span></div>
         <div class="enu-notice-area">
           <div class="enu-notice-wrap" data-notice-id="date">
-            <div class="enu-notice enu-notice-date"><span class="enu-icon">📅</span><span class="enu-body">掲載情報は <strong>2026年3月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
+            <div class="enu-notice enu-notice-date"><span class="enu-icon">📅</span><span class="enu-body">掲載情報は <strong id="enu-info-date">2026年5月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
             <button type="button" class="enu-notice-mini enu-notice-mini-date" title="情報の時点を表示">📅</button>
           </div>
         </div>
-        <p class="pattern-note">ベージュ / 情報の鮮度が大事なアプリで使用</p>
-
-        <div class="pattern-label">Pattern ⑥ 📚 ヘルプ導線 <span class="tag">common</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="help">
-            <div class="enu-notice enu-notice-help"><span class="enu-icon">📚</span><span class="enu-body">使い方・FAQ・トラブル対応は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-help" title="ヘルプを表示">📚</button>
-          </div>
-        </div>
-        <p class="pattern-note">セージグリーン / ヘルプページへのリンク埋め込み</p>
+        <p class="pattern-note">ベージュ / 情報の鮮度が大事なアプリで使用（日付は表示時点の年月を自動反映）</p>
       </div>
     </section>
 
@@ -246,14 +274,14 @@
 
       <div class="enu-toolbar">
         <button type="button" class="enu-btn-card enu-fc-pdf"    id="enu-btn-print"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
-        <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2"><span class="enu-icon">📤</span><span class="enu-label">シェア</span></button>
+        <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
         <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-export"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
         <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-import"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
       </div>
 
       <div style="margin-top:14px;font-size:.72rem;color:var(--sub);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif">
         <div style="margin-bottom:4px"><strong style="color:#804a52">📄 PDF / 印刷</strong> — ローズ系。<code>window.print()</code> でPDFと印刷を統合</div>
-        <div style="margin-bottom:4px"><strong style="color:#1f4d80">📤 シェア</strong> — 統合シェアモジュール v4。通常 / 進捗 / 紹介の3モード切替、画像生成付き</div>
+        <div style="margin-bottom:4px"><strong style="color:#1f4d80">🔗 シェア</strong> — 統合シェアモジュール v4。通常 / 進捗 / 紹介の3モード切替、画像生成付き</div>
         <div style="margin-bottom:4px"><strong style="color:#6b5a3d">📤 エクスポート / 📥 インポート</strong> — ベージュ系（ペア表現で同色）。JSONバックアップ</div>
       </div>
     </section>
@@ -299,12 +327,13 @@
         <button type="button" class="enu-share-btn enu-share-btn--primary" id="enu-share-native">📲 シェア</button>
         <button type="button" class="enu-share-btn" id="enu-share-download">📥 画像保存</button>
         <button type="button" class="enu-share-btn" id="enu-share-copy">📋 テキストコピー</button>
-        <button type="button" class="enu-share-btn" id="enu-share-x">𝕏 Xで投稿</button>
+        <button type="button" class="enu-share-btn" id="enu-share-x">𝕏 で投稿</button>
         <button type="button" class="enu-share-btn" id="enu-share-line">💬 LINEで送る</button>
+        <button type="button" class="enu-share-btn enu-share-btn--span2 enu-share-btn--ig" id="enu-share-instagram">📷 Instagramで投稿</button>
       </div>
 
       <p class="enu-share-help" id="enu-share-help">
-        ※ Instagramは「画像保存」してからアプリで投稿。Xは画像の手動添付が必要です。
+        ※ スマホでは共有シートから「写真に保存」やInstagramへの投稿を選べます。PCではダウンロードフォルダに保存されます。Xは画像の手動添付が必要です。
       </p>
     </div>
   </div>
@@ -367,6 +396,15 @@
     const enuTools=(function(){let CFG=null;const _key=(s)=>`enu_${CFG.appId}_${s}`;function showToast(msg){const t=document.getElementById('enu-toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}function initNotices(){const K=_key('notice_minimized');const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};const help=document.getElementById('enu-help-link');if(help){help.href=CFG.helpUrl||'#';if(CFG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener'}}const list=get();document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.add('is-mini');const l=get();if(!l.includes(id)){l.push(id);set(l)}}));document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.remove('is-mini');set(get().filter(x=>x!==id))}))}function handleExport(){const payload={app_id:CFG.appId,app_name:CFG.appName,data_version:CFG.dataVersion||1,exported_at:new Date().toISOString(),data:CFG.getData()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`enutools-showcase_${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('📤 JSONをダウンロードしました')}function handleImport(){showToast('📥 見本ページではダミー動作です')}function initButtons(){const map={'enu-btn-print':()=>window.print(),'enu-btn-export':handleExport,'enu-btn-import':handleImport};Object.entries(map).forEach(([id,fn])=>{const el=document.getElementById(id);if(el)el.addEventListener('click',fn)})}function init(c){CFG=c;initNotices();initButtons()}return{init,toast:showToast}})();
 
     enuTools.init(ENU_CONFIG);
+
+    // Pattern ⑤ の日付を現在の年月で自動反映
+    (function(){
+      const el = document.getElementById('enu-info-date');
+      if (el) {
+        const d = new Date();
+        el.textContent = `${d.getFullYear()}年${d.getMonth() + 1}月時点`;
+      }
+    })();
 
     // ===== Share Module v4 =====
     (function() {
@@ -786,7 +824,23 @@
       }
       async function actDownload() {
         if (currentMode === 'normal') return;
-        const blob = await canvasToBlob(document.getElementById('enu-share-canvas'));
+        const canvas = document.getElementById('enu-share-canvas');
+        const blob = await canvasToBlob(canvas);
+        const file = new File([blob], makeFileName(), { type: 'image/png' });
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        // スマホ: 共有シートを表示（「写真に保存」が選べる）
+        if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file] });
+            return;
+          } catch (e) {
+            if (e && e.name === 'AbortError') return;
+            // フォールバック処理へ
+          }
+        }
+
+        // PC または フォールバック: 通常のダウンロード
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = makeFileName();
@@ -832,6 +886,36 @@
         const url = `https://line.me/R/share?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank', 'noopener');
       }
+      async function actInstagram() {
+        if (currentMode === 'normal') {
+          enuTools.toast('⚠️ Instagramは画像投稿のみ対応です');
+          return;
+        }
+        const canvas = document.getElementById('enu-share-canvas');
+        const blob = await canvasToBlob(canvas);
+        const file = new File([blob], makeFileName(), { type: 'image/png' });
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        // スマホ: 共有シートを表示（Instagramを直接選べる）
+        if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file] });
+            return;
+          } catch (e) {
+            if (e && e.name === 'AbortError') return;
+            // フォールバック処理へ
+          }
+        }
+
+        // PC または フォールバック: 画像保存 + Instagram投稿の案内
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = makeFileName();
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        enuTools.toast('🎨 画像を保存しました');
+        setTimeout(() => enuTools.toast('📷 Instagramアプリで投稿してください'), 1600);
+      }
 
       function init() {
         const btn = document.getElementById('enu-btn-share2');
@@ -841,11 +925,12 @@
         modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
         document.querySelectorAll('.enu-share-mode').forEach(b => { b.addEventListener('click', () => setMode(b.dataset.mode)); });
         document.querySelectorAll('.enu-share-tab').forEach(b => { b.addEventListener('click', () => setSize(b.dataset.size)); });
-        document.getElementById('enu-share-native')  ?.addEventListener('click', actNativeShare);
-        document.getElementById('enu-share-download')?.addEventListener('click', actDownload);
-        document.getElementById('enu-share-copy')    ?.addEventListener('click', actCopy);
-        document.getElementById('enu-share-x')       ?.addEventListener('click', actX);
-        document.getElementById('enu-share-line')    ?.addEventListener('click', actLine);
+        document.getElementById('enu-share-native')   ?.addEventListener('click', actNativeShare);
+        document.getElementById('enu-share-download') ?.addEventListener('click', actDownload);
+        document.getElementById('enu-share-copy')     ?.addEventListener('click', actCopy);
+        document.getElementById('enu-share-x')        ?.addEventListener('click', actX);
+        document.getElementById('enu-share-line')     ?.addEventListener('click', actLine);
+        document.getElementById('enu-share-instagram')?.addEventListener('click', actInstagram);
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
       }
       if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
