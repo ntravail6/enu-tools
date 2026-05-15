@@ -1,10 +1,112 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex">
-  <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex"> <!-- 検索エンジンに載せない設定 -->
+    <title>enu-tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfaf7; /* 淡いベージュ */
+            --text-color: #5b534f; /* 柔らかいブラウン */
+            --accent-color: #d8c3b3; /* ニュアンスカラー */
+            --white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Quicksand', 'Noto Sans JP', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 40px 20px;
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            margin: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-color);
+            margin: 20px auto;
+        }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .id-text {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+
+    <div class="container">
+        <h1>enu-tools</h1>
+        <div class="divider"></div>
+        
+        <p>
+            ご利用ありがとうございます。<br>
+            各種ツールは現在、特定のリンクからのみ<br>
+            アクセスいただける仕様となっております。
+        </p>
+
+        <div class="link-group">
+            <a href="https://www.instagram.com/enu_at_desk" class="btn" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.threads.net/@enu_at_desk" class="btn" target="_blank" rel="noopener">Threads</a>
+        </div>
+
+        <div class="id-text">@enu_at_desk</div>
+    </div>
+
 </body>
 </html>
