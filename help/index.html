@@ -1,941 +1,1070 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>enuTools 全パターン見本</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#faf7f2;--card:#fff;--line:#ece5d6;--text:#3d3530;--sub:#9b8f82;--accent:#d4a5a5;--accent-deep:#a86b6b}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-    body{padding:24px 24px 0;min-height:100vh}
-    @media (max-width:650px){body{padding:16px 16px 0}}
-    .page-wrapper{max-width:960px;width:100%;margin:0 auto}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヘルプ｜使い方ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff8f3;
+    --card: #ffffff;
+    --primary: #ff8fa3;
+    --primary-soft: #ffe1e8;
+    --accent: #7ad0c2;
+    --accent-soft: #d8f1ec;
+    --info: #b3a4d4;
+    --info-soft: #ece3f5;
+    --text: #3d3a38;
+    --sub: #9a9590;
+    --border: #f3e6dc;
+    --shadow: 0 6px 20px rgba(180, 140, 120, 0.10);
+    --shadow-hover: 0 10px 28px rgba(180, 140, 120, 0.18);
+  }
 
-    .app-header{text-align:center;padding:8px 0 28px}
-    .app-title{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:.02em}
-    @media (max-width:650px){.app-title{font-size:1.25rem}}
-    .app-subtitle{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.75rem;color:var(--sub);margin-top:4px}
-    @media (max-width:650px){.app-subtitle{font-size:.7rem}}
+  * {
+    box-sizing: border-box;
+  }
 
-    .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(168,107,107,.04)}
-    @media (max-width:650px){.section{padding:16px}}
-    .section-title{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-    .section-desc{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.74rem;color:var(--sub);margin-bottom:18px}
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 500;
+    line-height: 1.7;
+  }
 
-    .pattern-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.7rem;font-weight:700;color:var(--accent-deep);letter-spacing:.05em;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
-    .pattern-label:first-child{margin-top:0}
-    .pattern-label .tag{background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;font-size:.6rem;letter-spacing:.04em}
-    .pattern-note{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.7rem;color:var(--sub);margin-top:4px;margin-left:2px}
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 40px 30px;
+  }
 
-    .pattern-group{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--line)}
-    .pattern-group:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
-    .group-title{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:10px;padding:6px 12px;background:#fbf9f5;border-radius:6px;display:inline-block}
+  /* ヘッダー */
+  .hero {
+    text-align: center;
+    padding: 32px 24px 36px;
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--accent-soft) 100%);
+    border-radius: 24px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .hero p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--sub);
+  }
+  .hero .icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+  }
 
-    .divider{border:none;border-top:1px solid var(--line);width:100%;margin-top:4px}
-    .copyright{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:10px;text-align:center;color:var(--sub);opacity:.7;padding-top:16px;padding-bottom:24px}
+  /* 題目リスト */
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .topic-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    background: var(--card);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+  }
+  .topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+  .topic-card .topic-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .topic-card.alt .topic-icon {
+    background: var(--accent-soft);
+  }
+  .topic-card.info .topic-icon {
+    background: var(--info-soft);
+  }
+  .topic-card.pdf .topic-icon {
+    background: #fef0f0;
+  }
+  .topic-card.print .topic-icon {
+    background: #f0f1f3;
+  }
+  .topic-card.share .topic-icon {
+    background: #eef4f9;
+  }
+  .topic-card .topic-text {
+    flex: 1;
+  }
+  .topic-card h3 {
+    margin: 0 0 2px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .topic-card h3 .sub-title {
+    display: block;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--sub);
+    margin-top: 2px;
+  }
+  .topic-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--sub);
+  }
+  .topic-card .topic-arrow {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--primary);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 600;
+  }
+  .topic-card.alt .topic-arrow {
+    color: var(--accent);
+  }
+  .topic-card.info .topic-arrow {
+    color: var(--info);
+  }
+  .topic-card.pdf .topic-arrow {
+    color: #c08080;
+  }
+  .topic-card.print .topic-arrow {
+    color: #8a929a;
+  }
+  .topic-card.share .topic-arrow {
+    color: #6f95b8;
+  }
 
-    /* enuTools Notice */
-    .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px}
-    .enu-notice-wrap{width:100%}.enu-notice-wrap.is-mini{width:auto}
-    .enu-notice-wrap > .enu-notice{display:flex}.enu-notice-wrap > .enu-notice-mini{display:none}
-    .enu-notice-wrap.is-mini > .enu-notice{display:none}.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
-    .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-    .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-    .enu-notice .enu-body{flex:1;min-width:0}
-    .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-    .enu-notice .enu-close-btn:hover{opacity:1}
-    .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-    .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-    .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-    .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-    .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
-    .enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-    .enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
-    .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-    .enu-notice-privacy,.enu-notice-mini-privacy{background:#e8f1ec;border-color:#c3d8c9;color:#3d5a48}
-    .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+  /* 詳細セクション */
+  .topic-detail {
+    display: none;
+  }
+  .topic-detail.active {
+    display: block;
+  }
 
-    /* enuTools Toolbar */
-    .enu-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
-    @media (max-width:600px){.enu-toolbar{grid-template-columns:repeat(2,1fr)}}
-    .enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
-    .enu-btn-card:hover{transform:translateY(-1px)}
-    .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
-    .enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-    .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-    .enu-fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-    .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .back-btn:hover {
+    background: var(--primary-soft);
+    transform: translateX(-3px);
+  }
 
-    /* Toast */
-    .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
-    .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  section {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 32px 32px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
 
-    /* ===== Share Module v4 ===== */
-    .enu-fc-share2 { background:#e6f0fa; border-color:#abc8e3; color:#1f4d80; }
-    .enu-share-modal { position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center; padding:16px; }
-    .enu-share-modal[hidden] { display:none; }
-    .enu-share-modal__bg { position:absolute; inset:0; background:rgba(20,20,15,.5); backdrop-filter:blur(4px); animation:enuShareFade .2s ease; }
-    .enu-share-modal__box { position:relative; background:#fff; border-radius:16px; padding:24px 22px 20px; max-width:480px; width:100%; max-height:92vh; overflow:auto; box-shadow:0 16px 48px rgba(0,0,0,.25); font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; animation:enuShareUp .2s ease; }
-    @keyframes enuShareFade { from{opacity:0} to{opacity:1} }
-    @keyframes enuShareUp { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
-    .enu-share-modal__close { position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; border:none; background:#f0ebe2; cursor:pointer; font-size:1.1rem; line-height:1; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-modal__close:hover { background:#e0dad0; }
-    .enu-share-modal__title { font-size:1.1rem; font-weight:700; margin:0 0 4px; }
-    .enu-share-modal__desc { font-size:.78rem; color:#7A756B; margin:0 0 14px; }
-    .enu-share-modes { display:flex; gap:6px; margin-bottom:14px; background:#f5f1e8; padding:5px; border-radius:10px; }
-    .enu-share-modes[hidden] { display:none; }
-    .enu-share-mode { flex:1; padding:9px 6px; border:none; background:transparent; border-radius:7px; font-size:.74rem; font-weight:700; color:#7A756B; cursor:pointer; transition:all .15s; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-mode[data-mode="normal"].is-active { background:linear-gradient(135deg,#6ba4d8,#4a7fb5); color:#fff; box-shadow:0 2px 6px rgba(74,127,181,.3); }
-    .enu-share-mode[data-mode="progress"].is-active { background:linear-gradient(135deg,#a47ad9,#7d4fb8); color:#fff; box-shadow:0 2px 6px rgba(125,79,184,.3); }
-    .enu-share-mode[data-mode="promo"].is-active { background:linear-gradient(135deg,#ff9554,#e07024); color:#fff; box-shadow:0 2px 6px rgba(224,112,36,.3); }
-    .enu-share-tabs { display:flex; gap:4px; background:#f5f1e8; padding:4px; border-radius:999px; margin-bottom:14px; }
-    .enu-share-tab { flex:1; padding:7px 8px; border:none; background:transparent; border-radius:999px; font-size:.72rem; font-weight:700; color:#7A756B; cursor:pointer; transition:all .15s; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-tab.is-active { background:#fff; color:#2C2A24; box-shadow:0 1px 3px rgba(0,0,0,.08); }
-    .enu-share-preview { background:#f5f1e8; border-radius:10px; padding:12px; margin-bottom:14px; text-align:center; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:200px; }
-    .enu-share-preview canvas { max-width:100%; max-height:360px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-    @media (max-width:600px){ .enu-share-preview canvas{ max-height:280px; } }
-    .enu-share-modal[data-mode="normal"] #enu-share-tabs,
-    .enu-share-modal[data-mode="normal"] #enu-share-preview,
-    .enu-share-modal[data-mode="normal"] #enu-share-download { display:none; }
-    .enu-share-modal[data-mode="normal"] #enu-share-help { display:none; }
-    .enu-share-section { margin-bottom:12px; }
-    .enu-share-section__label { font-size:.7rem; color:#7A756B; font-weight:700; margin-bottom:6px; letter-spacing:.04em; }
-    .enu-share-chips { display:flex; flex-wrap:wrap; gap:6px; }
-    .enu-share-chip { background:#FAF7F0; border:1px solid #E0DAD0; color:#7A756B; padding:5px 11px; border-radius:999px; font-size:.7rem; cursor:pointer; transition:all .15s; user-select:none; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-chip:hover { border-color:#A09A8E; }
-    .enu-share-modal[data-mode="normal"] .enu-share-chip.is-on { background:#e6f0fa; border-color:#6ba4d8; color:#1f4d80; font-weight:600; }
-    .enu-share-modal[data-mode="progress"] .enu-share-chip.is-on { background:#f3eef9; border-color:#a47ad9; color:#5a3d7a; font-weight:600; }
-    .enu-share-modal[data-mode="promo"] .enu-share-chip.is-on { background:#fff1e6; border-color:#e89441; color:#7a4d1a; font-weight:600; }
-    .enu-share-text-box { background:#FAF7F0; border-radius:8px; padding:11px 13px; font-size:.75rem; color:#2C2A24; white-space:pre-wrap; word-break:break-word; max-height:100px; overflow-y:auto; margin-bottom:14px; line-height:1.6; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .enu-share-btn { padding:10px; border:1px solid #E0DAD0; background:#fff; border-radius:8px; font-size:.78rem; font-weight:700; color:#2C2A24; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
-    .enu-share-btn:hover { transform:translateY(-1px); }
-    .enu-share-btn--primary { grid-column:span 2; color:#fff; border:none; padding:12px; }
-    .enu-share-btn--span2 { grid-column:span 2; }
-    .enu-share-btn--ig { background:linear-gradient(135deg,#fde4ec,#f3d9e9); border-color:#e8b5d0; color:#8e2367; }
-    .enu-share-btn--ig:hover { background:linear-gradient(135deg,#fce0eb,#eecde3) !important; border-color:#d490b5 !important; color:#6b1850 !important; }
-    .enu-share-modal[data-mode="normal"] #enu-share-instagram { display:none; }
-    .enu-share-modal[data-mode="normal"] .enu-share-btn--primary { background:linear-gradient(135deg,#6ba4d8,#4a7fb5); }
-    .enu-share-modal[data-mode="normal"] .enu-share-btn:hover { border-color:#6ba4d8; color:#1f4d80; }
-    .enu-share-modal[data-mode="normal"] .enu-share-btn--primary:hover { color:#fff; opacity:.94; }
-    .enu-share-modal[data-mode="progress"] .enu-share-btn--primary { background:linear-gradient(135deg,#a47ad9,#7d4fb8); }
-    .enu-share-modal[data-mode="progress"] .enu-share-btn:hover { border-color:#a47ad9; color:#5a3d7a; }
-    .enu-share-modal[data-mode="progress"] .enu-share-btn--primary:hover { color:#fff; opacity:.94; }
-    .enu-share-modal[data-mode="promo"] .enu-share-btn--primary { background:linear-gradient(135deg,#ff9554,#e07024); }
-    .enu-share-modal[data-mode="promo"] .enu-share-btn:hover { border-color:#e89441; color:#7a4d1a; }
-    .enu-share-modal[data-mode="promo"] .enu-share-btn--primary:hover { color:#fff; opacity:.94; }
-    .enu-share-help { font-size:.65rem; color:#7A756B; margin-top:10px; line-height:1.5; }
-  </style>
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 26px;
+    padding-bottom: 18px;
+    border-bottom: 2px dashed var(--border);
+  }
+  .section-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .section-icon.alt {
+    background: var(--accent-soft);
+  }
+  .section-icon.info {
+    background: var(--info-soft);
+  }
+  .section-icon.pdf {
+    background: #fef0f0;
+  }
+  .section-icon.print {
+    background: #f0f1f3;
+  }
+  .section-icon.share {
+    background: #eef4f9;
+  }
+  h2 {
+    margin: 0;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  h2 .sub-title {
+    display: block;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--sub);
+    margin-top: 3px;
+  }
+
+  h3.sub-head {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 26px 0 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  h3.sub-head .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 18px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  h3.sub-head .badge.android {
+    background: var(--accent-soft);
+    color: #4ba596;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+
+  /* ステップリスト */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+  .steps li {
+    position: relative;
+    padding: 12px 16px 12px 56px;
+    margin-bottom: 10px;
+    background: var(--bg);
+    border-radius: 14px;
+    font-size: 14px;
+    counter-increment: step;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .steps.android li::before {
+    color: #4ba596;
+    border-color: var(--accent);
+  }
+  .steps.pdf-color li::before {
+    color: #804a52;
+    border-color: #c08080;
+  }
+  .steps.print-color li::before {
+    color: #525860;
+    border-color: #8a929a;
+  }
+  .steps.share-color li::before {
+    color: #355a7a;
+    border-color: #6f95b8;
+  }
+
+  .steps li strong {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .steps.android li strong {
+    color: #4ba596;
+  }
+  .steps.pdf-color li strong {
+    color: #804a52;
+  }
+  .steps.print-color li strong {
+    color: #525860;
+  }
+  .steps.share-color li strong {
+    color: #355a7a;
+  }
+
+  /* 注意ボックス */
+  .note {
+    margin: 16px 0;
+    padding: 13px 18px;
+    background: #fff7ec;
+    border-left: 4px solid #f5b86c;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .note .label {
+    font-weight: 700;
+    color: #d68a3a;
+    margin-right: 8px;
+  }
+
+  /* 機種変更 */
+  .transfer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  /* 場面別カード（こんなときに使えます） */
+  .scene-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .scene-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    min-width: 0;
+  }
+  .scene-card .scene-icon {
+    flex-shrink: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .scene-card .scene-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .scene-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .scene-card p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.5;
+  }
+
+  /* ボタン説明カード（ツールバーの使い方） */
+  .btn-help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .btn-help-card {
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid;
+    min-width: 0;
+  }
+  .btn-help-card .btn-help-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .btn-help-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: inherit;
+  }
+  .btn-help-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: inherit;
+  }
+  .btn-help-card.pdf { background: #fef0f0; border-color: #f0c8c8; color: #804a52; }
+  .btn-help-card.print { background: #f0f1f3; border-color: #c8cdd4; color: #525860; }
+  .btn-help-card.share { background: #eef4f9; border-color: #c5d8ea; color: #355a7a; }
+  .btn-help-card.json { background: #f5f1e8; border-color: #d8cdaa; color: #6b5a3d; }
+  .btn-help-card .inline-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* スタイル説明 */
+  .style-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  .style-card {
+    padding: 18px 20px;
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    min-width: 0;
+  }
+  .style-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--text);
+  }
+  .style-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--sub);
+  }
+  .transfer-card {
+    padding: 22px 20px;
+    border-radius: 18px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    min-width: 0;
+  }
+  .transfer-card .stage {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #ffffff;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .transfer-card.new .stage {
+    background: var(--accent);
+  }
+  .transfer-card h4 {
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  .transfer-card .steps li {
+    background: #ffffff;
+    font-size: 13px;
+  }
+
+  /* 一覧表示 / 詳細表示の切り替え */
+  body.detail-mode .hero {
+    display: none;
+  }
+  body.detail-mode .topic-list {
+    display: none;
+  }
+
+  /* 幅が狭くなったときのレイアウト調整（スマホ・タブレット） */
+  @media (max-width: 720px) {
+    .wrap {
+      padding: 24px 16px 24px;
+    }
+    .hero {
+      padding: 26px 16px 28px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: 22px;
+    }
+    .hero p {
+      font-size: 13px;
+    }
+    .hero .icon {
+      font-size: 34px;
+    }
+    section {
+      padding: 22px 18px 22px;
+      border-radius: 18px;
+    }
+    .section-head {
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+    }
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+    h2 {
+      font-size: 19px;
+    }
+    h2 .sub-title {
+      font-size: 12px;
+    }
+    h3.sub-head {
+      font-size: 16px;
+      margin: 22px 0 12px;
+    }
+    h3.sub-head .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+    }
+    p {
+      font-size: 14px;
+    }
+    .steps li {
+      padding: 11px 14px 11px 50px;
+      font-size: 13px;
+    }
+    .steps li::before {
+      width: 28px;
+      height: 28px;
+      left: 12px;
+      font-size: 13px;
+    }
+    .transfer-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .transfer-card {
+      padding: 18px 16px;
+    }
+    .transfer-card h4 {
+      font-size: 15px;
+    }
+    .transfer-card .steps li {
+      font-size: 12px;
+    }
+    .scene-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .scene-card {
+      padding: 11px 14px;
+      gap: 10px;
+    }
+    .scene-card .scene-icon {
+      font-size: 22px;
+    }
+    .scene-card h4 {
+      font-size: 14px;
+    }
+    .scene-card p {
+      font-size: 12px;
+    }
+    .btn-help-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .btn-help-card {
+      padding: 14px 16px;
+    }
+    .btn-help-card .btn-help-icon {
+      font-size: 22px;
+    }
+    .btn-help-card h4 {
+      font-size: 15px;
+    }
+    .btn-help-card p {
+      font-size: 12px;
+    }
+    .style-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .style-card {
+      padding: 14px 16px;
+    }
+    .style-card h4 {
+      font-size: 14px;
+    }
+    .style-card p {
+      font-size: 12px;
+    }
+    .topic-card {
+      padding: 14px 16px;
+      gap: 12px;
+    }
+    .topic-card .topic-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+    .topic-card h3 {
+      font-size: 15px;
+    }
+    .topic-card h3 .sub-title {
+      font-size: 11px;
+    }
+    .topic-card p {
+      font-size: 12px;
+    }
+    .topic-card .topic-arrow {
+      font-size: 18px;
+    }
+    .note {
+      padding: 11px 14px;
+      font-size: 12px;
+    }
+    .back-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+  }
+
+  /* フッター */
+  footer {
+    text-align: center;
+    padding: 40px 20px 30px;
+    font-size: 10px;
+    color: var(--sub);
+    opacity: 0.7;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    letter-spacing: 0.05em;
+  }
+</style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <header class="app-header">
-      <h1 class="app-title">🧰 enuTools 全パターン見本</h1>
-      <p class="app-subtitle">注意書きカード & アクションボタンの全バリエーション</p>
-    </header>
+<div class="wrap">
 
-    <!-- ============================================
-         注意書きカード 全パターン
-         ============================================ -->
-    <section class="section">
-      <h2 class="section-title">📋 注意書きカード一覧</h2>
-      <p class="section-desc">×ボタンで最小化、丸アイコンクリックで復帰。タグでストレージ方式・アプリ種別を表示しています</p>
-
-      <!-- 💾 ローカル保存時のみ -->
-      <div class="pattern-group">
-        <span class="group-title">💾 ローカル保存時のみ</span>
-
-        <div class="pattern-label">Pattern ① 💾 ローカル保存案内 <span class="tag">local</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="info">
-            <div class="enu-notice enu-notice-info"><span class="enu-icon">💾</span><span class="enu-body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-info" title="案内を表示">💾</button>
-          </div>
-        </div>
-        <p class="pattern-note">スカイブルー / データがローカル保存であることを安心系で伝える</p>
-
-        <div class="pattern-label">Pattern ② ⚠️ データ消失リスクの注意（iOS Safari追記版） <span class="tag">local</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="warn">
-            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードではデータが引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>重要なデータは「📤 エクスポート」ボタンからバックアップを取ることをおすすめします。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="注意を表示">⚠️</button>
-          </div>
-        </div>
-        <p class="pattern-note">アンバー / 消失リスク・iOS Safariの自動消去・JSONバックアップ推奨</p>
-
-        <div class="pattern-label">Pattern ⑧ 🌐 オフライン動作OK <span class="tag">local</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="offline-local">
-            <div class="enu-notice enu-notice-info"><span class="enu-icon">🌐</span><span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、データの追加・編集が可能です。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-info" title="オフライン動作を表示">🌐</button>
-          </div>
-        </div>
-        <p class="pattern-note">スカイブルー / オフラインでも使えることを安心系で伝える</p>
-      </div>
-
-      <!-- ☁️ Google保存時のみ -->
-      <div class="pattern-group">
-        <span class="group-title">☁️ Google保存時のみ</span>
-
-        <div class="pattern-label">Pattern ①' ☁️ Googleドライブ保存案内 <span class="tag">google</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="info-cloud">
-            <div class="enu-notice enu-notice-info"><span class="enu-icon">☁️</span><span class="enu-body">データはお客様ご自身のGoogleドライブに自動保存されます。お客様のGoogleアカウントから、いつでも直接開いて確認・編集することができます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-info" title="案内を表示">☁️</button>
-          </div>
-        </div>
-        <p class="pattern-note">スカイブルー / お客様自身のGoogleドライブに保存されることを案内（保存形式に依存しない汎用表現）</p>
-
-        <div class="pattern-label">Pattern ②' ⚠️ Google連携・別端末の注意 <span class="tag">google</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="warn-cloud">
-            <div class="enu-notice enu-notice-warn"><span class="enu-icon">⚠️</span><span class="enu-body">Googleアカウントの連携を解除した場合、アプリから保存先ファイルへのアクセスができなくなります（データ自体はGoogleドライブに残ります）。別端末からも同じGoogleアカウントでログインすれば継続利用できます。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="注意を表示">⚠️</button>
-          </div>
-        </div>
-        <p class="pattern-note">アンバー / 連携解除時の挙動と別端末利用の説明</p>
-
-        <div class="pattern-label">Pattern ⑦ 🔒 プライバシー（理由追加版） <span class="tag">google</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="privacy-cloud">
-            <div class="enu-notice enu-notice-privacy"><span class="enu-icon">🔒</span><span class="enu-body">本アプリはお客様のGoogleアカウントに直接アクセスする仕組みで、運営者のサーバーを経由しません。そのため運営者はお客様のデータを閲覧できません。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-privacy" title="プライバシーを表示">🔒</button>
-          </div>
-        </div>
-        <p class="pattern-note">ミントグリーン / 「なぜ閲覧できないか」の理由とともに明示</p>
-
-        <div class="pattern-label">Pattern ⑧' 📶 通信必須 <span class="tag">google</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="offline-cloud">
-            <div class="enu-notice enu-notice-warn"><span class="enu-icon">📶</span><span class="enu-body">データの保存・同期には常時インターネット接続が必要です。電波の弱い場所では保存に失敗することがあります。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-warn" title="通信必須を表示">📶</button>
-          </div>
-        </div>
-        <p class="pattern-note">アンバー / 通信が必須であることの注意</p>
-      </div>
-
-      <!-- 🌐 すべてのアプリで使う -->
-      <div class="pattern-group">
-        <span class="group-title">🌐 すべてのアプリで使う</span>
-
-        <div class="pattern-label">Pattern ③ 🚨 免責事項（本文はアプリごとに書き換え） <span class="tag">common</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="disclaim">
-            <div class="enu-notice enu-notice-disclaim"><span class="enu-icon">🚨</span><span class="enu-body">本アプリのご利用により生じた損失や不利益について、運営者は責任を負いかねます。ご利用は自己責任でお願いします。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" title="免責事項を表示">🚨</button>
-          </div>
-        </div>
-        <p class="pattern-note">ローズ / 一般的な免責文。④（取引系）を使う場合はこちらは不要</p>
-
-        <div class="pattern-label">Pattern ⑥ 📚 ヘルプ導線 <span class="tag">common</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="help">
-            <div class="enu-notice enu-notice-help"><span class="enu-icon">📚</span><span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-help" title="ヘルプを表示">📚</button>
-          </div>
-        </div>
-        <p class="pattern-note">セージグリーン / ヘルプページへのリンク埋め込み</p>
-      </div>
-
-      <!-- 🎯 アプリによる（オプション） -->
-      <div class="pattern-group">
-        <span class="group-title">🎯 アプリによる（必要なときだけ使う）</span>
-
-        <div class="pattern-label">Pattern ④ 🚨 取引・計算結果の免責 <span class="tag">trade</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="trade">
-            <div class="enu-notice enu-notice-trade"><span class="enu-icon">🚨</span><span class="enu-body">計算結果は目安です。実際の取引における最終判断はご自身でお願いいたします。取引結果について責任を負いかねますのでご了承ください。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-trade" title="取引の免責を表示">🚨</button>
-          </div>
-        </div>
-        <p class="pattern-note">ローズ（③と同色）/ 計算・取引系アプリで使用（③の代わり・両方入れない）</p>
-
-        <div class="pattern-label">Pattern ⑤ 📅 情報の時点 <span class="tag">date</span></div>
-        <div class="enu-notice-area">
-          <div class="enu-notice-wrap" data-notice-id="date">
-            <div class="enu-notice enu-notice-date"><span class="enu-icon">📅</span><span class="enu-body">掲載情報は <strong id="enu-info-date">2026年5月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span><button type="button" class="enu-close-btn" aria-label="最小化">×</button></div>
-            <button type="button" class="enu-notice-mini enu-notice-mini-date" title="情報の時点を表示">📅</button>
-          </div>
-        </div>
-        <p class="pattern-note">ベージュ / 情報の鮮度が大事なアプリで使用（日付は表示時点の年月を自動反映）</p>
-      </div>
-    </section>
-
-    <!-- ============================================
-         アクションボタン 4種
-         ============================================ -->
-    <section class="section">
-      <h2 class="section-title">🎛 アクションボタン（4種）</h2>
-      <p class="section-desc">クリックで実際に動作します（共有は対応環境でWeb Share API、それ以外はURLコピー）</p>
-
-      <div class="enu-toolbar">
-        <button type="button" class="enu-btn-card enu-fc-pdf"    id="enu-btn-print"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
-        <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
-        <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-export"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
-        <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-import"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
-      </div>
-
-      <div style="margin-top:14px;font-size:.72rem;color:var(--sub);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif">
-        <div style="margin-bottom:4px"><strong style="color:#804a52">📄 PDF / 印刷</strong> — ローズ系。<code>window.print()</code> でPDFと印刷を統合</div>
-        <div style="margin-bottom:4px"><strong style="color:#1f4d80">🔗 シェア</strong> — 統合シェアモジュール v4。通常 / 進捗 / 紹介の3モード切替、画像生成付き</div>
-        <div style="margin-bottom:4px"><strong style="color:#6b5a3d">📤 エクスポート / 📥 インポート</strong> — ベージュ系（ペア表現で同色）。JSONバックアップ</div>
-      </div>
-    </section>
-
-    <hr class="divider">
-    <p class="copyright">© 2026 enu(エヌ) All rights reserved.</p>
+  <!-- ヘッダー -->
+  <div class="hero">
+    <div class="icon">📖</div>
+    <h1>ヘルプ・使い方ガイド</h1>
+    <p>知りたい項目をタップしてください</p>
   </div>
 
-  <div class="enu-toast" id="enu-toast"></div>
+  <!-- 題目リスト -->
+  <div class="topic-list" id="topicList">
 
-  <!-- ===== Share Modal v4 ===== -->
-  <div class="enu-share-modal" id="enu-share-modal" hidden>
-    <div class="enu-share-modal__bg" data-close></div>
-    <div class="enu-share-modal__box">
-      <button type="button" class="enu-share-modal__close" data-close aria-label="閉じる">×</button>
-      <h3 class="enu-share-modal__title">📤 シェアする</h3>
-      <p class="enu-share-modal__desc" id="enu-share-desc">シェアの仕方を選んでください</p>
-
-      <div class="enu-share-modes" id="enu-share-modes" hidden>
-        <button type="button" class="enu-share-mode" data-mode="normal">🔗 通常</button>
-        <button type="button" class="enu-share-mode" data-mode="progress">📈 進捗</button>
-        <button type="button" class="enu-share-mode" data-mode="promo">📣 紹介</button>
+    <div class="topic-card" data-target="home-screen">
+      <div class="topic-icon">📱</div>
+      <div class="topic-text">
+        <h3>ホーム画面への追加方法</h3>
+        <p>iPhone・Androidからアプリのように起動できるようにする</p>
       </div>
-
-      <div class="enu-share-tabs" id="enu-share-tabs">
-        <button type="button" class="enu-share-tab is-active" data-size="story">📱 ストーリー</button>
-        <button type="button" class="enu-share-tab" data-size="feed">▢ フィード</button>
-        <button type="button" class="enu-share-tab" data-size="landscape">🖼 横長</button>
-      </div>
-
-      <div class="enu-share-preview" id="enu-share-preview">
-        <canvas id="enu-share-canvas"></canvas>
-      </div>
-
-      <div class="enu-share-section" id="enu-share-section-chips">
-        <div class="enu-share-section__label">ハッシュタグを選ぶ</div>
-        <div class="enu-share-chips" id="enu-share-chips"></div>
-      </div>
-
-      <div class="enu-share-text-box" id="enu-share-text-box"></div>
-
-      <div class="enu-share-grid">
-        <button type="button" class="enu-share-btn enu-share-btn--primary" id="enu-share-native">📲 シェア</button>
-        <button type="button" class="enu-share-btn" id="enu-share-download">📥 画像保存</button>
-        <button type="button" class="enu-share-btn" id="enu-share-copy">📋 テキストコピー</button>
-        <button type="button" class="enu-share-btn" id="enu-share-x">𝕏 で投稿</button>
-        <button type="button" class="enu-share-btn" id="enu-share-line">💬 LINEで送る</button>
-        <button type="button" class="enu-share-btn enu-share-btn--span2 enu-share-btn--ig" id="enu-share-instagram">📷 Instagramで投稿</button>
-      </div>
-
-      <p class="enu-share-help" id="enu-share-help">
-        ※ スマホでは共有シートから「写真に保存」やInstagramへの投稿を選べます。PCではダウンロードフォルダに保存されます。Xは画像の手動添付が必要です。
-      </p>
+      <div class="topic-arrow">→</div>
     </div>
+
+    <div class="topic-card pdf" data-target="pdf-export">
+      <div class="topic-icon">📄</div>
+      <div class="topic-text">
+        <h3>PDF出力方法</h3>
+        <p>表示中の内容をPDFファイルとして保存する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card print" data-target="print">
+      <div class="topic-icon">🖨</div>
+      <div class="topic-text">
+        <h3>印刷方法</h3>
+        <p>表示中の内容をプリンターで印刷する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card share" data-target="share">
+      <div class="topic-icon">🔗</div>
+      <div class="topic-text">
+        <h3>共有方法</h3>
+        <p>このアプリのURLを他の人に共有する</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card alt" data-target="data-transfer">
+      <div class="topic-icon">💾</div>
+      <div class="topic-text">
+        <h3>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h3>
+        <p>定期的にバックアップを取る／機種変更で引き継ぐ／別の端末でも使う</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <!-- 新しい項目を追加するときは、上と同じ形式でここにコピーしてください
+    <div class="topic-card" data-target="任意のID">
+      <div class="topic-icon">✨</div>
+      <div class="topic-text">
+        <h3>題目</h3>
+        <p>説明文</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+    -->
+
   </div>
 
-  <script>
-    // 見本用の最小構成（storageType フィルタは無効化、全パターン表示）
-    const ENU_CONFIG = {
-      appId:'showcase',appName:'enuTools 見本',dataVersion:1,storageType:'showcase',
-      helpUrl:'https://enu-tools.pages.dev/help/',helpOpenNewTab:true,shareText:null,
-      getData(){return{demo:true}},applyData(d){},validateData(d){return true},
+  <!-- 詳細: ホーム画面追加 -->
+  <div class="topic-detail" id="home-screen">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
 
-      // ===== Share Module v4 設定（3モード全部有効化） =====
-      normalShare: {
-        getShareText() { return `🧰 enuTools 見本ページ\n注意書きカード & アクションボタンの全パターン集`; },
-        hashtags: ['#enu_tools', '#便利ツール', '#Webデザイン'],
-        initialTags: ['#enu_tools'],
-      },
-      socialImage: {
-        getData() {
-          return {
-            title: 'enuTools',
-            subtitle: '見本ページ デモ',
-            accent: '🧰',
-            stats: [
-              { label: '注意書き', value: '9' },
-              { label: 'ボタン', value: '4' },
-              { label: 'モード', value: '3' },
-            ],
-            message: '全パターン揃ってます！',
-            theme: '#a47ad9',
-            siteLabel: 'enu-tools.pages.dev',
-          };
-        },
-        getShareText() { return `🧰 enuTools の見本ページを作りました\n注意書き9パターン・ボタン4種・シェア3モード\n\n再利用できるテンプレ集です ✨`; },
-        hashtags: ['#enu_tools', '#今日の積み上げ', '#コーディング', '#個人開発'],
-        initialTags: ['#enu_tools', '#今日の積み上げ'],
-      },
-      appPromo: {
-        getData() {
-          return {
-            icon: '🧰',
-            appName: 'enuTools',
-            tagline: '個人開発の共通テンプレ',
-            features: [
-              '✓ 注意書きカード9パターン',
-              '✓ アクションボタン4種',
-              '✓ シェア機能3モード',
-            ],
-            cta: '無料で使えるテンプレ集',
-            theme: '#e07024',
-            siteLabel: 'enu-tools.pages.dev',
-          };
-        },
-        getShareText() { return `便利なテンプレ集を見つけました 📍\n\n🧰 enuTools\n個人開発の共通テンプレ\n\n無料で使えます！`; },
-        hashtags: ['#おすすめツール', '#便利ツール', '#無料アプリ', '#enu_tools'],
-        initialTags: ['#おすすめツール', '#enu_tools'],
-      },
-    };
+    <section>
+      <div class="section-head">
+        <div class="section-icon">📱</div>
+        <h2>ホーム画面への追加方法</h2>
+      </div>
 
-    const enuTools=(function(){let CFG=null;const _key=(s)=>`enu_${CFG.appId}_${s}`;function showToast(msg){const t=document.getElementById('enu-toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}function initNotices(){const K=_key('notice_minimized');const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};const help=document.getElementById('enu-help-link');if(help){help.href=CFG.helpUrl||'#';if(CFG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener'}}const list=get();document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.add('is-mini');const l=get();if(!l.includes(id)){l.push(id);set(l)}}));document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.remove('is-mini');set(get().filter(x=>x!==id))}))}function handleExport(){const payload={app_id:CFG.appId,app_name:CFG.appName,data_version:CFG.dataVersion||1,exported_at:new Date().toISOString(),data:CFG.getData()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`enutools-showcase_${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('📤 JSONをダウンロードしました')}function handleImport(){showToast('📥 見本ページではダミー動作です')}function initButtons(){const map={'enu-btn-print':()=>window.print(),'enu-btn-export':handleExport,'enu-btn-import':handleImport};Object.entries(map).forEach(([id,fn])=>{const el=document.getElementById(id);if(el)el.addEventListener('click',fn)})}function init(c){CFG=c;initNotices();initButtons()}return{init,toast:showToast}})();
+      <p>本アプリをホーム画面に追加すると、アプリのようにすぐ起動できます。お使いの端末を選んで手順をご確認ください。</p>
 
-    enuTools.init(ENU_CONFIG);
+      <h3 class="sub-head">📝 操作手順（iPhone）<span class="badge">iOS / Safari・Chrome</span></h3>
+      <ol class="steps">
+        <li><strong>Safari</strong> または <strong>Chrome</strong> でこのページを開きます。</li>
+        <li><strong>共有ボタン</strong>（□から↑が出ているアイコン）をタップします。<br><span style="font-size: 11px; color: var(--sub);">※ Safariは画面下、Chromeはアドレスバー右にあります</span></li>
+        <li>メニューを下にスクロールし、<strong>「ホーム画面に追加」</strong> をタップします。</li>
+        <li>アプリ名を確認して、右上の <strong>「追加」</strong> をタップしたら完了です。</li>
+      </ol>
 
-    // Pattern ⑤ の日付を現在の年月で自動反映
-    (function(){
-      const el = document.getElementById('enu-info-date');
-      if (el) {
-        const d = new Date();
-        el.textContent = `${d.getFullYear()}年${d.getMonth() + 1}月時点`;
-      }
-    })();
+      <div class="note">
+        <span class="label">💡 ヒント</span>Chrome の「ホーム画面に追加」機能は iOS 16.4 以降で利用できます。iPhone・iPad の OS バージョンが古い場合は Safari からの追加をおすすめします。
+      </div>
 
-    // ===== Share Module v4 =====
-    (function() {
-      const SIZES = {
-        story:     { w:1080, h:1920, label:'ストーリー',  layout:'vertical' },
-        feed:      { w:1080, h:1350, label:'フィード',    layout:'vertical' },
-        landscape: { w:1200, h:630,  label:'横長',        layout:'horizontal' },
-      };
-      const MODE_DESC = {
-        normal:   'URLとテキストをシンプルに共有します',
-        progress: '自分の進捗を画像で共有します',
-        promo:    'アプリ自体をSNSで知らせる画像を作ります',
-      };
-      const MODE_PRIMARY_LABEL = {
-        normal:   '📲 シェア',
-        progress: '📲 シェア（画像つき）',
-        promo:    '📲 シェア（画像つき）',
-      };
-      const MODE_ORDER = ['normal', 'progress', 'promo'];
+      <h3 class="sub-head">📝 操作手順（Android）<span class="badge android">Android / Chrome</span></h3>
+      <ol class="steps android">
+        <li><strong>Chrome</strong> でこのページを開きます。</li>
+        <li>画面右上の <strong>メニューボタン</strong>（縦に点が3つ並んだアイコン ⋮）をタップします。</li>
+        <li>メニューから <strong>「ホーム画面に追加」</strong> または <strong>「アプリをインストール」</strong> を選びます。</li>
+        <li>名前を確認して <strong>「追加」</strong> または <strong>「インストール」</strong> をタップしたら完了です。</li>
+      </ol>
 
-      let currentMode = 'normal';
-      let currentSize = 'story';
-      const tagsByMode = { normal: new Set(), progress: new Set(), promo: new Set() };
+      <div class="note">
+        <span class="label">💡 ヒント</span>機種やブラウザのバージョンによって表示が少し異なる場合があります。「ホーム画面」「インストール」のいずれかの言葉を探してみてください。
+      </div>
+    </section>
+  </div>
 
-      function getCfg(mode) {
-        if (mode === 'normal')   return ENU_CONFIG.normalShare;
-        if (mode === 'progress') return ENU_CONFIG.socialImage;
-        if (mode === 'promo')    return ENU_CONFIG.appPromo;
-        return null;
-      }
-      function hasMode(mode) {
-        const c = getCfg(mode);
-        if (mode === 'normal') return c && typeof c.getShareText === 'function';
-        return c && typeof c.getData === 'function';
-      }
-      function availableModes() { return MODE_ORDER.filter(hasMode); }
+  <!-- 詳細: データバックアップ・復元 -->
+  <div class="topic-detail" id="data-transfer">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
 
-      function hexToRgba(hex, a) {
-        const m = (hex||'#000').replace('#','').match(/.{2}/g);
-        if (!m) return `rgba(0,0,0,${a})`;
-        const [r,g,b] = m.map(x => parseInt(x, 16));
-        return `rgba(${r},${g},${b},${a})`;
-      }
-      function roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x+r, y);
-        ctx.arcTo(x+w, y, x+w, y+h, r);
-        ctx.arcTo(x+w, y+h, x, y+h, r);
-        ctx.arcTo(x, y+h, x, y, r);
-        ctx.arcTo(x, y, x+w, y, r);
-        ctx.closePath();
-      }
+    <section>
+      <div class="section-head">
+        <div class="section-icon alt">💾</div>
+        <h2>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h2>
+      </div>
 
-      function drawDotPattern(ctx, W, H, theme) {
-        ctx.fillStyle = hexToRgba(theme, 0.08);
-        const step = 40, r = 2.5;
-        for (let x = step; x < W; x += step) {
-          for (let y = step; y < H; y += step) {
-            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-          }
-        }
-      }
-      function drawCornerAccent(ctx, W, H, theme) {
-        ctx.save(); ctx.globalAlpha = 0.15; ctx.fillStyle = theme;
-        ctx.beginPath(); ctx.moveTo(W, 0); ctx.lineTo(W, H * 0.15); ctx.lineTo(W * 0.85, 0); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, H * 0.85); ctx.lineTo(W * 0.15, H); ctx.closePath(); ctx.fill();
-        ctx.restore();
-      }
-      function drawBackground(ctx, W, H, theme, intensity) {
-        const grad = ctx.createLinearGradient(0, 0, W, H);
-        grad.addColorStop(0, '#FFFFFF'); grad.addColorStop(1, hexToRgba(theme, intensity || 0.10));
-        ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
-        drawDotPattern(ctx, W, H, theme); drawCornerAccent(ctx, W, H, theme);
-        ctx.fillStyle = theme; ctx.fillRect(0, 0, W, Math.max(12, W * 0.012));
-        ctx.fillStyle = hexToRgba(theme, 0.4); ctx.fillRect(0, Math.max(18, W * 0.018), W, Math.max(3, W * 0.003));
-      }
+      <p>本アプリのデータはお使いの端末内に保存されています。<strong>JSONファイル</strong>を使ってデータを保存・復元できます。</p>
 
-      function drawShareImage(canvas, mode, sizeKey, data) {
-        const S = SIZES[sizeKey];
-        canvas.width = S.w; canvas.height = S.h;
-        const ctx = canvas.getContext('2d');
-        const W = S.w, H = S.h;
-        const theme = data.theme || '#107C41';
-        drawBackground(ctx, W, H, theme, mode === 'promo' ? 0.12 : 0.10);
-        if (S.layout === 'vertical') {
-          if (mode === 'promo') drawPromoVertical(ctx, W, H, data, theme);
-          else                  drawProgressVertical(ctx, W, H, data, theme);
-        } else {
-          if (mode === 'promo') drawPromoHorizontal(ctx, W, H, data, theme);
-          else                  drawProgressHorizontal(ctx, W, H, data, theme);
-        }
-      }
+      <!-- 場面別の説明 -->
+      <h3 class="sub-head">📌 こんなときに使えます</h3>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">🗓️</div>
+          <div class="scene-text">
+            <h4>定期的なバックアップ</h4>
+            <p>こまめに保存して安心</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">📱</div>
+          <div class="scene-text">
+            <h4>機種変更のとき</h4>
+            <p>新端末にデータを引き継ぐ</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">🔄</div>
+          <div class="scene-text">
+            <h4>別の端末でも使う</h4>
+            <p>同じデータを複数端末で</p>
+          </div>
+        </div>
+      </div>
 
-      function drawProgressVertical(ctx, W, H, data, theme) {
-        const scale = W / 1080;
-        const heroY = H * 0.13;
-        if (data.accent) {
-          ctx.font = `${160*scale}px serif`;
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(data.accent, W/2, heroY);
-        }
-        ctx.font = `700 ${88*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        ctx.fillStyle = '#1A2E22'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(data.title || '', W/2, heroY + 130 * scale);
-        if (data.subtitle) {
-          ctx.font = `500 ${42*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#6B7B72'; ctx.fillText(data.subtitle, W/2, heroY + 210 * scale);
-        }
-        ctx.fillStyle = theme;
-        roundRect(ctx, W/2 - 60*scale, heroY + 280*scale, 120*scale, 8*scale, 4*scale); ctx.fill();
-        if (data.stats && data.stats.length) drawProgressStats(ctx, data.stats, W, H * 0.42, scale, theme);
-        if (data.message) {
-          const msgY = H * 0.74, msgW = W * 0.78, msgH = 130 * scale;
-          const msgX = (W - msgW) / 2;
-          ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = hexToRgba(theme, 0.3); ctx.lineWidth = 2 * scale;
-          roundRect(ctx, msgX, msgY, msgW, msgH, 20*scale); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = theme; roundRect(ctx, msgX, msgY, 6*scale, msgH, 3*scale); ctx.fill();
-          ctx.font = `600 ${44*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#1A2E22'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(data.message, W/2, msgY + msgH/2);
-        }
-        const labelText = data.siteLabel || 'enu-tools';
-        const footerY = H - 110 * scale;
-        ctx.font = `700 ${28*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        const tw = ctx.measureText(labelText).width;
-        const labelW = tw + 40 * scale, labelH = 50 * scale;
-        const labelX = (W - labelW) / 2;
-        ctx.fillStyle = hexToRgba(theme, 0.15);
-        roundRect(ctx, labelX, footerY, labelW, labelH, 25*scale); ctx.fill();
-        ctx.fillStyle = theme; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(labelText, W/2, footerY + labelH/2);
-      }
-      function drawProgressStats(ctx, stats, W, centerY, scale, theme) {
-        const cardW = 280 * scale, cardH = 240 * scale, gap = 24 * scale;
-        const total = stats.length * cardW + (stats.length - 1) * gap;
-        let startX = (W - total) / 2;
-        const y = centerY - cardH / 2;
-        stats.forEach(stat => {
-          ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = hexToRgba(theme, 0.2); ctx.lineWidth = 2 * scale;
-          roundRect(ctx, startX, y, cardW, cardH, 22 * scale); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = theme; roundRect(ctx, startX, y, cardW, 6 * scale, 3 * scale); ctx.fill();
-          ctx.font = `600 ${32*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#7A756B'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(stat.label, startX + cardW/2, y + 60 * scale);
-          ctx.font = `700 ${86*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = theme; ctx.fillText(stat.value, startX + cardW/2, y + 145 * scale);
-          ctx.strokeStyle = hexToRgba(theme, 0.3); ctx.lineWidth = 3 * scale;
-          ctx.beginPath(); ctx.moveTo(startX + cardW * 0.3, y + cardH - 30 * scale);
-          ctx.lineTo(startX + cardW * 0.7, y + cardH - 30 * scale); ctx.stroke();
-          startX += cardW + gap;
+      <!-- 操作手順 -->
+      <h3 class="sub-head">📝 操作手順</h3>
+
+      <div class="transfer-grid">
+        <div class="transfer-card">
+          <span class="stage">バックアップ</span>
+          <h4>データを保存する（エクスポート）</h4>
+          <ol class="steps">
+            <li>本アプリを開きます。</li>
+            <li>ページ最下部のツールバーを表示します。</li>
+            <li><strong>📤 エクスポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「出力」）</span>をタップします。</li>
+            <li>JSONファイルが保存されます。メールやクラウド（Google Drive・iCloudなど）に保存しておくと安心です。</li>
+          </ol>
+        </div>
+
+        <div class="transfer-card new">
+          <span class="stage">復元</span>
+          <h4>データを読み込む（インポート）</h4>
+          <ol class="steps android">
+            <li>本アプリを開きます。</li>
+            <li>ページ最下部のツールバーを表示します。</li>
+            <li><strong>📥 インポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「読込」）</span>をタップします。</li>
+            <li>保存しておいたJSONファイルを選んで読み込みます。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>JSONファイルは大切なデータです。クラウドや別の場所にもバックアップを取っておくことをおすすめします。機種変更の際は、新端末にインポートが完了するまで旧端末のデータは消さないでください。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>インポートを行うと、現在のデータが上書きされます。心配な場合は、先に現在のデータをエクスポートしておきましょう。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: PDF出力方法 -->
+  <div class="topic-detail" id="pdf-export">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon pdf">📄</div>
+        <h2>PDF出力方法</h2>
+      </div>
+
+      <p>表示中の内容をPDFファイルとして保存できます。保存したPDFはメールやクラウドに共有・印刷などに使えます。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps pdf-color">
+        <li>ページ最下部のツールバーから <strong>📄 PDF出力</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「PDF」）</span>をタップします。</li>
+        <li>印刷ダイアログが開きます。</li>
+        <li>出力先（プリンター選択）で <strong>「PDFとして保存」</strong> を選びます。<br><span style="font-size: 11px; color: var(--sub);">※ 端末によって「PDFに保存」「PDFで保存」など表記が異なります</span></li>
+        <li>保存場所を選んで <strong>「保存」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>iPhoneでは保存後「ファイル」アプリ、Androidでは「Files」や「Drive」などから保存したPDFを確認できます。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>用紙サイズを変えると見え方が変わります。A4・B5など、お好みに合わせて選んでください。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: 印刷方法 -->
+  <div class="topic-detail" id="print">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon print">🖨</div>
+        <h2>印刷方法</h2>
+      </div>
+
+      <p>表示中の内容をプリンターで印刷できます。あらかじめ端末がプリンターと接続されている必要があります。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps print-color">
+        <li>ページ最下部のツールバーから <strong>🖨 印刷</strong> ボタンをタップします。</li>
+        <li>印刷ダイアログが開きます。</li>
+        <li>使用する <strong>プリンター</strong> を選びます。</li>
+        <li>必要に応じて部数・用紙サイズなどを設定します。</li>
+        <li><strong>「印刷」</strong> をタップしたら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>事前にプリンターの電源と接続をご確認ください。スマホからの印刷には、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは <strong>クラウド印刷</strong> 対応プリンターが必要です。
+      </div>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>プリンターがない環境では、代わりに <strong>📄 PDF出力</strong>（小スクエア版では「PDF」）でPDFに保存し、後で印刷することもできます。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: 共有方法 -->
+  <div class="topic-detail" id="share">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon share">🔗</div>
+        <h2>共有方法</h2>
+      </div>
+
+      <p>このアプリのURLを、LINEやメール・SNSなどで他の人に共有できます。</p>
+
+      <h3 class="sub-head">📝 操作手順</h3>
+      <ol class="steps share-color">
+        <li>ページ最下部のツールバーから <strong>🔗 共有</strong> ボタンをタップします。</li>
+        <li>共有メニュー（共有シート）が開きます。</li>
+        <li>共有したい <strong>アプリや相手</strong> を選んだら完了です。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>パソコンなど共有メニューに対応していない環境では、代わりに <strong>URLが自動でクリップボードにコピー</strong> されます。そのままメールやチャットに貼り付けてご利用ください。
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>共有されるのは<strong>アプリのURL</strong>です。あなたの入力したデータは共有されません。データを引き継ぎたい場合は <strong>💾 データのバックアップ・復元方法</strong> をご利用ください。
+      </div>
+    </section>
+  </div>
+
+  <!-- フッター -->
+  <footer>
+    © 2026 enu(エヌ) All rights reserved.
+  </footer>
+
+</div>
+
+<script>
+  // 題目カードのクリックイベント
+  document.querySelectorAll('.topic-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var targetId = card.getAttribute('data-target');
+      showDetail(targetId);
+    });
+  });
+
+  // 詳細を表示
+  function showDetail(id) {
+    document.body.classList.add('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+    }
+    try {
+      history.pushState({ topic: id }, '', '#' + id);
+    } catch (e) {
+      // サンドボックス等でpushStateが使えない環境では何もしない
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 一覧へもどる
+  function showList() {
+    document.body.classList.remove('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    try {
+      history.pushState({ topic: null }, '', window.location.pathname);
+    } catch (e) {
+      // サンドボックス等でpushStateが使えない環境では何もしない
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ブラウザの戻るボタンに対応
+  window.addEventListener('popstate', function(e) {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        showDetailNoHistory(hash);
+      } else {
+        document.body.classList.remove('detail-mode');
+        document.querySelectorAll('.topic-detail').forEach(function(el) {
+          el.classList.remove('active');
         });
       }
-      function drawProgressHorizontal(ctx, W, H, data, theme) {
-        const scale = H / 630;
-        const padX = 60 * scale;
-        const leftW = W * 0.48;
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        let titleX = padX; const titleY = H * 0.30;
-        if (data.accent) {
-          ctx.font = `${72*scale}px serif`; ctx.fillStyle = '#1A2E22';
-          ctx.fillText(data.accent, titleX, titleY); titleX += 100 * scale;
-        }
-        ctx.font = `700 ${58*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        ctx.fillStyle = '#1A2E22';
-        const maxTitleW = leftW - (titleX - padX) - 20 * scale;
-        ctx.save(); ctx.beginPath(); ctx.rect(titleX, 0, maxTitleW, H); ctx.clip();
-        ctx.fillText(data.title || '', titleX, titleY); ctx.restore();
-        if (data.subtitle) {
-          ctx.font = `500 ${30*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#6B7B72'; ctx.fillText(data.subtitle, padX, H * 0.46);
-        }
-        ctx.fillStyle = theme;
-        roundRect(ctx, padX, H * 0.55, 70 * scale, 5 * scale, 2.5 * scale); ctx.fill();
-        if (data.message) {
-          ctx.font = `600 ${28*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#1A2E22'; ctx.fillText(data.message, padX, H * 0.66);
-        }
-        const labelText = data.siteLabel || 'enu-tools';
-        ctx.font = `700 ${22*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        const tw = ctx.measureText(labelText).width;
-        const labelW = tw + 30 * scale, labelH = 38 * scale;
-        const labelY = H * 0.85 - labelH/2;
-        ctx.fillStyle = theme; roundRect(ctx, padX, labelY, labelW, labelH, 19*scale); ctx.fill();
-        ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(labelText, padX + labelW/2, labelY + labelH/2);
-        if (data.stats && data.stats.length) drawProgressStatsCompact(ctx, data.stats, W, H, padX, scale, theme);
-      }
-      function drawProgressStatsCompact(ctx, stats, W, H, padX, scale, theme) {
-        const cardW = 150 * scale, cardH = 160 * scale, gap = 14 * scale;
-        const total = stats.length * cardW + (stats.length - 1) * gap;
-        let startX = W - padX - total;
-        const y = H/2 - cardH/2;
-        stats.forEach(stat => {
-          ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = hexToRgba(theme, 0.25); ctx.lineWidth = 2 * scale;
-          roundRect(ctx, startX, y, cardW, cardH, 14 * scale); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = theme; roundRect(ctx, startX, y, cardW, 4 * scale, 2 * scale); ctx.fill();
-          ctx.font = `600 ${20*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#7A756B'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(stat.label, startX + cardW/2, y + 40 * scale);
-          ctx.font = `700 ${52*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = theme; ctx.fillText(stat.value, startX + cardW/2, y + cardH/2 + 18 * scale);
-          startX += cardW + gap;
-        });
-      }
+    } catch (e) {
+      // サンドボックス環境では無視
+    }
+  });
 
-      function drawPromoVertical(ctx, W, H, data, theme) {
-        const scale = W / 1080;
-        const heroY = H * 0.12;
-        if (data.icon) {
-          ctx.fillStyle = hexToRgba(theme, 0.12);
-          ctx.beginPath(); ctx.arc(W/2, heroY, 130 * scale, 0, Math.PI * 2); ctx.fill();
-          ctx.font = `${170*scale}px serif`;
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(data.icon, W/2, heroY);
-        }
-        ctx.font = `700 ${92*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        ctx.fillStyle = '#1A2E22'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(data.appName || '', W/2, heroY + 180 * scale);
-        if (data.tagline) {
-          ctx.font = `500 ${40*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#6B7B72'; ctx.fillText(data.tagline, W/2, heroY + 250 * scale);
-        }
-        ctx.fillStyle = theme;
-        roundRect(ctx, W/2 - 60*scale, heroY + 310 * scale, 120*scale, 8*scale, 4*scale); ctx.fill();
-        if (data.features && data.features.length) {
-          const featuresY = H * 0.40;
-          const boxW = W * 0.84;
-          const boxX = (W - boxW) / 2;
-          const featLineH = 90 * scale;
-          const boxPad = 50 * scale;
-          const boxH = data.features.length * featLineH + boxPad * 2;
-          ctx.fillStyle = hexToRgba(theme, 0.1);
-          roundRect(ctx, boxX + 8*scale, featuresY + 8*scale, boxW, boxH, 24*scale); ctx.fill();
-          ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = hexToRgba(theme, 0.2); ctx.lineWidth = 2 * scale;
-          roundRect(ctx, boxX, featuresY, boxW, boxH, 24*scale); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = theme; roundRect(ctx, boxX, featuresY, boxW, 6*scale, 3*scale); ctx.fill();
-          ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-          data.features.forEach((feat, i) => {
-            const fy = featuresY + boxPad + (i + 0.5) * featLineH;
-            ctx.fillStyle = theme;
-            ctx.beginPath(); ctx.arc(boxX + boxPad - 10*scale, fy, 8*scale, 0, Math.PI * 2); ctx.fill();
-            ctx.font = `600 ${40*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-            ctx.fillStyle = '#1A2E22'; ctx.fillText(feat, boxX + boxPad + 20*scale, fy);
-          });
-        }
-        if (data.cta) {
-          ctx.font = `700 ${46*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = theme; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(`🎉 ${data.cta}`, W/2, H * 0.78);
-        }
-        const labelText = data.siteLabel || 'enu-tools';
-        const footerY = H - 100 * scale;
-        ctx.font = `700 ${32*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        const tw = ctx.measureText(labelText).width;
-        const labelW = tw + 50 * scale, labelH = 56 * scale;
-        const labelX = (W - labelW) / 2;
-        ctx.fillStyle = theme;
-        roundRect(ctx, labelX, footerY, labelW, labelH, 28*scale); ctx.fill();
-        ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(labelText, W/2, footerY + labelH/2);
-      }
-      function drawPromoHorizontal(ctx, W, H, data, theme) {
-        const scale = H / 630;
-        const padX = 60 * scale;
-        const leftW = W * 0.50;
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        if (data.icon) {
-          ctx.fillStyle = hexToRgba(theme, 0.12);
-          ctx.beginPath(); ctx.arc(padX + 50 * scale, H * 0.30, 65 * scale, 0, Math.PI * 2); ctx.fill();
-          ctx.font = `${80*scale}px serif`;
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(data.icon, padX + 50 * scale, H * 0.30);
-          ctx.textAlign = 'left';
-        }
-        const titleX = padX + (data.icon ? 130 * scale : 0);
-        ctx.font = `700 ${52*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        ctx.fillStyle = '#1A2E22';
-        ctx.save(); ctx.beginPath(); ctx.rect(titleX, 0, leftW - (titleX - padX), H); ctx.clip();
-        ctx.fillText(data.appName || '', titleX, H * 0.30); ctx.restore();
-        if (data.tagline) {
-          ctx.font = `500 ${28*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = '#6B7B72'; ctx.fillText(data.tagline, padX, H * 0.48);
-        }
-        if (data.cta) {
-          ctx.font = `700 ${28*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-          ctx.fillStyle = theme; ctx.fillText(`🎉 ${data.cta}`, padX, H * 0.66);
-        }
-        const labelText = data.siteLabel || 'enu-tools';
-        ctx.font = `700 ${22*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-        const tw = ctx.measureText(labelText).width;
-        const labelW = tw + 30 * scale, labelH = 38 * scale;
-        const labelY = H * 0.85 - labelH/2;
-        ctx.fillStyle = theme; roundRect(ctx, padX, labelY, labelW, labelH, 19*scale); ctx.fill();
-        ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(labelText, padX + labelW/2, labelY + labelH/2);
-        if (data.features && data.features.length) {
-          const boxX = leftW + 20 * scale;
-          const boxW = W - boxX - padX;
-          const featLineH = 60 * scale;
-          const boxPad = 28 * scale;
-          const boxH = data.features.length * featLineH + boxPad * 2;
-          const boxY = H/2 - boxH/2;
-          ctx.fillStyle = hexToRgba(theme, 0.1);
-          roundRect(ctx, boxX + 6*scale, boxY + 6*scale, boxW, boxH, 16*scale); ctx.fill();
-          ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = hexToRgba(theme, 0.2); ctx.lineWidth = 2 * scale;
-          roundRect(ctx, boxX, boxY, boxW, boxH, 16*scale); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = theme; roundRect(ctx, boxX, boxY, boxW, 4*scale, 2*scale); ctx.fill();
-          ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-          data.features.forEach((feat, i) => {
-            const fy = boxY + boxPad + (i + 0.5) * featLineH;
-            ctx.fillStyle = theme;
-            ctx.beginPath(); ctx.arc(boxX + boxPad - 5*scale, fy, 6*scale, 0, Math.PI * 2); ctx.fill();
-            ctx.font = `600 ${26*scale}px Quicksand, "Kosugi Maru", sans-serif`;
-            ctx.fillStyle = '#1A2E22'; ctx.fillText(feat, boxX + boxPad + 16*scale, fy);
-          });
-        }
-      }
+  function showDetailNoHistory(id) {
+    document.body.classList.add('detail-mode');
+    document.querySelectorAll('.topic-detail').forEach(function(el) {
+      el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+    }
+  }
 
-      function buildShareText() {
-        const cfg = getCfg(currentMode);
-        let text = (cfg && typeof cfg.getShareText === 'function') ? cfg.getShareText() : (ENU_CONFIG.appName || '');
-        const tags = tagsByMode[currentMode];
-        if (tags.size > 0) text += '\n\n' + [...tags].join(' ');
-        return text;
+  // ページ読み込み時、URLにハッシュがあればその詳細を開く
+  window.addEventListener('DOMContentLoaded', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        showDetailNoHistory(hash);
       }
-      function updateShareTextBox() {
-        const box = document.getElementById('enu-share-text-box');
-        if (box) box.textContent = buildShareText();
-      }
-      function buildChips() {
-        const container = document.getElementById('enu-share-chips');
-        if (!container) return;
-        container.innerHTML = '';
-        const cfg = getCfg(currentMode) || {};
-        const tags = cfg.hashtags || [];
-        const section = document.getElementById('enu-share-section-chips');
-        if (tags.length === 0) { if (section) section.style.display = 'none'; return; }
-        if (section) section.style.display = '';
-        const selected = tagsByMode[currentMode];
-        tags.forEach(tag => {
-          const el = document.createElement('span');
-          el.className = 'enu-share-chip' + (selected.has(tag) ? ' is-on' : '');
-          el.textContent = tag;
-          el.addEventListener('click', () => {
-            if (selected.has(tag)) selected.delete(tag); else selected.add(tag);
-            el.classList.toggle('is-on');
-            updateShareTextBox();
-          });
-          container.appendChild(el);
-        });
-      }
+    } catch (e) {
+      // サンドボックス環境では無視
+    }
+  });
+</script>
 
-      function setMode(mode) {
-        if (!hasMode(mode)) return;
-        currentMode = mode;
-        const modal = document.getElementById('enu-share-modal');
-        modal.dataset.mode = mode;
-        document.querySelectorAll('.enu-share-mode').forEach(b => { b.classList.toggle('is-active', b.dataset.mode === mode); });
-        const desc = document.getElementById('enu-share-desc');
-        if (desc) desc.textContent = MODE_DESC[mode] || '';
-        const primaryBtn = document.getElementById('enu-share-native');
-        if (primaryBtn) primaryBtn.textContent = MODE_PRIMARY_LABEL[mode] || '📲 シェア';
-        buildChips(); updateShareTextBox();
-        if (mode !== 'normal') renderPreview();
-      }
-      function setSize(size) {
-        currentSize = size;
-        document.querySelectorAll('.enu-share-tab').forEach(b => { b.classList.toggle('is-active', b.dataset.size === size); });
-        renderPreview();
-      }
-      async function renderPreview() {
-        if (currentMode === 'normal') return;
-        const cfg = getCfg(currentMode);
-        if (!cfg || typeof cfg.getData !== 'function') return;
-        const canvas = document.getElementById('enu-share-canvas');
-        if (!canvas) return;
-        await document.fonts.ready;
-        drawShareImage(canvas, currentMode, currentSize, cfg.getData());
-      }
-
-      function openModal() {
-        const modal = document.getElementById('enu-share-modal');
-        if (!modal) return;
-        const avail = availableModes();
-        if (avail.length === 0) { console.error('[enuTools] normalShare / socialImage / appPromo のいずれかを定義してください'); return; }
-        const modesEl = document.getElementById('enu-share-modes');
-        if (modesEl) {
-          modesEl.hidden = avail.length < 2;
-          modesEl.querySelectorAll('.enu-share-mode').forEach(b => { b.style.display = hasMode(b.dataset.mode) ? '' : 'none'; });
-        }
-        currentMode = avail[0];
-        modal.dataset.mode = currentMode;
-        ['normal','progress','promo'].forEach(m => {
-          const cfg = getCfg(m);
-          tagsByMode[m] = new Set((cfg && cfg.initialTags) || []);
-        });
-        document.querySelectorAll('.enu-share-mode').forEach(b => { b.classList.toggle('is-active', b.dataset.mode === currentMode); });
-        const desc = document.getElementById('enu-share-desc');
-        if (desc) desc.textContent = MODE_DESC[currentMode] || '';
-        const primaryBtn = document.getElementById('enu-share-native');
-        if (primaryBtn) primaryBtn.textContent = MODE_PRIMARY_LABEL[currentMode] || '📲 シェア';
-        modal.hidden = false;
-        buildChips(); updateShareTextBox();
-        if (currentMode !== 'normal') renderPreview();
-      }
-      function closeModal() {
-        const modal = document.getElementById('enu-share-modal');
-        if (modal) modal.hidden = true;
-      }
-
-      function canvasToBlob(canvas) { return new Promise(res => canvas.toBlob(res, 'image/png', 1)); }
-      function _safeFileName(s) { return String(s || 'image').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC\-]/g, '_'); }
-      function makeFileName() {
-        const date = new Date().toISOString().slice(0, 10);
-        const name = _safeFileName(ENU_CONFIG.appName || ENU_CONFIG.appId);
-        return `${name}_${currentMode}_${currentSize}_${date}.png`;
-      }
-      async function actDownload() {
-        if (currentMode === 'normal') return;
-        const canvas = document.getElementById('enu-share-canvas');
-        const blob = await canvasToBlob(canvas);
-        const file = new File([blob], makeFileName(), { type: 'image/png' });
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        // スマホ: 共有シートを表示（「写真に保存」が選べる）
-        if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file] });
-            return;
-          } catch (e) {
-            if (e && e.name === 'AbortError') return;
-            // フォールバック処理へ
-          }
-        }
-
-        // PC または フォールバック: 通常のダウンロード
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = makeFileName();
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        enuTools.toast('🎨 画像を保存しました');
-      }
-      async function actNativeShare() {
-        try {
-          const text = buildShareText();
-          if (currentMode === 'normal') {
-            if (navigator.share) { await navigator.share({ text, url: location.href }); enuTools.toast('📲 シェアしました'); }
-            else { await navigator.clipboard.writeText(text + '\n\n' + location.href); enuTools.toast('テキストをコピーしました'); }
-            return;
-          }
-          const canvas = document.getElementById('enu-share-canvas');
-          const blob = await canvasToBlob(canvas);
-          const file = new File([blob], makeFileName(), { type: 'image/png' });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], text, url: location.href });
-            enuTools.toast('📲 シェアしました');
-          } else {
-            await actDownload();
-            try { await navigator.clipboard.writeText(text); } catch(e) {}
-            enuTools.toast('画像保存＋テキストコピーしました');
-          }
-        } catch (e) {
-          if (e && e.name === 'AbortError') return;
-          enuTools.toast('⚠️ シェアできませんでした');
-        }
-      }
-      async function actCopy() {
-        try { await navigator.clipboard.writeText(buildShareText() + '\n\n' + location.href); enuTools.toast('📋 テキストをコピーしました'); }
-        catch (e) { enuTools.toast('⚠️ コピーに失敗しました'); }
-      }
-      function actX() {
-        const text = buildShareText();
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
-        window.open(url, '_blank', 'noopener');
-      }
-      function actLine() {
-        const text = buildShareText() + '\n\n' + location.href;
-        const url = `https://line.me/R/share?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank', 'noopener');
-      }
-      async function actInstagram() {
-        if (currentMode === 'normal') {
-          enuTools.toast('⚠️ Instagramは画像投稿のみ対応です');
-          return;
-        }
-        const canvas = document.getElementById('enu-share-canvas');
-        const blob = await canvasToBlob(canvas);
-        const file = new File([blob], makeFileName(), { type: 'image/png' });
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        // スマホ: 共有シートを表示（Instagramを直接選べる）
-        if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file] });
-            return;
-          } catch (e) {
-            if (e && e.name === 'AbortError') return;
-            // フォールバック処理へ
-          }
-        }
-
-        // PC または フォールバック: 画像保存 + Instagram投稿の案内
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = makeFileName();
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        enuTools.toast('🎨 画像を保存しました');
-        setTimeout(() => enuTools.toast('📷 Instagramアプリで投稿してください'), 1600);
-      }
-
-      function init() {
-        const btn = document.getElementById('enu-btn-share2');
-        if (btn) btn.addEventListener('click', openModal);
-        const modal = document.getElementById('enu-share-modal');
-        if (!modal) return;
-        modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
-        document.querySelectorAll('.enu-share-mode').forEach(b => { b.addEventListener('click', () => setMode(b.dataset.mode)); });
-        document.querySelectorAll('.enu-share-tab').forEach(b => { b.addEventListener('click', () => setSize(b.dataset.size)); });
-        document.getElementById('enu-share-native')   ?.addEventListener('click', actNativeShare);
-        document.getElementById('enu-share-download') ?.addEventListener('click', actDownload);
-        document.getElementById('enu-share-copy')     ?.addEventListener('click', actCopy);
-        document.getElementById('enu-share-x')        ?.addEventListener('click', actX);
-        document.getElementById('enu-share-line')     ?.addEventListener('click', actLine);
-        document.getElementById('enu-share-instagram')?.addEventListener('click', actInstagram);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
-      }
-      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
-      else { init(); }
-    })();
-  </script>
 </body>
 </html>
