@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>勘定科目検索ツール</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,20 +18,29 @@
 <meta name="apple-mobile-web-app-title" content="勘定科目検索">
 <style>
 :root {
-  --bg: #FAF7F2;
-  --card: #FFFFFF;
-  --ink: #2C2A26;
+  /* enuTools 共通11変数（ルール準拠） */
+  --primary: #4A6FA5;
+  --primary-light: #6B89BC;
+  --primary-dark: #3D5C8A;
+  --primary-soft: #E8EEF6;
   --accent: #4A6FA5;
-  --accent-deep: #3D5C8A;
-  --accent-soft: #E8EEF6;
-  --sub: #8C8678;
+  --bg: #FAF7F2;
+  --bg-soft: #F4F0E8;
   --line: #E5DFD3;
+  --card: #fff;
+  --text: #2C2A24;
+  --sub: #7A756B;
+
+  /* アプリ固有 */
+  --ink: #2C2A24;          /* --text のエイリアス（既存コード互換用） */
+  --accent-deep: #3D5C8A;  /* = --primary-dark */
+  --accent-soft: #E8EEF6;  /* = --primary-soft */
   --line-soft: #F0EBE0;
   --ok: #5A8F69;
   --ok-soft: #E8F1EA;
   --caution: #C99A2E;
   --caution-soft: #FAF1DC;
-  --gray-status: #8C8678;
+  --gray-status: #7A756B;  /* = --sub */
   --gray-soft: #ECEAE3;
   --pink: #E66B7A;
   --shadow: 0 2px 8px rgba(44, 42, 38, 0.06);
@@ -64,11 +73,11 @@ input:focus, select:focus, button:focus-visible {
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px max(24px, env(safe-area-inset-right)) 24px max(24px, env(safe-area-inset-left));
 }
 
 @media (max-width: 650px) {
-  .page-wrapper { padding: 16px; }
+  .page-wrapper { padding: 16px max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left)); }
 }
 
 /* === Header === */
@@ -82,7 +91,7 @@ header {
   font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--primary-dark);
   letter-spacing: 0.02em;
 }
 
@@ -122,12 +131,12 @@ header {
 .section-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--primary-dark);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--primary-dark);
   padding-left: 10px;
   line-height: 1.3;
 }
@@ -595,7 +604,7 @@ header {
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 2000;
   padding: 16px;
   backdrop-filter: blur(2px);
 }
@@ -759,22 +768,72 @@ header {
 .toolbar-bottom-spacer { margin-bottom: 6px; }
 
 .footer-wrapper {
-  margin-top: 4px;
+  margin-top: 24px;
+  text-align: center;
 }
 
+/* 🏠 ホームへ戻るボタン（アウトライン型ピル） */
+.footer-home-btn {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  display: inline-block;
+  padding: 7px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid var(--sub);
+  color: var(--sub);
+  background: transparent;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: all 0.15s;
+}
+.footer-home-btn:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+/* 区切り線 */
 .footer-divider {
   width: 100%;
-  height: 1px;
-  background: var(--line);
+  height: 0;
+  border-top: 1px solid color-mix(in srgb, var(--sub) 30%, transparent);
+  background: transparent;
 }
 
+/* footer-credit リンク（enuホームへ） */
+.footer-credit {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--sub);
+  margin-top: 12px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.footer-credit .credit-link {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  color: var(--sub);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.footer-credit .credit-link:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* コピーライト */
 .copyright {
+  font-family: 'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
   text-align: center;
   font-size: 10px;
   color: var(--sub);
   opacity: 0.7;
-  padding-top: 16px;
-  padding-bottom: 24px;
+  padding-top: 0;
+  padding-bottom: 0;
   letter-spacing: 0.04em;
 }
 
@@ -788,42 +847,41 @@ header {
 .empty-icon { font-size: 2rem; opacity: 0.5; margin-bottom: 8px; }
 
 /* === Notice cards === */
-.notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.notice-wrap{width:100%}
-.notice-wrap.is-mini{width:auto}
-.notice-wrap > .notice{display:flex}
-.notice-wrap > .notice-mini{display:none}
-.notice-wrap.is-mini > .notice{display:none}
-.notice-wrap.is-mini > .notice-mini{display:inline-flex}
-.notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-.notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-.notice .body{flex:1;min-width:0}
-.notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-.notice .close-btn:hover{opacity:1}
-.notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-.notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-.notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-.notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.notice-trade,.notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
-.notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-.notice-help .help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-.notice-help .help-link:hover{color:#1f2c1c}
+.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.enu-notice-wrap{width:100%}
+.enu-notice-wrap.is-mini{width:auto}
+.enu-notice-wrap > .enu-notice{display:flex}
+.enu-notice-wrap > .enu-notice-mini{display:none}
+.enu-notice-wrap.is-mini > .enu-notice{display:none}
+.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+.enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.enu-notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.enu-notice .body{flex:1;min-width:0}
+.enu-notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.enu-notice .close-btn:hover{opacity:1}
+.enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+.enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
 
 /* === Action toolbar === */
-.fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-.fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
-.fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
-.btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
-.btn-card .icon{font-size:1.3rem;line-height:1}
-.btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
+.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.enu-fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
+.enu-fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
+.enu-btn-card .icon{font-size:1.3rem;line-height:1}
+.enu-btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+.enu-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;align-items:center;margin-bottom:6px}
 
 /* === Print === */
 @media print{
-  .toolbar,.toast,.notice-area,.modal-overlay,.search-toolbar{display:none !important}
+  .toolbar,.toast,.enu-notice-area,.modal-overlay,.search-toolbar{display:none !important}
   .print-hide{display:none !important}
   body{background:#fff !important}
   .card{box-shadow:none !important;border:1px solid #ddd !important;break-inside:avoid;page-break-inside:avoid}
@@ -835,7 +893,8 @@ header {
 .sticky-search{
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 100;
+  border-bottom: 1px solid var(--line);
   box-shadow: 0 4px 14px rgba(44, 42, 38, 0.10);
   /* スクロール中もコンテンツが透けないように背景固定 */
   background: var(--card);
@@ -866,8 +925,8 @@ header {
 
 /* === Toast (new spec) === */
 
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -879,46 +938,46 @@ header {
   <div class="app-subtitle">個人事業主のための実用ツール</div>
 </header>
 
-<div class="notice-area">
-    <div class="notice-wrap" data-notice-id="info">
-        <div class="notice notice-info">
+<div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="info">
+        <div class="enu-notice enu-notice-info">
             <span class="icon">💾</span>
             <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
             <button type="button" class="close-btn" aria-label="最小化">×</button>
         </div>
-        <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+        <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
     </div>
-    <div class="notice-wrap" data-notice-id="warn">
-        <div class="notice notice-warn">
+    <div class="enu-notice-wrap" data-notice-id="warn">
+        <div class="enu-notice enu-notice-warn">
             <span class="icon">⚠️</span>
             <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
             <button type="button" class="close-btn" aria-label="最小化">×</button>
         </div>
-        <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+        <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
     </div>
-    <div class="notice-wrap" data-notice-id="disclaim">
-        <div class="notice notice-disclaim">
+    <div class="enu-notice-wrap" data-notice-id="disclaim">
+        <div class="enu-notice enu-notice-disclaim">
             <span class="icon">🚨</span>
             <span class="body"><strong>本ツールは情報提供を目的としており、税務相談ではありません。</strong>判定は一般的な目安であり、個別事案は税理士または所轄税務署にご相談ください。</span>
             <button type="button" class="close-btn" aria-label="最小化">×</button>
         </div>
-        <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+        <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
     </div>
-    <div class="notice-wrap" data-notice-id="date">
-        <div class="notice notice-date">
+    <div class="enu-notice-wrap" data-notice-id="date">
+        <div class="enu-notice enu-notice-date">
             <span class="icon">📅</span>
             <span class="body">掲載情報は <strong>2026年5月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
             <button type="button" class="close-btn" aria-label="最小化">×</button>
         </div>
-        <button type="button" class="notice-mini notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+        <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
     </div>
-    <div class="notice-wrap" data-notice-id="help">
-        <div class="notice notice-help">
+    <div class="enu-notice-wrap" data-notice-id="help">
+        <div class="enu-notice enu-notice-help">
             <span class="icon">📚</span>
-            <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
+            <span class="body">使い方・FAQ・トラブル対応は<a href="" class="enu-help-link" id="help-page-link">こちらから</a></span>
             <button type="button" class="close-btn" aria-label="最小化">×</button>
         </div>
-        <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+        <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
     </div>
 </div>
 
@@ -1009,16 +1068,20 @@ header {
   <div id="faqList"></div>
 </div>
 
-<div class="toolbar">
-    <button class="btn-card fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
-    <button class="btn-card fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
-    <button class="btn-card fc-share" id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
-    <button class="btn-card fc-json"  id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
-    <button class="btn-card fc-json"  id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+<div class="enu-toolbar">
+    <button class="enu-btn-card enu-fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
+    <button class="enu-btn-card enu-fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
+    <button class="enu-btn-card enu-fc-share" id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
+    <button class="enu-btn-card enu-fc-json"  id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
+    <button class="enu-btn-card enu-fc-json"  id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
 </div>
 
 <div class="footer-wrapper">
+  <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener" class="footer-home-btn">🏠 ホームへ戻る</a>
   <div class="footer-divider"></div>
+  <div class="footer-credit">
+    <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener" class="credit-link">🌷 by enu(エヌ)</a>
+  </div>
   <div class="copyright">© 2026 enu(エヌ) All rights reserved.</div>
 </div>
 
@@ -1033,7 +1096,7 @@ header {
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="enu-toast" id="toast"></div>
 
 <script>
 // ============================================
@@ -1067,7 +1130,6 @@ const accounts = [
     status: "ok", statusNote: "一般に1点10万円未満が目安とされます",
     industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
     filing: "both",
-    amountRule: { min: 0, max: 99999 },
     related: ["office_supplies","equipment"],
     recommendation: "一般に10万円未満で1年以内に消費するものが対象とされます"
   },
@@ -1205,7 +1267,6 @@ const accounts = [
     status: "caution", statusNote: "一般に取得価額や法定耐用年数に基づいて計算されます",
     industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
     filing: "both",
-    amountRule: { min: 100000, max: Infinity },
     related: ["equipment","lump_depreciation","small_depreciation"]
   },
   {
@@ -1215,7 +1276,6 @@ const accounts = [
     status: "caution", statusNote: "一般に10万円以上は減価償却の対象とされます",
     industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
     filing: "both",
-    amountRule: { min: 100000, max: Infinity },
     related: ["depreciation","supplies"]
   },
   {
@@ -1225,7 +1285,6 @@ const accounts = [
     status: "ok", statusNote: "一般に3年で均等償却され、青色白色を問わず利用できる制度です",
     industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
     filing: "both",
-    amountRule: { min: 100000, max: 199999 },
     related: ["depreciation","small_depreciation"],
     recommendation: "一般に10万〜20万円の物品購入時に検討される科目です"
   },
@@ -1237,7 +1296,6 @@ const accounts = [
     industries: ["designer","engineer","writer","consultant","teacher","video_creator","photographer","illustrator","handmade_ec","resale","beauty","fitness","therapist"],
     filing: "blue",
     filingNote: "青色申告者の特典・即時経費化できる",
-    amountRule: { min: 100000, max: 299999 },
     related: ["depreciation","lump_depreciation","equipment"],
     recommendation: "青色申告者向けの制度で、30万円未満を即時経費化できます"
   },
@@ -1935,6 +1993,16 @@ function init() {
 init();
 
 // ============================================
+// enuTools 共通設定
+// ============================================
+const ENU_CONFIG = {
+  app_id: 'kanjo-search',
+  app_name: '勘定科目検索ツール',
+  data_version: 1,
+  storage_type: 'local'
+};
+
+// ============================================
 // 注意書きカード制御
 // ============================================
 const HELP_URL='https://enu-tools.pages.dev/help/';
@@ -1943,18 +2011,20 @@ const HELP_OPEN_NEW_TAB=true;
 const NOTICE_KEY='enu_notice_minimized';
 function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
 function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
-(function(){const l=getNoticeList();document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
-document.querySelectorAll('.notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
-document.querySelectorAll('.notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+(function(){const l=getNoticeList();document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
+document.querySelectorAll('.enu-notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
+document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
 
 // ============================================
 // アクションボタン制御
 // ============================================
 function getAppData(){
   return {
-    version: 1,
-    app: 'kanjo-search',
-    exportedAt: new Date().toISOString(),
+    app_id: 'kanjo-search',
+    app_name: '勘定科目検索ツール',
+    data_version: 1,
+    storage_type: 'local',
+    exported_at: new Date().toISOString(),
     bookmarks: state.bookmarks,
     filing: state.filing,
     industry: state.industry,
@@ -1963,7 +2033,9 @@ function getAppData(){
 }
 function validateData(data){
   if(!data || typeof data !== 'object') return false;
-  if(data.app && data.app !== 'kanjo-search') return false;
+  // app_id（新形式）または app（旧形式・互換用）どちらかが kanjo-search であること
+  const id = data.app_id || data.app;
+  if(id && id !== 'kanjo-search') return false;
   if(data.bookmarks !== undefined && !Array.isArray(data.bookmarks)) return false;
   if(data.history !== undefined && !Array.isArray(data.history)) return false;
   if(data.filing !== undefined && !['blue','white'].includes(data.filing)) return false;
@@ -2048,33 +2120,40 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
     return '#' + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,'0')).join('').toUpperCase();
   }
 
-  function makeIconCanvas(size, emoji, bgColor){
+  function makeIconCanvas(size, emoji, bgColor, maskable){
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
-    const r = size * 0.22;
     ctx.fillStyle = bgColor;
-    if(ctx.roundRect){
-      ctx.beginPath();
-      ctx.roundRect(0, 0, size, size, r);
-      ctx.fill();
+
+    if(maskable){
+      // maskable: 角丸なし・フルスクエア（OSマスクとの干渉回避）
+      ctx.fillRect(0, 0, size, size);
     } else {
-      // フォールバック（quadraticCurveで角丸描画）
-      ctx.beginPath();
-      ctx.moveTo(r,0);
-      ctx.lineTo(size-r,0);
-      ctx.quadraticCurveTo(size,0,size,r);
-      ctx.lineTo(size,size-r);
-      ctx.quadraticCurveTo(size,size,size-r,size);
-      ctx.lineTo(r,size);
-      ctx.quadraticCurveTo(0,size,0,size-r);
-      ctx.lineTo(0,r);
-      ctx.quadraticCurveTo(0,0,r,0);
-      ctx.closePath();
-      ctx.fill();
+      // any: 角丸22%
+      const r = size * 0.22;
+      if(ctx.roundRect){
+        ctx.beginPath();
+        ctx.roundRect(0, 0, size, size, r);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(r,0);
+        ctx.lineTo(size-r,0);
+        ctx.quadraticCurveTo(size,0,size,r);
+        ctx.lineTo(size,size-r);
+        ctx.quadraticCurveTo(size,size,size-r,size);
+        ctx.lineTo(r,size);
+        ctx.quadraticCurveTo(0,size,0,size-r);
+        ctx.lineTo(0,r);
+        ctx.quadraticCurveTo(0,0,r,0);
+        ctx.closePath();
+        ctx.fill();
+      }
     }
-    // 絵文字を中央に配置
-    ctx.font = (size*0.62) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+    // 絵文字を中央に配置（maskableは50%、anyは55%）
+    const fontRatio = maskable ? 0.50 : 0.55;
+    ctx.font = (size*fontRatio) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(emoji, size/2, size/2 + size*0.025);
@@ -2095,12 +2174,16 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
     return '#FAF7F2';
   }
 
-  function setup(){
+  async function setup(){
+    // フォント読込待ち（Canvas絵文字描画前）
+    if(document.fonts && document.fonts.ready){
+      try { await document.fonts.ready; } catch(e){}
+    }
     const bg = getBgColor();
 
-    // 1. apple-touch-icon (180px)
+    // 1. apple-touch-icon (180px, any相当: 角丸22%/絵文字55%)
     try {
-      const apple = makeIconCanvas(180, EMOJI, bg);
+      const apple = makeIconCanvas(180, EMOJI, bg, false);
       const appleLink = document.createElement('link');
       appleLink.rel = 'apple-touch-icon';
       appleLink.sizes = '180x180';
@@ -2108,20 +2191,27 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
       document.head.appendChild(appleLink);
     } catch(e){ console.warn('apple-touch-icon生成失敗', e); }
 
-    // 2. PWA manifest (192px / 512px → Blob URL で注入)
+    // 2. PWA manifest (192px / 512px × any/maskable の4枚)
     try {
-      const c192 = makeIconCanvas(192, EMOJI, bg);
-      const c512 = makeIconCanvas(512, EMOJI, bg);
+      const c192any = makeIconCanvas(192, EMOJI, bg, false);
+      const c192msk = makeIconCanvas(192, EMOJI, bg, true);
+      const c512any = makeIconCanvas(512, EMOJI, bg, false);
+      const c512msk = makeIconCanvas(512, EMOJI, bg, true);
       Promise.all([
-        new Promise(r => c192.toBlob(r, 'image/png')),
-        new Promise(r => c512.toBlob(r, 'image/png'))
-      ]).then(([b192, b512]) => {
-        if(!b192 || !b512) return;
-        const url192 = URL.createObjectURL(b192);
-        const url512 = URL.createObjectURL(b512);
+        new Promise(r => c192any.toBlob(r, 'image/png')),
+        new Promise(r => c192msk.toBlob(r, 'image/png')),
+        new Promise(r => c512any.toBlob(r, 'image/png')),
+        new Promise(r => c512msk.toBlob(r, 'image/png'))
+      ]).then(([b192a, b192m, b512a, b512m]) => {
+        if(!b192a || !b192m || !b512a || !b512m) return;
+        const url192a = URL.createObjectURL(b192a);
+        const url192m = URL.createObjectURL(b192m);
+        const url512a = URL.createObjectURL(b512a);
+        const url512m = URL.createObjectURL(b512m);
         // start_url / scope を pathname から動的算出（サブパス対応）
         const dir = location.pathname.replace(/[^/]*$/, '') || '/';
         const manifest = {
+          id: dir + '#kanjo-search',
           name: APP_NAME,
           short_name: SHORT_NAME,
           start_url: dir,
@@ -2131,10 +2221,10 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
           background_color: bg,
           theme_color: bg,
           icons: [
-            {src: url192, sizes: '192x192', type: 'image/png', purpose: 'any'},
-            {src: url192, sizes: '192x192', type: 'image/png', purpose: 'maskable'},
-            {src: url512, sizes: '512x512', type: 'image/png', purpose: 'any'},
-            {src: url512, sizes: '512x512', type: 'image/png', purpose: 'maskable'}
+            {src: url192a, sizes: '192x192', type: 'image/png', purpose: 'any'},
+            {src: url192m, sizes: '192x192', type: 'image/png', purpose: 'maskable'},
+            {src: url512a, sizes: '512x512', type: 'image/png', purpose: 'any'},
+            {src: url512m, sizes: '512x512', type: 'image/png', purpose: 'maskable'}
           ]
         };
         const mBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
@@ -2161,3 +2251,4 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
 
 </body>
 </html>
+
