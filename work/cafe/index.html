@@ -2,16 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>カフェ経費判定</title>
 
-    <!-- favicon (SVG) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23f5f0eb'/><text x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central' font-family='Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif'>☕</text></svg>">
-
-    <!-- PWA / ホーム画面追加 -->
+    <!-- favicon / PWA（JS で動的生成・上書き） -->
+    <link rel="icon" type="image/svg+xml" id="favicon-link">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="カフェ経費判定">
+    <meta name="theme-color" content="#f5f0eb">
     <link rel="apple-touch-icon" id="apple-touch-icon">
     <link rel="manifest" id="pwa-manifest">
 
@@ -20,13 +19,21 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --rose:   #c0666a;
-            --rose-l: #f3d0d2;
-            --rose-bg:#fff8f8;
-            --ink:    #1e1e1e;
-            --muted:  #7a7a7a;
-            --sub:    #aaa9a8;
-            --line:   #e8e2dd;
+            /* ─── primary palette ─── */
+            --primary:      #c0666a;
+            --primary-light:#f3d0d2;
+            --primary-dark: #9a5055;
+            --primary-soft: #fff8f8;
+            --accent:       #c0666a;
+            /* ─── enuTools 固定3変数 ─── */
+            --card: #fff;
+            --text: #2C2A24;
+            --sub:  #7A756B;
+            /* ─── bg系 ─── */
+            --bg:      #f5f0eb;
+            --bg-soft: #f0ebe4;
+            --line:    #e8e2dd;
+            /* ─── semantic ─── */
             --ok-bg:  #e8f5ec;
             --ok-fg:  #1f6e36;
             --ng-bg:  #fde9e9;
@@ -37,322 +44,176 @@
 
         body {
             font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
-            background: #f5f0eb;
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 0 16px 48px;
+            padding: 0 16px calc(48px + env(safe-area-inset-bottom));
         }
 
-        /* ─── outer shell ─── */
-        .notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-        .notice-wrap{width:100%}
-        .notice-wrap.is-mini{width:auto}
-        .notice-wrap > .notice{display:flex}
-        .notice-wrap > .notice-mini{display:none}
-        .notice-wrap.is-mini > .notice{display:none}
-        .notice-wrap.is-mini > .notice-mini{display:inline-flex}
-        .notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-        .notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-        .notice .body{flex:1;min-width:0}
-        .notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-        .notice .close-btn:hover{opacity:1}
-        .notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-        .notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-        .notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-        .notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-        .notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
-        .notice-trade,.notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-        .notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
-        .notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-        .notice-help .help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-        .notice-help .help-link:hover{color:#1f2c1c}
-        .notice strong{font-weight:700}
-        /* ─── 履歴 ─── */
+        /* ─── enu-notice（101仕様） ─── */
+        .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+        .enu-notice-wrap{width:100%}
+        .enu-notice-wrap.is-mini{width:auto}
+        .enu-notice-wrap > .enu-notice{display:flex}
+        .enu-notice-wrap > .enu-notice-mini{display:none}
+        .enu-notice-wrap.is-mini > .enu-notice{display:none}
+        .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+        .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+        .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+        .enu-notice .enu-body{flex:1;min-width:0}
+        .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+        .enu-notice .enu-close-btn:hover{opacity:1}
+        .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+        .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+        .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+        .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+        .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+        .enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+        .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+        .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+        .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+        .enu-notice strong{font-weight:700}
+
+        /* ─── log history ─── */
         .log-area{display:flex;flex-direction:column;gap:8px;margin-top:16px;margin-bottom:6px}
-        .log-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--ink)}
+        .log-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--text)}
         .log-item .log-date{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;color:var(--sub);flex-shrink:0}
-        .log-item .log-cat{font-weight:700;flex-shrink:0;color:var(--rose)}
-        .log-item .log-memo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+        .log-item .log-cat{font-weight:700;flex-shrink:0;color:var(--primary)}
+        .log-item .log-memo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub)}
         .log-item .log-amt{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-weight:700;flex-shrink:0}
-        .log-del{background:none;border:none;cursor:pointer;color:var(--rose);opacity:0.45;font-size:.85rem;padding:0 2px;flex-shrink:0;transition:opacity .15s}
+        .log-del{background:none;border:none;cursor:pointer;color:var(--primary);opacity:0.45;font-size:.85rem;padding:0 2px;flex-shrink:0;transition:opacity .15s}
         .log-del:hover{opacity:1}
-        .log-total{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:.78rem;margin-top:2px}
-        .log-total .total-label{color:var(--muted)}
-        .log-total .total-val{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-weight:700;color:var(--ink)}
+        .log-total{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;font-size:.78rem;margin-top:2px}
+        .log-total .total-label{color:var(--sub)}
+        .log-total .total-val{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-weight:700;color:var(--text)}
         .log-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-        .filter-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;font-weight:700;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;transition:.15s}
-        .filter-btn.active{background:var(--rose);color:#fff;border-color:var(--rose)}
-        .retry-btn{flex:1;padding:13px;background:#fff;color:var(--muted);border:1.5px solid var(--line);border-radius:10px;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.15s}
-        .retry-btn:hover{background:var(--rose-bg);color:var(--rose);border-color:var(--rose-l)}
-        .btn-row{display:flex;gap:8px;margin-top:0}
-        .footer{text-align:center;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:0.625rem;color:var(--sub);opacity:0.7;letter-spacing:0.14em;margin-top:18px;padding-bottom:4px;}
-        /* ─── toolbar ─── */
-        .fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-        .fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
-        .fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-        .fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
-        .btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
-        .btn-card .icon{font-size:1.3rem;line-height:1}
-        .btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-        .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
-        .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-        @media print{.toolbar,.toast,.notice-area{display:none !important}}
+        .filter-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;font-weight:700;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--sub);cursor:pointer;transition:.15s}
+        .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        .shell {
-            width: 100%;
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 76px 16px 0;
-            box-sizing: border-box;
+        /* ─── enu-toolbar（102仕様：grid auto-fit） ─── */
+        .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+        .enu-fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+        .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+        .enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+        .enu-btn-card:hover{transform:translateY(-1px)}
+        .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+        .enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+        .enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+
+        /* ─── enu-toast（z-index:3000） ─── */
+        .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+        .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+        /* ─── enu-confirm-modal（z-index:2500） ─── */
+        .enu-confirm-modal[hidden]{display:none}
+        .enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+        .enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:enuFade .15s ease}
+        .enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px 22px 18px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;animation:enuConfirmUp .2s ease}
+        .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 10px;line-height:1.4}
+        .enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin:0 0 20px;line-height:1.65;white-space:pre-line}
+        .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+        .enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;transition:opacity .15s,transform .1s}
+        .enu-confirm-btn:hover{transform:translateY(-1px)}
+        .enu-confirm-btn--cancel{background:transparent;border:1px solid var(--line);color:var(--sub)}
+        .enu-confirm-btn--ok{background:var(--primary);border:1px solid var(--primary);color:#fff}
+        @keyframes enuFade{from{opacity:0}to{opacity:1}}
+        @keyframes enuConfirmUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* ─── enu-footer ─── */
+        .enu-footer{text-align:center;margin-top:24px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+        .enu-home-btn{display:inline-block;padding:7px 16px;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.75rem;font-weight:700;color:var(--primary);border:1.5px solid var(--primary);border-radius:999px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:12px}
+        .enu-home-btn:hover{background:var(--primary);color:#fff}
+        .enu-footer-line{border:none;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);margin-bottom:12px}
+        .enu-footer-credit{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.75rem;color:var(--sub);opacity:.7;margin-bottom:8px}
+        .enu-footer-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+        .enu-footer-copy{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.625rem;color:var(--sub);opacity:.7;letter-spacing:.14em}
+
+        /* ─── @media print ─── */
+        @media print{
+            body{background:#fff}
+            .enu-notice-area,.enu-toolbar,.enu-toast,.enu-confirm-modal,.site-header{display:none !important}
         }
 
-        /* ─── 650〜960px ─── */
-        @media (min-width: 650px) {
-            body { padding: 0 0 56px; }
-            .shell { padding: 82px 24px 0; }
-            .header-title { font-size: 1.5rem; }
-            .header-sub { font-size: 0.75rem; }
+        /* ─── shell ─── */
+        .shell{width:100%;max-width:960px;margin:0 auto;padding:76px 16px 0;box-sizing:border-box}
+
+        @media(min-width:650px){
+            body{padding:0 0 calc(56px + env(safe-area-inset-bottom))}
+            .shell{padding:82px 24px 0}
+            .header-title{font-size:1.5rem}
+            .header-sub{font-size:.75rem}
+        }
+        @media(min-width:960px){
+            body{padding:0 0 calc(64px + env(safe-area-inset-bottom))}
+            .shell{padding:86px 32px 0}
+            .step-body{padding:32px 32px 28px}
+            .choice-btn{font-size:.92rem;padding:15px 18px}
         }
 
-        /* ─── 960px超 ─── */
-        @media (min-width: 960px) {
-            body { padding: 0 0 64px; }
-            .shell { padding: 86px 32px 0; }
-            .step-body { padding: 32px 32px 28px; }
-            .choice-btn { font-size: 0.92rem; padding: 15px 18px; }
-        }
-
-        /* ─── header (固定) ─── */
-        .site-header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            background: #f5f0eb;
-            border-bottom: 1px solid var(--line);
-            padding: 10px 24px 8px;
-            text-align: center;
-        }
-        .header-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--muted);
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        .header-title {
-            font-family: 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: 0.01em;
-            margin-bottom: 2px;
-        }
-        .header-title span { color: var(--ink); }
-        .header-sub {
-            font-size: 0.7rem;
-            color: var(--sub);
-            letter-spacing: 0.1em;
-            font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
-        }
-        /* ヘッダー高さ分のオフセット（スマホ） */
+        /* ─── site-header（固定） ─── */
+        .site-header{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 24px 8px;text-align:center}
+        .header-label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);font-weight:500;margin-bottom:2px}
+        .header-title{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:.01em;margin-bottom:2px}
+        .header-title span{color:var(--text)}
+        .header-sub{font-size:.7rem;color:var(--sub);letter-spacing:.1em;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif}
 
         /* ─── progress bar ─── */
-        .progress-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 20px;
-            padding: 0 2px;
-        }
-        .prog-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--line);
-            transition: background 0.35s, transform 0.35s;
-            flex-shrink: 0;
-        }
-        .prog-dot.done { background: var(--rose-l); }
-        .prog-dot.active { background: var(--rose); transform: scale(1.4); }
-        .prog-line { flex: 1; height: 2px; background: var(--line); border-radius: 2px; }
-        .prog-line.done { background: var(--rose-l); }
+        .progress-wrap{display:flex;align-items:center;gap:6px;margin-bottom:20px;padding:0 2px}
+        .prog-dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .35s,transform .35s;flex-shrink:0}
+        .prog-dot.done{background:var(--primary-light)}
+        .prog-dot.active{background:var(--primary);transform:scale(1.4)}
+        .prog-line{flex:1;height:2px;background:var(--line);border-radius:2px}
+        .prog-line.done{background:var(--primary-light)}
 
         /* ─── card ─── */
-        .card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
+        .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+        .step-body{padding:28px 24px 24px}
 
-        /* ─── step panel ─── */
-        .step-body {
-            padding: 28px 24px 24px;
-        }
+        .step{display:none}
+        .step.active{display:block;animation:slideUp .3s cubic-bezier(.22,1,.36,1)}
+        @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ─── question area ─── */
-        .step { display: none; }
-        .step.active {
-            display: block;
-            animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        .q-num{font-size:.68rem;font-weight:700;letter-spacing:.14em;color:var(--primary);text-transform:uppercase;margin-bottom:6px}
+        .q-text{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:18px;line-height:1.5}
 
-        .q-num {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            color: var(--rose);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .q-text {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
+        .choices{display:flex;flex-direction:column;gap:9px}
+        .choice-btn{display:flex;align-items:center;width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:500;color:var(--text);text-align:left;transition:border-color .18s,background .18s,transform .12s}
+        .choice-btn:hover{border-color:var(--primary-light);background:var(--primary-soft)}
+        .choice-btn:active{transform:scale(.98)}
+        .choice-btn .icon{width:28px;height:28px;border-radius:8px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1rem;margin-right:12px;flex-shrink:0}
 
-        /* ─── choice buttons ─── */
-        .choices { display: flex; flex-direction: column; gap: 9px; }
-        .choice-btn {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 13px 16px;
-            border: 1.5px solid var(--line);
-            border-radius: 10px;
-            background: #fff;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--ink);
-            text-align: left;
-            transition: border-color 0.18s, background 0.18s, transform 0.12s;
-        }
-        .choice-btn:hover {
-            border-color: var(--rose-l);
-            background: var(--rose-bg);
-        }
-        .choice-btn:active { transform: scale(0.98); }
-        .choice-btn .icon {
-            width: 28px; height: 28px;
-            border-radius: 8px;
-            background: var(--rose-bg);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
+        .back-link{display:none;margin-top:16px;font-size:.75rem;color:var(--sub);background:none;border:none;cursor:pointer;font-family:inherit;padding:0}
+        .back-link:hover{color:var(--primary)}
+        .back-link.visible{display:block}
 
-        /* ─── back link ─── */
-        .back-link {
-            display: none;
-            margin-top: 16px;
-            font-size: 0.75rem;
-            color: var(--muted);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            padding: 0;
-        }
-        .back-link:hover { color: var(--rose); }
-        .back-link.visible { display: block; }
+        #result-step{display:none}
+        #result-step.active{display:block;animation:slideUp .3s cubic-bezier(.22,1,.36,1)}
+        .result-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:6px;font-size:.72rem;font-weight:700;letter-spacing:.06em;margin-bottom:10px}
+        .badge-ok{background:var(--ok-bg);color:var(--ok-fg)}
+        .badge-ng{background:var(--ng-bg);color:var(--ng-fg)}
+        .result-cat{font-size:1.25rem;font-weight:700;color:var(--text);margin-bottom:4px}
+        .result-tip{font-size:.78rem;color:var(--sub);margin-bottom:20px}
 
-        /* ─── result ─── */
-        #result-step { display: none; }
-        #result-step.active {
-            display: block;
-            animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
-        }
+        .field-group{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+        .field-wrap{position:relative}
+        .field-wrap label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.1em;color:var(--sub);text-transform:uppercase;margin-bottom:4px}
+        .field-wrap input{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:.88rem;color:var(--text);outline:none;transition:border-color .18s;background:var(--bg-soft)}
+        .field-wrap input:focus{border-color:var(--primary);background:var(--card)}
 
-        .result-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 11px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            margin-bottom: 10px;
-        }
-        .badge-ok { background: var(--ok-bg); color: var(--ok-fg); }
-        .badge-ng { background: var(--ng-bg); color: var(--ng-fg); }
+        .submit-btn{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .18s,transform .12s}
+        .submit-btn:hover{background:var(--primary-dark)}
+        .submit-btn:active{transform:scale(.98)}
+        .submit-btn .arrow{font-size:1.1rem}
 
-        .result-cat {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 4px;
-        }
-        .result-tip {
-            font-size: 0.78rem;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-
-        /* ─── form fields ─── */
-        .field-group { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
-        .field-wrap { position: relative; }
-        .field-wrap label {
-            display: block;
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: var(--muted);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .field-wrap input {
-            width: 100%;
-            padding: 10px 13px;
-            border: 1.5px solid var(--line);
-            border-radius: 9px;
-            font-family: inherit;
-            font-size: 0.88rem;
-            color: var(--ink);
-            outline: none;
-            transition: border-color 0.18s;
-            background: #fafafa;
-        }
-        .field-wrap input:focus { border-color: var(--rose); background: #fff; }
-
-        /* ─── submit btn ─── */
-        .submit-btn {
-            width: 100%;
-            padding: 13px;
-            background: var(--rose);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            transition: background 0.18s, transform 0.12s;
-        }
-        .submit-btn:hover { background: #b05559; }
-        .submit-btn:active { transform: scale(0.98); }
-        .submit-btn .arrow { font-size: 1.1rem; }
+        .retry-btn{flex:1;padding:13px;background:var(--card);color:var(--sub);border:1.5px solid var(--line);border-radius:10px;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.15s}
+        .retry-btn:hover{background:var(--primary-soft);color:var(--primary);border-color:var(--primary-light)}
+        .btn-row{display:flex;gap:8px;margin-top:0}
     </style>
 </head>
 <body>
 
-<!-- 固定ヘッダー -->
 <header class="site-header">
     <div class="header-label">Café Expense Check</div>
     <div class="header-title">カフェ経費&thinsp;<span>判定</span></div>
@@ -361,47 +222,47 @@
 
 <div class="shell">
 
-    <!-- notice-area -->
-    <div class="notice-area">
-        <div class="notice-wrap" data-notice-id="info">
-            <div class="notice notice-info">
-                <span class="icon">💾</span>
-                <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
-                <button type="button" class="close-btn" aria-label="最小化">×</button>
+    <!-- enu-notice-area（101仕様） -->
+    <div class="enu-notice-area">
+        <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+            <div class="enu-notice enu-notice-info">
+                <span class="enu-icon">💾</span>
+                <span class="enu-body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+                <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
             </div>
-            <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+            <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
         </div>
-        <div class="notice-wrap" data-notice-id="warn">
-            <div class="notice notice-warn">
-                <span class="icon">⚠️</span>
-                <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
-                <button type="button" class="close-btn" aria-label="最小化">×</button>
+        <div class="enu-notice-wrap" data-notice-id="warn" data-storage="local">
+            <div class="enu-notice enu-notice-warn">
+                <span class="enu-icon">⚠️</span>
+                <span class="enu-body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
+                <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
             </div>
-            <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+            <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
         </div>
-        <div class="notice-wrap" data-notice-id="disclaim">
-            <div class="notice notice-disclaim">
-                <span class="icon">🚨</span>
-                <span class="body">本ツールの判定は一般的な目安です。実際の経費処理は社内規定や税法により異なるため、税理士にご確認ください。</span>
-                <button type="button" class="close-btn" aria-label="最小化">×</button>
+        <div class="enu-notice-wrap" data-notice-id="disclaim">
+            <div class="enu-notice enu-notice-disclaim">
+                <span class="enu-icon">🚨</span>
+                <span class="enu-body">本ツールの判定は一般的な目安です。実際の経費処理は社内規定や税法により異なるため、税理士にご確認ください。</span>
+                <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
             </div>
-            <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+            <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
         </div>
-        <div class="notice-wrap" data-notice-id="date">
-            <div class="notice notice-date">
-                <span class="icon">📅</span>
-                <span class="body">掲載情報は <strong>2026年3月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
-                <button type="button" class="close-btn" aria-label="最小化">×</button>
+        <div class="enu-notice-wrap" data-notice-id="date">
+            <div class="enu-notice enu-notice-date">
+                <span class="enu-icon">📅</span>
+                <span class="enu-body">掲載情報は <strong>2026年3月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
+                <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
             </div>
-            <button type="button" class="notice-mini notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+            <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
         </div>
-        <div class="notice-wrap" data-notice-id="help">
-            <div class="notice notice-help">
-                <span class="icon">📚</span>
-                <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
-                <button type="button" class="close-btn" aria-label="最小化">×</button>
+        <div class="enu-notice-wrap" data-notice-id="help">
+            <div class="enu-notice enu-notice-help">
+                <span class="enu-icon">📚</span>
+                <span class="enu-body">使い方・FAQ・トラブル対応は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+                <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
             </div>
-            <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+            <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
         </div>
     </div>
 
@@ -418,81 +279,53 @@
 
     <!-- card -->
     <div class="card">
-
-        <!-- step body -->
         <div class="step-body">
 
-            <!-- Q1: 誰と -->
             <div id="q1" class="step active">
                 <div class="q-num">Step 1 / 4</div>
                 <div class="q-text">誰と飲食しましたか？</div>
                 <div class="choices">
-                    <button class="choice-btn" onclick="goStep('q_alone', 1)">
-                        <span class="icon">🧍</span>ひとりで
-                    </button>
-                    <button class="choice-btn" onclick="goStep('q_guest', 1)">
-                        <span class="icon">🤝</span>客先・取引先
-                    </button>
+                    <button class="choice-btn" onclick="goStep('q_alone',1)"><span class="icon">🧍</span>ひとりで</button>
+                    <button class="choice-btn" onclick="goStep('q_guest',1)"><span class="icon">🤝</span>客先・取引先</button>
                 </div>
             </div>
 
-            <!-- Q alone: 目的 -->
             <div id="q_alone" class="step">
                 <div class="q-num">Step 2 / 4</div>
                 <div class="q-text">目的は何ですか？</div>
                 <div class="choices">
-                    <button class="choice-btn" onclick="finish('private', 2)">
-                        <span class="icon">🏠</span>私用
-                    </button>
-                    <button class="choice-btn" onclick="goStep('q_work', 2)">
-                        <span class="icon">💼</span>仕事
-                    </button>
+                    <button class="choice-btn" onclick="finish('private',2)"><span class="icon">🏠</span>私用</button>
+                    <button class="choice-btn" onclick="goStep('q_work',2)"><span class="icon">💼</span>仕事</button>
                 </div>
             </div>
 
-            <!-- Q work: 内容 -->
             <div id="q_work" class="step">
                 <div class="q-num">Step 3 / 4</div>
                 <div class="q-text">仕事の内容は？</div>
                 <div class="choices">
-                    <button class="choice-btn" onclick="finish('study', 3)">
-                        <span class="icon">🔬</span>研究・視察
-                    </button>
-                    <button class="choice-btn" onclick="goStep('q_order', 3)">
-                        <span class="icon">🖥️</span>ひとり仕事
-                    </button>
+                    <button class="choice-btn" onclick="finish('study',3)"><span class="icon">🔬</span>研究・視察</button>
+                    <button class="choice-btn" onclick="goStep('q_order',3)"><span class="icon">🖥️</span>ひとり仕事</button>
                 </div>
             </div>
 
-            <!-- Q order: 注文 -->
             <div id="q_order" class="step">
                 <div class="q-num">Step 4 / 4</div>
                 <div class="q-text">注文内容は？</div>
                 <div class="choices">
-                    <button class="choice-btn" onclick="finish('drink', 4)">
-                        <span class="icon">☕</span>飲み物
-                    </button>
-                    <button class="choice-btn" onclick="finish('food', 4)">
-                        <span class="icon">🍱</span>食べ物
-                    </button>
+                    <button class="choice-btn" onclick="finish('drink',4)"><span class="icon">☕</span>飲み物</button>
+                    <button class="choice-btn" onclick="finish('food',4)"><span class="icon">🍱</span>食べ物</button>
                 </div>
             </div>
 
-            <!-- Q guest: 目的 -->
             <div id="q_guest" class="step">
                 <div class="q-num">Step 2 / 4</div>
                 <div class="q-text">内容は何でしたか？</div>
                 <div class="choices">
-                    <button class="choice-btn" onclick="finish('mtg', 2)">
-                        <span class="icon">📋</span>打合せ・ミーティング
-                    </button>
-                    <button class="choice-btn" onclick="finish('high', 2)">
-                        <span class="icon">🥂</span>接待・慰労
-                    </button>
+                    <button class="choice-btn" onclick="finish('mtg',2)"><span class="icon">📋</span>打合せ・ミーティング</button>
+                    <button class="choice-btn" onclick="finish('high',2)"><span class="icon">🥂</span>接待・慰労</button>
                 </div>
             </div>
 
-            <!-- Result -->
             <div id="result-step">
                 <div id="result-badge-wrap"></div>
                 <div id="result-cat" class="result-cat"></div>
@@ -508,321 +341,421 @@
                     </div>
                 </div>
                 <div class="btn-row">
-                    <button class="submit-btn" style="flex:1;" onclick="saveData()">
-                        保存する <span class="arrow">→</span>
-                    </button>
+                    <button class="submit-btn" style="flex:1" onclick="saveData()">保存する <span class="arrow">→</span></button>
                     <button class="retry-btn" onclick="resetToStart()">もう一度判定</button>
                 </div>
             </div>
 
-            <!-- back btn -->
             <button class="back-link" id="back-btn" onclick="goBack()">← やり直す</button>
 
-        </div><!-- /step-body -->
-    </div><!-- /card -->
+        </div>
+    </div>
 
     <!-- 履歴 -->
     <div id="log-area"></div>
 
-    <!-- toolbar -->
-    <div class="toolbar">
-        <button class="btn-card fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
-        <button class="btn-card fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
-        <button class="btn-card fc-share"  id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
-        <button class="btn-card fc-json"   id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
-        <button class="btn-card fc-json"   id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+    <!-- enu-toolbar（102仕様：grid / PDF+印刷統合） -->
+    <div class="enu-toolbar">
+        <button type="button" class="enu-btn-card enu-fc-pdf"  id="enu-btn-print"  aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+        <button type="button" class="enu-btn-card enu-fc-share" id="enu-btn-share"  aria-label="共有"><span class="enu-icon">🔗</span><span class="enu-label">共有</span></button>
+        <button type="button" class="enu-btn-card enu-fc-json"  id="enu-btn-export" aria-label="エクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
+        <button type="button" class="enu-btn-card enu-fc-json"  id="enu-btn-import" aria-label="インポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
     </div>
 
-    <!-- footer -->
-    <div class="footer">© 2026 enu(エヌ) All rights reserved.</div>
+    <!-- enu-footer -->
+    <footer class="enu-footer">
+        <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener" class="enu-home-btn">🏠 ホームへ戻る</a>
+        <hr class="enu-footer-line">
+        <div class="enu-footer-credit">🌷 by <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">enu(エヌ)</a></div>
+        <div class="enu-footer-copy">© 2026 enu(エヌ) All rights reserved.</div>
+    </footer>
 
 </div><!-- /shell -->
 
-<div class="toast" id="toast"></div>
+<div class="enu-toast" id="enu-toast"></div>
+
+<div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
+    <div class="enu-confirm-modal__backdrop"></div>
+    <div class="enu-confirm-modal__box" role="dialog" aria-modal="true" aria-labelledby="enu-confirm-title">
+        <h3 class="enu-confirm-modal__title" id="enu-confirm-title"></h3>
+        <p class="enu-confirm-modal__desc"></p>
+        <div class="enu-confirm-modal__actions">
+            <button type="button" class="enu-confirm-btn enu-confirm-btn--cancel">キャンセル</button>
+            <button type="button" class="enu-confirm-btn enu-confirm-btn--ok">OK</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    let history = [];   // stack of step ids
-    let cur = {};
+'use strict';
 
-    const STEPS = ['q1','q_alone','q_work','q_order','q_guest'];
-    const backBtn = document.getElementById('back-btn');
+// =========================================================
+// ENU_CONFIG
+// =========================================================
+const ENU_CONFIG = {
+    appId:       'cafe-expense',
+    appName:     'カフェ経費判定',
+    dataVersion: 1,
+    storageType: 'local',
+    getData()       { return JSON.parse(localStorage.getItem('logs_mail') || '[]'); },
+    applyData(data) { localStorage.setItem('logs_mail', JSON.stringify(data)); renderLogs(); },
+    validateData(d) { return Array.isArray(d); }
+};
+const CFG = ENU_CONFIG;
 
-    function showStep(id) {
-        // hide all
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('result-step').classList.remove('active');
+// =========================================================
+// toast & enuConfirm
+// =========================================================
+function toast(msg) {
+    const t = document.getElementById('enu-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
 
-        if (id === 'result') {
-            document.getElementById('result-step').classList.add('active');
-        } else {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('active');
-        }
-    }
-
-    function updateProgress(stepIdx) {
-        for (let i = 0; i <= 3; i++) {
-            const dot = document.getElementById('pd'+i);
-            dot.classList.remove('active','done');
-            if (i < stepIdx)  dot.classList.add('done');
-            if (i === stepIdx) dot.classList.add('active');
-        }
-        for (let i = 0; i <= 2; i++) {
-            const line = document.getElementById('pl'+i);
-            line.classList.toggle('done', i < stepIdx);
-        }
-    }
-
-    function goStep(id, progressIdx) {
-        history.push({ step: getCurrentStep(), progress: progressIdx - 1 });
-        showStep(id);
-        updateProgress(progressIdx);
-        backBtn.classList.add('visible');
-    }
-
-    function getCurrentStep() {
-        const active = document.querySelector('.step.active');
-        if (active) return active.id;
-        if (document.getElementById('result-step').classList.contains('active')) return 'result';
-        return 'q1';
-    }
-
-    function goBack() {
-        if (history.length === 0) return;
-        const prev = history.pop();
-        showStep(prev.step);
-        updateProgress(prev.progress);
-        document.getElementById('result-step').classList.remove('active');
-        if (history.length === 0) backBtn.classList.remove('visible');
-    }
-
-    function finish(type, progressIdx) {
-        history.push({ step: getCurrentStep(), progress: progressIdx - 1 });
-
-        const map = {
-            private:  { ok: false, cat: '経費不可',               tip: '私用は経費計上できません' },
-            study:    { ok: true,  cat: '雑費（研究費・取材費も可）', tip: 'レシートの裏に視察・取材の目的を記載しておきましょう' },
-            drink:    { ok: true,  cat: '雑費',                   tip: 'レシートの裏にいつ・何の仕事をしたか記載しておきましょう' },
-            food:     { ok: false, cat: '経費不可',               tip: '食事代は生活費とみなされ原則NG。飲み物と食事は領収書を分けてもらいましょう' },
-            mtg:      { ok: true,  cat: '会議費',                  tip: '誰と・何の打合せかをレシートの裏に記載。雑費・接待交際費でも可' },
-            high:     { ok: true,  cat: '接待交際費',              tip: '相手の氏名・会社名・目的をレシートの裏に記載しておきましょう' },
+function enuConfirm(title, desc, okLabel = 'OK', cancelLabel = 'キャンセル') {
+    return new Promise(resolve => {
+        const modal = document.getElementById('enu-confirm-modal');
+        if (!modal) { resolve(window.confirm(`${title}\n\n${desc}`)); return; }
+        modal.querySelector('.enu-confirm-modal__title').textContent = title;
+        modal.querySelector('.enu-confirm-modal__desc').textContent  = desc;
+        const ok       = modal.querySelector('.enu-confirm-btn--ok');
+        const cancel   = modal.querySelector('.enu-confirm-btn--cancel');
+        const backdrop = modal.querySelector('.enu-confirm-modal__backdrop');
+        ok.textContent     = okLabel;
+        cancel.textContent = cancelLabel;
+        modal.hidden = false;
+        setTimeout(() => cancel.focus(), 50);
+        const cleanup = result => {
+            modal.hidden = true;
+            ok.removeEventListener('click', onOk);
+            cancel.removeEventListener('click', onCancel);
+            backdrop.removeEventListener('click', onCancel);
+            document.removeEventListener('keydown', onKey);
+            resolve(result);
         };
-        cur = map[type] || {};
+        const onOk     = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        const onKey    = e => { if (e.key === 'Escape') onCancel(); if (e.key === 'Enter') onOk(); };
+        ok.addEventListener('click', onOk);
+        cancel.addEventListener('click', onCancel);
+        backdrop.addEventListener('click', onCancel);
+        document.addEventListener('keydown', onKey);
+    });
+}
 
-        const badgeWrap = document.getElementById('result-badge-wrap');
-        badgeWrap.innerHTML = cur.ok
-            ? `<span class="result-badge badge-ok">✓ 経費OK</span>`
-            : `<span class="result-badge badge-ng">✕ 経費NG</span>`;
+window.enuTools         = window.enuTools || {};
+window.enuTools.toast   = toast;
+window.enuTools.confirm = enuConfirm;
 
-        document.getElementById('result-cat').textContent = cur.cat;
-        document.getElementById('result-tip').textContent = cur.tip;
+// =========================================================
+// フローチャート
+// =========================================================
+let stepHistory = [];
+let cur = {};
+const backBtn = document.getElementById('back-btn');
 
-        showStep('result');
-        updateProgress(4);
-        backBtn.classList.add('visible');
+function showStep(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('result-step').classList.remove('active');
+    if (id === 'result') {
+        document.getElementById('result-step').classList.add('active');
+    } else {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('active');
     }
+}
 
-    let currentFilter = '全て';
-
-    function getCategories(logs) {
-        const cats = [...new Set(logs.map(l => l.c))];
-        return cats;
+function updateProgress(idx) {
+    for (let i = 0; i <= 3; i++) {
+        const d = document.getElementById('pd' + i);
+        d.classList.remove('active', 'done');
+        if (i < idx) d.classList.add('done');
+        if (i === idx) d.classList.add('active');
     }
-
-    function renderLogs() {
-        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
-        const area = document.getElementById('log-area');
-        if (logs.length === 0) { area.innerHTML = ''; return; }
-
-        const cats = getCategories(logs);
-        const filtered = currentFilter === '全て' ? logs : logs.filter(l => l.c === currentFilter);
-        const total = filtered.reduce((s, l) => s + Number(l.a), 0);
-
-        const filterHTML = `<div class="log-filter">
-            ${['全て', ...cats].map(c => `
-                <button class="filter-btn ${c === currentFilter ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>
-            `).join('')}
-        </div>`;
-
-        const itemsHTML = filtered.map((l, i) => {
-            const realIndex = logs.indexOf(l);
-            return `<div class="log-item">
-                <span class="log-date">${l.d}</span>
-                <span class="log-cat">${l.c}</span>
-                <span class="log-memo">${l.m}</span>
-                <span class="log-amt">¥${Number(l.a).toLocaleString()}</span>
-                <button class="log-del" onclick="deleteLog(${realIndex})" title="削除">🗑</button>
-            </div>`;
-        }).join('');
-
-        area.innerHTML = `<div class="log-area">
-            ${filterHTML}
-            ${itemsHTML}
-            <div class="log-total">
-                <span class="total-label">${currentFilter === '全て' ? '合計' : currentFilter + ' 合計'}</span>
-                <span class="total-val">¥${total.toLocaleString()}</span>
-            </div>
-        </div>`;
+    for (let i = 0; i <= 2; i++) {
+        document.getElementById('pl' + i).classList.toggle('done', i < idx);
     }
+}
 
-    function setFilter(cat) {
-        currentFilter = cat;
-        renderLogs();
-    }
+function getCurrentStep() {
+    const a = document.querySelector('.step.active');
+    if (a) return a.id;
+    if (document.getElementById('result-step').classList.contains('active')) return 'result';
+    return 'q1';
+}
 
-    function deleteLog(index) {
-        if (!confirm('この記録を削除しますか？')) return;
-        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
-        logs.splice(index, 1);
-        localStorage.setItem('logs_mail', JSON.stringify(logs));
-        if (currentFilter !== '全て') {
-            const remaining = logs.filter(l => l.c === currentFilter);
-            if (remaining.length === 0) currentFilter = '全て';
-        }
-        renderLogs();
-        toast('🗑 削除しました');
-    }
+function goStep(id, idx) {
+    stepHistory.push({ step: getCurrentStep(), progress: idx - 1 });
+    showStep(id);
+    updateProgress(idx);
+    backBtn.classList.add('visible');
+}
 
-    function resetToStart() {
-        history = [];
-        showStep('q1');
-        updateProgress(0);
-        backBtn.classList.remove('visible');
-        document.getElementById('memo').value = '';
-        document.getElementById('amt').value = '';
-    }
+function goBack() {
+    if (!stepHistory.length) return;
+    const prev = stepHistory.pop();
+    showStep(prev.step);
+    updateProgress(prev.progress);
+    document.getElementById('result-step').classList.remove('active');
+    if (!stepHistory.length) backBtn.classList.remove('visible');
+}
 
-    function saveData() {
-        const a = document.getElementById('amt').value;
-        const m = document.getElementById('memo').value || '未入力';
-        if (!a) { alert('金額を入力してください'); return; }
-        const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
-        logs.unshift({ d: new Date().toLocaleDateString(), a, m, c: cur.cat });
-        localStorage.setItem('logs_mail', JSON.stringify(logs));
-        document.getElementById('memo').value = '';
-        document.getElementById('amt').value = '';
-        renderLogs();
-        toast('💾 保存しました');
-    }
+function finish(type, idx) {
+    stepHistory.push({ step: getCurrentStep(), progress: idx - 1 });
+    const map = {
+        private: { ok: false, cat: '経費不可',                tip: '私用は経費計上できません' },
+        study:   { ok: true,  cat: '雑費（研究費・取材費も可）', tip: 'レシートの裏に視察・取材の目的を記載しておきましょう' },
+        drink:   { ok: true,  cat: '雑費',                    tip: 'レシートの裏にいつ・何の仕事をしたか記載しておきましょう' },
+        food:    { ok: false, cat: '経費不可',                tip: '食事代は生活費とみなされ原則NG。飲み物と食事は領収書を分けてもらいましょう' },
+        mtg:     { ok: true,  cat: '会議費',                   tip: '誰と・何の打合せかをレシートの裏に記載。雑費・接待交際費でも可' },
+        high:    { ok: true,  cat: '接待交際費',               tip: '相手の氏名・会社名・目的をレシートの裏に記載しておきましょう' },
+    };
+    cur = map[type] || {};
+    const wrap = document.getElementById('result-badge-wrap');
+    wrap.textContent = '';
+    const badge = document.createElement('span');
+    badge.className = 'result-badge ' + (cur.ok ? 'badge-ok' : 'badge-ng');
+    badge.textContent = cur.ok ? '✓ 経費OK' : '✕ 経費NG';
+    wrap.appendChild(badge);
+    document.getElementById('result-cat').textContent = cur.cat;
+    document.getElementById('result-tip').textContent = cur.tip;
+    showStep('result');
+    updateProgress(4);
+    backBtn.classList.add('visible');
+}
 
-    // ページ読み込み時に履歴を表示
+// =========================================================
+// 履歴
+// =========================================================
+let currentFilter = '全て';
+
+function getCategories(logs) { return [...new Set(logs.map(l => l.c))]; }
+
+function renderLogs() {
+    const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+    const area = document.getElementById('log-area');
+    if (!logs.length) { area.textContent = ''; return; }
+
+    const cats     = getCategories(logs);
+    const filtered = currentFilter === '全て' ? logs : logs.filter(l => l.c === currentFilter);
+    const total    = filtered.reduce((s, l) => s + Number(l.a), 0);
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'log-area';
+
+    const filterDiv = document.createElement('div');
+    filterDiv.className = 'log-filter';
+    ['全て', ...cats].forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn' + (c === currentFilter ? ' active' : '');
+        btn.textContent = c;
+        btn.addEventListener('click', () => setFilter(c));
+        filterDiv.appendChild(btn);
+    });
+    wrapper.appendChild(filterDiv);
+
+    filtered.forEach(l => {
+        const ri   = logs.indexOf(l);
+        const item = document.createElement('div');
+        item.className = 'log-item';
+        const d = document.createElement('span'); d.className = 'log-date'; d.textContent = l.d;
+        const c = document.createElement('span'); c.className = 'log-cat';  c.textContent = l.c;
+        const m = document.createElement('span'); m.className = 'log-memo'; m.textContent = l.m;
+        const a = document.createElement('span'); a.className = 'log-amt';  a.textContent = '¥' + Number(l.a).toLocaleString();
+        const del = document.createElement('button'); del.className = 'log-del'; del.title = '削除'; del.textContent = '🗑';
+        del.addEventListener('click', () => deleteLog(ri));
+        item.append(d, c, m, a, del);
+        wrapper.appendChild(item);
+    });
+
+    const totalDiv = document.createElement('div'); totalDiv.className = 'log-total';
+    const lbl = document.createElement('span'); lbl.className = 'total-label'; lbl.textContent = currentFilter === '全て' ? '合計' : currentFilter + ' 合計';
+    const val = document.createElement('span'); val.className = 'total-val'; val.textContent = '¥' + total.toLocaleString();
+    totalDiv.append(lbl, val);
+    wrapper.appendChild(totalDiv);
+
+    area.textContent = '';
+    area.appendChild(wrapper);
+}
+
+function setFilter(cat) { currentFilter = cat; renderLogs(); }
+
+async function deleteLog(index) {
+    const ok = await enuConfirm('記録の削除', 'この記録を削除しますか？\n元に戻すことはできません。', '削除', 'キャンセル');
+    if (!ok) return;
+    const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+    logs.splice(index, 1);
+    localStorage.setItem('logs_mail', JSON.stringify(logs));
+    if (currentFilter !== '全て' && !logs.filter(l => l.c === currentFilter).length) currentFilter = '全て';
     renderLogs();
+    toast('🗑 削除しました');
+}
 
-    // ─── notice minimize ───
-    const HELP_URL = 'https://enu-tools.pages.dev/help/';
-    const HELP_OPEN_NEW_TAB = true;
-    (function(){const l=document.getElementById('help-page-link');if(!l)return;l.href=HELP_URL;if(HELP_OPEN_NEW_TAB){l.target='_blank';l.rel='noopener'}})();
-    const NOTICE_KEY = 'enu_notice_minimized';
-    function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
-    function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
-    (function(){const l=getNoticeList();document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
-    document.querySelectorAll('.notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
-    document.querySelectorAll('.notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+function resetToStart() {
+    stepHistory = [];
+    showStep('q1');
+    updateProgress(0);
+    backBtn.classList.remove('visible');
+    document.getElementById('memo').value = '';
+    document.getElementById('amt').value  = '';
+}
 
-    // ─── toolbar ───
-    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
-    async function handleShare(){
-        const shareData={title:document.title,text:`${document.title} を共有します`,url:location.href};
-        if(navigator.share){try{await navigator.share(shareData)}catch(e){}}
-        else{try{await navigator.clipboard.writeText(location.href);toast('🔗 URLをコピーしました')}catch(e){toast('共有に対応していない環境です')}}
+function saveData() {
+    const a = document.getElementById('amt').value;
+    const m = document.getElementById('memo').value || '未入力';
+    if (!a) { toast('⚠️ 金額を入力してください'); return; }
+    const logs = JSON.parse(localStorage.getItem('logs_mail') || '[]');
+    logs.unshift({ d: new Date().toLocaleDateString(), a, m, c: cur.cat });
+    localStorage.setItem('logs_mail', JSON.stringify(logs));
+    document.getElementById('memo').value = '';
+    document.getElementById('amt').value  = '';
+    renderLogs();
+    toast('💾 保存しました');
+}
+
+renderLogs();
+
+// =========================================================
+// notice IIFE
+// =========================================================
+(function () {
+    const NOTICE_KEY   = 'enu_cafe-expense_notice_minimized';
+    const HELP_URL     = 'https://enu-tools.pages.dev/help/';
+    const helpEl = document.getElementById('enu-help-link');
+    if (helpEl) { helpEl.href = HELP_URL; helpEl.target = '_blank'; helpEl.rel = 'noopener'; }
+    function get()   { try { return JSON.parse(localStorage.getItem(NOTICE_KEY) || '[]'); } catch(e) { return []; } }
+    function save(l) { try { localStorage.setItem(NOTICE_KEY, JSON.stringify(l)); } catch(e) {} }
+    get().forEach(id => { const w = document.querySelector(`.enu-notice-wrap[data-notice-id="${id}"]`); if (w) w.classList.add('is-mini'); });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b => b.addEventListener('click', () => {
+        const w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.add('is-mini');
+        const l = get(); if (!l.includes(id)) { l.push(id); save(l); }
+    }));
+    document.querySelectorAll('.enu-notice-mini').forEach(m => m.addEventListener('click', () => {
+        const w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.remove('is-mini');
+        save(get().filter(x => x !== id));
+    }));
+})();
+
+// =========================================================
+// toolbar IIFE
+// =========================================================
+(function () {
+    async function handleShare() {
+        const d = { title: document.title, text: `${document.title} を共有します`, url: location.href };
+        if (navigator.share) { try { await navigator.share(d); } catch(e) {} }
+        else { try { await navigator.clipboard.writeText(location.href); toast('🔗 URLをコピーしました'); } catch(e) { toast('共有に対応していない環境です'); } }
     }
-    function handlePrint(){ window.print(); }
-    document.getElementById('btn-pdf')?.addEventListener('click', handlePrint);
-    document.getElementById('btn-print')?.addEventListener('click', handlePrint);
-    document.getElementById('btn-share')?.addEventListener('click', handleShare);
-
-    function getAppData(){ return JSON.parse(localStorage.getItem('logs_mail') || '[]'); }
-    function validateData(d){ return Array.isArray(d); }
-    function applyAppData(d){ localStorage.setItem('logs_mail', JSON.stringify(d)); renderLogs(); }
-
-    function handleExport(){
-        const data = getAppData();
-        const json = JSON.stringify(data, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
+    function handleExport() {
+        const payload = { app_id: CFG.appId, app_name: CFG.appName, data_version: CFG.dataVersion, storage_type: CFG.storageType, exported_at: new Date().toISOString(), data: CFG.getData() };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `カフェ経費判定_${new Date().toISOString().slice(0,10)}.json`;
-        document.body.appendChild(a); a.click();
-        document.body.removeChild(a); URL.revokeObjectURL(url);
+        const a = document.createElement('a'); a.href = url; a.download = `カフェ経費判定_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         toast('📤 JSONをダウンロードしました');
     }
-    function handleImport(){
-        const input = document.createElement('input');
-        input.type = 'file'; input.accept = 'application/json,.json';
+    async function handleImport() {
+        const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json,.json';
         input.addEventListener('change', async e => {
-            const file = e.target.files[0]; if(!file) return;
+            const f = e.target.files[0]; if (!f) return;
             try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-                if(!validateData(data)) throw new Error('データ形式が違います');
-                if(!confirm('現在のデータを上書きしてインポートしますか？')) return;
-                applyAppData(data);
-                toast('📥 インポートしました');
-            } catch(err) { toast('⚠️ ファイルが読み込めません'); }
+                const p = JSON.parse(await f.text());
+                if (!p || typeof p !== 'object') throw new Error('JSONの形式が不正です');
+                if (p.app_id && p.app_id !== CFG.appId) throw new Error(`別アプリのファイルです（${p.app_id}）`);
+                if (p.data_version > (CFG.dataVersion || 1)) throw new Error('新しいバージョンのファイルです');
+                const d = p.data !== undefined ? p.data : p;
+                if (!CFG.validateData(d)) throw new Error('データ形式が違います');
+                const ok = await enuConfirm('📥 データのインポート', `「${p.app_name || CFG.appName}」のデータをインポートします。\n現在のデータは上書きされます。元に戻せません。`, 'インポート', 'キャンセル');
+                if (!ok) return;
+                CFG.applyData(d); toast('📥 インポートしました');
+            } catch(err) { toast(`⚠️ ${err.message || 'ファイルが読み込めません'}`); }
         });
         input.click();
     }
-    document.getElementById('btn-export')?.addEventListener('click', handleExport);
-    document.getElementById('btn-import')?.addEventListener('click', handleImport);
+    document.getElementById('enu-btn-print')?.addEventListener('click',  () => window.print());
+    document.getElementById('enu-btn-share')?.addEventListener('click',  handleShare);
+    document.getElementById('enu-btn-export')?.addEventListener('click', handleExport);
+    document.getElementById('enu-btn-import')?.addEventListener('click', handleImport);
+})();
 
-    // ─── PWA icons ───
-    (function(){
-        const BG = (function(){
-            const v = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-            return v || '#f5f0eb';
-        })();
-        const EMOJI = '☕';
-        const SIZES = [192, 512];
-        const EMOJI_FONT = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+// =========================================================
+// PWA icons（003仕様：DOMContentLoaded・toBlob・Promise.all）
+// =========================================================
+(function () {
+    function init() {
+        document.fonts.ready.then(async function () {
+            // Step 2: bg取得
+            const BG = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#faf7f0';
+            const EMOJI      = '☕';
+            const EMOJI_FONT = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
 
-        function makeCanvas(size) {
-            const c = document.createElement('canvas');
-            c.width = c.height = size;
-            const ctx = c.getContext('2d');
-            const r = size * 0.22;
-            ctx.beginPath();
-            ctx.moveTo(r, 0);
-            ctx.arcTo(size, 0, size, size, r);
-            ctx.arcTo(size, size, 0, size, r);
-            ctx.arcTo(0, size, 0, 0, r);
-            ctx.arcTo(0, 0, size, 0, r);
-            ctx.closePath();
-            ctx.fillStyle = BG;
-            ctx.fill();
-            ctx.font = `${size * 0.62}px ${EMOJI_FONT}`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
-            return c;
-        }
+            // Step 5: SVG favicon（font-size 60）
+            const svgSrc = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='${BG}'/><text x='50' y='50' font-size='60' text-anchor='middle' dominant-baseline='central' font-family='Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif'>${EMOJI}</text></svg>`;
+            const favEl = document.getElementById('favicon-link') || document.querySelector('link[rel="icon"]');
+            if (favEl) favEl.href = 'data:image/svg+xml,' + encodeURIComponent(svgSrc);
 
-        // apple-touch-icon (180px)
-        document.getElementById('apple-touch-icon').href = makeCanvas(180).toDataURL('image/png');
+            // Canvas helper: any（角丸22%・絵文字55%）
+            function makeAny(size) {
+                return new Promise(resolve => {
+                    const c = document.createElement('canvas'); c.width = c.height = size;
+                    const ctx = c.getContext('2d'); const r = size * 0.22;
+                    ctx.beginPath(); ctx.moveTo(r,0); ctx.arcTo(size,0,size,size,r); ctx.arcTo(size,size,0,size,r); ctx.arcTo(0,size,0,0,r); ctx.arcTo(0,0,size,0,r); ctx.closePath();
+                    ctx.fillStyle = BG; ctx.fill();
+                    ctx.font = `${size * 0.55}px ${EMOJI_FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
+                    c.toBlob(blob => resolve(URL.createObjectURL(blob)));
+                });
+            }
 
-        // PWA manifest with icons (any + maskable 別々に登録)
-        const icons = SIZES.flatMap(s => {
-            const url = makeCanvas(s).toDataURL('image/png');
-            return [
-                { src: url, sizes: `${s}x${s}`, type: 'image/png', purpose: 'any' },
-                { src: url, sizes: `${s}x${s}`, type: 'image/png', purpose: 'maskable' }
-            ];
+            // Canvas helper: maskable（フルスクエア・絵文字50%）
+            function makeMaskable(size) {
+                return new Promise(resolve => {
+                    const c = document.createElement('canvas'); c.width = c.height = size;
+                    const ctx = c.getContext('2d');
+                    ctx.fillStyle = BG; ctx.fillRect(0, 0, size, size);
+                    ctx.font = `${size * 0.50}px ${EMOJI_FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
+                    c.toBlob(blob => resolve(URL.createObjectURL(blob)));
+                });
+            }
+
+            // Step 6: apple-touch-icon（180px any）
+            const appleUrl = await makeAny(180);
+            const appleEl  = document.getElementById('apple-touch-icon');
+            if (appleEl) appleEl.href = appleUrl;
+
+            // Step 7: 4枚並列生成
+            const [u192a, u192m, u512a, u512m] = await Promise.all([
+                makeAny(192), makeMaskable(192), makeAny(512), makeMaskable(512)
+            ]);
+
+            // Step 8: manifest注入
+            const path = location.pathname;
+            const manifest = {
+                id: path, name: 'カフェ経費判定', short_name: 'カフェ経費判定',
+                start_url: path, scope: path, display: 'standalone', orientation: 'portrait',
+                background_color: BG, theme_color: BG,
+                icons: [
+                    { src: u192a, sizes: '192x192', type: 'image/png', purpose: 'any' },
+                    { src: u192m, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+                    { src: u512a, sizes: '512x512', type: 'image/png', purpose: 'any' },
+                    { src: u512m, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestEl = document.getElementById('pwa-manifest');
+            if (manifestEl) manifestEl.href = URL.createObjectURL(blob);
         });
-        const path = location.pathname;
-        const manifest = {
-            name: 'カフェ経費判定',
-            short_name: 'カフェ経費判定',
-            start_url: path,
-            scope: path,
-            display: 'standalone',
-            orientation: 'portrait',
-            background_color: BG,
-            theme_color: BG,
-            icons
-        };
-        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-        document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
-    })();
+    }
+
+    if (document.readyState !== 'loading') { init(); }
+    else { document.addEventListener('DOMContentLoaded', init); }
+})();
 </script>
 </body>
 </html>
+
+
