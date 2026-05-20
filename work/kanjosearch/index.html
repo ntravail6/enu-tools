@@ -870,18 +870,33 @@ header {
 .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
 
 /* === Action toolbar === */
+.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+.enu-btn-card:hover{transform:translateY(-1px)}
+.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+.enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+/* 各ボタンの色 */
 .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-.enu-fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
-.enu-fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
 .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
-.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
-.enu-btn-card .icon{font-size:1.3rem;line-height:1}
-.enu-btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-.enu-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;align-items:center;margin-bottom:6px}
+/* 確認モーダル（enuTools 標準ダイアログ） */
+.enu-confirm-modal[hidden]{display:none}
+.enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+.enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:enuFade .15s ease}
+.enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px 22px 18px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;animation:enuConfirmUp .2s ease}
+.enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 10px;line-height:1.4}
+.enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin:0 0 20px;line-height:1.65;white-space:pre-line}
+.enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+.enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;transition:opacity .15s,transform .1s}
+.enu-confirm-btn:hover{transform:translateY(-1px)}
+.enu-confirm-btn--cancel{background:transparent;border:1px solid var(--line);color:var(--sub)}
+.enu-confirm-btn--ok{background:var(--primary);border:1px solid var(--primary);color:#fff}
+@keyframes enuFade{from{opacity:0}to{opacity:1}}
+@keyframes enuConfirmUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* === Print === */
 @media print{
-  .toolbar,.toast,.enu-notice-area,.modal-overlay,.search-toolbar{display:none !important}
+  .enu-toolbar,.enu-toast,.enu-confirm-modal,.enu-notice-area,.modal-overlay,.search-toolbar{display:none !important}
   .print-hide{display:none !important}
   body{background:#fff !important}
   .card{box-shadow:none !important;border:1px solid #ddd !important;break-inside:avoid;page-break-inside:avoid}
@@ -1069,11 +1084,10 @@ header {
 </div>
 
 <div class="enu-toolbar">
-    <button class="enu-btn-card enu-fc-pdf"   id="btn-pdf"><span class="icon">📄</span><span class="label">PDF出力</span></button>
-    <button class="enu-btn-card enu-fc-print" id="btn-print"><span class="icon">🖨</span><span class="label">印刷</span></button>
-    <button class="enu-btn-card enu-fc-share" id="btn-share"><span class="icon">🔗</span><span class="label">共有</span></button>
-    <button class="enu-btn-card enu-fc-json"  id="btn-export"><span class="icon">📤</span><span class="label">エクスポート</span></button>
-    <button class="enu-btn-card enu-fc-json"  id="btn-import"><span class="icon">📥</span><span class="label">インポート</span></button>
+    <button type="button" class="enu-btn-card enu-fc-pdf"    id="enu-btn-print"   aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2"  aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-export"  aria-label="データをエクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-import"  aria-label="データをインポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
 </div>
 
 <div class="footer-wrapper">
@@ -1096,7 +1110,20 @@ header {
 </div>
 
 <!-- Toast -->
-<div class="enu-toast" id="toast"></div>
+<div class="enu-toast" id="enu-toast"></div>
+
+<!-- enuTools 確認モーダル（インポート確認用） -->
+<div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
+  <div class="enu-confirm-modal__backdrop"></div>
+  <div class="enu-confirm-modal__box" role="dialog" aria-modal="true" aria-labelledby="enu-confirm-title">
+    <h3 class="enu-confirm-modal__title" id="enu-confirm-title"></h3>
+    <p class="enu-confirm-modal__desc"></p>
+    <div class="enu-confirm-modal__actions">
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--cancel">キャンセル</button>
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--ok">OK</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ============================================
@@ -1549,21 +1576,35 @@ function getStatusBadge(account) {
     gray: { cls: 'badge-gray', label: '個別判断' }
   };
   const m = map[account.status] || map.ok;
-  return `<span class="badge ${m.cls}" data-tooltip="${escapeAttr(account.statusNote || '')}">${m.label}</span>`;
+  return h('span', { class: 'badge ' + m.cls, 'data-tooltip': account.statusNote || '' }, m.label);
 }
 
 function getFilingMark(account) {
   if (account.filing === 'blue') {
-    return '<span class="filing-mark filing-blue-only" title="青色申告のみ">青のみ</span>';
+    return h('span', { class: 'filing-mark filing-blue-only', title: '青色申告のみ' }, '青のみ');
   }
-  return '';
+  return null;
 }
 
-function escapeHtml(s) {
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function escapeAttr(s) {
-  return escapeHtml(s);
+// DOMビルダー: createTextNode が自動エスケープするため XSS安全（innerHTML不使用）
+function h(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  if (attrs) {
+    for (const k in attrs) {
+      const v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v;
+      else if (k === 'dataset') { for (const d in v) n.dataset[d] = v[d]; }
+      else if (k === 'style') n.setAttribute('style', v);
+      else if (k.slice(0, 2) === 'on' && typeof v === 'function') n.addEventListener(k.slice(2).toLowerCase(), v);
+      else n.setAttribute(k, v);
+    }
+  }
+  for (const c of kids.flat()) {
+    if (c == null || c === false || c === '') continue;
+    n.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return n;
 }
 
 function findAccount(id) {
@@ -1582,18 +1623,21 @@ function renderList() {
     matchesSearch(a, state.query) && matchesIndustry(a, state.industry)
   );
   
+  tbody.replaceChildren();
+  cards.replaceChildren();
   if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    cards.innerHTML = '';
     empty.style.display = 'block';
   } else {
     empty.style.display = 'none';
-    tbody.innerHTML = filtered.map(a => renderTableRow(a)).join('');
-    cards.innerHTML = filtered.map(a => renderCard(a)).join('');
+    filtered.forEach(a => tbody.appendChild(renderTableRow(a)));
+    filtered.forEach(a => cards.appendChild(renderCard(a)));
   }
   
-  document.getElementById('summaryCount').innerHTML = 
-    `全<strong>${accounts.length}</strong>件中 <strong>${filtered.length}</strong>件表示`;
+  const summary = document.getElementById('summaryCount');
+  summary.replaceChildren(
+    '全', h('strong', null, String(accounts.length)), '件中 ',
+    h('strong', null, String(filtered.length)), '件表示'
+  );
   document.getElementById('summaryBookmark').textContent = 
     `マイ科目 ${state.bookmarks.length}件`;
   
@@ -1603,43 +1647,39 @@ function renderList() {
 function renderTableRow(a) {
   const locked = isLockedByFiling(a, state.filing);
   const bookmarked = state.bookmarks.includes(a.id);
-  return `
-    <tr data-id="${a.id}" class="${locked ? 'locked' : ''}">
-      <td>
-        <span class="account-name">${escapeHtml(a.name)}</span>${getFilingMark(a)}
-        <span class="account-reading">${escapeHtml(a.reading)}</span>
-        <div class="account-category">区分：${escapeHtml(a.category)}</div>
-      </td>
-      <td>${getStatusBadge(a)}</td>
-      <td style="text-align:right;white-space:nowrap;">
-        <button class="copy-btn" data-copy="${escapeAttr(a.name)}" title="科目名をコピー">📋</button>
-        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
-      </td>
-    </tr>
-  `;
+  return h('tr', { 'data-id': a.id, class: locked ? 'locked' : '' },
+    h('td', null,
+      h('span', { class: 'account-name' }, a.name), getFilingMark(a),
+      h('span', { class: 'account-reading' }, a.reading),
+      h('div', { class: 'account-category' }, '区分：' + a.category)
+    ),
+    h('td', null, getStatusBadge(a)),
+    h('td', { style: 'text-align:right;white-space:nowrap;' },
+      h('button', { class: 'copy-btn', 'data-copy': a.name, title: '科目名をコピー' }, '📋'),
+      h('button', { class: 'bookmark-btn ' + (bookmarked ? 'active' : ''), 'data-bookmark': a.id, 'aria-label': 'ブックマーク' }, bookmarked ? '♥' : '♡')
+    )
+  );
 }
 
 function renderCard(a) {
   const locked = isLockedByFiling(a, state.filing);
   const bookmarked = state.bookmarks.includes(a.id);
   const examplePreview = (a.examples || []).slice(0, 2).join(' / ');
-  return `
-    <div class="account-card ${locked ? 'locked' : ''}" data-id="${a.id}">
-      <div class="card-header">
-        <div style="flex:1;min-width:0;">
-          <span class="account-name">${escapeHtml(a.name)}</span>${getFilingMark(a)}
-          <span class="account-reading">${escapeHtml(a.reading)}</span>
-        </div>
-        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
-      </div>
-      <div class="card-meta">
-        ${getStatusBadge(a)}
-        <span style="font-size:0.72rem;color:var(--sub);">区分：${escapeHtml(a.category)}</span>
-        <button class="copy-btn" data-copy="${escapeAttr(a.name)}" title="科目名をコピー">📋 コピー</button>
-      </div>
-      <div class="card-examples">${escapeHtml(examplePreview)}</div>
-    </div>
-  `;
+  return h('div', { class: 'account-card ' + (locked ? 'locked' : ''), 'data-id': a.id },
+    h('div', { class: 'card-header' },
+      h('div', { style: 'flex:1;min-width:0;' },
+        h('span', { class: 'account-name' }, a.name), getFilingMark(a),
+        h('span', { class: 'account-reading' }, a.reading)
+      ),
+      h('button', { class: 'bookmark-btn ' + (bookmarked ? 'active' : ''), 'data-bookmark': a.id, 'aria-label': 'ブックマーク' }, bookmarked ? '♥' : '♡')
+    ),
+    h('div', { class: 'card-meta' },
+      getStatusBadge(a),
+      h('span', { style: 'font-size:0.72rem;color:var(--sub);' }, '区分：' + a.category),
+      h('button', { class: 'copy-btn', 'data-copy': a.name, title: '科目名をコピー' }, '📋 コピー')
+    ),
+    h('div', { class: 'card-examples' }, examplePreview)
+  );
 }
 
 // ============================================
@@ -1654,14 +1694,14 @@ function renderMyAccounts() {
     return;
   }
   card.style.display = 'block';
-  list.innerHTML = state.bookmarks.map(id => {
+  list.replaceChildren();
+  state.bookmarks.forEach(id => {
     const a = findAccount(id);
-    if (!a) return '';
-    return `<button class="my-account-pill" data-id="${a.id}">${escapeHtml(a.name)}</button>`;
-  }).join('');
-  
-  list.querySelectorAll('[data-id]').forEach(el => {
-    el.addEventListener('click', () => openModal(el.dataset.id));
+    if (!a) return;
+    list.appendChild(h('button', {
+      class: 'my-account-pill', 'data-id': a.id,
+      onclick: () => openModal(a.id)
+    }, a.name));
   });
 }
 
@@ -1675,23 +1715,21 @@ function renderHistory() {
     return;
   }
   wrap.style.display = 'flex';
-  wrap.innerHTML = '<span class="history-label">📌 最近の検索：</span>' +
-    state.history.map(h => `<button class="chip" data-history="${escapeAttr(h)}">${escapeHtml(h)}</button>`).join('') +
-    `<button class="chip-clear" id="historyClear">クリア</button>`;
-  
-  wrap.querySelectorAll('[data-history]').forEach(el => {
-    el.addEventListener('click', () => {
-      const q = el.dataset.history;
-      document.getElementById('searchInput').value = q;
-      state.query = q;
-      renderList();
-    });
+  wrap.replaceChildren(h('span', { class: 'history-label' }, '📌 最近の検索：'));
+  state.history.forEach(q => {
+    wrap.appendChild(h('button', {
+      class: 'chip', 'data-history': q,
+      onclick: () => {
+        document.getElementById('searchInput').value = q;
+        state.query = q;
+        renderList();
+      }
+    }, q));
   });
-  document.getElementById('historyClear').addEventListener('click', () => {
-    state.history = [];
-    saveState();
-    renderHistory();
-  });
+  wrap.appendChild(h('button', {
+    class: 'chip-clear', id: 'historyClear',
+    onclick: () => { state.history = []; saveState(); renderHistory(); }
+  }, 'クリア'));
 }
 
 function addToHistory(query) {
@@ -1707,20 +1745,22 @@ function addToHistory(query) {
 // ============================================
 function renderComparisons() {
   const wrap = document.getElementById('comparisonList');
-  wrap.innerHTML = comparisons.map((c, i) => `
-    <details class="comparison-item" ${i === 0 ? '' : ''}>
-      <summary>${escapeHtml(c.title)}</summary>
-      <div class="comparison-content">
-        <div style="overflow-x:auto;">
-        <table class="comparison-table">
-          <thead><tr>${c.headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
-          <tbody>${c.rows.map(r => `<tr>${r.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody>
-        </table>
-        </div>
-        <div class="comparison-tip">💡 ${escapeHtml(c.tip)}</div>
-      </div>
-    </details>
-  `).join('');
+  wrap.replaceChildren();
+  comparisons.forEach(c => {
+    const thead = h('thead', null, h('tr', null, c.headers.map(head => h('th', null, head))));
+    const tbody = h('tbody', null, c.rows.map(r => h('tr', null, r.map(cell => h('td', null, cell)))));
+    wrap.appendChild(
+      h('details', { class: 'comparison-item' },
+        h('summary', null, c.title),
+        h('div', { class: 'comparison-content' },
+          h('div', { style: 'overflow-x:auto;' },
+            h('table', { class: 'comparison-table' }, thead, tbody)
+          ),
+          h('div', { class: 'comparison-tip' }, '💡 ' + c.tip)
+        )
+      )
+    );
+  });
 }
 
 // ============================================
@@ -1728,12 +1768,15 @@ function renderComparisons() {
 // ============================================
 function renderFaqs() {
   const wrap = document.getElementById('faqList');
-  wrap.innerHTML = faqs.map(f => `
-    <details class="faq-item">
-      <summary>${escapeHtml(f.q)}</summary>
-      <div class="faq-content">${escapeHtml(f.a)}</div>
-    </details>
-  `).join('');
+  wrap.replaceChildren();
+  faqs.forEach(f => {
+    wrap.appendChild(
+      h('details', { class: 'faq-item' },
+        h('summary', null, f.q),
+        h('div', { class: 'faq-content' }, f.a)
+      )
+    );
+  });
 }
 
 // ============================================
@@ -1748,82 +1791,93 @@ function openModal(id) {
   const locked = isLockedByFiling(a, state.filing);
   const bookmarked = state.bookmarks.includes(a.id);
   
-  body.innerHTML = `
-    <div class="modal-header">
-      <h2>${escapeHtml(a.name)}${getFilingMark(a)}</h2>
-      <div class="modal-reading">${escapeHtml(a.reading)} ／ 区分：${escapeHtml(a.category)}</div>
-      <div class="modal-meta-row">
-        ${getStatusBadge(a)}
-        <button class="copy-btn" data-copy="${escapeAttr(a.name)}">📋 科目名をコピー</button>
-        <button class="bookmark-btn ${bookmarked ? 'active' : ''}" data-bookmark="${a.id}" aria-label="ブックマーク">${bookmarked ? '♥' : '♡'}</button>
-      </div>
-    </div>
-    
-    ${locked ? `
-      <div class="lock-notice">
-        <span style="font-size:1rem;">🔒</span>
-        <span>この科目は<strong>青色申告</strong>でのみ利用できます。現在は白色申告モードです。</span>
-      </div>
-    ` : ''}
-    
-    <div class="modal-section">
-      <h3>📝 こんな支出が該当します</h3>
-      <ul>
-        ${(a.examples || []).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}
-      </ul>
-    </div>
-    
-    ${a.statusNote ? `
-      <div class="modal-section">
-        <h3>⚠️ 経費にする際の注意点</h3>
-        <div class="note-block">${escapeHtml(a.statusNote)}</div>
-      </div>
-    ` : ''}
-    
-    ${a.filingNote ? `
-      <div class="modal-section">
-        <h3>📘 申告方式での扱い</h3>
-        <div class="note-block">${escapeHtml(a.filingNote)}</div>
-      </div>
-    ` : ''}
-    
-    ${a.recommendation ? `
-      <div class="modal-section">
-        <h3>💡 一般的な選び方の目安</h3>
-        <div class="note-block recommend-block">${escapeHtml(a.recommendation)}</div>
-      </div>
-    ` : ''}
-    
-    ${(a.related || []).length > 0 ? `
-      <div class="modal-section">
-        <h3>🔗 関連する科目</h3>
-        <div class="modal-related">
-          ${a.related.map(rid => {
-            const r = findAccount(rid);
-            return r ? `<button class="pill-link" data-related="${r.id}">${escapeHtml(r.name)}</button>` : '';
-          }).join('')}
-        </div>
-      </div>
-    ` : ''}
-  `;
-  
-  // バインド
-  body.querySelectorAll('[data-related]').forEach(el => {
-    el.addEventListener('click', () => openModal(el.dataset.related));
-  });
-  body.querySelectorAll('[data-bookmark]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleBookmark(el.dataset.bookmark);
-      openModal(id); // 再描画
+  const sections = [];
+
+  // ヘッダー
+  sections.push(
+    h('div', { class: 'modal-header' },
+      h('h2', null, a.name, getFilingMark(a)),
+      h('div', { class: 'modal-reading' }, a.reading + ' ／ 区分：' + a.category),
+      h('div', { class: 'modal-meta-row' },
+        getStatusBadge(a),
+        h('button', {
+          class: 'copy-btn', 'data-copy': a.name,
+          onclick: (e) => { e.stopPropagation(); copyText(a.name, e.currentTarget); }
+        }, '📋 科目名をコピー'),
+        h('button', {
+          class: 'bookmark-btn ' + (bookmarked ? 'active' : ''), 'data-bookmark': a.id, 'aria-label': 'ブックマーク',
+          onclick: (e) => { e.stopPropagation(); toggleBookmark(a.id); openModal(id); }
+        }, bookmarked ? '♥' : '♡')
+      )
+    )
+  );
+
+  // ロック通知
+  if (locked) {
+    sections.push(
+      h('div', { class: 'lock-notice' },
+        h('span', { style: 'font-size:1rem;' }, '🔒'),
+        h('span', null, 'この科目は', h('strong', null, '青色申告'), 'でのみ利用できます。現在は白色申告モードです。')
+      )
+    );
+  }
+
+  // 該当する支出
+  sections.push(
+    h('div', { class: 'modal-section' },
+      h('h3', null, '📝 こんな支出が該当します'),
+      h('ul', null, (a.examples || []).map(ex => h('li', null, ex)))
+    )
+  );
+
+  // 注意点
+  if (a.statusNote) {
+    sections.push(
+      h('div', { class: 'modal-section' },
+        h('h3', null, '⚠️ 経費にする際の注意点'),
+        h('div', { class: 'note-block' }, a.statusNote)
+      )
+    );
+  }
+
+  // 申告方式
+  if (a.filingNote) {
+    sections.push(
+      h('div', { class: 'modal-section' },
+        h('h3', null, '📘 申告方式での扱い'),
+        h('div', { class: 'note-block' }, a.filingNote)
+      )
+    );
+  }
+
+  // 選び方の目安
+  if (a.recommendation) {
+    sections.push(
+      h('div', { class: 'modal-section' },
+        h('h3', null, '💡 一般的な選び方の目安'),
+        h('div', { class: 'note-block recommend-block' }, a.recommendation)
+      )
+    );
+  }
+
+  // 関連科目
+  if ((a.related || []).length > 0) {
+    const relatedBtns = a.related.map(rid => {
+      const r = findAccount(rid);
+      return r ? h('button', {
+        class: 'pill-link', 'data-related': r.id,
+        onclick: () => openModal(r.id)
+      }, r.name) : null;
     });
-  });
-  body.querySelectorAll('[data-copy]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      copyText(el.dataset.copy, el);
-    });
-  });
+    sections.push(
+      h('div', { class: 'modal-section' },
+        h('h3', null, '🔗 関連する科目'),
+        h('div', { class: 'modal-related' }, relatedBtns)
+      )
+    );
+  }
+
+  body.replaceChildren(...sections);
   
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1883,7 +1937,8 @@ function fallbackCopy(text, btn) {
 }
 
 function toast(msg){
-  const t=document.getElementById('toast');
+  const t=document.getElementById('enu-toast');
+  if(!t)return;
   t.textContent=msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2000);
@@ -1993,49 +2048,26 @@ function init() {
 init();
 
 // ============================================
-// enuTools 共通設定
+// 注意書きカード制御（グローバル汚染防止のため全体をIIFEで閉じ込め）
 // ============================================
-const ENU_CONFIG = {
-  app_id: 'kanjo-search',
-  app_name: '勘定科目検索ツール',
-  data_version: 1,
-  storage_type: 'local'
-};
-
-// ============================================
-// 注意書きカード制御
-// ============================================
-const HELP_URL='https://enu-tools.pages.dev/help/';
-const HELP_OPEN_NEW_TAB=true;
-(function(){const l=document.getElementById('help-page-link');if(!l)return;l.href=HELP_URL;if(HELP_OPEN_NEW_TAB){l.target='_blank';l.rel='noopener'}})();
-const NOTICE_KEY='enu_notice_minimized';
-function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
-function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
-(function(){const l=getNoticeList();document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
-document.querySelectorAll('.enu-notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
-document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+(function(){
+  const HELP_URL='https://enu-tools.pages.dev/help/';
+  const HELP_OPEN_NEW_TAB=true;
+  (function(){const l=document.getElementById('help-page-link');if(!l)return;l.href=HELP_URL;if(HELP_OPEN_NEW_TAB){l.target='_blank';l.rel='noopener'}})();
+  const NOTICE_KEY='enu_notice_minimized';
+  function getNoticeList(){try{return JSON.parse(localStorage.getItem(NOTICE_KEY)||'[]')}catch(e){return[]}}
+  function saveNoticeList(l){try{localStorage.setItem(NOTICE_KEY,JSON.stringify(l))}catch(e){}}
+  (function(){const l=getNoticeList();document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(l.includes(w.dataset.noticeId))w.classList.add('is-mini')})})();
+  document.querySelectorAll('.enu-notice-wrap .close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.add('is-mini');const l=getNoticeList();if(!l.includes(i)){l.push(i);saveNoticeList(l)}}));
+  document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),i=w.dataset.noticeId;w.classList.remove('is-mini');saveNoticeList(getNoticeList().filter(x=>x!==i))}));
+})();
 
 // ============================================
 // アクションボタン制御
 // ============================================
-function getAppData(){
-  return {
-    app_id: 'kanjo-search',
-    app_name: '勘定科目検索ツール',
-    data_version: 1,
-    storage_type: 'local',
-    exported_at: new Date().toISOString(),
-    bookmarks: state.bookmarks,
-    filing: state.filing,
-    industry: state.industry,
-    history: state.history
-  };
-}
 function validateData(data){
+  // 内側 data（{bookmarks, filing, industry, history}）の構造検証
   if(!data || typeof data !== 'object') return false;
-  // app_id（新形式）または app（旧形式・互換用）どちらかが kanjo-search であること
-  const id = data.app_id || data.app;
-  if(id && id !== 'kanjo-search') return false;
   if(data.bookmarks !== undefined && !Array.isArray(data.bookmarks)) return false;
   if(data.history !== undefined && !Array.isArray(data.history)) return false;
   if(data.filing !== undefined && !['blue','white'].includes(data.filing)) return false;
@@ -2055,52 +2087,133 @@ function applyAppData(data){
   renderMyAccounts();
   renderHistory();
 }
-function handlePrint(){window.print()}
-async function handleShare(){
-    const shareData={title:document.title,text:`${document.title} を共有します`,url:location.href};
-    if(navigator.share){try{await navigator.share(shareData)}catch(e){}}
-    else{try{await navigator.clipboard.writeText(location.href);toast('🔗 URLをコピーしました')}catch(e){toast('共有に対応していない環境です')}}
-}
-function handleExport(){
-    const data = getAppData();
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json],{type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+// ============================================
+// アクションボタン（102仕様: IIFE + enuTools名前空間）
+// ============================================
+(function(){
+  'use strict';
+
+  // === ENU_CONFIG（アプリ固有のデータ供給関数）===
+  const ENU_CONFIG = {
+    appId: 'kanjo-search',
+    appName: '勘定科目検索ツール',
+    dataVersion: 1,
+    storageType: 'local',
+    getData(){ return { bookmarks: state.bookmarks, filing: state.filing, industry: state.industry, history: state.history }; },
+    applyData(data){ applyAppData(data); },
+    validateData(data){ return validateData(data); }
+  };
+  const CFG = ENU_CONFIG;
+
+  window.enuTools = window.enuTools || {};
+
+  function showToast(msg){
+    const t = document.getElementById('enu-toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2000);
+  }
+
+  // enuTools 確認モーダル（confirm() の代替）
+  function enuConfirm(title, desc, okLabel='OK', cancelLabel='キャンセル'){
+    return new Promise(resolve => {
+      const modal = document.getElementById('enu-confirm-modal');
+      if(!modal){ resolve(window.confirm(title + '\n\n' + desc)); return; }
+      modal.querySelector('.enu-confirm-modal__title').textContent = title;
+      modal.querySelector('.enu-confirm-modal__desc').textContent = desc;
+      const ok = modal.querySelector('.enu-confirm-btn--ok');
+      const cancel = modal.querySelector('.enu-confirm-btn--cancel');
+      const backdrop = modal.querySelector('.enu-confirm-modal__backdrop');
+      ok.textContent = okLabel;
+      cancel.textContent = cancelLabel;
+      modal.hidden = false;
+      setTimeout(()=>cancel.focus(), 50);
+      const cleanup = (result) => {
+        modal.hidden = true;
+        ok.removeEventListener('click', onOk);
+        cancel.removeEventListener('click', onCancel);
+        backdrop.removeEventListener('click', onCancel);
+        document.removeEventListener('keydown', onKey);
+        resolve(result);
+      };
+      const onOk = () => cleanup(true);
+      const onCancel = () => cleanup(false);
+      const onKey = (e) => { if(e.key==='Escape') onCancel(); if(e.key==='Enter') onOk(); };
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      backdrop.addEventListener('click', onCancel);
+      document.addEventListener('keydown', onKey);
+    });
+  }
+
+  function _safeFileName(s){ return String(s||'data').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC\-]/g,'_'); }
+
+  // 簡易シェア（201モジュール未導入のため navigator.share / クリップボードで代替）
+  async function handleShare(){
+    const shareData = { title: document.title, text: document.title + ' を共有します', url: location.href };
+    if(navigator.share){ try{ await navigator.share(shareData); }catch(e){} }
+    else { try{ await navigator.clipboard.writeText(location.href); showToast('🔗 URLをコピーしました'); }catch(e){ showToast('⚠️ 共有に対応していない環境です'); } }
+  }
+
+  function handleExport(){
+    if(typeof CFG.getData!=='function'){ showToast('⚠️ getData が未定義です'); return; }
+    const payload = {
+      app_id: CFG.appId, app_name: CFG.appName,
+      data_version: CFG.dataVersion||1, storage_type: CFG.storageType||'local',
+      exported_at: new Date().toISOString(), data: CFG.getData()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url;
-    const date = new Date().toISOString().slice(0,10);
-    a.download = `kanjo-search_${date}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.download = _safeFileName(CFG.appName||CFG.appId) + '_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast('📤 JSONをダウンロードしました');
-}
-function handleImport(){
+    showToast('📤 JSONをダウンロードしました');
+  }
+
+  async function handleImport(){
+    if(typeof CFG.applyData!=='function'){ showToast('⚠️ applyData が未定義です'); return; }
     const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json,.json';
+    input.type = 'file'; input.accept = 'application/json,.json';
     input.addEventListener('change', async e=>{
-        const file = e.target.files[0];
-        if(!file) return;
-        try{
-            const text = await file.text();
-            const data = JSON.parse(text);
-            if(!validateData(data)) throw new Error('データ形式が違います');
-            if(!confirm('現在のデータを上書きしてインポートしますか？')) return;
-            applyAppData(data);
-            toast('📥 インポートしました');
-        }catch(err){
-            toast('⚠️ ファイルが読み込めません');
-        }
+      const f = e.target.files[0]; if(!f) return;
+      try{
+        // 段階的検証: JSON → app_id → data_version → validateData
+        const p = JSON.parse(await f.text());
+        if(!p || typeof p!=='object') throw new Error('JSONの形式が不正です');
+        if(!p.app_id) throw new Error('app_id がない古いファイル形式です');
+        if(p.app_id !== CFG.appId) throw new Error('別アプリのファイルです（' + p.app_id + '）');
+        if(p.data_version > (CFG.dataVersion||1)) throw new Error('新しいバージョンのファイルです');
+        if(typeof CFG.validateData==='function' && !CFG.validateData(p.data)) throw new Error('データ形式が違います');
+        const ok = await enuConfirm(
+          '📥 データのインポート',
+          '「' + (p.app_name||p.app_id) + '」のデータをインポートします。\n現在のデータは上書きされます。元に戻せません。',
+          'インポート', 'キャンセル'
+        );
+        if(!ok) return;
+        CFG.applyData(p.data);
+        showToast('📥 インポートしました');
+      }catch(err){ showToast('⚠️ ' + (err.message||'ファイルが読み込めません')); }
     });
     input.click();
-}
-document.getElementById('btn-pdf')?.addEventListener('click', handlePrint);
-document.getElementById('btn-print')?.addEventListener('click', handlePrint);
-document.getElementById('btn-share')?.addEventListener('click', handleShare);
-document.getElementById('btn-export')?.addEventListener('click', handleExport);
-document.getElementById('btn-import')?.addEventListener('click', handleImport);
+  }
+
+  function initButtons(){
+    const map = {
+      'enu-btn-print': () => window.print(),
+      'enu-btn-share2': handleShare,
+      'enu-btn-export': handleExport,
+      'enu-btn-import': handleImport
+    };
+    Object.entries(map).forEach(([id,fn])=>{ const el=document.getElementById(id); if(el) el.addEventListener('click', fn); });
+  }
+
+  window.enuTools.toast = showToast;
+  window.enuTools.confirm = enuConfirm;
+
+  if(document.readyState!=='loading'){ initButtons(); } else { document.addEventListener('DOMContentLoaded', initButtons); }
+})();
 
 </script>
 
@@ -2251,3 +2364,5 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
 
 </body>
 </html>
+
+
