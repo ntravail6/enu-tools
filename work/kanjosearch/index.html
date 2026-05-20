@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- Favicon (SVG inline) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FAF7F2'/><text x='50' y='50' font-size='68' text-anchor='middle' dominant-baseline='central'>🧮</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23faf7f0'/><text x='50' y='50' font-size='60' text-anchor='middle' dominant-baseline='central'>🧮</text></svg>">
 
 <!-- PWA / iOS meta -->
 <meta name="theme-color" content="#FAF7F2">
@@ -2116,7 +2116,7 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
 
   function rgbToHex(rgb){
     const m = (rgb||'').match(/\d+/g);
-    if(!m) return '#FAF7F2';
+    if(!m) return '#faf7f0';
     return '#' + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,'0')).join('').toUpperCase();
   }
 
@@ -2170,8 +2170,8 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
     const bodyBg = getComputedStyle(document.body).backgroundColor;
     const fromBody = rgbToHex(bodyBg);
     if(fromBody && fromBody !== '#000000') return fromBody;
-    // フォールバック2: ハードコード値
-    return '#FAF7F2';
+    // フォールバック2: ハードコード値（enuTools標準クリーム）
+    return '#faf7f0';
   }
 
   async function setup(){
@@ -2208,14 +2208,14 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
         const url192m = URL.createObjectURL(b192m);
         const url512a = URL.createObjectURL(b512a);
         const url512m = URL.createObjectURL(b512m);
-        // start_url / scope を pathname から動的算出（サブパス対応）
-        const dir = location.pathname.replace(/[^/]*$/, '') || '/';
+        // id / start_url / scope は location.pathname を使用（Pattern①: サブパスごとに一意なPWA）
+        const path = location.pathname;
         const manifest = {
-          id: dir + '#kanjo-search',
+          id: path,
           name: APP_NAME,
           short_name: SHORT_NAME,
-          start_url: dir,
-          scope: dir,
+          start_url: path,
+          scope: path,
           display: 'standalone',
           orientation: 'portrait',
           background_color: bg,
@@ -2251,4 +2251,3 @@ document.getElementById('btn-import')?.addEventListener('click', handleImport);
 
 </body>
 </html>
-
