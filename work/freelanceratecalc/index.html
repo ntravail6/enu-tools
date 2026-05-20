@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#f4f7f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -25,18 +25,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
 :root {
+  /* Primary palette - teal */
+  --primary: #2d8b85;
+  --primary-light: #4ba3a0;
+  --primary-dark: #226d68;
+  --primary-soft: #e3f1ef;
+
+  /* Accent palette - coral */
+  --accent: #e76f51;
+  --accent-dark: #c8553d;
+  --accent-soft: #fde8e0;
+
+  /* Neutral */
   --bg: #f4f7f6;
+  --bg-soft: #ebf0ee;
+  --line: #e0e6e4;
+
+  /* Common (fixed) */
   --card: #ffffff;
-  --main: #2d8b85;
-  --main-dark: #226d68;
-  --main-soft: #e3f1ef;
-  --coral: #e76f51;
-  --coral-dark: #c8553d;
-  --coral-soft: #fde8e0;
-  --gold: #e9c46a;
-  --text: #2c3e50;
-  --sub: #7a8a8a;
-  --border: #e0e6e4;
+  --text: #2C2A24;
+  --sub: #7A756B;
+
+  /* Shadows */
   --shadow: 0 2px 10px rgba(45, 139, 133, 0.08);
   --shadow-strong: 0 8px 24px rgba(45, 139, 133, 0.22);
 }
@@ -53,18 +63,19 @@ body {
   font-size: 14px;
   line-height: 1.6;
   -webkit-text-size-adjust: 100%;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 
-/* ---------- Accessibility: focus-visible ---------- */
 :focus-visible {
-  outline: 2px solid var(--main);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
-input:focus-visible {
-  outline: none;
-}
+input:focus-visible { outline: none; }
 
 .page-wrapper {
   max-width: 960px;
@@ -86,7 +97,7 @@ input:focus-visible {
 .header h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--main-dark);
+  color: var(--primary-dark);
   letter-spacing: 0.02em;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
@@ -104,30 +115,31 @@ input:focus-visible {
   .header .subtitle { font-size: 0.7rem; }
 }
 
-/* ---------- Notice Cards ---------- */
-.notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.notice-wrap{width:100%}
-.notice-wrap.is-mini{width:auto}
-.notice-wrap > .notice{display:flex}
-.notice-wrap > .notice-mini{display:none}
-.notice-wrap.is-mini > .notice{display:none}
-.notice-wrap.is-mini > .notice-mini{display:inline-flex}
-.notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-.notice .icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-.notice .body{flex:1;min-width:0}
-.notice .body strong{font-weight:700}
-.notice .close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-.notice .close-btn:hover{opacity:1}
-.notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-.notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-.notice-info,.notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.notice-warn,.notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-.notice-disclaim,.notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.notice-trade,.notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.notice-date,.notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
-.notice-help,.notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-.notice-help .help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-.notice-help .help-link:hover{color:#1f2c1c}
+/* ---------- Notice Cards (101 latest spec) ---------- */
+.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.enu-notice-wrap{width:100%}
+.enu-notice-wrap.is-mini{width:auto}
+.enu-notice-wrap > .enu-notice{display:flex}
+.enu-notice-wrap > .enu-notice-mini{display:none}
+.enu-notice-wrap.is-mini > .enu-notice{display:none}
+.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+.enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.enu-notice .enu-body{flex:1;min-width:0}
+.enu-notice .enu-body strong{font-weight:700}
+.enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.enu-notice .enu-close-btn:hover{opacity:1}
+.enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+.enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.enu-notice-privacy,.enu-notice-mini-privacy{background:#e8f1ec;border-color:#c3d8c9;color:#3d5a48}
+.enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
 
 /* ---------- Main Card ---------- */
 .main-card {
@@ -148,17 +160,17 @@ input:focus-visible {
 .section-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--main-dark);
+  color: var(--primary-dark);
   margin-bottom: 16px;
   padding-left: 12px;
-  border-left: 3px solid var(--main);
+  border-left: 3px solid var(--primary);
   letter-spacing: 0.02em;
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
-.section-title.coral { color: var(--coral-dark); border-left-color: var(--coral); }
+.section-title.accent { color: var(--accent-dark); border-left-color: var(--accent); }
 
 .section-hint {
   font-size: 0.75rem;
@@ -205,7 +217,7 @@ input:focus-visible {
 .input-wrap input {
   width: 100%;
   padding: 11px 52px 11px 14px;
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   font-size: 0.95rem;
   background: var(--card);
@@ -218,7 +230,7 @@ input:focus-visible {
 .input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .input-wrap input:focus {
   outline: none;
-  border-color: var(--main);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(45, 139, 133, 0.12);
 }
 .input-wrap .unit {
@@ -230,19 +242,18 @@ input:focus-visible {
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 
-/* Input clamped feedback */
 @keyframes flash-warn {
-  0%, 100% { border-color: var(--border); background: var(--card); }
-  50% { border-color: var(--coral); background: var(--coral-soft); }
+  0%, 100% { border-color: var(--line); background: var(--card); }
+  50% { border-color: var(--accent); background: var(--accent-soft); }
 }
 .input-wrap input.was-clamped { animation: flash-warn 1.2s ease; }
 
-/* ---------- Checkbox Row (青色申告) ---------- */
+/* ---------- Checkbox Row ---------- */
 .checkbox-row {
   margin-top: 18px;
   padding: 12px 14px;
-  background: #f8faf9;
-  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
   border-radius: 8px;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
@@ -259,7 +270,7 @@ input:focus-visible {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--main);
+  accent-color: var(--primary);
   flex-shrink: 0;
 }
 .checkbox-label .emoji { font-size: 1rem; }
@@ -283,30 +294,30 @@ input:focus-visible {
 .result-table th, .result-table td {
   padding: 13px 16px;
   text-align: left;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
   font-size: 0.9rem;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 .result-table th { color: var(--text); font-weight: 500; width: 55%; }
 .result-table th .emoji { margin-right: 6px; font-size: 1rem; }
 .result-table td { text-align: right; font-weight: 600; color: var(--text); }
-.result-table tr.hl-coral { background: var(--coral-soft); }
-.result-table tr.hl-coral th, .result-table tr.hl-coral td {
-  color: var(--coral-dark); font-weight: 700; border-bottom-color: transparent;
+.result-table tr.hl-accent { background: var(--accent-soft); }
+.result-table tr.hl-accent th, .result-table tr.hl-accent td {
+  color: var(--accent-dark); font-weight: 700; border-bottom-color: transparent;
 }
-.result-table tr.hl-coral td { font-size: 1rem; }
-.result-table tr.hl-teal { background: var(--main-soft); }
-.result-table tr.hl-teal th, .result-table tr.hl-teal td {
-  color: var(--main-dark); font-weight: 700; border-bottom-color: transparent;
+.result-table tr.hl-accent td { font-size: 1rem; }
+.result-table tr.hl-primary { background: var(--primary-soft); }
+.result-table tr.hl-primary th, .result-table tr.hl-primary td {
+  color: var(--primary-dark); font-weight: 700; border-bottom-color: transparent;
 }
-.result-table tr.hl-teal td { font-size: 1rem; }
+.result-table tr.hl-primary td { font-size: 1rem; }
 .result-table tr:last-child th, .result-table tr:last-child td { border-bottom: none; }
 
 /* ---------- Result Cards (SP) ---------- */
 .result-cards-wrap { display: none; flex-direction: column; gap: 8px; }
 .result-card {
-  background: #fafbfb;
-  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px 14px;
   display: flex;
@@ -331,24 +342,24 @@ input:focus-visible {
   text-align: right;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
-.result-card.hl-coral { background: var(--coral-soft); border-color: transparent; }
-.result-card.hl-coral .label, .result-card.hl-coral .value { color: var(--coral-dark); font-weight: 700; }
-.result-card.hl-coral .value { font-size: 1.05rem; }
-.result-card.hl-teal { background: var(--main-soft); border-color: transparent; }
-.result-card.hl-teal .label, .result-card.hl-teal .value { color: var(--main-dark); font-weight: 700; }
-.result-card.hl-teal .value { font-size: 1.05rem; }
+.result-card.hl-accent { background: var(--accent-soft); border-color: transparent; }
+.result-card.hl-accent .label, .result-card.hl-accent .value { color: var(--accent-dark); font-weight: 700; }
+.result-card.hl-accent .value { font-size: 1.05rem; }
+.result-card.hl-primary { background: var(--primary-soft); border-color: transparent; }
+.result-card.hl-primary .label, .result-card.hl-primary .value { color: var(--primary-dark); font-weight: 700; }
+.result-card.hl-primary .value { font-size: 1.05rem; }
 
 @media (max-width: 650px) {
   .result-table-wrap { display: none; }
   .result-cards-wrap { display: flex; }
 }
 
-/* ---------- Formula Note (薄い計算式) ---------- */
+/* ---------- Formula Note ---------- */
 .formula-note {
   margin-top: 16px;
   padding: 10px 12px;
-  background: #f8faf9;
-  border-left: 2px solid var(--border);
+  background: var(--bg-soft);
+  border-left: 2px solid var(--line);
   border-radius: 4px;
   font-size: 0.65rem;
   color: var(--sub);
@@ -368,7 +379,7 @@ input:focus-visible {
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 
-/* ---------- Project Calc Section (案件単価) ---------- */
+/* ---------- Project Calc Section ---------- */
 .project-calc {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -387,7 +398,7 @@ input:focus-visible {
 }
 .preset-btn {
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 6px;
   padding: 5px 10px;
   font-size: 0.7rem;
@@ -397,13 +408,13 @@ input:focus-visible {
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 .preset-btn:hover {
-  border-color: var(--coral);
-  color: var(--coral-dark);
-  background: var(--coral-soft);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: var(--accent-soft);
 }
 
 .project-output {
-  background: linear-gradient(135deg, var(--coral-soft) 0%, #fdd7c4 100%);
+  background: linear-gradient(135deg, var(--accent-soft) 0%, #fdd7c4 100%);
   padding: 18px 24px;
   border-radius: 10px;
   text-align: center;
@@ -415,7 +426,7 @@ input:focus-visible {
 }
 .project-output .label {
   font-size: 0.72rem;
-  color: var(--coral-dark);
+  color: var(--accent-dark);
   font-weight: 700;
   margin-bottom: 4px;
   letter-spacing: 0.04em;
@@ -430,22 +441,20 @@ input:focus-visible {
 .project-output .value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--coral-dark);
+  color: var(--accent-dark);
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 .project-output .value-unit {
   font-size: 0.75rem;
-  color: var(--coral-dark);
+  color: var(--accent-dark);
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
-@media (max-width: 650px) {
-  .project-output .value { font-size: 1.3rem; }
-}
+@media (max-width: 650px) { .project-output .value { font-size: 1.3rem; } }
 
-/* ---------- Summary Bar (Sticky on top) ---------- */
+/* ---------- Summary Bar ---------- */
 .summary-bar {
   margin-top: 0;
-  background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-radius: 12px;
   padding: 10px 16px;
   display: grid;
@@ -455,7 +464,7 @@ input:focus-visible {
   box-shadow: var(--shadow-strong);
   position: sticky;
   top: 8px;
-  z-index: 10;
+  z-index: 200;
   overflow: hidden;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
@@ -513,7 +522,6 @@ input:focus-visible {
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 
-/* Auto-shrink for long numbers */
 .summary-item.text-long .value { font-size: 0.95rem; }
 .summary-item.text-long .value-unit { font-size: 0.6rem; }
 .summary-item.text-extra .value { font-size: 0.8rem; }
@@ -538,7 +546,7 @@ input:focus-visible {
 }
 .btn-reset {
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   color: var(--sub);
   padding: 7px 16px;
   border-radius: 6px;
@@ -551,33 +559,97 @@ input:focus-visible {
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
 }
 .btn-reset:hover {
-  border-color: var(--coral);
-  color: var(--coral-dark);
-  background: var(--coral-soft);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: var(--accent-soft);
 }
 
-/* ---------- Action Buttons ---------- */
-.fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-.fc-print{background:#f0f1f3;border-color:#c8cdd4;color:#525860}
-.fc-share{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
-.btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex:1 1 80px;min-width:80px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px}
-.btn-card .icon{font-size:1.3rem;line-height:1}
-.btn-card .label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:16px 14px;background:#fff;border:1px solid #ece5d6;border-radius:10px;align-items:center;margin-bottom:6px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media print{.toolbar,.reset-bar,.toast,.notice-area{display:none !important}.summary-bar{position:static !important}body{background:#fff}.formula-note{opacity:1}}
+/* ---------- Action Buttons (102 latest spec - auto-fit grid) ---------- */
+.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+.enu-btn-card:hover{transform:translateY(-1px)}
+.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+.enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
 
-/* ---------- Footer ---------- */
-.footer { margin-top: 4px; width: 100%; font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif; }
-.footer hr { border: none; border-top: 1px solid var(--border); width: 100%; margin: 0; }
-.footer .copyright {
+.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+.enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+
+/* ---------- Toast ---------- */
+.enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- Confirm Modal ---------- */
+.enu-confirm-modal[hidden]{display:none}
+.enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+.enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:enuFade .15s ease}
+.enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px 22px 18px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;animation:enuConfirmUp .2s ease}
+.enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 10px;line-height:1.4}
+.enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin:0 0 20px;line-height:1.65;white-space:pre-line}
+.enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+.enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;transition:opacity .15s,transform .1s}
+.enu-confirm-btn:hover{transform:translateY(-1px)}
+.enu-confirm-btn--cancel{background:transparent;border:1px solid var(--line);color:var(--sub)}
+.enu-confirm-btn--ok{background:var(--primary);border:1px solid var(--primary);color:#fff}
+@keyframes enuFade{from{opacity:0}to{opacity:1}}
+@keyframes enuConfirmUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- Print ---------- */
+@media print{
+  body{background:#fff}
+  .enu-notice-area,.enu-toolbar,.enu-toast,.enu-confirm-modal,.reset-bar{display:none !important}
+  .summary-bar{position:static !important}
+  .formula-note{opacity:1}
+}
+
+/* ---------- Footer (enu共通仕様) ---------- */
+.footer {
+  margin-top: 24px;
+  width: 100%;
   text-align: center;
+  font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+}
+.footer .home-btn {
+  display: inline-block;
+  padding: 7px 16px;
+  font-size: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--sub) 30%, transparent);
+  border-radius: 999px;
+  color: var(--sub);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 12px;
+  transition: border-color .15s, color .15s;
+  font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+}
+.footer .home-btn:hover {
+  border-color: var(--sub);
+  color: var(--text);
+}
+.footer hr {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--sub) 30%, transparent);
+  width: 100%;
+  margin: 0 0 12px 0;
+}
+.footer .credit {
+  font-size: 0.78rem;
+  color: var(--sub);
+  margin-bottom: 8px;
+  font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+}
+.footer .credit a {
+  color: var(--sub);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color .15s;
+  font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
+}
+.footer .credit a:hover { color: var(--text); }
+.footer .copyright {
   font-size: 10px;
   color: var(--sub);
   opacity: 0.7;
-  padding-top: 16px;
   padding-bottom: 24px;
   letter-spacing: 0.08em;
   font-family: 'Quicksand', 'Arial Rounded MT Bold', 'Kosugi Maru', sans-serif;
@@ -594,47 +666,56 @@ input:focus-visible {
     <p class="subtitle">希望年収から、必要な売上・時給・案件単価を逆算</p>
   </header>
 
-  <!-- Notice Cards -->
-  <div class="notice-area">
-    <div class="notice-wrap" data-notice-id="info">
-      <div class="notice notice-info">
-        <span class="icon">💾</span>
-        <span class="body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
-        <button type="button" class="close-btn" aria-label="最小化">×</button>
+  <!-- Notice Cards (101 latest spec) -->
+  <div class="enu-notice-area">
+    <!-- 💾 ローカル保存案内 -->
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="notice-mini notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
     </div>
-    <div class="notice-wrap" data-notice-id="warn">
-      <div class="notice notice-warn">
-        <span class="icon">⚠️</span>
-        <span class="body">ブラウザのデータ削除、他端末・他ブラウザでの閲覧、シークレットモードでのご利用では、データが失われたり引き継げない場合があります。重要な情報はJSONバックアップでの保存を推奨します。</span>
-        <button type="button" class="close-btn" aria-label="最小化">×</button>
+
+    <!-- ⚠️ データ消失リスク（iOS Safari 7日含む） -->
+    <div class="enu-notice-wrap" data-notice-id="warn" data-storage="local">
+      <div class="enu-notice enu-notice-warn">
+        <span class="enu-icon">⚠️</span>
+        <span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードではデータが引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>重要なデータは「📤 エクスポート」ボタンからバックアップを取ることをおすすめします。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="notice-mini notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
     </div>
-    <div class="notice-wrap" data-notice-id="disclaim">
-      <div class="notice notice-disclaim">
-        <span class="icon">🚨</span>
-        <span class="body">⚠️ <strong>本ツールは税務相談ではありません。</strong> 計算結果は概算の目安であり、正確な税額・社会保険料・契約条件は個人の事業状況により異なります。実際の数値や判断は <strong>税理士・社労士等の専門家</strong> にご相談ください。</span>
-        <button type="button" class="close-btn" aria-label="最小化">×</button>
+
+    <!-- 🌐 オフライン動作OK -->
+    <div class="enu-notice-wrap" data-notice-id="offline-local" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">🌐</span>
+        <span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、計算を行うことができます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="notice-mini notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="オフライン動作を表示" title="オフライン動作を表示">🌐</button>
     </div>
-    <div class="notice-wrap" data-notice-id="trade">
-      <div class="notice notice-trade">
-        <span class="icon">🚨</span>
-        <span class="body">計算結果は目安です。実際の取引における最終判断はご自身でお願いいたします。取引結果について責任を負いかねますのでご了承ください。</span>
-        <button type="button" class="close-btn" aria-label="最小化">×</button>
+
+    <!-- 🚨 取引・計算結果免責（税務相談ではない を統合） -->
+    <div class="enu-notice-wrap" data-notice-id="trade">
+      <div class="enu-notice enu-notice-trade">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body"><strong>本ツールは税務相談ではありません。</strong> 計算結果は概算の目安であり、正確な税額・社会保険料は個人の事業状況により異なります。<strong>実際のレート設定・契約における最終判断はご自身の責任でお願いいたします。</strong> 具体的な相談は税理士・社労士等の専門家にご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="notice-mini notice-mini-trade" aria-label="取引の免責を表示" title="取引の免責を表示">🚨</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="取引の免責を表示" title="取引の免責を表示">🚨</button>
     </div>
-    <div class="notice-wrap" data-notice-id="help">
-      <div class="notice notice-help">
-        <span class="icon">📚</span>
-        <span class="body">使い方・FAQ・トラブル対応は<a href="" class="help-link" id="help-page-link">こちらから</a></span>
-        <button type="button" class="close-btn" aria-label="最小化">×</button>
+
+    <!-- 📚 ヘルプ -->
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="notice-mini notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
     </div>
   </div>
 
@@ -724,7 +805,6 @@ input:focus-visible {
 
       </div>
 
-      <!-- 青色申告特別控除 -->
       <div class="checkbox-row">
         <label class="checkbox-label" for="blueReturn">
           <input type="checkbox" id="blueReturn" aria-describedby="hint-blueReturn">
@@ -736,7 +816,7 @@ input:focus-visible {
     </section>
 
     <section class="section">
-      <h2 class="section-title coral"><span>📊</span>計算結果</h2>
+      <h2 class="section-title accent"><span>📊</span>計算結果</h2>
 
       <div class="result-table-wrap">
         <table class="result-table">
@@ -746,7 +826,6 @@ input:focus-visible {
 
       <div class="result-cards-wrap" id="resultCardsWrap"></div>
 
-      <!-- 計算式（薄く表示） -->
       <div class="formula-note" aria-label="計算式の補足">
         <p class="formula-title">📐 計算式</p>
         <p>必要総売上 = ( 希望年収 + 年間経費 − 控除 × 税率 ) ÷ ( 1 − 税率 )</p>
@@ -756,9 +835,8 @@ input:focus-visible {
       </div>
     </section>
 
-    <!-- 案件単価の試算（NEW） -->
     <section class="section">
-      <h2 class="section-title coral"><span>💼</span>案件単価の試算</h2>
+      <h2 class="section-title accent"><span>💼</span>案件単価の試算</h2>
       <p class="section-hint">必要時給を元に、案件にかかる時間から適正な単価を逆算します。</p>
 
       <div class="project-calc">
@@ -791,52 +869,114 @@ input:focus-visible {
 
   </div><!-- /.sticky-group -->
 
-  <!-- Reset Button -->
   <div class="reset-bar">
     <button class="btn-reset" id="btnReset" type="button">↺ 初期値に戻す</button>
   </div>
 
-  <!-- Action Buttons -->
-  <div class="toolbar">
-    <button class="btn-card fc-pdf"   id="btn-pdf" aria-label="PDF出力"><span class="icon">📄</span><span class="label">PDF出力</span></button>
-    <button class="btn-card fc-print" id="btn-print" aria-label="印刷"><span class="icon">🖨</span><span class="label">印刷</span></button>
-    <button class="btn-card fc-share" id="btn-share" aria-label="共有"><span class="icon">🔗</span><span class="label">共有</span></button>
-    <button class="btn-card fc-json"  id="btn-export" aria-label="JSONエクスポート"><span class="icon">📤</span><span class="label">エクスポート</span></button>
-    <button class="btn-card fc-json"  id="btn-import" aria-label="JSONインポート"><span class="icon">📥</span><span class="label">インポート</span></button>
+  <!-- Action Buttons (102 latest spec) -->
+  <div class="enu-toolbar">
+    <button type="button" class="enu-btn-card enu-fc-pdf"    id="enu-btn-print"   aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2"  aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-export"  aria-label="データをエクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json"   id="enu-btn-import"  aria-label="データをインポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
   </div>
 
+  <!-- Footer (enu共通仕様) -->
   <footer class="footer">
+    <a href="https://enu-tools.pages.dev/" class="home-btn">🏠 ホームへ戻る</a>
     <hr>
+    <p class="credit"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></p>
     <p class="copyright">© 2026 enu(エヌ) All rights reserved.</p>
   </footer>
 
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="enu-toast" id="enu-toast" role="status" aria-live="polite"></div>
+
+<!-- Confirm Modal -->
+<div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
+  <div class="enu-confirm-modal__backdrop"></div>
+  <div class="enu-confirm-modal__box" role="dialog" aria-modal="true" aria-labelledby="enu-confirm-title">
+    <h3 class="enu-confirm-modal__title" id="enu-confirm-title"></h3>
+    <p class="enu-confirm-modal__desc"></p>
+    <div class="enu-confirm-modal__actions">
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--cancel">キャンセル</button>
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--ok">OK</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (function () {
   'use strict';
 
   /* ============================================================
-   * CONSTANTS / DEFAULTS
+   * CALCULATOR CORE FUNCTIONS (定義先行 - ENU_CONFIG で参照するため)
    * ============================================================ */
   const STORAGE_KEY = 'freelance-rate-calc-v1';
-  const DEDUCTION_BLUE_RETURN = 650000; // 青色申告特別控除 65万円
+  const DEDUCTION_BLUE_RETURN = 650000;
 
   const DEFAULTS = {
-    targetIncome: 500,
-    workDays: 220,
-    workHours: 8,
-    annualExpense: 60,
-    taxRate: 25,
-    nonBillableRate: 20,
-    projectHours: 40,
-    blueReturn: false
+    targetIncome: 500, workDays: 220, workHours: 8,
+    annualExpense: 60, taxRate: 25, nonBillableRate: 20,
+    projectHours: 40, blueReturn: false
   };
 
   const FIELDS = ['targetIncome', 'workDays', 'workHours', 'annualExpense', 'taxRate', 'nonBillableRate', 'projectHours'];
+
+  function getValues() {
+    const values = {};
+    FIELDS.forEach(function (f) {
+      values[f] = parseFloat(document.getElementById(f).value) || 0;
+    });
+    const blueEl = document.getElementById('blueReturn');
+    values.blueReturn = blueEl ? blueEl.checked : false;
+    return values;
+  }
+
+  function applyAppData(data) {
+    FIELDS.forEach(function (f) {
+      if (typeof data[f] === 'number' && isFinite(data[f])) {
+        const el = document.getElementById(f);
+        if (el) el.value = data[f];
+      }
+    });
+    if (typeof data.blueReturn === 'boolean') {
+      const el = document.getElementById('blueReturn');
+      if (el) el.checked = data.blueReturn;
+    }
+    saveValues();
+    renderResults();
+  }
+
+  function validateImportData(data) {
+    if (!data || typeof data !== 'object') return false;
+    return ['targetIncome', 'workDays', 'workHours', 'annualExpense', 'taxRate', 'nonBillableRate']
+      .every(function (f) { return typeof data[f] === 'number' && isFinite(data[f]); });
+  }
+
+  /* ============================================================
+   * ENU_CONFIG
+   * ============================================================ */
+  const ENU_CONFIG = {
+    appId: 'freelance-rate-calc',
+    appName: 'フリーランス レート計算機',
+    dataVersion: 1,
+    storageType: 'local',
+    helpUrl: 'https://enu-tools.pages.dev/help/',
+    helpOpenNewTab: true,
+    getData() { return getValues(); },
+    applyData(data) { applyAppData(data); },
+    validateData(data) { return validateImportData(data); }
+  };
+  const CFG = ENU_CONFIG;
+
+  // enuTools namespace (global, single instance)
+  window.enuTools = window.enuTools || {};
+
+  // appId-based storage key helper
+  function _key(suffix) { return 'enu_' + CFG.appId + '_' + suffix; }
 
   /* ============================================================
    * STORAGE
@@ -848,13 +988,9 @@ input:focus-visible {
       if (saved) {
         const parsed = JSON.parse(saved);
         FIELDS.forEach(function (f) {
-          if (typeof parsed[f] === 'number' && isFinite(parsed[f])) {
-            values[f] = parsed[f];
-          }
+          if (typeof parsed[f] === 'number' && isFinite(parsed[f])) values[f] = parsed[f];
         });
-        if (typeof parsed.blueReturn === 'boolean') {
-          values.blueReturn = parsed.blueReturn;
-        }
+        if (typeof parsed.blueReturn === 'boolean') values.blueReturn = parsed.blueReturn;
       }
     } catch (e) { /* ignore */ }
     FIELDS.forEach(function (f) {
@@ -875,16 +1011,6 @@ input:focus-visible {
       values.blueReturn = blueEl ? blueEl.checked : false;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
     } catch (e) { /* ignore */ }
-  }
-
-  function getValues() {
-    const values = {};
-    FIELDS.forEach(function (f) {
-      values[f] = parseFloat(document.getElementById(f).value) || 0;
-    });
-    const blueEl = document.getElementById('blueReturn');
-    values.blueReturn = blueEl ? blueEl.checked : false;
-    return values;
   }
 
   function fmt(n) {
@@ -912,20 +1038,13 @@ input:focus-visible {
     const projectPrice = hourlyRate * v.projectHours;
 
     return {
-      targetIncomeYen: targetIncomeYen,
-      annualExpenseYen: annualExpenseYen,
-      taxAmount: taxAmount,
-      totalRevenue: totalRevenue,
-      annualHours: annualHours,
-      hourlyRate: hourlyRate,
-      dailyRate: dailyRate,
-      monthlyRevenue: monthlyRevenue,
-      projectPrice: projectPrice
+      targetIncomeYen, annualExpenseYen, taxAmount, totalRevenue,
+      annualHours, hourlyRate, dailyRate, monthlyRevenue, projectPrice
     };
   }
 
   /* ============================================================
-   * RENDER
+   * RENDER (XSS-safe: createElement + textContent)
    * ============================================================ */
   function adjustValueFontSize() {
     document.querySelectorAll('.summary-item').forEach(function (item) {
@@ -938,32 +1057,56 @@ input:focus-visible {
     });
   }
 
+  function buildRowElement(row, isCard) {
+    if (isCard) {
+      const card = document.createElement('div');
+      card.className = 'result-card' + (row.hl ? ' ' + row.hl : '');
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'label';
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'emoji';
+      emojiSpan.textContent = row.emoji;
+      labelSpan.appendChild(emojiSpan);
+      labelSpan.appendChild(document.createTextNode(row.label));
+      const valueSpan = document.createElement('span');
+      valueSpan.className = 'value';
+      valueSpan.textContent = row.value;
+      card.append(labelSpan, valueSpan);
+      return card;
+    } else {
+      const tr = document.createElement('tr');
+      if (row.hl) tr.className = row.hl;
+      const th = document.createElement('th');
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'emoji';
+      emojiSpan.textContent = row.emoji;
+      th.appendChild(emojiSpan);
+      th.appendChild(document.createTextNode(row.label));
+      const td = document.createElement('td');
+      td.textContent = row.value;
+      tr.append(th, td);
+      return tr;
+    }
+  }
+
   function renderResults() {
     const r = calculate();
     const rows = [
       { emoji: '🎯', label: '目標年収（手取り）', value: fmt(r.targetIncomeYen) + ' 円', hl: '' },
       { emoji: '💸', label: '年間経費', value: fmt(r.annualExpenseYen) + ' 円', hl: '' },
       { emoji: '📋', label: '税金・社会保険料', value: fmt(r.taxAmount) + ' 円', hl: '' },
-      { emoji: '💎', label: '必要総売上(年商)', value: fmt(r.totalRevenue) + ' 円', hl: 'hl-coral' },
+      { emoji: '💎', label: '必要総売上(年商)', value: fmt(r.totalRevenue) + ' 円', hl: 'hl-accent' },
       { emoji: '⏱️', label: '年間実働時間', value: fmt(r.annualHours) + ' 時間', hl: '' },
-      { emoji: '⚡', label: '必要時給', value: fmt(r.hourlyRate) + ' 円', hl: 'hl-teal' }
+      { emoji: '⚡', label: '必要時給', value: fmt(r.hourlyRate) + ' 円', hl: 'hl-primary' }
     ];
 
     const tbody = document.getElementById('resultTableBody');
-    tbody.innerHTML = rows.map(function (row) {
-      return '<tr class="' + row.hl + '">'
-        + '<th><span class="emoji">' + row.emoji + '</span>' + row.label + '</th>'
-        + '<td>' + row.value + '</td>'
-        + '</tr>';
-    }).join('');
+    tbody.replaceChildren();
+    rows.forEach(function (row) { tbody.appendChild(buildRowElement(row, false)); });
 
     const cardsWrap = document.getElementById('resultCardsWrap');
-    cardsWrap.innerHTML = rows.map(function (row) {
-      return '<div class="result-card ' + row.hl + '">'
-        + '<span class="label"><span class="emoji">' + row.emoji + '</span>' + row.label + '</span>'
-        + '<span class="value">' + row.value + '</span>'
-        + '</div>';
-    }).join('');
+    cardsWrap.replaceChildren();
+    rows.forEach(function (row) { cardsWrap.appendChild(buildRowElement(row, true)); });
 
     document.getElementById('hourlyRate').textContent = fmt(r.hourlyRate);
     document.getElementById('dailyRate').textContent = fmt(r.dailyRate);
@@ -974,7 +1117,7 @@ input:focus-visible {
   }
 
   /* ============================================================
-   * INPUT VALIDATION (clamp on blur)
+   * INPUT VALIDATION
    * ============================================================ */
   function attachClamping(el) {
     el.addEventListener('blur', function () {
@@ -987,7 +1130,7 @@ input:focus-visible {
       else if (!isNaN(min) && value < min) { el.value = min; clamped = true; }
       if (clamped) {
         el.classList.remove('was-clamped');
-        void el.offsetWidth; // restart animation
+        void el.offsetWidth;
         el.classList.add('was-clamped');
         saveValues();
         renderResults();
@@ -996,42 +1139,60 @@ input:focus-visible {
   }
 
   /* ============================================================
-   * IMPORT / EXPORT
-   * ============================================================ */
-  function getAppData() {
-    return getValues();
-  }
-
-  function applyAppData(data) {
-    FIELDS.forEach(function (f) {
-      if (typeof data[f] === 'number' && isFinite(data[f])) {
-        const el = document.getElementById(f);
-        if (el) el.value = data[f];
-      }
-    });
-    if (typeof data.blueReturn === 'boolean') {
-      const el = document.getElementById('blueReturn');
-      if (el) el.checked = data.blueReturn;
-    }
-    saveValues();
-    renderResults();
-  }
-
-  function validateData(data) {
-    if (!data || typeof data !== 'object') return false;
-    return ['targetIncome', 'workDays', 'workHours', 'annualExpense', 'taxRate', 'nonBillableRate']
-      .every(function (f) { return typeof data[f] === 'number' && isFinite(data[f]); });
-  }
-
-  /* ============================================================
    * TOAST
    * ============================================================ */
-  function toast(msg) {
-    const t = document.getElementById('toast');
+  function showToast(msg) {
+    const t = document.getElementById('enu-toast');
     if (!t) return;
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(function () { t.classList.remove('show'); }, 2000);
+  }
+
+  /* ============================================================
+   * CONFIRM MODAL (Promise版・window.confirm の代替)
+   * ============================================================ */
+  function enuConfirm(title, desc, okLabel, cancelLabel) {
+    okLabel = okLabel || 'OK';
+    cancelLabel = cancelLabel || 'キャンセル';
+    return new Promise(function (resolve) {
+      const modal = document.getElementById('enu-confirm-modal');
+      if (!modal) {
+        resolve(window.confirm(title + '\n\n' + desc));
+        return;
+      }
+      modal.querySelector('.enu-confirm-modal__title').textContent = title;
+      modal.querySelector('.enu-confirm-modal__desc').textContent = desc;
+      const ok = modal.querySelector('.enu-confirm-btn--ok');
+      const cancel = modal.querySelector('.enu-confirm-btn--cancel');
+      const backdrop = modal.querySelector('.enu-confirm-modal__backdrop');
+      ok.textContent = okLabel;
+      cancel.textContent = cancelLabel;
+      modal.hidden = false;
+      setTimeout(function () { cancel.focus(); }, 50);
+      const cleanup = function (result) {
+        modal.hidden = true;
+        ok.removeEventListener('click', onOk);
+        cancel.removeEventListener('click', onCancel);
+        backdrop.removeEventListener('click', onCancel);
+        document.removeEventListener('keydown', onKey);
+        resolve(result);
+      };
+      const onOk = function () { cleanup(true); };
+      const onCancel = function () { cleanup(false); };
+      const onKey = function (e) {
+        if (e.key === 'Escape') onCancel();
+        if (e.key === 'Enter') onOk();
+      };
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      backdrop.addEventListener('click', onCancel);
+      document.addEventListener('keydown', onKey);
+    });
+  }
+
+  function _safeFileName(s) {
+    return String(s || 'data').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC\-]/g, '_');
   }
 
   /* ============================================================
@@ -1050,45 +1211,65 @@ input:focus-visible {
     } else {
       try {
         await navigator.clipboard.writeText(location.href);
-        toast('🔗 URLをコピーしました');
+        showToast('🔗 URLをコピーしました');
       } catch (e) {
-        toast('共有に対応していない環境です');
+        showToast('共有に対応していない環境です');
       }
     }
   }
 
   function handleExport() {
-    const data = getAppData();
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    if (typeof CFG.getData !== 'function') { showToast('⚠️ getData が未定義です'); return; }
+    const payload = {
+      app_id: CFG.appId,
+      app_name: CFG.appName,
+      data_version: CFG.dataVersion || 1,
+      storage_type: CFG.storageType || 'local',
+      exported_at: new Date().toISOString(),
+      data: CFG.getData()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const date = new Date().toISOString().slice(0, 10);
-    a.download = document.title + '_' + date + '.json';
+    a.download = _safeFileName(CFG.appName || CFG.appId) + '_' + new Date().toISOString().slice(0, 10) + '.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast('📤 JSONをダウンロードしました');
+    showToast('📤 JSONをダウンロードしました');
   }
 
-  function handleImport() {
+  async function handleImport() {
+    if (typeof CFG.applyData !== 'function') { showToast('⚠️ applyData が未定義です'); return; }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json,.json';
     input.addEventListener('change', async function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
+      const f = e.target.files[0];
+      if (!f) return;
       try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        if (!validateData(data)) throw new Error('データ形式が違います');
-        if (!confirm('現在のデータを上書きしてインポートしますか？')) return;
-        applyAppData(data);
-        toast('📥 インポートしました');
+        const text = await f.text();
+        const p = JSON.parse(text);
+        // 多段階検証
+        if (!p || typeof p !== 'object') throw new Error('JSONの形式が不正です');
+        if (!p.app_id) throw new Error('app_id がない古いファイル形式です');
+        if (p.app_id !== CFG.appId) throw new Error('別アプリのファイルです（' + p.app_id + '）');
+        if (p.data_version > (CFG.dataVersion || 1)) throw new Error('新しいバージョンのファイルです');
+        if (typeof CFG.validateData === 'function' && !CFG.validateData(p.data)) {
+          throw new Error('データ形式が違います');
+        }
+        const ok = await enuConfirm(
+          '📥 データのインポート',
+          '「' + (p.app_name || p.app_id) + '」のデータをインポートします。\n現在のデータは上書きされます。元に戻せません。',
+          'インポート',
+          'キャンセル'
+        );
+        if (!ok) return;
+        CFG.applyData(p.data);
+        showToast('📥 インポートしました');
       } catch (err) {
-        toast('⚠️ ファイルが読み込めません');
+        showToast('⚠️ ' + (err.message || 'ファイルが読み込めません'));
       }
     });
     input.click();
@@ -1097,74 +1278,92 @@ input:focus-visible {
   /* ============================================================
    * NOTICE CARDS
    * ============================================================ */
-  const HELP_URL = 'https://enu-tools.pages.dev/help/';
-  const HELP_OPEN_NEW_TAB = true;
-  const NOTICE_KEY = 'enu_notice_minimized';
-
-  function getNoticeList() {
-    try { return JSON.parse(localStorage.getItem(NOTICE_KEY) || '[]'); }
-    catch (e) { return []; }
-  }
-
-  function saveNoticeList(l) {
-    try { localStorage.setItem(NOTICE_KEY, JSON.stringify(l)); }
-    catch (e) { /* ignore */ }
+  function applyStorageType() {
+    const type = CFG.storageType || 'local';
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(function (w) {
+      if (w.dataset.storage !== type) { w.style.display = 'none'; }
+    });
   }
 
   function initNotices() {
-    const helpLink = document.getElementById('help-page-link');
-    if (helpLink) {
-      helpLink.href = HELP_URL;
-      if (HELP_OPEN_NEW_TAB) {
-        helpLink.target = '_blank';
-        helpLink.rel = 'noopener';
+    const K = _key('notice_minimized');
+    const get = function () {
+      try { return JSON.parse(localStorage.getItem(K) || '[]'); }
+      catch (e) { return []; }
+    };
+    const set = function (l) {
+      try { localStorage.setItem(K, JSON.stringify(l)); }
+      catch (e) { /* ignore */ }
+    };
+
+    const help = document.getElementById('enu-help-link');
+    if (help) {
+      help.href = CFG.helpUrl || '#';
+      if (CFG.helpOpenNewTab !== false) {
+        help.target = '_blank';
+        help.rel = 'noopener';
       }
     }
-    const minimizedList = getNoticeList();
-    document.querySelectorAll('.notice-wrap[data-notice-id]').forEach(function (w) {
-      if (minimizedList.includes(w.dataset.noticeId)) w.classList.add('is-mini');
+
+    applyStorageType();
+
+    const list = get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function (w) {
+      if (list.includes(w.dataset.noticeId)) w.classList.add('is-mini');
     });
-    document.querySelectorAll('.notice-wrap .close-btn').forEach(function (b) {
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(function (b) {
       b.addEventListener('click', function () {
-        const w = b.closest('.notice-wrap');
-        const i = w.dataset.noticeId;
+        const w = b.closest('.enu-notice-wrap');
+        const id = w.dataset.noticeId;
         w.classList.add('is-mini');
-        const l = getNoticeList();
-        if (!l.includes(i)) { l.push(i); saveNoticeList(l); }
+        const l = get();
+        if (!l.includes(id)) { l.push(id); set(l); }
       });
     });
-    document.querySelectorAll('.notice-mini').forEach(function (m) {
+    document.querySelectorAll('.enu-notice-mini').forEach(function (m) {
       m.addEventListener('click', function () {
-        const w = m.closest('.notice-wrap');
-        const i = w.dataset.noticeId;
+        const w = m.closest('.enu-notice-wrap');
+        const id = w.dataset.noticeId;
         w.classList.remove('is-mini');
-        saveNoticeList(getNoticeList().filter(function (x) { return x !== i; }));
+        set(get().filter(function (x) { return x !== id; }));
       });
     });
+
+    // Pattern ⑤ の日付（採用していないので no-op）
+    const dateEl = document.getElementById('enu-info-date');
+    if (dateEl) {
+      const d = new Date();
+      dateEl.textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月時点';
+    }
   }
 
   /* ============================================================
    * FAVICON / PWA
    * ============================================================ */
   const ICON_EMOJI = '💼';
-  const APP_NAME = 'フリーランス レート計算機';
-  const SHORT_NAME = 'レート計算機';
 
   function getBodyBg() {
-    const computed = getComputedStyle(document.body).backgroundColor;
-    const m = computed.match(/\d+/g);
-    if (m && m.length >= 3) {
-      return '#' + m.slice(0, 3).map(function (n) {
-        return parseInt(n).toString(16).padStart(2, '0');
-      }).join('');
-    }
+    try {
+      const cssVar = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      if (cssVar) return cssVar;
+    } catch (e) { /* ignore */ }
+    try {
+      const computed = getComputedStyle(document.body).backgroundColor;
+      const m = computed.match(/\d+/g);
+      if (m && m.length >= 3) {
+        return '#' + m.slice(0, 3).map(function (n) {
+          return parseInt(n).toString(16).padStart(2, '0');
+        }).join('');
+      }
+    } catch (e) { /* ignore */ }
     return '#f4f7f6';
   }
 
   function injectFavicon(emoji, bgColor) {
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
-      + '<rect width="64" height="64" rx="14" fill="' + bgColor + '"/>'
-      + '<text x="50%" y="54%" font-size="44" text-anchor="middle" dominant-baseline="central">'
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+      + '<rect width="100" height="100" rx="22" fill="' + bgColor + '"/>'
+      + '<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" '
+      + 'font-family="\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Noto Color Emoji\',\'Twemoji Mozilla\',sans-serif">'
       + emoji + '</text></svg>';
     const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     let link = document.querySelector('link[rel="icon"]');
@@ -1187,23 +1386,31 @@ input:focus-visible {
     ctx.closePath();
   }
 
-  function generateCanvasIcon(size, emoji, bgColor) {
+  function generateCanvasIcon(size, emoji, bgColor, opts) {
+    opts = opts || {};
+    const emojiScale = opts.emojiScale || 0.55;   // any/apple-touch=0.55, maskable=0.50
+    const rounded = opts.rounded !== false;        // true=角丸22%, false=フルスクエア(maskable)
     const canvas = document.createElement('canvas');
     canvas.width = size; canvas.height = size;
     const ctx = canvas.getContext('2d');
-    const radius = Math.round(size * 0.22);
     ctx.fillStyle = bgColor;
-    roundRectPath(ctx, 0, 0, size, size, radius);
-    ctx.fill();
-    ctx.font = Math.round(size * 0.62) + 'px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+    if (rounded) {
+      const radius = Math.round(size * 0.22);
+      roundRectPath(ctx, 0, 0, size, size, radius);
+      ctx.fill();
+    } else {
+      // maskable: OSマスクと干渉しないようフルスクエアで塗る
+      ctx.fillRect(0, 0, size, size);
+    }
+    ctx.font = Math.round(size * emojiScale) + 'px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(emoji, size / 2, size / 2 + size * 0.04);
+    ctx.fillText(emoji, size / 2, size / 2 + size * 0.025);
     return canvas;
   }
 
   function injectAppleTouchIcon(emoji, bgColor) {
-    const canvas = generateCanvasIcon(180, emoji, bgColor);
+    const canvas = generateCanvasIcon(180, emoji, bgColor, { emojiScale: 0.55, rounded: true });
     const dataUrl = canvas.toDataURL('image/png');
     let link = document.querySelector('link[rel="apple-touch-icon"]');
     if (!link) { link = document.createElement('link'); link.rel = 'apple-touch-icon'; document.head.appendChild(link); }
@@ -1211,22 +1418,34 @@ input:focus-visible {
   }
 
   function injectManifest(emoji, bgColor) {
-    const c192 = generateCanvasIcon(192, emoji, bgColor);
-    const c512 = generateCanvasIcon(512, emoji, bgColor);
+    // any: 角丸22% + 絵文字55% / maskable: フルスクエア + 絵文字50%
+    const cAny192  = generateCanvasIcon(192, emoji, bgColor, { emojiScale: 0.55, rounded: true });
+    const cMask192 = generateCanvasIcon(192, emoji, bgColor, { emojiScale: 0.50, rounded: false });
+    const cAny512  = generateCanvasIcon(512, emoji, bgColor, { emojiScale: 0.55, rounded: true });
+    const cMask512 = generateCanvasIcon(512, emoji, bgColor, { emojiScale: 0.50, rounded: false });
     Promise.all([
-      new Promise(function (r) { c192.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); }),
-      new Promise(function (r) { c512.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); })
+      new Promise(function (r) { cAny192.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); }),
+      new Promise(function (r) { cMask192.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); }),
+      new Promise(function (r) { cAny512.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); }),
+      new Promise(function (r) { cMask512.toBlob(function (b) { r(URL.createObjectURL(b)); }, 'image/png'); })
     ]).then(function (urls) {
+      // urls[0]=any192, urls[1]=maskable192, urls[2]=any512, urls[3]=maskable512
+      const basePath = location.pathname.replace(/[^/]*$/, '');
       const manifest = {
-        name: APP_NAME,
-        short_name: SHORT_NAME,
-        start_url: '.',
+        id: CFG.appId,
+        name: CFG.appName,
+        short_name: 'レート計算機',
+        start_url: basePath,
+        scope: basePath,
         display: 'standalone',
+        orientation: 'portrait',
         background_color: bgColor,
         theme_color: bgColor,
         icons: [
-          { src: urls[0], sizes: '192x192', type: 'image/png' },
-          { src: urls[1], sizes: '512x512', type: 'image/png' }
+          { src: urls[0], sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: urls[1], sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: urls[2], sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: urls[3], sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       };
       const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
@@ -1238,7 +1457,7 @@ input:focus-visible {
   }
 
   function initPwa() {
-    document.title = APP_NAME;
+    document.title = CFG.appName;
     const bg = getBodyBg();
     let metaTheme = document.querySelector('meta[name="theme-color"]');
     if (!metaTheme) { metaTheme = document.createElement('meta'); metaTheme.name = 'theme-color'; document.head.appendChild(metaTheme); }
@@ -1249,13 +1468,18 @@ input:focus-visible {
   }
 
   /* ============================================================
+   * PUBLIC API (enuTools namespace)
+   * ============================================================ */
+  window.enuTools.toast = showToast;
+  window.enuTools.confirm = enuConfirm;
+
+  /* ============================================================
    * INIT
    * ============================================================ */
   function init() {
     loadValues();
     renderResults();
 
-    // Numeric input listeners + clamping
     FIELDS.forEach(function (f) {
       const el = document.getElementById(f);
       if (!el) return;
@@ -1266,7 +1490,6 @@ input:focus-visible {
       attachClamping(el);
     });
 
-    // Blue return checkbox
     const blueEl = document.getElementById('blueReturn');
     if (blueEl) {
       blueEl.addEventListener('change', function () {
@@ -1275,7 +1498,6 @@ input:focus-visible {
       });
     }
 
-    // Project preset buttons
     document.querySelectorAll('.preset-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const hours = parseFloat(btn.dataset.hours);
@@ -1288,7 +1510,6 @@ input:focus-visible {
       });
     });
 
-    // Reset button
     const resetBtn = document.getElementById('btnReset');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
@@ -1303,18 +1524,15 @@ input:focus-visible {
       });
     }
 
-    // Notice cards
     initNotices();
 
     // Action buttons
     const $ = function (id) { return document.getElementById(id); };
-    if ($('btn-pdf')) $('btn-pdf').addEventListener('click', handlePrint);
-    if ($('btn-print')) $('btn-print').addEventListener('click', handlePrint);
-    if ($('btn-share')) $('btn-share').addEventListener('click', handleShare);
-    if ($('btn-export')) $('btn-export').addEventListener('click', handleExport);
-    if ($('btn-import')) $('btn-import').addEventListener('click', handleImport);
+    if ($('enu-btn-print'))  $('enu-btn-print').addEventListener('click', handlePrint);
+    if ($('enu-btn-share2')) $('enu-btn-share2').addEventListener('click', handleShare);
+    if ($('enu-btn-export')) $('enu-btn-export').addEventListener('click', handleExport);
+    if ($('enu-btn-import')) $('enu-btn-import').addEventListener('click', handleImport);
 
-    // Favicon / PWA
     initPwa();
   }
 
@@ -1327,3 +1545,5 @@ input:focus-visible {
 </script>
 </body>
 </html>
+
+
