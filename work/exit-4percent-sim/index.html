@@ -76,13 +76,12 @@ body{
 .seg button.active{background:var(--primary-dark);color:#fff}
 .seg.seg-sm{margin-bottom:0}
 .seg.seg-sm button{padding:3px 12px;font-size:.7rem}
-.amount-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px;margin-bottom:6px}
-.amount-head label{min-height:0;margin-bottom:0}
-
+.amount-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px;margin-bottom:6px}
+.amount-head label{min-height:0 !important;margin-bottom:0 !important}
 
 /* ===== 入力フォーム ===== */
 .input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:start}
-.field label{display:flex;align-items:center;min-height:32px;font-size:.78rem;color:var(--text);margin-bottom:6px;font-weight:700}
+.field label{display:flex;align-items:center;min-height:34px;font-size:.78rem;color:var(--text);margin-bottom:6px;font-weight:700}
 .input-wrap{position:relative;display:flex;align-items:center}
 .input-wrap input{
   width:100%;padding:12px 50px 12px 14px;border:1.5px solid var(--line);border-radius:10px;
@@ -316,7 +315,6 @@ body{
           </div>
         </div>
         <div class="input-wrap">
-
           <input id="in-amount" type="text" inputmode="numeric" autocomplete="off" value="1,200,000">
           <span class="unit">円</span>
         </div>
@@ -511,14 +509,14 @@ body{
     }
     if(r.depletedAge === null){
       const last = r.points[r.points.length - 1];
-      main.innerHTML = '';
+      main.textContent = '';
       main.appendChild(document.createTextNode('🎉 このペースなら '));
       const big = document.createElement('span'); big.className = 'big'; big.textContent = '資産は減りません';
       main.appendChild(big);
       sub.textContent = MAX_AGE + '歳時点でも約 ' + yenToManText(last.balance) + ' 残る見込みです（運用益が取崩額を上回っています）';
     } else {
       const years = r.depletedAge - r.startAge;
-      main.innerHTML = '';
+      main.textContent = '';
       main.appendChild(document.createTextNode('💰 資産は約 '));
       const big = document.createElement('span'); big.className = 'big'; big.textContent = r.depletedAge + '歳';
       main.appendChild(big);
@@ -610,7 +608,7 @@ body{
       const val = maxBal * i / yt;
       const yy = ay(val);
       s.appendChild(svg('line', { x1:padL, y1:yy, x2:W-padR, y2:yy, stroke:'var(--line)', 'stroke-width':1 }));
-      const tx = svg('text', { x:padL-8, y:yy+4, 'text-anchor':'end', 'font-size':12, fill:'var(--sub)', 'font-family':"'Quicksand','Kosugi Maru',sans-serif" });
+      const tx = svg('text', { x:padL-8, y:yy+4, 'text-anchor':'end', 'font-size':12, fill:'var(--sub)', 'font-family':"'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif" });
       tx.textContent = manLabel(val);
       s.appendChild(tx);
     }
@@ -621,7 +619,7 @@ body{
     s.appendChild(svg('line', { x1:padL, y1:baseY, x2:W-padR, y2:baseY, stroke:'var(--sub)', 'stroke-width':1 }));
     for(let age = firstTick; age <= maxAge; age += step){
       const xx = ax(age);
-      const tx = svg('text', { x:xx, y:H-padB+20, 'text-anchor':'middle', 'font-size':12, fill:'var(--sub)', 'font-family':"'Quicksand','Kosugi Maru',sans-serif" });
+      const tx = svg('text', { x:xx, y:H-padB+20, 'text-anchor':'middle', 'font-size':12, fill:'var(--sub)', 'font-family':"'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif" });
       tx.textContent = age + '歳';
       s.appendChild(tx);
     }
@@ -644,7 +642,7 @@ body{
       s.appendChild(svg('circle', { cx:dx, cy:baseY, r:5, fill:'#b35454', stroke:'#fff', 'stroke-width':2 }));
       const anchor = dx > W*0.7 ? 'end' : 'middle';
       const lx = dx > W*0.7 ? dx - 8 : dx;
-      const lab = svg('text', { x:lx, y:padT+14, 'text-anchor':anchor, 'font-size':13, fill:'#b35454', 'font-weight':'700', 'font-family':"'Quicksand','Kosugi Maru',sans-serif" });
+      const lab = svg('text', { x:lx, y:padT+14, 'text-anchor':anchor, 'font-size':13, fill:'#b35454', 'font-weight':'700', 'font-family':"'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif" });
       lab.textContent = '💸 ' + r.depletedAge + '歳';
       s.appendChild(lab);
     }
@@ -880,6 +878,8 @@ body{
     let bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
     if(!bg) bg = '#faf7f0';
 
+    try { await document.fonts.ready; } catch(e) {}
+
     document.title = APP_NAME;
 
     setMeta('theme-color', bg);
@@ -928,4 +928,5 @@ body{
 </script>
 </body>
 </html>
+
 
