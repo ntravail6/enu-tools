@@ -25,6 +25,7 @@
   --bg:#f6f8fa;
   --bg-soft:#fafbfc;
   --line:#dde3eb;
+--save:#3d7a5a; /* 削減額の強調色 */ 
 }
 
 *{box-sizing:border-box}
@@ -321,7 +322,7 @@ body{word-break:auto-phrase;line-break:strict;overflow-wrap:break-word}
         <span class="progress-label" id="progress-label">質問 1 / 5</span>
       </div>
       <p class="q-text" id="q-text"></p>
-      <div class="options" id="q-options" role="radiogroup" aria-label="回答の選択肢"></div>
+      <div class="options" id="q-options" role="group" aria-label="回答の選択肢"></div>
       <div class="q-nav">
         <button type="button" class="btn-text" id="btn-back">← もどる</button>
         <span></span>
@@ -838,5 +839,4 @@ body{word-break:auto-phrase;line-break:strict;overflow-wrap:break-word}
 </script>
 </body>
 </html>
-
 
