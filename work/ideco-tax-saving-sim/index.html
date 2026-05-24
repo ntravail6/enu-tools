@@ -1022,7 +1022,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
         ctx.font=Math.round(size*ratio)+'px '+EMOJI_FONT;
         ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.fillText(EMOJI,size/2,size/2+size*0.025);
-        c.toBlob(function(b){ resolve(b?URL.createObjectURL(b):''); },'image/png');
+        resolve(c.toDataURL('image/png'));
       });
     }
 
@@ -1056,8 +1056,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
           {src:u[3],sizes:'512x512',type:'image/png',purpose:'maskable'}
         ]
       };
-      var blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-      setLink('manifest',URL.createObjectURL(blob));
+      setLink('manifest','data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
     });
   }
 
