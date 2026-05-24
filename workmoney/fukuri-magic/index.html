@@ -158,6 +158,20 @@ body{
 .input-wrap input:focus{border-color:var(--primary);background:var(--card);box-shadow:0 0 0 3px var(--primary-soft)}
 .input-wrap .unit{position:absolute;right:12px;font-size:.72rem;color:var(--sub);font-weight:700;pointer-events:none}
 
+/* period block（年数 / 年齢） */
+.period{margin-top:11px}
+.period-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.period-label{font-size:.68rem;color:var(--sub);font-weight:700}
+.period-toggle{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.period-toggle button{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.64rem;font-weight:700;color:var(--sub);background:transparent;border:none;border-radius:999px;padding:3px 11px;cursor:pointer;transition:.15s}
+.period-toggle button.active{background:var(--card);color:var(--primary-dark);box-shadow:0 1px 3px rgba(142,117,96,.18)}
+.period-years{max-width:50%}
+.period-age{display:flex;align-items:flex-end;gap:8px}
+.period-age .field{flex:1;min-width:0}
+.period-arrow{flex-shrink:0;color:var(--sub);font-size:.85rem;font-weight:700;padding-bottom:11px}
+.period-calc{font-size:.7rem;color:var(--primary-dark);font-weight:700;margin-top:7px}
+@media(max-width:650px){.period-years{max-width:none}}
+
 /* plan result */
 .plan-result{margin-top:15px;padding-top:15px;border-top:1px dashed var(--line)}
 .pr-figs{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:4px}
@@ -253,7 +267,7 @@ body{
 @media print{
   body{background:#fff;padding:0}
   .enu-notice-area,.enu-toolbar,.enu-toast,.enu-confirm-modal,.app-home,
-  .plan-del,.plan-dup,.add-plan,.mode-seg,.unit-toggle{display:none !important}
+  .plan-del,.plan-dup,.add-plan,.mode-seg,.unit-toggle,.period-toggle{display:none !important}
   .summary,.plan{box-shadow:none;break-inside:avoid}
   .input-wrap input{border-color:#ccc;background:#fff}
 }
@@ -412,8 +426,7 @@ body{
     appName:'複利シミュレーター',
     storageType:'local',
     helpUrl:'https://enu-tools.pages.dev/help/',
-    helpOpenNewTab:true,
-    dataVersion:1
+    helpOpenNewTab:true
   };
   const CFG = ENU_CONFIG;
 
@@ -434,6 +447,19 @@ body{
   function pct(n){return (Math.round(n*10)/10).toLocaleString('ja-JP')}
   function uid(){return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36)}
   function num(v,def){const x=parseFloat(v);return (isFinite(x)&&x>=0)?x:def}
+  // 金額入力欄：入力中も3桁カンマ表示（整数・円）
+  function formatThousands(s){const d=String(s).replace(/[^0-9]/g,'');return d===''?'':parseInt(d,10).toLocaleString('ja-JP')}
+  function attachMoneyFormat(inp){
+    inp.addEventListener('input',function(){
+      const before=inp.value.slice(0,inp.selectionStart).replace(/[^0-9]/g,'').length;
+      const f=formatThousands(inp.value);inp.value=f;
+      let pos=0,c=0;while(pos<f.length&&c<before){const ch=f.charCodeAt(pos);if(ch>=48&&ch<=57)c++;pos++}
+      try{inp.setSelectionRange(pos,pos)}catch(e){}
+    });
+  }
+  function moneyVal(inp){return num(inp.value.replace(/,/g,''),0)}
+  // プランの初期値（年数モード・年齢モード両対応）
+  function newPlan(){return {id:uid(),name:'',mode:'monthly',monthly:30000,lump:0,years:20,rate:5,periodMode:'years',ageNow:30,ageTo:60}}
 
   // ===== toast =====
   function showToast(msg){
@@ -490,9 +516,14 @@ body{
       if(raw){const o=JSON.parse(raw);if(Array.isArray(o)&&o.length)plans=o}
     }catch(e){}
     try{const u=localStorage.getItem(UNIT_KEY);if(u==='man'||u==='yen')unitMode=u}catch(e){}
-    if(!plans.length){
-      plans=[{id:uid(),name:'',mode:'monthly',monthly:30000,lump:0,years:20,rate:5}];
-    }
+    if(!plans.length){plans=[newPlan()]}
+    // 旧データ互換：期間モード関連フィールドを補完
+    plans.forEach(p=>{
+      if(p.periodMode!=='age')p.periodMode='years';
+      if(typeof p.ageNow!=='number')p.ageNow=30;
+      if(typeof p.ageTo!=='number')p.ageTo=60;
+      if(typeof p.years!=='number')p.years=20;
+    });
   }
   function save(){
     try{localStorage.setItem(DATA_KEY,JSON.stringify(plans))}catch(e){}
@@ -609,15 +640,20 @@ body{
     if(active)b.classList.add('active');
     return b;
   }
-  function field(labelText,unit,val,step){
+  function field(labelText,unit,val,step,money){
     const wrap=document.createElement('div');wrap.className='field';
-    const lab=document.createElement('label');lab.textContent=labelText;
+    if(labelText){const lab=document.createElement('label');lab.textContent=labelText;wrap.appendChild(lab)}
     const iw=document.createElement('div');iw.className='input-wrap';
     const inp=document.createElement('input');
-    inp.type='number';inp.inputMode='decimal';inp.min='0';inp.step=step;inp.value=val;
+    if(money){
+      inp.type='text';inp.inputMode='numeric';inp.value=formatThousands(String(val));
+      attachMoneyFormat(inp);
+    }else{
+      inp.type='number';inp.inputMode='decimal';inp.min='0';inp.step=step;inp.value=val;
+    }
     const u=document.createElement('span');u.className='unit';u.textContent=unit;
     iw.appendChild(inp);iw.appendChild(u);
-    wrap.appendChild(lab);wrap.appendChild(iw);
+    wrap.appendChild(iw);
     return {wrap:wrap,input:inp};
   }
 
@@ -643,16 +679,34 @@ body{
     seg.appendChild(modeBtn('一括投入','lump',p.mode==='lump'));
     seg.appendChild(modeBtn('併用','both',p.mode==='both'));
 
-    // fields
+    // fields（金額はカンマ表示）
     const fields=document.createElement('div');fields.className='fields';
-    const fLump=field('初期投資額','円',p.lump,'10000');
-    const fMonthly=field('毎月の積立額','円',p.monthly,'1000');
-    const fYears=field('期間','年',p.years,'1');
+    const fLump=field('初期投資額','円',p.lump,'10000',true);
+    const fMonthly=field('毎月の積立額','円',p.monthly,'1000',true);
     const fRate=field('年利（利回り）','%',p.rate,'0.1');
     fields.appendChild(fLump.wrap);
     fields.appendChild(fMonthly.wrap);
-    fields.appendChild(fYears.wrap);
     fields.appendChild(fRate.wrap);
+
+    // period block（年数 / 年齢の2方式）
+    const period=document.createElement('div');period.className='period';
+    const pHead=document.createElement('div');pHead.className='period-head';
+    const pLabel=document.createElement('span');pLabel.className='period-label';pLabel.textContent='期間';
+    const pToggle=document.createElement('div');pToggle.className='period-toggle';
+    const tgYears=document.createElement('button');tgYears.type='button';tgYears.textContent='年数';
+    const tgAge=document.createElement('button');tgAge.type='button';tgAge.textContent='年齢';
+    pToggle.appendChild(tgYears);pToggle.appendChild(tgAge);
+    pHead.appendChild(pLabel);pHead.appendChild(pToggle);
+    const pBody=document.createElement('div');pBody.className='period-body';
+    const fYears=field('','年',p.years,'1');fYears.wrap.classList.add('period-years');
+    const ageNow=field('今の年齢','歳',p.ageNow,'1');
+    const ageTo=field('何歳まで','歳',p.ageTo,'1');
+    const ageRow=document.createElement('div');ageRow.className='period-age';
+    const arrow=document.createElement('span');arrow.className='period-arrow';arrow.textContent='→';
+    ageRow.appendChild(ageNow.wrap);ageRow.appendChild(arrow);ageRow.appendChild(ageTo.wrap);
+    const pCalc=document.createElement('div');pCalc.className='period-calc';
+    pBody.appendChild(fYears.wrap);pBody.appendChild(ageRow);pBody.appendChild(pCalc);
+    period.appendChild(pHead);period.appendChild(pBody);
 
     // result
     const result=document.createElement('div');result.className='plan-result';
@@ -668,7 +722,7 @@ body{
     const cap=document.createElement('div');cap.className='chart-cap';cap.textContent='📈 年数が経つほど、複利（濃い線）が単利（薄い線）から離れていきます';
     result.appendChild(figs);result.appendChild(meter);result.appendChild(chart);result.appendChild(cap);
 
-    card.appendChild(top);card.appendChild(seg);card.appendChild(fields);card.appendChild(result);
+    card.appendChild(top);card.appendChild(seg);card.appendChild(fields);card.appendChild(period);card.appendChild(result);
 
     function applyMode(){
       fLump.wrap.style.display=(p.mode==='lump'||p.mode==='both')?'':'none';
@@ -676,12 +730,32 @@ body{
     }
     applyMode();
 
+    function applyPeriodMode(){
+      const isAge=p.periodMode==='age';
+      tgYears.classList.toggle('active',!isAge);
+      tgAge.classList.toggle('active',isAge);
+      fYears.wrap.style.display=isAge?'none':'';
+      ageRow.style.display=isAge?'':'none';
+      pCalc.style.display=isAge?'':'none';
+    }
+    function updatePeriodCalc(){
+      if(p.periodMode==='age')pCalc.textContent='＝ '+p.years+'年間で計算します';
+    }
+    applyPeriodMode();updatePeriodCalc();
+
     function readInputs(){
       p.name=name.value.slice(0,24);
-      p.monthly=num(fMonthly.input.value,0);
-      p.lump=num(fLump.input.value,0);
-      p.years=Math.min(100,Math.max(0,num(fYears.input.value,0)));
+      p.monthly=moneyVal(fMonthly.input);
+      p.lump=moneyVal(fLump.input);
       p.rate=Math.min(100,num(fRate.input.value,0));
+      if(p.periodMode==='age'){
+        p.ageNow=Math.min(120,Math.max(0,Math.round(num(ageNow.input.value,0))));
+        p.ageTo=Math.min(120,Math.max(0,Math.round(num(ageTo.input.value,0))));
+        p.years=Math.max(0,Math.min(100,p.ageTo-p.ageNow));
+      }else{
+        p.years=Math.min(100,Math.max(0,num(fYears.input.value,0)));
+      }
+      updatePeriodCalc();
     }
 
     function refresh(){
@@ -694,14 +768,16 @@ body{
       meter.querySelector('.val-c').textContent=fmt(r.compound);
       const chartEl=buildChartEl(calcSeries(p));
       if(chartEl){chart.replaceChildren(chartEl)}
-      else{const e=document.createElement('div');e.className='chart-empty';e.textContent='期間を入力すると推移グラフが表示されます';chart.replaceChildren(e)}
+      else{const e=document.createElement('div');e.className='chart-empty';e.textContent=p.periodMode==='age'?'「何歳まで」を今の年齢より大きくしてください':'期間を入力すると推移グラフが表示されます';chart.replaceChildren(e)}
     }
     card._refresh=refresh;
 
-    [fMonthly.input,fLump.input,fYears.input,fRate.input].forEach(inp=>{
+    [fMonthly.input,fLump.input,fRate.input,fYears.input,ageNow.input,ageTo.input].forEach(inp=>{
       inp.addEventListener('input',()=>{readInputs();refresh();updateSummary();save()});
     });
     name.addEventListener('input',()=>{readInputs();save()});
+    tgYears.addEventListener('click',()=>{if(p.periodMode==='years')return;p.periodMode='years';applyPeriodMode();readInputs();refresh();updateSummary();save()});
+    tgAge.addEventListener('click',()=>{if(p.periodMode==='age')return;p.periodMode='age';applyPeriodMode();readInputs();refresh();updateSummary();save()});
     seg.querySelectorAll('button').forEach(b=>{
       b.addEventListener('click',()=>{
         p.mode=b.dataset.mode;
@@ -792,7 +868,8 @@ body{
       const r=calc(p);
       const label=p.name||('プラン'+(idx+1));
       const modeTxt=p.mode==='monthly'?('毎月'+yen(p.monthly)):p.mode==='lump'?('一括'+yen(p.lump)):('初期'+yen(p.lump)+'＋毎月'+yen(p.monthly));
-      lines.push('▼ '+label+'（'+modeTxt+'／'+p.years+'年／年利'+p.rate+'%）');
+      const periodTxt=p.periodMode==='age'?(p.ageNow+'→'+p.ageTo+'歳・'+p.years+'年'):(p.years+'年');
+      lines.push('▼ '+label+'（'+modeTxt+'／'+periodTxt+'／年利'+p.rate+'%）');
       lines.push('　複利 '+yen(r.compound)+'／単利 '+yen(r.simple)+'／差 +'+yen(r.diff));
     });
     if(plans.length>=2){
@@ -842,7 +919,7 @@ body{
     const cy=document.getElementById('enu-copy');
     if(cy)cy.textContent='© '+new Date().getFullYear()+' enu(エヌ) All rights reserved.';
     document.getElementById('add-plan').addEventListener('click',()=>{
-      plans.push({id:uid(),name:'',mode:'monthly',monthly:30000,lump:0,years:20,rate:5});
+      plans.push(newPlan());
       renderPlans();updateSummary();save();
     });
     document.getElementById('enu-btn-print').addEventListener('click',()=>window.print());
@@ -947,5 +1024,3 @@ body{
 </script>
 </body>
 </html>
-
-
