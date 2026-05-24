@@ -203,11 +203,11 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 /* ===== Footer ===== */
 .app-footer{text-align:center;margin-top:24px;opacity:.85}
 .home-btn{
-  display:inline-block;font-family:var(--font);font-size:.75rem;font-weight:700;
+  display:inline-block;font-family:var(--font);font-size:.75rem;font-weight:600;
   padding:7px 16px;border-radius:999px;text-decoration:none;
-  background:#fff;color:var(--primary-dark);border:1px solid var(--primary);transition:all .15s;
+  background:transparent;color:var(--sub);border:1px solid var(--sub);transition:all .15s;
 }
-.home-btn:hover{background:var(--primary-soft);transform:translateY(-1px)}
+.home-btn:hover{color:var(--primary-dark);border-color:var(--primary-dark)}
 .footer-divider{border:none;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);margin:12px 0}
 .footer-brand{font-family:var(--font);font-size:.7rem;color:var(--sub)}
 .footer-brand a{color:var(--sub);text-decoration:none;font-weight:700}
@@ -454,7 +454,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
     <hr class="footer-divider">
     <p class="footer-brand"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></p>
-    <p class="footer-copy">© 2026 enu(エヌ) All rights reserved.</p>
+    <p class="footer-copy">© <span id="copy-year">2026</span> enu(エヌ) All rights reserved.</p>
   </footer>
 
 </div>
@@ -944,6 +944,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     $('enu-btn-share2').addEventListener('click',handleShare);
     // 情報時点を自動反映
     var d=new Date(); $('info-date').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月時点';
+    // コピーライトの年を自動反映
+    var cy=$('copy-year'); if(cy) cy.textContent=d.getFullYear();
   }
 
   function init(){
@@ -1065,4 +1067,3 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 </script>
 </body>
 </html>
-
