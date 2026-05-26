@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>お金の基礎ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root{
+  --card:#fff; --text:#2C2A24; --sub:#7A756B;
+  --primary:#A0C5B8; --primary-light:#D8ECE3; --primary-dark:#6FA092;
+  --primary-soft:#EAF2EE; --accent:#8AB5A2;
+  --bg:#f5faf8; --bg-soft:#fafdfb; --line:#dceae5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.7;
+  padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+}
+.page-wrapper{max-width:960px;margin:0 auto;width:100%}
+
+/* ヘッダー */
+.app-header{text-align:center;padding:6px 0 18px}
+.app-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+.app-header h1{font-size:1.5rem;font-weight:700;color:var(--primary-dark);letter-spacing:.02em}
+.app-header .tagline{font-size:.75rem;color:var(--sub);margin-top:5px}
+
+/* 注意書き（101） */
+.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.enu-notice-wrap{width:100%}
+.enu-notice-wrap.is-mini{width:auto}
+.enu-notice-wrap > .enu-notice{display:flex}
+.enu-notice-wrap > .enu-notice-mini{display:none}
+.enu-notice-wrap.is-mini > .enu-notice{display:none}
+.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+.enu-notice{font-family:inherit;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.enu-notice .enu-body{flex:1;min-width:0}
+.enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.enu-notice .enu-close-btn:hover{opacity:1}
+.enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.enu-notice-help .enu-help-link{font-family:inherit;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+/* タブ */
+.tab-bar{position:sticky;top:0;z-index:200;display:flex;gap:6px;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:16px}
+.tab-btn{flex:1;font-family:inherit;cursor:pointer;padding:10px 6px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:.8rem;font-weight:600;transition:all .15s}
+.tab-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.tab-btn:not(.active):hover{border-color:var(--primary);color:var(--primary-dark)}
+
+.intro-text{font-size:.8rem;color:var(--sub);margin-bottom:14px;text-align:center}
+.hidden{display:none}
+
+/* 診断 */
+.diag-q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.diag-q-text{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:10px}
+.diag-opts{display:flex;gap:8px}
+.diag-opt{flex:1;font-family:inherit;cursor:pointer;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);font-size:.82rem;font-weight:600;transition:all .15s}
+.diag-opt.sel-yes{background:var(--primary);border-color:var(--primary);color:#fff}
+.diag-opt.sel-no{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary{display:block;width:100%;font-family:inherit;cursor:pointer;padding:12px 24px;border-radius:999px;border:none;background:var(--primary);color:#fff;font-size:.9rem;font-weight:600;transition:background .15s;margin-top:6px}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-sub{display:inline-block;font-family:inherit;cursor:pointer;padding:8px 18px;border-radius:999px;border:1px solid var(--sub);background:transparent;color:var(--sub);font-size:.78rem;font-weight:600;transition:all .15s;text-decoration:none}
+.btn-sub:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+.diag-result{background:var(--primary-soft);border:1px solid var(--primary);border-radius:14px;padding:20px;margin-top:14px;text-align:center}
+.diag-result .res-step{font-size:.72rem;font-weight:700;color:var(--primary-dark);letter-spacing:.08em}
+.diag-result .res-title{font-size:1.15rem;font-weight:700;color:var(--text);margin:4px 0 10px}
+.diag-result .res-msg{font-size:.83rem;color:var(--text);line-height:1.85;margin-bottom:14px}
+
+/* ロードマップ */
+.progress-bar-wrap{margin:6px 0 18px}
+.progress-track{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);width:0;transition:width .3s}
+.progress-label{font-size:.72rem;color:var(--sub);text-align:center;margin-top:6px}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:border-color .15s}
+.step.done{border-color:var(--primary);background:var(--primary-soft)}
+.step-check{flex-shrink:0;margin-top:2px}
+.step-check input{display:none}
+.step-check label{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid var(--line);background:var(--card);font-size:.9rem;color:transparent;transition:all .15s}
+.step.done .step-check label{background:var(--primary);border-color:var(--primary);color:#fff}
+.step-body{flex:1;min-width:0}
+.step-num{font-size:.68rem;font-weight:700;color:var(--primary-dark);letter-spacing:.08em}
+.step-title{font-size:1rem;font-weight:700;color:var(--text);margin:2px 0 6px}
+.step-desc{font-size:.82rem;color:var(--sub);line-height:1.8;margin-bottom:10px}
+.step-action{background:var(--primary-soft);border-radius:9px;padding:9px 12px;font-size:.78rem;color:var(--text);line-height:1.7}
+.step-action b{color:var(--primary-dark)}
+.step-pitfall{font-size:.76rem;color:#8a5a14;background:#fef6df;border-radius:9px;padding:9px 12px;margin-top:8px;line-height:1.7}
+.tool-toggle{font-family:inherit;cursor:pointer;margin-top:10px;font-size:.76rem;font-weight:600;color:var(--primary-dark);background:transparent;border:1px dashed var(--primary);border-radius:8px;padding:7px 12px;width:100%;transition:all .15s}
+.tool-toggle:hover{background:var(--primary-soft)}
+.tool-body{margin-top:10px;padding:14px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px}
+.tool-body.hidden{display:none}
+
+/* チェックリスト */
+.cl-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.cl-item:last-child{border-bottom:none}
+.cl-item input{display:none}
+.cl-item label.cl-box{flex-shrink:0;margin-top:2px;width:22px;height:22px;border-radius:6px;cursor:pointer;border:2px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:.78rem;color:transparent;transition:all .15s}
+.cl-item.checked label.cl-box{background:var(--primary);border-color:var(--primary);color:#fff}
+.cl-text{flex:1;min-width:0}
+.cl-label{font-size:.82rem;font-weight:600;color:var(--text)}
+.cl-item.checked .cl-label{color:var(--sub);text-decoration:line-through}
+.cl-tip{font-size:.72rem;color:var(--sub);margin-top:2px}
+
+/* 計算機 */
+.calc-row{margin-bottom:10px}
+.calc-row label{display:block;font-size:.76rem;font-weight:600;color:var(--sub);margin-bottom:4px}
+.calc-input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:.9rem;background:var(--card);color:var(--text)}
+.calc-input:focus{outline:none;border-color:var(--primary)}
+.calc-out{display:flex;gap:10px;margin-top:6px}
+.calc-out-box{flex:1;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.calc-out-box .lbl{font-size:.68rem;color:var(--sub)}
+.calc-out-box .val{font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin-top:2px}
+
+/* 用語辞典 */
+.glossary-tools{position:sticky;top:55px;z-index:100;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:14px}
+.search-box{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:.85rem;background:var(--bg-soft);color:var(--text)}
+.search-box:focus{outline:none;border-color:var(--primary)}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-family:inherit;cursor:pointer;font-size:.72rem;font-weight:600;padding:5px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--sub);transition:all .15s}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.chip:not(.active):hover{border-color:var(--primary);color:var(--primary-dark)}
+.term{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.term-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.term-name{font-size:.95rem;font-weight:700;color:var(--primary-dark)}
+.term-cat{font-size:.65rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--primary-soft);color:var(--primary-dark)}
+.term-desc{font-size:.82rem;color:var(--text);line-height:1.8}
+.term-tip{font-size:.76rem;color:var(--text);line-height:1.75;background:var(--primary-soft);border-radius:9px;padding:9px 12px;margin-top:8px}
+.term-tip b{color:var(--primary-dark)}
+.no-result{text-align:center;color:var(--sub);font-size:.82rem;padding:24px 0}
+
+/* ホーム＋フッター */
+.home-btn-wrap{text-align:center}
+.home-btn{display:inline-block;margin:24px auto 0;font-family:inherit;font-size:.75rem;font-weight:600;text-decoration:none;padding:7px 16px;border-radius:999px;background:transparent;border:1px solid var(--sub);color:var(--sub);transition:all .15s}
+.home-btn:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+.app-footer{text-align:center;margin-top:12px;padding-top:16px;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);opacity:.85}
+.app-footer .brand{font-size:.7rem;color:var(--sub);text-decoration:none}
+.app-footer .brand:hover{color:var(--primary-dark)}
+.app-footer .copy{font-size:.65rem;color:var(--sub);margin-top:8px}
+
+/* 参考リンク */
+.ref-links{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:8px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ref-title{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
+.ref-note{font-size:.74rem;color:var(--sub);margin-bottom:12px;line-height:1.6}
+.ref-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;text-decoration:none;background:var(--bg-soft);transition:all .15s}
+.ref-item:last-child{margin-bottom:0}
+.ref-item:hover{border-color:var(--primary);background:var(--primary-soft)}
+.ref-icon{font-size:1.1rem;flex-shrink:0}
+.ref-text{font-size:.82rem;color:var(--text);min-width:0}
+.ref-text b{color:var(--primary-dark)}
+.ref-text .ref-src{display:block;font-size:.72rem;color:var(--sub);margin-top:1px}
+.ref-divider{height:1px;background:var(--line);margin:14px 2px 12px}
+.ref-divider-label{font-size:.7rem;color:var(--sub);text-align:center;margin-bottom:10px;letter-spacing:.05em}
+
+@media (max-width:650px){
+  .app-header h1{font-size:1.25rem}
+  .app-header .tagline{font-size:.7rem}
+  .tab-btn{font-size:.72rem}
+  .glossary-tools{top:50px}
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="app-header">
+    <div class="app-icon">📗</div>
+    <h1>お金の基礎ガイド</h1>
+    <p class="tagline">お金の「順番」と「言葉」が、これ1つでわかる</p>
+  </header>
+
+  <!-- 注意書き（③⑤⑥） -->
+  <div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="disclaim">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">本アプリは一般的な情報提供を目的としています。投資・税制などの最終判断は、ご自身または専門家にご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="date">
+      <div class="enu-notice enu-notice-date">
+        <span class="enu-icon">📅</span>
+        <span class="enu-body">掲載情報は <strong id="enu-info-date">2026年5月時点</strong> のものです。NISA・iDeCoなどの制度内容は変わることがあるため、最新情報は公式サイト等でご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </div>
+
+  <!-- タブ -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="diag">🩺 診断</button>
+    <button class="tab-btn" data-tab="roadmap">🗺️ ロードマップ</button>
+    <button class="tab-btn" data-tab="glossary">📖 用語辞典</button>
+  </nav>
+
+  <!-- 診断 -->
+  <section id="tab-diag">
+    <p class="intro-text">かんたん4問で、あなたの「お金の現在地」がわかります 🩺<br>「はい / いいえ」で答えてみましょう。</p>
+    <div id="diagQuestions"></div>
+    <button class="btn-primary" id="diagBtn" disabled>診断する</button>
+    <div id="diagResult"></div>
+  </section>
+
+  <!-- ロードマップ -->
+  <section id="tab-roadmap" class="hidden">
+    <p class="intro-text">お金を整える「正しい順番」を4ステップで 🌱<br>できたらチェックを入れてみましょう。</p>
+    <div class="progress-bar-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 4 ステップ</div>
+    </div>
+    <div id="stepList"></div>
+  </section>
+
+  <!-- 用語辞典 -->
+  <section id="tab-glossary" class="hidden">
+    <div class="glossary-tools">
+      <input type="text" class="search-box" id="searchBox" placeholder="🔍 用語を検索（例：複利、NISA）">
+      <div class="cat-chips" id="catChips"></div>
+    </div>
+    <div id="termList"></div>
+    <div class="no-result hidden" id="noResult">該当する用語が見つかりませんでした 🙏</div>
+  </section>
+
+  <!-- 参考リンク -->
+  <section class="ref-links">
+    <h2 class="ref-title">📎 もっと詳しく（公式・参考リンク）</h2>
+    <p class="ref-note">正確で最新の情報は、公式サイトでご確認くださいね 🌿</p>
+    <a class="ref-item" href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener">
+      <span class="ref-icon">📈</span>
+      <span class="ref-text"><b>NISAについて</b><span class="ref-src">金融庁 NISA特設ウェブサイト</span></span>
+    </a>
+    <a class="ref-item" href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener">
+      <span class="ref-icon">🏦</span>
+      <span class="ref-text"><b>iDeCoについて</b><span class="ref-src">iDeCo公式サイト（国民年金基金連合会）</span></span>
+    </a>
+    <a class="ref-item" href="https://www.nta.go.jp/" target="_blank" rel="noopener">
+      <span class="ref-icon">🧾</span>
+      <span class="ref-text"><b>税金・控除について</b><span class="ref-src">国税庁</span></span>
+    </a>
+    <a class="ref-item" href="https://www.fsa.go.jp/teach/kyouiku.html" target="_blank" rel="noopener">
+      <span class="ref-icon">📚</span>
+      <span class="ref-text"><b>お金の学び全般</b><span class="ref-src">金融庁 金融経済教育</span></span>
+    </a>
+    <div class="ref-divider"></div>
+    <div class="ref-divider-label">― enuの発信 ―</div>
+    <a class="ref-item" href="https://note.com/enu_at_desk" target="_blank" rel="noopener">
+      <span class="ref-icon">📗</span>
+      <span class="ref-text"><b>enuのnote</b><span class="ref-src">世界一やさしいお金の教科書｜お金の話をもっとやさしく</span></span>
+    </a>
+  </section>
+
+  <div class="home-btn-wrap">
+    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
+  </div>
+
+  <footer class="app-footer">
+    <a class="brand" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+    <div class="copy">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const ENU_CONFIG = {
+    appId:'money-basics-guide', appName:'お金の基礎ガイド',
+    storageType:'local', helpUrl:'https://enu-tools.pages.dev/help/', helpOpenNewTab:true
+  };
+  const CFG = ENU_CONFIG;
+  const _key = (s) => `enu_${CFG.appId}_${s}`;
+
+  // ===== ロードマップ =====
+  const STEPS = [
+    { num:'STEP 1', icon:'📊', title:'家計を把握する',
+      desc:'まずは毎月の収入と支出を「見える化」します。何にいくら使っているかを知ることが、すべての第一歩です。',
+      action:'家計簿アプリを入れて銀行・クレカを連携すれば、自動で記録されてラクちん。アプリが面倒なら、まず1週間だけ使ったお金をメモするのでもOK。完璧な家計簿より「続けられる」方法を選びましょう。',
+      pitfall:'いきなり細かく分類しようとして挫折しがち。最初は「食費」「固定費」「その他」のざっくり3つで十分です。' },
+    { num:'STEP 2', icon:'💸', title:'固定費を見直す',
+      desc:'通信費・保険・サブスクなど、毎月かかる固定費を見直します。一度見直せば節約効果がずっと続きます。',
+      action:'スマホの料金プランを確認。使っていないサブスクを1つ解約するだけでも効果があります。',
+      pitfall:'食費などの変動費から削ろうとして続かないパターン。先に固定費を削るのが鉄則です。',
+      tool:'checklist' },
+    { num:'STEP 3', icon:'🛟', title:'生活防衛資金を貯める',
+      desc:'病気や失業など「もしも」に備えるお金です。生活費の3〜6か月分が目安（収入が不安定な人は多めに）。',
+      action:'給料が入ったら「先に貯金」する設定を。残ったら貯金、ではなく先取りが基本です。',
+      pitfall:'「投資の方が増えるから」と防衛資金より投資を優先しがち。まずは守りを固めましょう。',
+      tool:'emergency' },
+    { num:'STEP 4', icon:'📈', title:'投資を始める',
+      desc:'生活防衛資金が貯まったら、余裕資金で投資へ。NISA・iDeCoなどの税制優遇制度を活用し、「長期・積立・分散」を基本に続けます。',
+      action:'まずはNISAの口座開設から。少額（月1,000円〜）でも始めてみるのが大切です。',
+      pitfall:'一気に大金を入れたくなりますが、まずは少額で「値動きに慣れる」ことから始めましょう。' }
+  ];
+
+  const CHECKLIST = [
+    { label:'スマホの料金プラン', tip:'格安SIMやプラン変更で月数千円下がることも' },
+    { label:'使っていないサブスク', tip:'動画・音楽・アプリ…使ってないものは解約' },
+    { label:'生命保険・医療保険', tip:'保障が手厚すぎないか、ライフステージに合わせて' },
+    { label:'電気・ガスの契約', tip:'会社やプランの乗り換えで安くなる場合も' },
+    { label:'住居費（家賃・住宅ローン）', tip:'ローンは借り換えで総額が変わることも' },
+    { label:'クレカ・年会費', tip:'使っていないカードの年会費は見直し対象' }
+  ];
+
+  // ===== 用語辞典（💬enuのひとこと付き） =====
+  const TERMS = [
+    { name:'手取り／額面', cat:'家計', desc:'「額面」は税金や社会保険料が引かれる前の総支給額。「手取り」は実際に口座へ振り込まれる金額です。',
+      tip:'ボーナスや昇給は「額面」で語られがち。手取りは思ったより増えないので、額面の約8割を目安に考えると現実的です。' },
+    { name:'固定費／変動費', cat:'家計', desc:'「固定費」は家賃・通信費・保険など毎月ほぼ一定の支出。「変動費」は食費・娯楽費など月によって変わる支出です。',
+      tip:'経理目線だと、まず狙うべきは「通信費」と「保険」。この2つだけで月1万円浮く人も多いです。' },
+    { name:'生活防衛資金', cat:'家計', desc:'病気・失業・急な出費など「もしも」に備えるお金。投資に回す前に、まずここを確保すると安心です。',
+      tip:'会社員は生活費の3か月分、自営業・フリーランスは6か月〜1年分が安心の目安です。' },
+    { name:'複利', cat:'投資', desc:'利息が元本に組み込まれ、その合計に対してさらに利息がつく仕組み。期間が長いほど雪だるま式に増えます。',
+      tip:'「早く始めるほど有利」なのは複利のおかげ。1年でも早く始める価値があります。' },
+    { name:'単利', cat:'投資', desc:'最初の元本に対してのみ利息がつく仕組み。複利と違い、利息が元本に組み込まれません。',
+      tip:'普通預金はほぼ単利の世界。だからこそ「複利が効く投資」に時間を味方につけたいところです。' },
+    { name:'元本', cat:'投資', desc:'投資や預金のもとになるお金のこと。利益や利息を除いた「最初に用意した金額」を指します。',
+      tip:'「元本割れ」は元本を下回ること。投資には元本保証がないものが多いので、防衛資金とは分けて考えましょう。' },
+    { name:'利回り', cat:'投資', desc:'投資した金額に対して、1年間でどれくらい利益が出るかを示す割合です。',
+      tip:'「年利5%」などは過去の平均で、毎年保証される数字ではありません。うますぎる利回りには要注意。' },
+    { name:'つみたて（積立）', cat:'投資', desc:'毎月一定額をコツコツ投資していく方法。買うタイミングを分散できます。',
+      tip:'自動積立にすると「気づいたら貯まってた」状態に。意志の力に頼らないのがコツです。' },
+    { name:'ドルコスト平均法', cat:'投資', desc:'一定額を定期的に買い続けることで、購入価格を平準化する手法です。',
+      tip:'高い時も安い時も淡々と買うのがミソ。「今は高いから待とう」が一番失敗しがちです。' },
+    { name:'分散投資', cat:'投資', desc:'投資先を1つに集中させず、複数に分けてリスクを抑える考え方です。',
+      tip:'1社の株に集中するより、世界中に分散された投資信託1本の方が、初心者には扱いやすいです。' },
+    { name:'リスク許容度', cat:'投資', desc:'資産が値下がりしたとき、どれくらいの変動を受け入れられるかの度合いです。',
+      tip:'「夜ぐっすり眠れるか」が一つの目安。値下がりで不安で眠れないなら、リスクの取りすぎかもしれません。' },
+    { name:'所得控除', cat:'税金', desc:'所得から一定額を差し引ける仕組み。課税の対象が減るので、結果的に税金が軽くなります。',
+      tip:'会社員でも使える控除は意外と多いです（医療費・ふるさと納税など）。知らないと損をする部分です。' },
+    { name:'NISA', cat:'税金', desc:'投資で得た利益が非課税になる制度。通常かかる約20%の税金がかからないのが大きな魅力です。',
+      tip:'迷ったら、まずNISAのつみたて投資枠から。少額・自動でコツコツが、初心者には一番続きます。' },
+    { name:'iDeCo', cat:'税金', desc:'自分で掛金を出して運用する私的年金制度。掛金が全額所得控除になるなど税制優遇が大きいのが特徴です。',
+      tip:'節税効果は大きい反面、原則60歳まで引き出せません。余裕資金で、が鉄則です。' },
+    { name:'源泉徴収／年末調整', cat:'税金', desc:'「源泉徴収」は給与から税金が天引きされること。「年末調整」は1年の正しい税額を会社が精算する手続きです。',
+      tip:'会社員は年末調整でほぼ完結しますが、医療費控除などは自分で確定申告が必要な場合があります。' }
+  ];
+  const CATEGORIES = ['すべて','家計','投資','税金'];
+
+  // ===== 診断 =====
+  const DIAG_Q = [
+    '毎月の収支を、だいたい把握している',
+    '固定費（通信・保険・サブスク）を見直したことがある',
+    '生活費の3か月分以上の貯金がある',
+    'NISAやiDeCoなどで投資を始めている'
+  ];
+  const DIAG_RES = [
+    { step:'STEP 1', title:'まずは家計の把握から 📊', msg:'お金を整える第一歩は「現状を知ること」。何にいくら使っているかを見える化するところからスタートしましょう。' },
+    { step:'STEP 2', title:'次は固定費の見直し 💸', msg:'家計は把握できていますね！次は固定費の見直しを。通信費や保険から見直すと、効果がずっと続きます。' },
+    { step:'STEP 3', title:'生活防衛資金を貯めよう 🛟', msg:'支出を整える土台ができています。次は「もしも」に備える生活防衛資金を。あると投資も落ち着いて始められます。' },
+    { step:'STEP 4', title:'いよいよ投資のステップ 📈', msg:'守りはバッチリ！NISA・iDeCoを活用して、長期・積立・分散でコツコツ増やしていきましょう。' }
+  ];
+  const DIAG_ALL = { step:'ALL CLEAR', title:'全ステップ クリア！🎉', msg:'お金の土台がしっかりできています。あとは継続あるのみ。年に一度、固定費や資産配分を見直すとさらに安心です。' };
+
+  function initStaticBits(){
+    const help=document.getElementById('enu-help-link');
+    if(help){help.href=CFG.helpUrl||'#';if(CFG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener';}}
+    const cy=document.getElementById('copyYear'); if(cy) cy.textContent=new Date().getFullYear();
+    const d=new Date(); const de=document.getElementById('enu-info-date');
+    if(de) de.textContent=`${d.getFullYear()}年${d.getMonth()+1}月時点`;
+  }
+
+  function initNotices(){
+    const K=_key('notice_minimized');
+    const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+    const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
+    const list=get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.add('is-mini');const l=get();if(!l.includes(id)){l.push(id);set(l);}}));
+    document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.remove('is-mini');set(get().filter(x=>x!==id));}));
+  }
+
+  function switchTab(tab){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    ['diag','roadmap','glossary'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hidden',t!==tab));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function initTabs(){
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
+  }
+
+  // ===== 診断ロジック =====
+  function initDiag(){
+    const wrap=document.getElementById('diagQuestions');
+    const btn=document.getElementById('diagBtn');
+    const resBox=document.getElementById('diagResult');
+    const answers=new Array(DIAG_Q.length).fill(null);
+
+    DIAG_Q.forEach((q,i)=>{
+      const card=document.createElement('div'); card.className='diag-q';
+      const txt=document.createElement('div'); txt.className='diag-q-text'; txt.textContent=`Q${i+1}. ${q}`;
+      const opts=document.createElement('div'); opts.className='diag-opts';
+      const yes=document.createElement('button'); yes.className='diag-opt'; yes.type='button'; yes.textContent='はい';
+      const no=document.createElement('button'); no.className='diag-opt'; no.type='button'; no.textContent='いいえ';
+      yes.addEventListener('click',()=>{answers[i]=true;yes.classList.add('sel-yes');no.classList.remove('sel-no');checkReady();});
+      no.addEventListener('click',()=>{answers[i]=false;no.classList.add('sel-no');yes.classList.remove('sel-yes');checkReady();});
+      opts.appendChild(yes); opts.appendChild(no);
+      card.appendChild(txt); card.appendChild(opts); wrap.appendChild(card);
+    });
+
+    function checkReady(){ btn.disabled=answers.includes(null); }
+
+    btn.addEventListener('click',()=>{
+      let focus=answers.indexOf(false);
+      const r=(focus===-1)?DIAG_ALL:DIAG_RES[focus];
+      resBox.innerHTML='';
+      const box=document.createElement('div'); box.className='diag-result';
+      const s=document.createElement('div'); s.className='res-step'; s.textContent=r.step;
+      const t=document.createElement('div'); t.className='res-title'; t.textContent=r.title;
+      const m=document.createElement('div'); m.className='res-msg'; m.textContent=r.msg;
+      const link=document.createElement('button'); link.className='btn-sub'; link.type='button'; link.textContent='🗺️ ロードマップで詳しく見る';
+      link.addEventListener('click',()=>switchTab('roadmap'));
+      box.appendChild(s); box.appendChild(t); box.appendChild(m); box.appendChild(link);
+      resBox.appendChild(box);
+      resBox.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  }
+
+  // ===== ロードマップ =====
+  function initRoadmap(){
+    const K=_key('roadmap');
+    const getDone=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+    const setDone=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
+    const list=document.getElementById('stepList');
+    const done=getDone();
+
+    STEPS.forEach((s,i)=>{
+      const el=document.createElement('div'); el.className='step'+(done.includes(i)?' done':'');
+      const cid='step-'+i;
+      const check=document.createElement('div'); check.className='step-check';
+      const input=document.createElement('input'); input.type='checkbox'; input.id=cid; input.checked=done.includes(i);
+      const label=document.createElement('label'); label.setAttribute('for',cid); label.textContent='✓';
+      check.appendChild(input); check.appendChild(label);
+
+      const body=document.createElement('div'); body.className='step-body';
+      const num=document.createElement('div'); num.className='step-num'; num.textContent=s.num;
+      const title=document.createElement('div'); title.className='step-title'; title.textContent=s.icon+' '+s.title;
+      const desc=document.createElement('div'); desc.className='step-desc'; desc.textContent=s.desc;
+      const act=document.createElement('div'); act.className='step-action';
+      const actB=document.createElement('b'); actB.textContent='✅ 今日できる一歩：';
+      act.appendChild(actB); act.appendChild(document.createTextNode(s.action));
+      body.appendChild(num); body.appendChild(title); body.appendChild(desc); body.appendChild(act);
+      if(s.pitfall){const pf=document.createElement('div'); pf.className='step-pitfall'; pf.textContent='⚠️ つまずきポイント：'+s.pitfall; body.appendChild(pf);}
+      if(s.tool){body.appendChild(buildTool(s.tool));}
+
+      el.appendChild(check); el.appendChild(body); list.appendChild(el);
+
+      input.addEventListener('change',()=>{
+        const cur=getDone();
+        if(input.checked){el.classList.add('done');if(!cur.includes(i))cur.push(i);}
+        else{el.classList.remove('done');const idx=cur.indexOf(i);if(idx>-1)cur.splice(idx,1);}
+        setDone(cur); updateProgress();
+      });
+    });
+    updateProgress();
+    function updateProgress(){
+      const n=getDone().length,total=STEPS.length;
+      document.getElementById('progressFill').style.width=(n/total*100)+'%';
+      document.getElementById('progressLabel').textContent=`${n} / ${total} ステップ`;
+    }
+  }
+
+  function buildTool(type){
+    const toggle=document.createElement('button'); toggle.className='tool-toggle'; toggle.type='button';
+    const bodyWrap=document.createElement('div'); bodyWrap.className='tool-body hidden';
+    if(type==='checklist'){
+      toggle.textContent='📋 固定費 見直しチェックリストを開く';
+      buildChecklist(bodyWrap);
+    }else if(type==='emergency'){
+      toggle.textContent='🛟 生活防衛資金を計算する';
+      buildEmergencyCalc(bodyWrap);
+    }
+    toggle.addEventListener('click',()=>{bodyWrap.classList.toggle('hidden');});
+    const frag=document.createDocumentFragment(); frag.appendChild(toggle); frag.appendChild(bodyWrap);
+    const holder=document.createElement('div'); holder.appendChild(frag); return holder;
+  }
+
+  function buildChecklist(wrap){
+    const K=_key('checklist');
+    const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+    const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
+    const checked=get();
+    CHECKLIST.forEach((c,i)=>{
+      const item=document.createElement('div'); item.className='cl-item'+(checked.includes(i)?' checked':'');
+      const cid='cl-'+i;
+      const input=document.createElement('input'); input.type='checkbox'; input.id=cid; input.checked=checked.includes(i);
+      const box=document.createElement('label'); box.className='cl-box'; box.setAttribute('for',cid); box.textContent='✓';
+      const txt=document.createElement('div'); txt.className='cl-text';
+      const lbl=document.createElement('div'); lbl.className='cl-label'; lbl.textContent=c.label;
+      const tip=document.createElement('div'); tip.className='cl-tip'; tip.textContent='💡 '+c.tip;
+      txt.appendChild(lbl); txt.appendChild(tip);
+      item.appendChild(input); item.appendChild(box); item.appendChild(txt); wrap.appendChild(item);
+      input.addEventListener('change',()=>{
+        const cur=get();
+        if(input.checked){item.classList.add('checked');if(!cur.includes(i))cur.push(i);}
+        else{item.classList.remove('checked');const idx=cur.indexOf(i);if(idx>-1)cur.splice(idx,1);}
+        set(cur);
+      });
+    });
+  }
+
+  function buildEmergencyCalc(wrap){
+    const row=document.createElement('div'); row.className='calc-row';
+    const lbl=document.createElement('label'); lbl.textContent='毎月の生活費（円）';
+    const input=document.createElement('input'); input.type='text'; input.inputMode='numeric'; input.className='calc-input'; input.placeholder='例：200,000';
+    row.appendChild(lbl); row.appendChild(input);
+    const out=document.createElement('div'); out.className='calc-out';
+    const b3=mkBox('3か月分の目安'); const b6=mkBox('6か月分の目安');
+    out.appendChild(b3.box); out.appendChild(b6.box);
+    const note=document.createElement('div'); note.className='cl-tip'; note.style.marginTop='8px';
+    note.textContent='💡 会社員は3か月分、自営業・フリーランスは6か月分以上が目安です。';
+    wrap.appendChild(row); wrap.appendChild(out); wrap.appendChild(note);
+    input.addEventListener('input',()=>{
+      const digits=input.value.replace(/[^0-9]/g,'');
+      input.value = digits ? Number(digits).toLocaleString() : '';
+      const v=parseInt(digits,10);
+      if(isNaN(v)||v<=0){b3.val.textContent='¥-';b6.val.textContent='¥-';return;}
+      b3.val.textContent='¥'+(v*3).toLocaleString();
+      b6.val.textContent='¥'+(v*6).toLocaleString();
+    });
+    function mkBox(label){
+      const box=document.createElement('div'); box.className='calc-out-box';
+      const l=document.createElement('div'); l.className='lbl'; l.textContent=label;
+      const val=document.createElement('div'); val.className='val'; val.textContent='¥-';
+      box.appendChild(l); box.appendChild(val); return {box,val};
+    }
+  }
+
+  // ===== 用語辞典 =====
+  function initGlossary(){
+    const listEl=document.getElementById('termList');
+    const noResult=document.getElementById('noResult');
+    const searchBox=document.getElementById('searchBox');
+    const chipsWrap=document.getElementById('catChips');
+    let activeCat='すべて';
+    CATEGORIES.forEach((c,i)=>{
+      const chip=document.createElement('button'); chip.className='chip'+(i===0?' active':''); chip.type='button'; chip.textContent=c;
+      chip.addEventListener('click',()=>{activeCat=c;chipsWrap.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));chip.classList.add('active');render();});
+      chipsWrap.appendChild(chip);
+    });
+    function render(){
+      const q=(searchBox.value||'').trim().toLowerCase();
+      listEl.innerHTML='';
+      const filtered=TERMS.filter(t=>{
+        const catOk=(activeCat==='すべて'||t.cat===activeCat);
+        const qOk=(!q||t.name.toLowerCase().includes(q)||t.desc.toLowerCase().includes(q)||t.tip.toLowerCase().includes(q));
+        return catOk&&qOk;
+      });
+      if(filtered.length===0){noResult.classList.remove('hidden');return;}
+      noResult.classList.add('hidden');
+      filtered.forEach(t=>{
+        const card=document.createElement('div'); card.className='term';
+        const head=document.createElement('div'); head.className='term-head';
+        const name=document.createElement('span'); name.className='term-name'; name.textContent=t.name;
+        const cat=document.createElement('span'); cat.className='term-cat'; cat.textContent=t.cat;
+        head.appendChild(name); head.appendChild(cat);
+        const desc=document.createElement('div'); desc.className='term-desc'; desc.textContent=t.desc;
+        const tip=document.createElement('div'); tip.className='term-tip';
+        const tb=document.createElement('b'); tb.textContent='💬 enuのひとこと：';
+        tip.appendChild(tb); tip.appendChild(document.createTextNode(t.tip));
+        card.appendChild(head); card.appendChild(desc); card.appendChild(tip);
+        listEl.appendChild(card);
+      });
+    }
+    searchBox.addEventListener('input',render);
+    render();
+  }
+
+  // ===== PWA・アイコン設定（003準拠） =====
+  function initPWA(){
+    const ICON='📗', APP_NAME='お金の基礎ガイド', SHORT_NAME='基礎ガイド';
+    let bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    if(!bg) bg='#faf7f0';
+    const EMOJI_FONT="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+    const head=document.head;
+    document.title=APP_NAME;
+
+    const setMeta=(name,content)=>{let m=document.querySelector('meta[name="'+name+'"]');if(!m){m=document.createElement('meta');m.setAttribute('name',name);head.appendChild(m);}m.setAttribute('content',content);};
+    const setLink=(rel,href,type)=>{let l=document.querySelector('link[rel="'+rel+'"]');if(!l){l=document.createElement('link');l.setAttribute('rel',rel);head.appendChild(l);}l.setAttribute('href',href);if(type)l.setAttribute('type',type);};
+
+    setMeta('theme-color',bg);
+    setMeta('apple-mobile-web-app-capable','yes');
+    setMeta('apple-mobile-web-app-status-bar-style','default');
+    setMeta('apple-mobile-web-app-title',SHORT_NAME);
+
+    // SVG favicon
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" ry="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EMOJI_FONT+'">'+ICON+'</text></svg>';
+    setLink('icon','data:image/svg+xml,'+encodeURIComponent(svg),'image/svg+xml');
+
+    function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+    function drawIcon(size,rounded,ratio){
+      const c=document.createElement('canvas'); c.width=size; c.height=size;
+      const ctx=c.getContext('2d');
+      ctx.fillStyle=bg;
+      if(rounded){roundRect(ctx,0,0,size,size,size*0.22);ctx.fill();}else{ctx.fillRect(0,0,size,size);}
+      ctx.font=(size*ratio)+"px "+EMOJI_FONT;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(ICON, size/2, size/2 + size*0.025);
+      return c.toDataURL('image/png');
+    }
+    setLink('apple-touch-icon', drawIcon(180,true,0.55));
+
+    const manifest={
+      id:location.pathname, name:APP_NAME, short_name:SHORT_NAME,
+      start_url:location.pathname, scope:location.pathname,
+      display:'standalone', orientation:'portrait',
+      background_color:bg, theme_color:bg,
+      icons:[
+        {src:drawIcon(192,true,0.55), sizes:'192x192', type:'image/png', purpose:'any'},
+        {src:drawIcon(192,false,0.50), sizes:'192x192', type:'image/png', purpose:'maskable'},
+        {src:drawIcon(512,true,0.55), sizes:'512x512', type:'image/png', purpose:'any'},
+        {src:drawIcon(512,false,0.50), sizes:'512x512', type:'image/png', purpose:'maskable'}
+      ]
+    };
+    setLink('manifest','data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    initPWA(); initStaticBits(); initNotices(); initTabs(); initDiag(); initRoadmap(); initGlossary();
+  });
+})();
+</script>
+</body>
+</html>
