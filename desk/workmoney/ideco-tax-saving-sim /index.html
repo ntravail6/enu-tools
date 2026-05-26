@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf6f1">
+<title>iDeCo節税シミュレーター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 共通カラー（全アプリ固定）*/
+  --card:#fff;
+  --text:#2C2A24;
+  --sub:#7A756B;
+  /* アプリ別カラー：08 モカ */
+  --primary:#B89A85;
+  --primary-light:#E5D5C5;
+  --primary-dark:#8E7560;
+  --primary-soft:#F0E8DE;
+  --accent:#A88770;
+  --bg:#faf6f1;
+  --bg-soft:#fdfaf6;
+  --line:#ebe2d5;
+
+  --font:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  color:var(--text);
+  background:
+    radial-gradient(circle at 12% -8%, var(--primary-soft) 0%, transparent 42%),
+    radial-gradient(circle at 92% 4%, var(--primary-light) 0%, transparent 38%),
+    var(--bg);
+  background-attachment:fixed;
+  line-height:1.7;
+  padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+}
+
+.page-wrapper{width:100%;max-width:960px;margin:0 auto}
+
+/* ===== Header ===== */
+.app-header{text-align:center;margin-bottom:18px;animation:fadeUp .5s ease both}
+.app-icon{
+  width:62px;height:62px;border-radius:50%;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.9rem;
+  background:linear-gradient(135deg,var(--primary-light),var(--primary-soft));
+  box-shadow:0 6px 18px rgba(142,117,96,.18);
+}
+.app-header h1{
+  font-family:var(--font);
+  font-size:1.5rem;font-weight:700;margin:0;color:var(--primary-dark);letter-spacing:.02em;
+}
+.app-header .tagline{font-family:var(--font);font-size:.75rem;color:var(--sub);margin:5px 0 0}
+
+/* ===== Notice (enuTools 101) ===== */
+.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;animation:fadeUp .5s .05s ease both}
+.enu-notice-wrap{width:100%}
+.enu-notice-wrap.is-mini{width:auto}
+.enu-notice-wrap > .enu-notice{display:flex}
+.enu-notice-wrap > .enu-notice-mini{display:none}
+.enu-notice-wrap.is-mini > .enu-notice{display:none}
+.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+.enu-notice{font-family:var(--font);border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.enu-notice .enu-body{flex:1;min-width:0}
+.enu-notice .enu-close-btn{font-family:var(--font);flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.enu-notice .enu-close-btn:hover{opacity:1}
+.enu-notice-mini{font-family:var(--font);width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+.enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.enu-notice .enu-body strong{font-weight:700}
+.enu-notice .src{display:block;margin-top:5px;font-size:.68rem;opacity:.95}
+.enu-notice .src a{color:inherit;text-decoration:underline;text-underline-offset:2px;font-weight:700}
+.enu-notice .src a:hover{opacity:.7}
+.enu-notice-help .enu-help-link{font-family:var(--font);color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+/* ===== Cards ===== */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:20px 18px;margin-bottom:16px;box-shadow:0 4px 20px rgba(142,117,96,.06);
+  animation:fadeUp .5s .1s ease both;
+}
+.card h2{
+  font-family:var(--font);font-size:1rem;font-weight:700;color:var(--primary-dark);
+  margin:0 0 4px;display:flex;align-items:center;gap:7px;
+}
+.card .card-sub{font-size:.72rem;color:var(--sub);margin:0 0 16px}
+
+/* ===== Form ===== */
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+.field-label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.field-label .fl-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.field-label .fl-val{font-size:.92rem;font-weight:700;color:var(--primary-dark);font-family:var(--font)}
+.field-hint{font-size:.68rem;color:var(--sub);margin-top:6px;line-height:1.6}
+
+/* segmented */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg.seg-2{grid-template-columns:repeat(2,1fr)}
+.seg button{
+  font-family:var(--font);font-size:.78rem;font-weight:700;cursor:pointer;
+  padding:9px 4px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg-soft);color:var(--sub);transition:all .15s;line-height:1.3;
+}
+.seg button:hover{background:var(--primary-soft)}
+.seg button.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(142,117,96,.25)}
+
+/* number input */
+.num-input{
+  width:100%;font-family:var(--font);font-size:1rem;font-weight:700;color:var(--text);
+  padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);
+  -moz-appearance:textfield;
+}
+.num-input:focus{outline:none;border-color:var(--primary);background:#fff}
+.num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.input-wrap{position:relative}
+.input-wrap .unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--sub);pointer-events:none}
+.input-wrap .num-input{padding-right:42px}
+
+/* range slider */
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;
+  background:linear-gradient(90deg,var(--primary) var(--p,50%),var(--line) var(--p,50%));
+  outline:none;margin:6px 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+  background:#fff;border:3px solid var(--primary);cursor:pointer;box-shadow:0 2px 6px rgba(142,117,96,.3);transition:transform .1s;
+}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--primary);cursor:pointer}
+.range-ends{display:flex;justify-content:space-between;font-size:.65rem;color:var(--sub);margin-top:-2px}
+
+/* ===== Result ===== */
+.result-hero{
+  text-align:center;background:linear-gradient(135deg,var(--primary-soft),#fff);
+  border-radius:14px;padding:18px 14px;border:1px solid var(--line);margin-bottom:16px;
+}
+.result-hero .rh-label{font-size:.74rem;color:var(--sub);margin:0 0 2px}
+.result-hero .rh-main{font-size:2.1rem;font-weight:700;color:var(--primary-dark);font-family:var(--font);line-height:1.2}
+.result-hero .rh-main small{font-size:1rem;font-weight:600}
+.result-hero .rh-break{font-size:.72rem;color:var(--sub);margin:6px 0 0}
+.result-hero .rh-break .nb-piece{white-space:nowrap}
+.result-hero .rh-month{font-size:.72rem;color:var(--primary-dark);font-weight:700;margin:4px 0 0}
+
+.compare{
+  display:flex;gap:9px;align-items:flex-start;border-radius:12px;padding:12px 13px;
+  font-size:.76rem;line-height:1.7;margin-bottom:16px;border:1px solid var(--primary-light);
+  background:linear-gradient(135deg,var(--primary-soft),#fff);color:var(--text);
+}
+.compare .ci{font-size:1.1rem;flex-shrink:0}
+.compare b{color:var(--primary-dark);white-space:nowrap}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:13px 12px}
+.stat .s-label{font-size:.68rem;color:var(--sub);margin:0 0 3px}
+.stat .s-val{font-size:1.15rem;font-weight:700;color:var(--text);font-family:var(--font);line-height:1.3}
+.stat .s-val small{font-size:.72rem;color:var(--sub);font-weight:600}
+.stat.full{grid-column:1/-1}
+.stat.accent{background:linear-gradient(135deg,#fff,var(--primary-soft));border-color:var(--primary-light)}
+.stat.accent .s-val{color:var(--primary-dark)}
+
+.assumptions{font-size:.7rem;color:var(--sub);background:var(--bg-soft);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-bottom:16px;line-height:1.65}
+.assumptions b{color:var(--text)}
+
+.calm{
+  display:flex;gap:9px;align-items:flex-start;background:var(--primary-soft);border:1px solid var(--primary-light);
+  border-radius:12px;padding:12px 13px;font-size:.75rem;color:var(--text);line-height:1.7;margin-bottom:4px;
+}
+.calm b{color:var(--primary-dark)}
+.calm .ci{font-size:1.1rem;flex-shrink:0}
+
+/* chart */
+.chart-card h2{margin-bottom:14px}
+.chart-wrap{width:100%;overflow:hidden}
+.chart-wrap svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:.72rem;color:var(--sub)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* ===== Toolbar (enuTools 102) ===== */
+.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:6px}
+.enu-btn-card{
+  font-family:var(--font);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:3px;transition:transform .15s;
+}
+.enu-btn-card:hover{transform:translateY(-2px)}
+.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+.enu-btn-card .enu-label{font-family:var(--font);font-size:.64rem;font-weight:700;color:inherit;line-height:1.2}
+.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+
+/* ===== Footer ===== */
+.app-footer{text-align:center;margin-top:24px;opacity:.85}
+.home-btn{
+  display:inline-block;font-family:var(--font);font-size:.75rem;font-weight:600;
+  padding:7px 16px;border-radius:999px;text-decoration:none;
+  background:transparent;color:var(--sub);border:1px solid var(--sub);transition:all .15s;
+}
+.home-btn:hover{color:var(--primary-dark);border-color:var(--primary-dark)}
+.footer-divider{border:none;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);margin:12px 0}
+.footer-brand{font-family:var(--font);font-size:.7rem;color:var(--sub)}
+.footer-brand a{color:var(--sub);text-decoration:none;font-weight:700}
+.footer-brand a:hover{color:var(--primary-dark)}
+.footer-copy{font-family:var(--font);font-size:.65rem;color:var(--sub);margin-top:8px}
+
+/* ===== Toast (enuTools 102) ===== */
+.enu-toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;
+  font-family:var(--font);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center;
+}
+.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== Responsive ===== */
+@media (max-width:650px){
+  .app-header h1{font-size:1.25rem}
+  .app-header .tagline{font-size:.7rem}
+  .result-hero .rh-main{font-size:1.7rem}
+}
+@media (min-width:651px) and (max-width:960px){
+  body{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
+}
+
+/* ===== Print ===== */
+@media print{
+  body{background:#fff;padding:0}
+  .enu-toolbar,.enu-toast,.home-btn,.enu-notice-area{display:none !important}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="app-header">
+    <div class="app-icon" aria-hidden="true">🌱</div>
+    <h1>iDeCo節税シミュレーター</h1>
+    <p class="tagline">出せないから、確実に貯まる。節税パワーをひと目で。</p>
+  </header>
+
+  <!-- 注意書き（enuTools 101・×で最小化） -->
+  <div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">入力内容はお使いの端末・ブラウザにのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="disclaim">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">本アプリは一般的な情報提供を目的とした<strong>概算ツール</strong>で、税務助言ではありません。実際の節税額は他の所得控除や個別事情で変わります。掛金の上限は勤務先の企業年金等で異なるため、正確な額は運営機関や勤務先、税理士など専門家にご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="date">
+      <div class="enu-notice enu-notice-date">
+        <span class="enu-icon">📅</span>
+        <span class="enu-body">掛金上限・税率は <strong id="info-date">2026年5月時点</strong> の現行制度に基づく概算です。掛金上限は2026年12月施行・2027年1月適用の改正で引き上げ予定（会社員・公務員は月6.2万円、自営業は月7.5万円など）です。<span class="src">出典：<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm" target="_blank" rel="noopener">国税庁 所得税の税率</a>／<a href="https://www.nta.go.jp/users/gensen/2025kiso/index.htm" target="_blank" rel="noopener">令和7年改正（基礎控除等）</a>／<a href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener">iDeCo公式サイト</a></span></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+  </div>
+
+  <!-- 入力 -->
+  <section class="card">
+    <h2>📝 あなたの条件</h2>
+    <p class="card-sub">職業・年齢・所得・掛金を入れると、すぐに試算します。</p>
+
+    <div class="field">
+      <div class="field-label"><span class="fl-name">職業</span></div>
+      <div class="seg" id="seg-job">
+        <button data-job="employee" class="active">会社員</button>
+        <button data-job="public">公務員</button>
+        <button data-job="self">自営業</button>
+      </div>
+    </div>
+
+    <div class="field" id="field-pension">
+      <div class="field-label"><span class="fl-name">勤務先の企業年金（DC・DB等）</span></div>
+      <div class="seg seg-2" id="seg-pension">
+        <button data-pension="none" class="active">なし</button>
+        <button data-pension="yes">あり</button>
+      </div>
+      <p class="field-hint">企業年金が「あり」だと現行のiDeCo上限が月23,000円→20,000円に下がります。正確な区分は勤務先にご確認ください。</p>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span class="fl-name">所得の入力方法</span></div>
+      <div class="seg seg-2" id="seg-mode">
+        <button data-mode="gross" class="active">年収から概算</button>
+        <button data-mode="taxable">課税所得を直接入力</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span class="fl-name" id="income-label">年収（額面・税込）</span>
+      </div>
+      <div class="input-wrap">
+        <input class="num-input" type="text" inputmode="numeric" id="in-income" value="5,000,000" autocomplete="off">
+        <span class="unit">円</span>
+      </div>
+      <p class="field-hint" id="income-hint"></p>
+    </div>
+
+    <div class="field" id="field-deduction">
+      <div class="field-label">
+        <span class="fl-name">その他の所得控除（任意）</span>
+      </div>
+      <div class="input-wrap">
+        <input class="num-input" type="text" inputmode="numeric" id="in-deduction" value="" placeholder="0" autocomplete="off">
+        <span class="unit">円</span>
+      </div>
+      <p class="field-hint">生命保険料控除・扶養控除・医療費控除など、基礎控除・社会保険料概算以外に差し引きたい控除があれば入力（年額）。</p>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span class="fl-name">現在の年齢</span>
+        <span class="fl-val"><span id="val-age">35</span>歳</span>
+      </div>
+      <input type="range" id="in-age" min="20" max="64" value="35" step="1">
+      <div class="range-ends"><span>20歳</span><span>64歳</span></div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span class="fl-name">何歳まで積み立てる？</span>
+        <span class="fl-val"><span id="val-endage">60</span>歳まで</span>
+      </div>
+      <input type="range" id="in-endage" min="21" max="65" value="60" step="1">
+      <div class="range-ends"><span id="endage-min">21歳</span><span id="endage-max">65歳</span></div>
+      <p class="field-hint" id="endage-hint"></p>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span class="fl-name">月々の掛金</span>
+        <span class="fl-val">¥<span id="val-contrib">23,000</span></span>
+      </div>
+      <input type="range" id="in-contrib" min="5000" max="23000" value="23000" step="1000">
+      <div class="range-ends"><span>¥5,000</span><span id="contrib-max">上限 ¥23,000</span></div>
+      <p class="field-hint" id="contrib-hint"></p>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span class="fl-name">想定の年利回り</span>
+        <span class="fl-val"><span id="val-rate">3.0</span>%</span>
+      </div>
+      <input type="range" id="in-rate" min="0" max="7" value="3" step="0.5">
+      <div class="range-ends"><span>0%</span><span>7%</span></div>
+      <p class="field-hint">運用は元本割れの可能性があります。利回りはあくまで仮定です。0%は元本確保型（定期預金等）の目安。</p>
+    </div>
+  </section>
+
+  <!-- 結果 -->
+  <section class="card">
+    <h2>📊 試算結果</h2>
+    <p class="card-sub">入力を変えるたびにリアルタイムで更新されます。</p>
+
+    <div class="result-hero">
+      <p class="rh-label">1年あたりの節税額（所得税＋住民税）</p>
+      <div class="rh-main">¥<span id="res-yearly-saving">0</span></div>
+      <p class="rh-break" id="res-saving-break"></p>
+      <p class="rh-month" id="res-month-saving"></p>
+    </div>
+
+    <div class="compare" id="compare-block">
+      <span class="ci">💡</span>
+      <span id="res-compare"></span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <p class="s-label">💴 推定課税所得</p>
+        <p class="s-val">¥<span id="res-taxable">0</span></p>
+      </div>
+      <div class="stat">
+        <p class="s-label">📊 適用される所得税率</p>
+        <p class="s-val"><span id="res-rate">5</span>%<small> ＋住民税10%</small></p>
+      </div>
+      <div class="stat">
+        <p class="s-label">🪙 積立元本（拠出総額）</p>
+        <p class="s-val">¥<span id="res-principal">0</span></p>
+      </div>
+      <div class="stat">
+        <p class="s-label">📈 運用益（想定）</p>
+        <p class="s-val">¥<span id="res-gain">0</span></p>
+      </div>
+      <div class="stat full accent">
+        <p class="s-label">💰 <span id="res-endage-label">60</span>歳時点の資産合計（元本＋運用益）</p>
+        <p class="s-val">¥<span id="res-total">0</span></p>
+      </div>
+      <div class="stat full">
+        <p class="s-label">✨ 拠出期間トータルの累計節税額（<span id="res-years">0</span>年間）</p>
+        <p class="s-val">¥<span id="res-cum-saving">0</span> <small>※同条件で続けた場合の概算</small></p>
+      </div>
+    </div>
+
+    <div class="assumptions" id="res-assumptions"></div>
+
+    <div class="calm">
+      <span class="ci">🛡️</span>
+      <span id="res-calm"></span>
+    </div>
+  </section>
+
+  <!-- グラフ -->
+  <section class="card chart-card">
+    <h2>📈 <span id="chart-endage">60</span>歳までの積み上がり</h2>
+    <div class="chart-wrap" id="chart-wrap"></div>
+    <div class="legend">
+      <span><i style="background:var(--primary)"></i>積立元本</span>
+      <span><i style="background:var(--accent);opacity:.55"></i>運用益</span>
+    </div>
+  </section>
+
+  <!-- アクションボタン（enuTools 102） -->
+  <div class="enu-toolbar">
+    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+  </div>
+
+  <!-- フッター -->
+  <footer class="app-footer">
+    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
+    <hr class="footer-divider">
+    <p class="footer-brand"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></p>
+    <p class="footer-copy">© <span id="copy-year">2026</span> enu(エヌ) All rights reserved.</p>
+  </footer>
+
+</div>
+
+<div class="enu-toast" id="enu-toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var ENU_CONFIG = {
+    appId:'ideco-tax-saving-sim',
+    appName:'iDeCo節税シミュレーター',
+    storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/help/',
+    helpOpenNewTab:true
+  };
+  var STORE_KEY = ENU_CONFIG.appId + '-data';
+
+  // ===== 制度データ（2026年5月時点・現行）=====
+  // 月額掛金上限
+  var LIMIT = {
+    employee_none: 23000,  // 会社員・企業年金なし
+    employee_yes : 20000,  // 会社員・企業年金あり
+    public       : 20000,  // 公務員
+    self         : 68000   // 自営業（国民年金基金等との合算枠）
+  };
+  // 拠出可能な上限年齢（現行）
+  var MAX_AGE = { employee:65, public:65, self:60 };
+
+  // ===== 状態 =====
+  var state = {
+    job:'employee',      // employee | public | self
+    pension:'none',      // none | yes （会社員のみ）
+    mode:'gross',        // gross | taxable
+    income:5000000,
+    deduction:0,
+    age:35,
+    endAge:60,
+    contrib:23000,
+    rate:3
+  };
+
+  // ===== ユーティリティ =====
+  function $(id){return document.getElementById(id)}
+  function yen(n){return Math.round(n).toLocaleString('ja-JP')}
+  function parseDigits(s){var d=String(s).replace(/[^0-9]/g,'');return d?parseInt(d,10):0}
+  function commaInt(n){return n? n.toLocaleString('ja-JP') : ''}
+  // テキスト＋強調を createElement / textContent で安全に組む（innerHTML不使用）
+  // parts: 文字列 / {b:'太字'} / {span:'文字',cls:'クラス'} / {br:true}
+  function setRich(el, parts){
+    el.textContent='';
+    parts.forEach(function(p){
+      if(typeof p==='string'){ el.appendChild(document.createTextNode(p)); return; }
+      if(p.br){ el.appendChild(document.createElement('br')); return; }
+      if(p.b!==undefined){ var b=document.createElement('b'); b.textContent=p.b; el.appendChild(b); return; }
+      if(p.span!==undefined){ var s=document.createElement('span'); if(p.cls)s.className=p.cls; s.textContent=p.span; el.appendChild(s); }
+    });
+  }
+  // コンマ区切りの数値入力欄をstateと同期
+  function bindMoney(id, key){
+    var el=$(id);
+    el.addEventListener('input', function(){
+      var v=parseDigits(this.value);
+      state[key]=v;
+      this.value=commaInt(v);
+      try{var len=this.value.length;this.setSelectionRange(len,len)}catch(e){/* caret調整は失敗しても無害 */}
+      render();
+    });
+  }
+  function toast(msg){
+    var t=$('enu-toast');if(!t)return;
+    t.textContent=msg;t.classList.add('show');
+    clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},2200);
+  }
+
+// enuTools 名前空間に公開（201等の他モジュールから toast を使えるように）
+  window.enuTools = window.enuTools || {};
+  window.enuTools.toast = toast;
+
+  // ===== 注意書きカード（enuTools 101・×で最小化／状態保存）=====
+  function initNotices(){
+    var K='enu_'+ENU_CONFIG.appId+'_notice_minimized';
+    var get=function(){try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+    var set=function(l){try{localStorage.setItem(K,JSON.stringify(l))}catch(e){/* 保存失敗は無害（次回も表示されるだけ） */}};
+    // storageType に合わないカードは非表示（このアプリは local のみ）
+    var type=ENU_CONFIG.storageType||'local';
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(function(w){
+      if(w.dataset.storage!==type){w.style.display='none'}
+    });
+    // ヘルプリンク（固定URL）
+    var help=$('enu-help-link');
+    if(help){help.href=ENU_CONFIG.helpUrl||'#';if(ENU_CONFIG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener'}}
+    // 最小化状態の復元
+    var list=get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){
+      if(list.indexOf(w.dataset.noticeId)>=0)w.classList.add('is-mini');
+    });
+    // × で最小化
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(function(b){
+      b.addEventListener('click',function(){
+        var w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;
+        w.classList.add('is-mini');var l=get();if(l.indexOf(id)<0){l.push(id);set(l)}
+      });
+    });
+    // 丸アイコンで復帰
+    document.querySelectorAll('.enu-notice-mini').forEach(function(m){
+      m.addEventListener('click',function(){
+        var w=m.closest('.enu-notice-wrap'),id=w.dataset.noticeId;
+        w.classList.remove('is-mini');set(get().filter(function(x){return x!==id}));
+      });
+    });
+  }
+
+  // 給与所得控除（令和7年(2025)改正後・最低保障額65万円）
+  function salaryDeduction(income){
+    if(income<=1900000) return 650000;
+    if(income<=3600000) return income*0.3+80000;
+    if(income<=6600000) return income*0.2+440000;
+    if(income<=8500000) return income*0.1+1100000;
+    return 1950000;
+  }
+
+  // 基礎控除（合計所得金額ベース・令和7,8年分=2025〜2026の暫定額。令和9年以降は一律58万円）
+  function basicDeduction(goukei){
+    if(goukei<=1320000)  return 950000;  // 58万+37万
+    if(goukei<=3360000)  return 880000;  // 58万+30万
+    if(goukei<=4890000)  return 680000;  // 58万+10万
+    if(goukei<=6550000)  return 630000;  // 58万+5万
+    if(goukei<=23500000) return 580000;  // 58万
+    if(goukei<=24000000) return 480000;
+    if(goukei<=24500000) return 320000;
+    if(goukei<=25000000) return 160000;
+    return 0;
+  }
+
+  // 所得税額（速算表・現行）
+  function incomeTax(taxable){
+    var x=Math.max(0,taxable);
+    if(x<=1950000)  return x*0.05;
+    if(x<=3300000)  return x*0.10-97500;
+    if(x<=6950000)  return x*0.20-427500;
+    if(x<=9000000)  return x*0.23-636000;
+    if(x<=18000000) return x*0.33-1536000;
+    if(x<=40000000) return x*0.40-2796000;
+    return x*0.45-4796000;
+  }
+  // 限界税率（表示用）
+  function marginalRate(taxable){
+    var x=Math.max(0,taxable);
+    if(x<=1950000)  return 5;
+    if(x<=3300000)  return 10;
+    if(x<=6950000)  return 20;
+    if(x<=9000000)  return 23;
+    if(x<=18000000) return 33;
+    if(x<=40000000) return 40;
+    return 45;
+  }
+
+  // 入力値から推定課税所得を求める
+  function estimateTaxable(){
+    if(state.mode==='taxable'){
+      return Math.max(0, state.income - state.deduction);
+    }
+    // 年収から概算
+    if(state.job==='self'){
+      // 自営業：入力＝事業所得（売上−経費）＝合計所得。基礎控除＋その他控除を差し引く
+      var goukeiS = state.income;
+      return Math.max(0, goukeiS - basicDeduction(goukeiS) - state.deduction);
+    }
+    // 会社員・公務員：給与所得控除→合計所得→社会保険料概算（年収×15%）＋基礎控除（段階）＋その他控除
+    var salaryD = salaryDeduction(state.income);
+    var goukei  = Math.max(0, state.income - salaryD);  // 給与所得＝合計所得
+    var social  = state.income*0.15;
+    return Math.max(0, goukei - social - basicDeduction(goukei) - state.deduction);
+  }
+
+  // 掛金上限を求める
+  function contribLimit(){
+    if(state.job==='self') return LIMIT.self;
+    if(state.job==='public') return LIMIT.public;
+    return state.pension==='yes' ? LIMIT.employee_yes : LIMIT.employee_none;
+  }
+
+  // ===== メイン計算＆描画 =====
+  function render(){
+    var taxable = estimateTaxable();
+    var annual  = state.contrib*12;
+
+    // 節税額（年）：掛金を引く前後の所得税差＋住民税10%分
+    var itBefore = incomeTax(taxable);
+    var itAfter  = incomeTax(Math.max(0, taxable-annual));
+    var saveIncomeTax = Math.max(0, itBefore-itAfter);
+    var saveResidentTax = 0.10 * Math.min(annual, Math.max(0,taxable)); // 住民税は所得割10%概算
+    var yearlySaving = saveIncomeTax + saveResidentTax;
+
+    // 積立（月次複利）
+    var years  = Math.max(0, state.endAge - state.age);
+    var months = years*12;
+    var r = state.rate/100, mr = r/12;
+    var principal = state.contrib*months;
+    var fv;
+    if(mr===0){ fv = principal; }
+    else { fv = state.contrib * ((Math.pow(1+mr,months)-1)/mr); }
+    var gain = Math.max(0, fv-principal);
+
+    var cumSaving = yearlySaving*years;
+
+    // 上限まで入れた場合の節税額（比較用）
+    var lim = contribLimit();
+    var maxAnnual = lim*12;
+    var saveMax = Math.max(0, itBefore - incomeTax(Math.max(0, taxable-maxAnnual)))
+                + 0.10 * Math.min(maxAnnual, Math.max(0,taxable));
+
+    // ---- 表示 ----
+    $('res-yearly-saving').textContent = yen(yearlySaving);
+    setRich($('res-saving-break'), [
+      {span:'所得税 ¥'+yen(saveIncomeTax), cls:'nb-piece'},
+      '　＋　',
+      {span:'住民税 ¥'+yen(saveResidentTax), cls:'nb-piece'}
+    ]);
+    $('res-month-saving').textContent = '1か月あたり 約¥'+yen(yearlySaving/12);
+    $('res-taxable').textContent   = yen(taxable);
+    $('res-rate').textContent      = marginalRate(taxable);
+    $('res-principal').textContent = yen(principal);
+    $('res-gain').textContent      = yen(gain);
+    $('res-total').textContent     = yen(fv);
+    $('res-endage-label').textContent = state.endAge;
+    $('chart-endage').textContent  = state.endAge;
+    $('res-years').textContent     = years;
+    $('res-cum-saving').textContent= yen(cumSaving);
+
+    // 上限比較ブロック
+    var cmpEl = $('res-compare');
+    if(state.contrib>=lim){
+      setRich(cmpEl, ['掛金は上限の ', {b:'¥'+yen(lim)+'/月'}, ' をフル活用中。これ以上の節税枠はありません。']);
+    }else{
+      var diff = Math.max(0, saveMax-yearlySaving);
+      setRich(cmpEl, [
+        '掛金を上限の ', {b:'¥'+yen(lim)+'/月'}, ' にすると、年間の節税額は ',
+        {b:'¥'+yen(saveMax)}, '（今より ', {b:'+¥'+yen(diff)}, '）に増えます。'
+      ]);
+    }
+
+    // 安心メッセージ
+    var calmEl = $('res-calm');
+    if(years<=0){
+      calmEl.textContent = '積立年数が0年です。「現在の年齢」より先の終了年齢を選んでください。';
+    }else{
+      setRich(calmEl, [
+        'iDeCoは原則60歳まで引き出せない仕組み。だからこそ、'+years+'年でコツコツ ',
+        {b:'¥'+yen(principal)}, ' が確実に積み上がり、同時に毎年の税金が ',
+        {b:'¥'+yen(yearlySaving)}, ' ずつ軽くなります。「使ってしまう心配がない」＝着実に老後資金が育つ安心感がここにあります。'
+      ]);
+    }
+
+    // 前提の明示
+    var assum = [];
+    assum.push([{b:'節税額'}, '＝掛金は全額が小規模企業共済等掛金控除の対象として計算（所得税は累進・住民税は一律10%概算）。']);
+    if(state.mode==='gross'){
+      if(state.job==='self'){
+        assum.push([{b:'課税所得の推定'}, '＝入力額を事業所得（合計所得）とみなし、基礎控除（令和7・8年は58〜95万円）＋その他控除を差し引いた概算（自営業は経費・控除差が大きいため「直接入力」がより正確です）。']);
+      }else{
+        assum.push([{b:'課税所得の推定'}, '＝年収から給与所得控除（令和7年改正・最低65万円）・社会保険料（年収の15%と仮定）・基礎控除（合計所得に応じ令和7・8年は58〜95万円）・その他控除を差し引いた概算。']);
+      }
+    }else{
+      assum.push([{b:'課税所得'}, '＝入力値からその他控除を差し引いた額で税率を判定。']);
+    }
+    assum.push(['累計節税額は同じ所得・掛金が続いた場合の単純合計です。復興特別所得税・各種税額控除等は未考慮。']);
+    // 各行を <br> でつなぎつつ createElement で構築
+    var flat=[];
+    assum.forEach(function(parts,i){ if(i>0)flat.push({br:true}); flat=flat.concat(parts); });
+    setRich($('res-assumptions'), flat);
+
+    drawChart(principal, fv, years, mr);
+    save();
+  }
+
+  // ===== グラフ（手描きSVG・外部ライブラリなし）=====
+  function drawChart(principalFinal, fvFinal, years, mr){
+    var wrap = $('chart-wrap');
+    if(years<=0){
+      wrap.textContent='';
+      var ph=document.createElement('p');
+      ph.style.cssText='font-size:.74rem;color:var(--sub);text-align:center;padding:24px 0';
+      ph.textContent='終了年齢を現在より先に設定すると、ここにグラフが表示されます。';
+      wrap.appendChild(ph);
+      return;
+    }
+
+    var W=600,H=300,padL=54,padR=14,padT=14,padB=34;
+    var plotW=W-padL-padR, plotH=H-padT-padB;
+    var maxY = fvFinal>0 ? fvFinal : 1;
+
+    // 年ごとの元本・合計を計算
+    var pPts=[], fPts=[];
+    for(var y=0;y<=years;y++){
+      var m=y*12;
+      var p=state.contrib*m;
+      var f = (mr===0)? p : state.contrib*((Math.pow(1+mr,m)-1)/mr);
+      var x = padL + (years===0?0:(y/years)*plotW);
+      pPts.push([x, padT+plotH-(p/maxY)*plotH]);
+      fPts.push([x, padT+plotH-(f/maxY)*plotH]);
+    }
+    var baseY = padT+plotH;
+
+    function path(pts, close){
+      var d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+      for(var i=1;i<pts.length;i++) d+=' L '+pts[i][0].toFixed(1)+' '+pts[i][1].toFixed(1);
+      if(close){ d+=' L '+pts[pts.length-1][0].toFixed(1)+' '+baseY.toFixed(1)+' L '+pts[0][0].toFixed(1)+' '+baseY.toFixed(1)+' Z'; }
+      return d;
+    }
+    // 運用益エリア＝合計ライン下〜元本ライン上 を埋める
+    var gainPath='M '+fPts[0][0].toFixed(1)+' '+fPts[0][1].toFixed(1);
+    for(var i=1;i<fPts.length;i++) gainPath+=' L '+fPts[i][0].toFixed(1)+' '+fPts[i][1].toFixed(1);
+    for(var j=pPts.length-1;j>=0;j--) gainPath+=' L '+pPts[j][0].toFixed(1)+' '+pPts[j][1].toFixed(1);
+    gainPath+=' Z';
+
+    // Y軸グリッド（4分割）
+    var grid='';
+    for(var g=0;g<=4;g++){
+      var gy=padT+plotH-(g/4)*plotH;
+      var gv=maxY*(g/4);
+      grid+='<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="var(--line)" stroke-width="1"/>';
+      grid+='<text x="'+(padL-6)+'" y="'+(gy+3).toFixed(1)+'" text-anchor="end" font-size="9" fill="var(--sub)" font-family="'+"'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif"+'">'+manY(gv)+'</text>';
+    }
+    // X軸ラベル（開始・中間・終了）
+    function xLabel(yIdx,label){
+      var x=padL+(yIdx/years)*plotW;
+      return '<text x="'+x.toFixed(1)+'" y="'+(H-12)+'" text-anchor="middle" font-size="9" fill="var(--sub)" font-family="'+"'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif"+'">'+label+'</text>';
+    }
+    var xls = xLabel(0, state.age+'歳');
+    if(years>=2) xls += xLabel(Math.round(years/2), (state.age+Math.round(years/2))+'歳');
+    xls += xLabel(years, state.endAge+'歳');
+
+    function manY(v){ // 縦軸を「万円」表記で短く
+      if(v>=10000) return Math.round(v/10000).toLocaleString('ja-JP')+'万';
+      return Math.round(v).toLocaleString('ja-JP');
+    }
+
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="積立の積み上がりグラフ">';
+    svg+=grid;
+    svg+='<path d="'+path(pPts,true)+'" fill="var(--primary)" fill-opacity="0.9"/>';
+    svg+='<path d="'+gainPath+'" fill="var(--accent)" fill-opacity="0.5"/>';
+    svg+='<path d="'+path(fPts,false)+'" fill="none" stroke="var(--primary-dark)" stroke-width="2"/>';
+    svg+=xls;
+    svg+='</svg>';
+    wrap.innerHTML=svg;
+  }
+
+  // ===== UI更新（依存関係の反映）=====
+  function setSliderFill(el){
+    var min=+el.min, max=+el.max, v=+el.value;
+    var p = max>min ? ((v-min)/(max-min))*100 : 0;
+    el.style.setProperty('--p', p+'%');
+  }
+
+  function syncJobDependent(){
+    // 企業年金トグルは会社員のみ表示
+    $('field-pension').style.display = (state.job==='employee') ? '' : 'none';
+
+    // 掛金上限
+    var lim = contribLimit();
+    var cEl = $('in-contrib');
+    cEl.max = lim;
+    if(state.contrib>lim){ state.contrib=lim; }
+    cEl.value = state.contrib;
+    $('contrib-max').textContent = '上限 ¥'+yen(lim);
+    $('val-contrib').textContent = yen(state.contrib);
+    var jobName = state.job==='self'?'自営業（第1号）':(state.job==='public'?'公務員':'会社員'+(state.pension==='yes'?'（企業年金あり）':'（企業年金なし）'));
+    $('contrib-hint').textContent = jobName+'の現行上限は月¥'+yen(lim)+'。iDeCoは月5,000円から1,000円単位で設定できます。'+(state.job==='self'?'（国民年金基金・付加保険料との合算枠）':'');
+    setSliderFill(cEl);
+
+    // 拠出上限年齢
+    var maxAge = state.job==='self'?MAX_AGE.self:(state.job==='public'?MAX_AGE.public:MAX_AGE.employee);
+    var eEl = $('in-endage');
+    eEl.max = maxAge;
+    $('endage-max').textContent = maxAge+'歳';
+    if(state.endAge>maxAge){ state.endAge=maxAge; }
+    // 終了年齢の下限は現在年齢+1
+    eEl.min = state.age+1;
+    $('endage-min').textContent = (state.age+1)+'歳';
+    if(state.endAge<state.age+1){ state.endAge=Math.min(maxAge, state.age+1); }
+    eEl.value = state.endAge;
+    $('val-endage').textContent = state.endAge;
+    var note = '現行制度では'+(state.job==='self'?'自営業は60歳未満':'会社員・公務員は65歳未満')+'まで拠出できます（原則60歳まで引き出し不可）。2027年1月からは70歳未満まで拡大予定です。';
+    $('endage-hint').textContent = note;
+    setSliderFill(eEl);
+  }
+
+  function syncModeDependent(){
+    if(state.mode==='taxable'){
+      $('income-label').textContent='課税所得（控除をすべて差し引いた後）';
+      $('income-hint').textContent='所得税率の判定にそのまま使う金額です。源泉徴収票や確定申告書で確認できます。';
+      $('field-deduction').style.display='none';
+    }else{
+      if(state.job==='self'){
+        $('income-label').textContent='事業所得（売上−経費）';
+        $('income-hint').textContent='自営業の方は控除差が大きいため「課税所得を直接入力」がより正確です。';
+      }else{
+        $('income-label').textContent='年収（額面・税込）';
+        $('income-hint').textContent='源泉徴収票の「支払金額」など。給与所得控除・社会保険料は自動で概算します。';
+      }
+      $('field-deduction').style.display='';
+    }
+  }
+
+  function refreshAll(){
+    syncModeDependent();
+    syncJobDependent();
+    $('val-age').textContent=state.age;
+    $('val-rate').textContent=(+state.rate).toFixed(1);
+    setSliderFill($('in-age'));
+    setSliderFill($('in-rate'));
+    render();
+  }
+
+  // ===== 保存・復元 =====
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    catch(e){ console.warn('入力の保存に失敗しました（localStorage利用不可）'); }
+  }
+  function load(){
+    try{
+      var s=JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+      if(s&&typeof s==='object'){ for(var k in state){ if(k in s) state[k]=s[k]; } }
+    }catch(e){ console.warn('保存データの読み込みに失敗しました'); }
+  }
+
+  // ===== シェア（端末ネイティブ共有 or クリップボード）=====
+  function buildSummary(){
+    var taxable=estimateTaxable(), annual=state.contrib*12;
+    var itB=incomeTax(taxable), itA=incomeTax(Math.max(0,taxable-annual));
+    var save=Math.max(0,itB-itA)+0.10*Math.min(annual,Math.max(0,taxable));
+    var years=Math.max(0,state.endAge-state.age);
+    return 'iDeCo節税シミュレーター 試算結果\n'
+      +'・月々の掛金：¥'+yen(state.contrib)+'\n'
+      +'・年間の節税額：約¥'+yen(save)+'\n'
+      +'・'+state.endAge+'歳までの累計節税額：約¥'+yen(save*years)+'\n'
+      +'※現行制度に基づく概算です';
+  }
+  function handleShare(){
+    var text=buildSummary();
+    var url=location.href.split('#')[0];
+    if(navigator.share){
+      navigator.share({title:ENU_CONFIG.appName,text:text,url:url}).then(function(){toast('🔗 シェアしました')}).catch(function(){});
+    }else if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('🔗 結果をコピーしました')}).catch(function(){toast('コピーできませんでした')});
+    }else{
+      toast('お使いの環境ではシェアに対応していません');
+    }
+  }
+
+  // ===== イベント登録 =====
+  function bind(){
+    // 職業
+    $('seg-job').addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      state.job=b.dataset.job;
+      [].forEach.call(this.children,function(c){c.classList.toggle('active',c===b)});
+      refreshAll();
+    });
+    // 企業年金
+    $('seg-pension').addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      state.pension=b.dataset.pension;
+      [].forEach.call(this.children,function(c){c.classList.toggle('active',c===b)});
+      refreshAll();
+    });
+    // 所得モード
+    $('seg-mode').addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      state.mode=b.dataset.mode;
+      [].forEach.call(this.children,function(c){c.classList.toggle('active',c===b)});
+      refreshAll();
+    });
+    // 金額入力（コンマ区切り）
+    bindMoney('in-income','income');
+    bindMoney('in-deduction','deduction');
+    // スライダー
+    $('in-age').addEventListener('input',function(){ state.age=+this.value; refreshAll(); });
+    $('in-endage').addEventListener('input',function(){ state.endAge=+this.value; $('val-endage').textContent=state.endAge; setSliderFill(this); render(); });
+    $('in-contrib').addEventListener('input',function(){ state.contrib=+this.value; $('val-contrib').textContent=yen(state.contrib); setSliderFill(this); render(); });
+    $('in-rate').addEventListener('input',function(){ state.rate=+this.value; $('val-rate').textContent=(+state.rate).toFixed(1); setSliderFill(this); render(); });
+    // ボタン
+    $('enu-btn-print').addEventListener('click',function(){ window.print(); });
+    $('enu-btn-share2').addEventListener('click',handleShare);
+    // 情報時点を自動反映
+    var d=new Date(); $('info-date').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月時点';
+    // コピーライトの年を自動反映
+    var cy=$('copy-year'); if(cy) cy.textContent=d.getFullYear();
+  }
+
+  function init(){
+    load();
+    // 復元値をUIへ反映
+    $('in-income').value=commaInt(state.income);
+    $('in-deduction').value=commaInt(state.deduction);
+    $('in-age').value=state.age;
+    $('in-rate').value=state.rate;
+    [].forEach.call($('seg-job').children,function(c){c.classList.toggle('active',c.dataset.job===state.job)});
+    [].forEach.call($('seg-pension').children,function(c){c.classList.toggle('active',c.dataset.pension===state.pension)});
+    [].forEach.call($('seg-mode').children,function(c){c.classList.toggle('active',c.dataset.mode===state.mode)});
+    bind();
+    initNotices();
+    refreshAll();
+  }
+
+  if(document.readyState!=='loading'){ init(); }
+  else { document.addEventListener('DOMContentLoaded', init); }
+})();
+
+/* === アイコン・PWA設定（enuTools 003）=== */
+(function(){
+  'use strict';
+  var EMOJI='🌱';
+  var APP_NAME='iDeCo節税シミュレーター';
+  var SHORT_NAME='iDeCo節税';
+  var EMOJI_FONT="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+
+  async function setup(){
+    var bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()||'#faf7f0';
+    document.title=APP_NAME;
+
+    function setMeta(name,content){
+      var m=document.querySelector('meta[name="'+name+'"]');
+      if(!m){m=document.createElement('meta');m.setAttribute('name',name);document.head.appendChild(m)}
+      m.setAttribute('content',content);
+    }
+    function setLink(rel,href,type){
+      var l=document.querySelector('link[rel="'+rel+'"]');
+      if(!l){l=document.createElement('link');l.setAttribute('rel',rel);document.head.appendChild(l)}
+      if(type)l.setAttribute('type',type);
+      l.setAttribute('href',href);
+    }
+    setMeta('theme-color',bg);
+    setMeta('apple-mobile-web-app-capable','yes');
+    setMeta('apple-mobile-web-app-status-bar-style','default');
+    setMeta('apple-mobile-web-app-title',SHORT_NAME);
+
+    // ブラウザタブ favicon（SVG・60%・角丸22%）
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+      +'<rect width="100" height="100" rx="22" fill="'+bg+'"/>'
+      +'<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EMOJI_FONT+'">'+EMOJI+'</text></svg>';
+    setLink('icon','data:image/svg+xml,'+encodeURIComponent(svg),'image/svg+xml');
+
+    // Canvas でアイコン生成
+    function makeIcon(size,ratio,rounded){
+      return new Promise(function(resolve){
+        var c=document.createElement('canvas');c.width=size;c.height=size;
+        var ctx=c.getContext('2d');
+        ctx.fillStyle=bg;
+        if(rounded){
+          var r=size*0.22;
+          ctx.beginPath();
+          ctx.moveTo(r,0);
+          ctx.arcTo(size,0,size,size,r);
+          ctx.arcTo(size,size,0,size,r);
+          ctx.arcTo(0,size,0,0,r);
+          ctx.arcTo(0,0,size,0,r);
+          ctx.closePath();ctx.fill();
+        }else{
+          ctx.fillRect(0,0,size,size);
+        }
+        ctx.font=Math.round(size*ratio)+'px '+EMOJI_FONT;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(EMOJI,size/2,size/2+size*0.025);
+        resolve(c.toDataURL('image/png'));
+      });
+    }
+
+    // Canvas描画前にフォント読み込みを待つ（絵文字描画の安定化）
+    if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){/* 待機失敗でも続行 */} }
+
+    // apple-touch-icon（180px・55%・角丸）
+    makeIcon(180,0.55,true).then(function(url){ if(url)setLink('apple-touch-icon',url) });
+
+    // PWAマニフェスト用 4枚（any=角丸55% / maskable=フルスクエア50%）
+    Promise.all([
+      makeIcon(192,0.55,true),
+      makeIcon(192,0.50,false),
+      makeIcon(512,0.55,true),
+      makeIcon(512,0.50,false)
+    ]).then(function(u){
+      var manifest={
+        id:location.pathname,
+        name:APP_NAME,
+        short_name:SHORT_NAME,
+        start_url:location.pathname,
+        scope:location.pathname,
+        display:'standalone',
+        orientation:'portrait',
+        background_color:bg,
+        theme_color:bg,
+        icons:[
+          {src:u[0],sizes:'192x192',type:'image/png',purpose:'any'},
+          {src:u[1],sizes:'192x192',type:'image/png',purpose:'maskable'},
+          {src:u[2],sizes:'512x512',type:'image/png',purpose:'any'},
+          {src:u[3],sizes:'512x512',type:'image/png',purpose:'maskable'}
+        ]
+      };
+      setLink('manifest','data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
+    });
+  }
+
+  if(document.readyState!=='loading'){ setup(); }
+  else { document.addEventListener('DOMContentLoaded', setup); }
+})();
+</script>
+</body>
+</html>
