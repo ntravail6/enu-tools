@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f6f8fa">
+<title>投資比較シミュレーター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#A0B5C9; --primary-light:#DEE7F0; --primary-dark:#6F8AA0;
+    --primary-soft:#EDF2F7; --accent:#8AA0B8;
+    --bg:#f6f8fa; --bg-soft:#fafbfc; --line:#dde3eb;
+    --card:#fff; --text:#2C2A24; --sub:#7A756B;
+    --series-a:#5f7d92; --series-b:#c4878f; --series-c:#8a9a7b; --series-d:#c2a35a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;
+    padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+            max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+  }
+  .page-wrapper{max-width:960px;margin:0 auto;width:100%}
+
+  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+  .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
+  .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:14px}
+  .section-note{font-size:.72rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6}
+
+  .preset-card{display:flex;flex-direction:column;gap:10px}
+  .preset-label{font-size:.78rem;font-weight:600;color:var(--sub)}
+  .preset-row{display:flex;flex-wrap:wrap;gap:8px}
+  .preset-chip{font-family:inherit;font-size:.8rem;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s,transform .1s}
+  .preset-chip:hover{background:var(--primary-light);transform:translateY(-1px)}
+
+  .plans{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+  .plan-card{flex:1 1 300px;min-width:0;margin-bottom:0;display:flex;flex-direction:column}
+  .plan-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .plan-badge{font-size:.78rem;font-weight:700;color:#fff;padding:3px 12px;border-radius:999px}
+  .plan-remove{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:.72rem;cursor:pointer;padding:2px 6px;font-family:inherit}
+  .plan-remove:hover{color:var(--series-b)}
+  .add-plan-btn{display:block;width:100%;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.85rem;cursor:pointer;font-family:inherit;margin:12px 0;transition:background .15s}
+  .add-plan-btn:hover{background:var(--primary-light)}
+  .add-plan-btn:disabled{opacity:.45;cursor:not-allowed}
+
+  .field{margin-bottom:13px}
+  .field:last-child{margin-bottom:0}
+  .field-label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:5px}
+  .field-help{display:block;font-size:.68rem;color:var(--sub);margin-top:4px;opacity:.9}
+  input[type="text"],input[type="number"],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--primary)}
+  .input-suffix{position:relative}
+  .input-suffix input{padding-right:36px}
+  .input-suffix .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--sub);pointer-events:none}
+  .fund-custom{margin-top:8px}
+  .method-toggle{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .method-toggle input{position:absolute;opacity:0;pointer-events:none}
+  .method-toggle label{flex:1;text-align:center;padding:9px 4px;font-size:.8rem;font-weight:600;color:var(--sub);cursor:pointer;background:var(--bg-soft);transition:background .15s,color .15s}
+  .method-toggle label:first-of-type{border-right:1px solid var(--line)}
+  .method-toggle input:checked + label{background:var(--primary);color:#fff}
+
+  .settings-row{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .settings-row .field{flex:1 1 180px;margin-bottom:0}
+
+  .chart-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .toggle-wrap{display:flex;align-items:center;gap:7px;font-size:.76rem;color:var(--sub);cursor:pointer;user-select:none}
+  .toggle-wrap input{width:auto;accent-color:var(--primary)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--text)}
+  .legend-swatch{width:16px;height:4px;border-radius:2px;flex-shrink:0}
+  .chart-wrap{width:100%}
+  #chart{width:100%;height:auto;display:block}
+  .axis-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:11px;fill:var(--sub)}
+
+  .ranking{margin-bottom:16px;background:var(--bg-soft);border-radius:10px;padding:12px 14px}
+  .ranking h3{font-size:.82rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
+  .rank-item{display:flex;align-items:center;gap:8px;font-size:.8rem;padding:3px 0}
+  .rank-medal{flex-shrink:0;width:20px;text-align:center}
+  .rank-name{flex:1;min-width:0;word-break:break-word}
+  .rank-val{font-weight:700;color:var(--primary-dark);white-space:nowrap}
+
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .summary-item{border:1px solid var(--line);border-radius:10px;padding:14px;border-top:3px solid}
+  .summary-fund{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:2px;word-break:break-word}
+  .summary-method{font-size:.68rem;color:var(--sub);margin-bottom:10px}
+  .summary-main-label{font-size:.66rem;color:var(--sub);font-weight:600}
+  .summary-main{font-size:1.4rem;font-weight:700;color:var(--primary-dark);line-height:1.25}
+  .real-val{font-size:.72rem;color:var(--sub);margin-top:2px}
+  .minibar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:12px 0 6px;background:var(--bg-soft)}
+  .minibar .seg-p{background:#c9d2da}
+  .minibar-legend{display:flex;justify-content:space-between;font-size:.72rem;color:var(--text)}
+  .minibar-legend .lbl{color:var(--sub)}
+  .gain-neg{color:var(--series-b);font-weight:600}
+  .fee-impact{font-size:.74rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);color:var(--text)}
+  .fee-impact .fee-val{font-weight:700;color:var(--series-b)}
+  .fee-impact .fee-sub{display:block;color:var(--sub);font-size:.68rem;margin-top:2px}
+
+  .table-wrap{width:100%;overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.82rem;white-space:nowrap}
+  th{font-weight:600;color:var(--primary-dark)}
+  td.num,th.num{text-align:right}
+  .year-cards{display:none}
+  .year-card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px}
+  .year-card .yc-year{font-size:.8rem;font-weight:700;color:var(--primary-dark);margin-bottom:6px}
+  .year-card .yc-row{display:flex;justify-content:space-between;gap:10px;font-size:.76rem;margin-top:3px}
+  .year-card .yc-row .lbl{color:var(--sub);word-break:break-word}
+
+  .save-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .save-row input{flex:1 1 180px}
+  .save-btn{padding:10px 18px;border-radius:999px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn:hover{background:var(--primary-dark)}
+  .history-empty{font-size:.78rem;color:var(--sub);text-align:center;padding:14px}
+  .history-item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+  .history-info{flex:1;min-width:0}
+  .history-name{font-size:.8rem;font-weight:600;color:var(--text);word-break:break-word}
+  .history-meta{font-size:.68rem;color:var(--sub);margin-top:2px;word-break:break-word}
+  .history-actions{display:flex;gap:6px;flex-shrink:0}
+  .hist-btn{padding:6px 14px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid}
+  .hist-load{background:var(--primary-soft);border-color:var(--primary-light);color:var(--primary-dark)}
+  .hist-del{background:transparent;border-color:var(--line);color:var(--sub)}
+  .hist-del:hover{color:var(--series-b);border-color:var(--series-b)}
+
+  .goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .goal-result{background:var(--primary-soft);border-radius:10px;padding:14px;margin-top:14px}
+  .goal-result .gr-label{font-size:.72rem;color:var(--sub)}
+  .goal-result .gr-val{font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin-top:3px}
+
+  .collapse-head{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-arrow{color:var(--primary-dark);font-size:.8rem;transition:transform .2s;flex-shrink:0;margin-left:10px}
+  .collapse-head[aria-expanded="true"] .collapse-arrow{transform:rotate(90deg)}
+  .collapse-body[hidden]{display:none}
+
+  .ref-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .ref-list li{position:relative;padding-left:20px}
+  .ref-list li::before{content:"↗";position:absolute;left:0;color:var(--sub);font-size:.8rem}
+  .ref-list a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;font-size:.84rem;font-weight:600;word-break:break-word}
+  .ref-list a:hover{color:var(--text)}
+
+  .app-footer{text-align:center;opacity:.85;padding-bottom:24px}
+  .home-btn{display:inline-block;margin-top:24px;padding:7px 16px;font-size:.75rem;font-weight:600;border-radius:999px;background:transparent;border:1px solid var(--sub);color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s,border-color .15s}
+  .home-btn:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+  .footer-divider{margin:12px auto;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .brand-link{display:inline-block;font-size:.7rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
+  .brand-link:hover{color:var(--primary-dark)}
+  .copyright{font-size:.65rem;color:var(--sub);margin-top:8px}
+
+  /* === enu 注意書きカード（101）=== */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+  .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+  .enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+  .enu-notice-help .enu-help-link{font-family:inherit;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+  /* === enu アクションボタン（102）=== */
+  .enu-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+  .enu-btn-card{font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+  .enu-btn-card:hover{transform:translateY(-1px)}
+  .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+  .enu-btn-card .enu-label{font-family:inherit;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+  .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+  .enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+  .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+  .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+  .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .enu-confirm-modal[hidden]{display:none}
+  .enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+  .enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+  .enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:inherit}
+  .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
+  .enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin-bottom:20px;line-height:1.6}
+  .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+  .enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
+  .enu-confirm-btn--ok{background:var(--series-b);border-color:var(--series-b);color:#fff}
+
+  @media (max-width:650px){
+    .app-title{font-size:1.25rem}
+    .app-sub{font-size:.7rem}
+    .table-wrap{display:none}
+    .year-cards{display:block}
+    .goal-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:600px){
+    .enu-toolbar{grid-template-columns:repeat(2,1fr)}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .enu-notice-area,.enu-toolbar,.enu-toast,.preset-card,.home-btn,.add-plan-btn,.plan-remove,.save-card,.goal-card,.ref-card,.toggle-wrap,.enu-confirm-modal{display:none !important}
+    .card{box-shadow:none;break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="app-header">
+    <div class="app-icon">📊</div>
+    <div>
+      <h1 class="app-title">投資比較シミュレーター</h1>
+      <p class="app-sub">オルカン vs S&amp;P500、一括 vs 積立を並べて比較</p>
+    </div>
+  </header>
+
+  <div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">入力した条件・保存した履歴は、お使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="warn" data-storage="local">
+      <div class="enu-notice enu-notice-warn">
+        <span class="enu-icon">⚠️</span>
+        <span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードでは履歴が引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>大切な比較は「📤 エクスポート」でバックアップをおすすめします。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="offline-local" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">🌐</span>
+        <span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、シミュレーションが可能です。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="オフライン動作を表示" title="オフライン動作を表示">🌐</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="trade">
+      <div class="enu-notice enu-notice-trade">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">本シミュレーションは入力した想定利回りに基づく試算で、将来の運用成果や元本を保証するものではありません。利回り・信託報酬・税率等は実際の数値と異なる場合があります。実際の投資判断はご自身の責任で、必要に応じて専門家にご相談ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </div>
+
+  <div class="card preset-card">
+    <span class="preset-label">かんたん比較プリセット（2プランにリセットして設定します）</span>
+    <div class="preset-row">
+      <button type="button" class="preset-chip" data-preset="orcan-sp">オルカン vs S&amp;P500</button>
+      <button type="button" class="preset-chip" data-preset="lump-dca">一括 vs 積立</button>
+      <button type="button" class="preset-chip" data-preset="same-fee">手数料あり vs なし</button>
+    </div>
+  </div>
+
+  <div class="plans" id="plans"></div>
+  <button type="button" class="add-plan-btn" id="add-plan">＋ プランを追加（最大4）</button>
+
+  <div class="card">
+    <h2 class="section-title">⚙️ 共通設定</h2>
+    <div class="settings-row">
+      <div class="field">
+        <label class="field-label" for="inflation-rate">想定インフレ率（年率）</label>
+        <div class="input-suffix">
+          <input type="number" id="inflation-rate" value="0" min="0" step="0.1" inputmode="decimal">
+          <span class="suffix">%</span>
+        </div>
+        <span class="field-help">0%で無効。入れると最終評価額を「今のお金の価値（実質）」に換算して併記します</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chart-head">
+      <h2 class="section-title" style="margin-bottom:0">📈 資産推移の比較</h2>
+      <label class="toggle-wrap"><input type="checkbox" id="toggle-principal"> 元本ラインを表示</label>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="chart-wrap" id="chart-wrap">
+      <svg id="chart" viewBox="0 0 720 380" preserveAspectRatio="xMidYMid meet" role="img" aria-label="資産推移の比較グラフ"></svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section-title">💴 シミュレーション結果</h2>
+    <div class="ranking" id="ranking"></div>
+    <div class="summary-grid" id="summary"></div>
+  </div>
+
+  <div class="card">
+    <button type="button" class="collapse-head" id="breakdown-toggle" aria-expanded="false">
+      <span class="section-title" style="margin:0">📋 年ごとの内訳</span>
+      <span class="collapse-arrow">▶</span>
+    </button>
+    <div class="collapse-body" id="breakdown-body" hidden>
+      <label class="toggle-wrap" style="margin:12px 0"><input type="checkbox" id="toggle-allyears"> すべての年を表示</label>
+      <div class="table-wrap">
+        <table>
+          <thead><tr id="year-thead"></tr></thead>
+          <tbody id="year-tbody"></tbody>
+        </table>
+      </div>
+      <div class="year-cards" id="year-cards"></div>
+    </div>
+  </div>
+
+  <div class="card save-card">
+    <h2 class="section-title">📌 一時保存・履歴</h2>
+    <div class="save-row">
+      <input type="text" id="save-name" placeholder="保存名（省略可）">
+      <button type="button" class="save-btn" id="save-btn">この比較を保存</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+
+  <div class="card goal-card" id="goal-card">
+    <h2 class="section-title">🎯 目標から逆算</h2>
+    <p class="section-note">利回りは手数料控除後の想定値で入力してください。</p>
+    <div class="goal-grid">
+      <div class="field">
+        <label class="field-label" for="goal-amount">目標額</label>
+        <div class="input-suffix"><input type="text" id="goal-amount" value="10,000,000" inputmode="numeric"><span class="suffix">円</span></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="goal-rate">想定利回り（年率）</label>
+        <div class="input-suffix"><input type="number" id="goal-rate" value="5" step="0.1" inputmode="decimal"><span class="suffix">%</span></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="goal-years">期間</label>
+        <div class="input-suffix"><input type="number" id="goal-years" value="20" min="1" max="60" step="1" inputmode="numeric"><span class="suffix">年</span></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="goal-monthly">毎月の積立額</label>
+        <div class="input-suffix"><input type="text" id="goal-monthly" value="30,000" inputmode="numeric"><span class="suffix">円</span></div>
+      </div>
+    </div>
+    <div class="goal-result">
+      <div class="gr-label">期間内に目標達成するのに必要な毎月の積立額</div>
+      <div class="gr-val" id="goal-r1">—</div>
+    </div>
+    <div class="goal-result">
+      <div class="gr-label">入力した毎月の積立額で目標達成までにかかる期間</div>
+      <div class="gr-val" id="goal-r2">—</div>
+    </div>
+  </div>
+
+  <div class="card ref-card">
+    <h2 class="section-title">📎 参考リンク</h2>
+    <p class="section-note">最新の制度・正確な数値は、必ず公式情報でご確認ください。</p>
+    <ul class="ref-list">
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener">金融庁「つみたてシミュレーター」</a></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener">金融庁「NISA特設ウェブサイト」</a></li>
+    </ul>
+  </div>
+
+  <div class="enu-toolbar">
+    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-export" aria-label="データをエクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
+    <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-import" aria-label="データをインポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
+  </div>
+
+  <div class="app-footer">
+    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
+    <div class="footer-divider"></div>
+    <a class="brand-link" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+    <div class="copyright">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</div>
+  </div>
+
+</div>
+
+<div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
+  <div class="enu-confirm-modal__backdrop"></div>
+  <div class="enu-confirm-modal__box" role="dialog" aria-modal="true" aria-labelledby="enu-confirm-title">
+    <h3 class="enu-confirm-modal__title" id="enu-confirm-title"></h3>
+    <p class="enu-confirm-modal__desc"></p>
+    <div class="enu-confirm-modal__actions">
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--cancel">キャンセル</button>
+      <button type="button" class="enu-confirm-btn enu-confirm-btn--ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="enu-toast" id="enu-toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  const ENU_CONFIG = {
+    appId:'versus-sim', appName:'投資比較シミュレーター', storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/help/', helpOpenNewTab:true, dataVersion:1
+  };
+  const CFG = ENU_CONFIG;
+  window.enuTools = window.enuTools || {};
+  const _key = (s)=> 'enu_' + CFG.appId + '_' + s;
+
+  // === DOM helper（createElementベース・innerHTML不使用）===
+  function el(tag, attrs, kids){
+    const e=document.createElement(tag);
+    if(attrs) for(const k in attrs){
+      const v=attrs[k];
+      if(k==='class') e.className=v;
+      else if(k==='text') e.textContent=v;
+      else if(v===true) e.setAttribute(k,'');
+      else if(v!==false && v!=null) e.setAttribute(k,v);
+    }
+    if(kids) kids.forEach(c=>{ if(c) e.appendChild(c); });
+    return e;
+  }
+
+  // === Toast ===
+  function showToast(msg){
+    const t=document.getElementById('enu-toast'); if(!t) return;
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+  window.enuTools.toast = showToast;
+
+  // === Confirm modal ===
+  function enuConfirm(title, desc, okLabel, cancelLabel){
+    return new Promise(resolve=>{
+      const modal=document.getElementById('enu-confirm-modal');
+      if(!modal){ resolve(window.confirm(title + '\n\n' + desc)); return; }
+      modal.querySelector('.enu-confirm-modal__title').textContent=title;
+      modal.querySelector('.enu-confirm-modal__desc').textContent=desc;
+      const ok=modal.querySelector('.enu-confirm-btn--ok');
+      const cancel=modal.querySelector('.enu-confirm-btn--cancel');
+      const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
+      ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      modal.hidden=false; setTimeout(()=>cancel.focus(),50);
+      const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+      const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
+      const onKey=(e)=>{ if(e.key==='Escape')onCancel(); if(e.key==='Enter')onOk(); };
+      ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
+    });
+  }
+  window.enuTools.confirm = enuConfirm;
+
+  // === Notices (101) ===
+  function applyStorageType(){
+    const type=CFG.storageType||'local';
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w=>{ if(w.dataset.storage!==type) w.style.display='none'; });
+  }
+  function initNotices(){
+    const K=_key('notice_minimized');
+    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
+    const help=document.getElementById('enu-help-link');
+    if(help){ help.href=CFG.helpUrl||'#'; if(CFG.helpOpenNewTab!==false){ help.target='_blank'; help.rel='noopener'; } }
+    const list=get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{
+      const w=b.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.add('is-mini');
+      const l=get(); if(!l.includes(id)){ l.push(id); set(l); }
+    }));
+    document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{
+      const w=m.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.remove('is-mini'); set(get().filter(x=>x!==id));
+    }));
+  }
+
+  // === Simple share (102) ===
+  async function handleSimpleShare(){
+    const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
+    try{
+      if(navigator.share){ await navigator.share(shareData); }
+      else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
+    }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+  }
+
+  // ============================================================
+  //  App state
+  // ============================================================
+  const PLAN_COLORS=['#5f7d92','#c4878f','#8a9a7b','#c2a35a'];
+  const FUND_OPTIONS=['オルカン（全世界株式）','S&P500','全米株式','先進国株式','NASDAQ100','日経225','TOPIX','8資産均等バランス'];
+  const MIN_PLANS=2, MAX_PLANS=4;
+  let plans=[];
+  let pendingInflation=null;
+  const plansEl=document.getElementById('plans');
+
+  function planLetter(i){ return String.fromCharCode(65+i); }
+  function defaultPlanA(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'lump',amount:1000000,rate:5,fee:0,years:20}; }
+  function defaultPlanB(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20}; }
+  function normalizePlan(p){
+    p=p||{};
+    return {
+      fundSel: typeof p.fundSel==='string'?p.fundSel:'オルカン（全世界株式）',
+      fundCustom: typeof p.fundCustom==='string'?p.fundCustom:'',
+      method: p.method==='dca'?'dca':'lump',
+      amount: Math.max(0, parseFloat(p.amount)||0),
+      rate: parseFloat(p.rate)||0,
+      fee: Math.max(0, parseFloat(p.fee)||0),
+      years: Math.max(1, Math.min(60, Math.round(parseFloat(p.years)||1)))
+    };
+  }
+  function fundName(p){
+    if(p.fundSel==='__other__'){ return (p.fundCustom||'').trim() || 'カスタム銘柄'; }
+    return p.fundSel;
+  }
+
+  // === number helpers ===
+  const yen=(v)=> '¥' + Math.round(v).toLocaleString();
+  function formatMan(v){
+    if(v>=1e8) return (v/1e8).toFixed(v/1e8>=10?0:1)+'億';
+    if(v>=1e4) return Math.round(v/1e4).toLocaleString()+'万';
+    return Math.round(v).toLocaleString();
+  }
+  function parseNum(v){ const n=parseFloat(String(v).replace(/,/g,'')); return isFinite(n)?n:0; }
+  function commaStr(v){ return (v===''||v==null) ? '' : Number(v).toLocaleString(); }
+
+  // === simulation（月末積立・期末払い）===
+  function simulate(plan){
+    const netAnnual=(plan.rate-plan.fee)/100, rm=netAnnual/12, months=plan.years*12;
+    let value=plan.method==='lump'?plan.amount:0;
+    let principal=plan.method==='lump'?plan.amount:0;
+    const yearly=[{year:0,value:value,principal:principal}];
+    for(let m=1;m<=months;m++){
+      value=value*(1+rm);
+      if(plan.method==='dca'){ value+=plan.amount; principal+=plan.amount; }
+      if(m%12===0) yearly.push({year:m/12,value:value,principal:principal});
+    }
+    return { yearly:yearly, finalValue:value, principal:principal, gain:value-principal, net:plan.rate-plan.fee };
+  }
+
+  // === Plan card（createElementで構築）===
+  function buildPlanCard(plan, index){
+    const color=PLAN_COLORS[index];
+    const removable=plans.length>MIN_PLANS;
+
+    const headKids=[ el('span',{class:'plan-badge',style:'background:'+color,text:'プラン'+planLetter(index)}) ];
+    if(removable) headKids.push(el('button',{type:'button',class:'plan-remove','data-remove':index,'aria-label':'このプランを削除',text:'× 削除'}));
+    const head=el('div',{class:'plan-head'},headKids);
+
+    const sel=el('select',{class:'pf','data-field':'fund'});
+    FUND_OPTIONS.forEach(f=> sel.appendChild(el('option',{value:f,text:f})));
+    sel.appendChild(el('option',{value:'__other__',text:'その他（自分で入力）'}));
+    sel.value = (FUND_OPTIONS.includes(plan.fundSel)||plan.fundSel==='__other__') ? plan.fundSel : '__other__';
+    const custom=el('input',{type:'text',class:'fund-custom pf','data-field':'fundCustom',placeholder:'銘柄名を入力'});
+    custom.value=plan.fundCustom||''; custom.hidden = sel.value!=='__other__';
+    const fundField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'銘柄（名前のみ）'}), sel, custom ]);
+
+    const ml=el('input',{type:'radio',class:'pf','data-field':'method',name:'method-'+index,value:'lump',id:'m-l-'+index}); ml.checked=plan.method==='lump';
+    const md=el('input',{type:'radio',class:'pf','data-field':'method',name:'method-'+index,value:'dca',id:'m-d-'+index}); md.checked=plan.method==='dca';
+    const toggle=el('div',{class:'method-toggle'},[ ml, el('label',{for:'m-l-'+index,text:'一括投資'}), md, el('label',{for:'m-d-'+index,text:'積立投資'}) ]);
+    const methodField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'投資方法'}), toggle ]);
+
+    const amt=el('input',{type:'text',class:'pf','data-field':'amount',inputmode:'numeric'}); amt.value=commaStr(plan.amount);
+    const amtField=el('div',{class:'field'},[
+      el('label',{class:'field-label amount-label',text: plan.method==='lump'?'一括投資額':'毎月の積立額'}),
+      el('div',{class:'input-suffix'},[ amt, el('span',{class:'suffix',text:'円'}) ])
+    ]);
+
+    const rate=el('input',{type:'number',class:'pf','data-field':'rate',step:'0.1',inputmode:'decimal'}); rate.value=plan.rate;
+    const rateField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'想定利回り（年率）'}), el('div',{class:'input-suffix'},[ rate, el('span',{class:'suffix',text:'%'}) ]) ]);
+
+    const fee=el('input',{type:'number',class:'pf','data-field':'fee',min:'0',step:'0.01',inputmode:'decimal'}); fee.value=plan.fee;
+    const feeField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'信託報酬（年率）'}), el('div',{class:'input-suffix'},[ fee, el('span',{class:'suffix',text:'%'}) ]), el('span',{class:'field-help',text:'正確な値は各運用会社の交付目論見書でご確認ください'}) ]);
+
+    const yr=el('input',{type:'number',class:'pf','data-field':'years',min:'1',max:'60',step:'1',inputmode:'numeric'}); yr.value=plan.years;
+    const yrField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'運用期間'}), el('div',{class:'input-suffix'},[ yr, el('span',{class:'suffix',text:'年'}) ]) ]);
+
+    return el('div',{class:'card plan-card','data-index':index},[ head, fundField, methodField, amtField, rateField, feeField, yrField ]);
+  }
+  function renderPlans(){
+    plansEl.textContent='';
+    plans.forEach((p,i)=>plansEl.appendChild(buildPlanCard(p,i)));
+    document.getElementById('add-plan').disabled = plans.length>=MAX_PLANS;
+  }
+  function onPlanInput(e){
+    const t=e.target; if(!t.classList||!t.classList.contains('pf')) return;
+    const card=t.closest('.plan-card'); if(!card) return;
+    const i=parseInt(card.dataset.index,10); const field=t.dataset.field;
+    if(field==='method'){ if(!t.checked) return; plans[i].method=t.value; card.querySelector('.amount-label').textContent=t.value==='lump'?'一括投資額':'毎月の積立額'; }
+    else if(field==='fund'){ plans[i].fundSel=t.value; card.querySelector('[data-field="fundCustom"]').hidden = t.value!=='__other__'; }
+    else if(field==='fundCustom'){ plans[i].fundCustom=t.value; }
+    else if(field==='amount'){ const n=parseNum(t.value); plans[i].amount=Math.max(0,n); t.value = (t.value==='' ? '' : n.toLocaleString()); }
+    else if(field==='rate'){ plans[i].rate=parseFloat(t.value)||0; }
+    else if(field==='fee'){ plans[i].fee=Math.max(0,parseFloat(t.value)||0); }
+    else if(field==='years'){ plans[i].years=Math.max(1,Math.min(60,Math.round(parseFloat(t.value)||1))); }
+    recalc();
+  }
+  function onPlanClick(e){
+    const t=e.target;
+    if(t.classList && t.classList.contains('plan-remove')){
+      const i=parseInt(t.dataset.remove,10);
+      if(plans.length>MIN_PLANS){ plans.splice(i,1); renderPlans(); recalc(); }
+    }
+  }
+  function addPlan(){
+    if(plans.length>=MAX_PLANS) return;
+    plans.push(Object.assign({}, plans[plans.length-1]));
+    renderPlans(); recalc();
+  }
+
+  // === Chart ===
+  const SVGNS='http://www.w3.org/2000/svg';
+  function svgE(tag,attrs){ const e=document.createElementNS(SVGNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+  function niceCeil(v){ if(v<=0) return 1; const exp=Math.floor(Math.log10(v)), base=Math.pow(10,exp), n=v/base; let m; if(n<=1)m=1; else if(n<=2)m=2; else if(n<=2.5)m=2.5; else if(n<=5)m=5; else m=10; return m*base; }
+
+  function renderChart(sims){
+    const svg=document.getElementById('chart');
+    const wrap=document.getElementById('chart-wrap');
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const showPrincipal=document.getElementById('toggle-principal').checked;
+    const W=Math.max(300,Math.min(760, wrap.clientWidth||720));
+    const H=Math.max(260,Math.min(400, Math.round(W*0.52)));
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    const padL=58,padR=16,padT=16,padB=38, plotW=W-padL-padR, plotH=H-padT-padB;
+    const maxYears=Math.max.apply(null, plans.map(p=>p.years).concat([1]));
+    let maxVal=0;
+    sims.forEach(s=>s.yearly.forEach(p=>{ if(p.value>maxVal)maxVal=p.value; if(showPrincipal&&p.principal>maxVal)maxVal=p.principal; }));
+    const niceMax=niceCeil(maxVal);
+    const X=(yr)=> padL+(yr/maxYears)*plotW;
+    const Y=(v)=> padT+plotH-(v/niceMax)*plotH;
+    const steps=5;
+    for(let i=0;i<=steps;i++){
+      const val=niceMax*i/steps, yy=Y(val);
+      svg.appendChild(svgE('line',{x1:padL,y1:yy,x2:W-padR,y2:yy,stroke:'#e7ecf2','stroke-width':1}));
+      const t=svgE('text',{x:padL-8,y:yy+4,'text-anchor':'end','class':'axis-label'}); t.textContent=formatMan(val); svg.appendChild(t);
+    }
+    const xstep=Math.max(1,Math.ceil(maxYears/8));
+    for(let yr=0;yr<=maxYears;yr+=xstep){ const t=svgE('text',{x:X(yr),y:H-padB+20,'text-anchor':'middle','class':'axis-label'}); t.textContent=yr; svg.appendChild(t); }
+    const tl=svgE('text',{x:X(maxYears),y:H-padB+20,'text-anchor':'middle','class':'axis-label'}); tl.textContent=maxYears+'年'; svg.appendChild(tl);
+
+    function series(sim,color,key,dashed){
+      let d=''; sim.yearly.forEach((p,k)=>{ const v=key==='principal'?p.principal:p.value; d+=(k?'L':'M')+X(p.year).toFixed(1)+' '+Y(v).toFixed(1)+' '; });
+      const path=svgE('path',{d:d.trim(),fill:'none',stroke:color,'stroke-width':dashed?1.8:2.5,'stroke-linejoin':'round','stroke-linecap':'round'});
+      if(dashed){ path.setAttribute('stroke-dasharray','4 4'); path.setAttribute('opacity','0.5'); }
+      svg.appendChild(path);
+      if(!dashed){ sim.yearly.forEach(p=>{ const c=svgE('circle',{cx:X(p.year),cy:Y(p.value),r:3,fill:color}); const tt=svgE('title',{}); tt.textContent=p.year+'年: '+yen(p.value); c.appendChild(tt); svg.appendChild(c); }); }
+    }
+    sims.forEach((s,i)=>{ if(showPrincipal) series(s,PLAN_COLORS[i],'principal',true); });
+    sims.forEach((s,i)=>{ series(s,PLAN_COLORS[i],'value',false); });
+  }
+
+  function methodLabel(m){ return m==='lump'?'一括':'積立'; }
+  function renderLegend(){
+    const elx=document.getElementById('legend'); elx.textContent='';
+    plans.forEach((p,i)=>{
+      const item=document.createElement('span'); item.className='legend-item';
+      const sw=document.createElement('span'); sw.className='legend-swatch'; sw.style.background=PLAN_COLORS[i];
+      const lab=document.createElement('span'); lab.textContent=fundName(p)+'（'+methodLabel(p.method)+'）';
+      item.append(sw,lab); elx.appendChild(item);
+    });
+    if(document.getElementById('toggle-principal').checked){
+      const note=document.createElement('span'); note.className='legend-item'; note.style.color='var(--sub)'; note.textContent='点線＝元本'; elx.appendChild(note);
+    }
+  }
+
+  function renderSummary(sims, simsNoFee){
+    const inflation=parseFloat(document.getElementById('inflation-rate').value)||0;
+    const rk=document.getElementById('ranking'); rk.textContent='';
+    const h=document.createElement('h3'); h.textContent='結果ランキング（最終評価額の高い順）'; rk.appendChild(h);
+    const medals=['🥇','🥈','🥉'];
+    const order=sims.map((s,i)=>({i:i,fv:s.finalValue})).sort((a,b)=>b.fv-a.fv);
+    order.forEach((o,rank)=>{
+      const row=document.createElement('div'); row.className='rank-item';
+      const med=document.createElement('span'); med.className='rank-medal'; med.textContent=medals[rank]||(rank+1)+'.';
+      const nm=document.createElement('span'); nm.className='rank-name'; nm.textContent='プラン'+planLetter(o.i)+'　'+fundName(plans[o.i])+'（'+methodLabel(plans[o.i].method)+'）';
+      const val=document.createElement('span'); val.className='rank-val'; val.textContent=yen(o.fv);
+      row.append(med,nm,val); rk.appendChild(row);
+    });
+
+    const grid=document.getElementById('summary'); grid.textContent='';
+    sims.forEach((sim,i)=>{
+      const plan=plans[i];
+      const card=document.createElement('div'); card.className='summary-item'; card.style.borderTopColor=PLAN_COLORS[i];
+      const fund=document.createElement('div'); fund.className='summary-fund'; fund.textContent='プラン'+planLetter(i)+'　'+fundName(plan);
+      const meth=document.createElement('div'); meth.className='summary-method'; meth.textContent=methodLabel(plan.method)+'・'+plan.years+'年・実質利回り '+sim.net.toFixed(2)+'%';
+      const mLbl=document.createElement('div'); mLbl.className='summary-main-label'; mLbl.textContent='最終評価額';
+      const main=document.createElement('div'); main.className='summary-main'; main.textContent=yen(sim.finalValue);
+      card.append(fund,meth,mLbl,main);
+      if(inflation>0){
+        const real=sim.finalValue/Math.pow(1+inflation/100, plan.years);
+        const rv=document.createElement('div'); rv.className='real-val'; rv.textContent='（実質：'+yen(real)+'／インフレ'+inflation+'%換算）';
+        card.appendChild(rv);
+      }
+      let base,pPct,gPct;
+      if(sim.gain>=0){ base=Math.max(sim.finalValue,1); pPct=sim.principal/base*100; gPct=sim.gain/base*100; }
+      else{ base=Math.max(sim.principal,1); pPct=Math.max(0,sim.finalValue)/base*100; gPct=0; }
+      const bar=document.createElement('div'); bar.className='minibar';
+      const segP=document.createElement('div'); segP.className='seg-p'; segP.style.width=pPct+'%';
+      const segG=document.createElement('div'); segG.className='seg-g'; segG.style.width=gPct+'%'; segG.style.background=PLAN_COLORS[i];
+      bar.append(segP,segG); card.appendChild(bar);
+      const blg=document.createElement('div'); blg.className='minibar-legend';
+      const lp=document.createElement('span'); lp.textContent='元本 '+yen(sim.principal);
+      const lg=document.createElement('span');
+      if(sim.gain>=0){ lg.textContent='運用益 +'+yen(sim.gain); } else { lg.className='gain-neg'; lg.textContent='運用益 −'+yen(Math.abs(sim.gain)); }
+      blg.append(lp,lg); card.appendChild(blg);
+      const fi=document.createElement('div'); fi.className='fee-impact';
+      if(plan.fee>0){
+        const impact=simsNoFee[i].finalValue - sim.finalValue;
+        const v=document.createElement('span'); v.textContent='手数料の影響：';
+        const vv=document.createElement('span'); vv.className='fee-val'; vv.textContent='−'+yen(impact);
+        const sub=document.createElement('span'); sub.className='fee-sub'; sub.textContent='（信託報酬0%なら '+yen(simsNoFee[i].finalValue)+'）';
+        fi.append(v,vv,sub);
+      }else{ fi.textContent='手数料の影響：なし（信託報酬 0%）'; }
+      card.appendChild(fi);
+      grid.appendChild(card);
+    });
+  }
+
+  function renderBreakdown(sims){
+    const thead=document.getElementById('year-thead');
+    const tbody=document.getElementById('year-tbody');
+    const cards=document.getElementById('year-cards');
+    thead.textContent=''; tbody.textContent=''; cards.textContent='';
+    const th0=document.createElement('th'); th0.textContent='経過'; thead.appendChild(th0);
+    plans.forEach((p,i)=>{ const th=document.createElement('th'); th.className='num'; th.textContent='プラン'+planLetter(i); thead.appendChild(th); });
+    const maxYears=Math.max.apply(null, plans.map(p=>p.years));
+    const valAt=(sim,yr)=>{ const p=sim.yearly.find(x=>x.year===yr); return p?p.value:null; };
+    const showAll=document.getElementById('toggle-allyears').checked;
+    const years=[];
+    if(showAll || maxYears<=10){ for(let y=0;y<=maxYears;y++) years.push(y); }
+    else{ for(let y=0;y<=maxYears;y+=5) years.push(y); if(years[years.length-1]!==maxYears) years.push(maxYears); }
+    years.forEach(yr=>{
+      const tr=document.createElement('tr');
+      const c0=document.createElement('td'); c0.textContent=yr+'年後'; tr.appendChild(c0);
+      const yc=document.createElement('div'); yc.className='year-card';
+      const yh=document.createElement('div'); yh.className='yc-year'; yh.textContent=yr+'年後'; yc.appendChild(yh);
+      sims.forEach((sim,i)=>{
+        const v=valAt(sim,yr);
+        const td=document.createElement('td'); td.className='num'; td.textContent=v===null?'—':yen(v); tr.appendChild(td);
+        const row=document.createElement('div'); row.className='yc-row';
+        const l=document.createElement('span'); l.className='lbl'; l.textContent='プラン'+planLetter(i)+' '+fundName(plans[i]);
+        const r=document.createElement('span'); r.textContent=v===null?'—':yen(v);
+        row.append(l,r); yc.appendChild(row);
+      });
+      tbody.appendChild(tr); cards.appendChild(yc);
+    });
+  }
+
+  // === Persistence (input) ===
+  function saveInput(){
+    try{ localStorage.setItem(CFG.appId+'-input', JSON.stringify({ plans:plans, inflation:document.getElementById('inflation-rate').value })); }catch(e){}
+  }
+  function restoreInput(){
+    let s; try{ s=JSON.parse(localStorage.getItem(CFG.appId+'-input')||'null'); }catch(e){ s=null; }
+    if(s && Array.isArray(s.plans) && s.plans.length>=MIN_PLANS){
+      plans=s.plans.slice(0,MAX_PLANS).map(normalizePlan);
+      if(s.inflation!=null) pendingInflation=s.inflation;
+    }else{ plans=[defaultPlanA(), defaultPlanB()]; }
+  }
+
+  // === History ===
+  function getHistory(){ try{ return JSON.parse(localStorage.getItem(CFG.appId+'-history')||'[]'); }catch(e){ return []; } }
+  function setHistory(h){ try{ localStorage.setItem(CFG.appId+'-history', JSON.stringify(h)); }catch(e){} }
+  function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function autoName(){
+    const names=plans.map(fundName).join(' / ');
+    const d=new Date(), p=(n)=>String(n).padStart(2,'0');
+    const stamp=(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes());
+    const label=names.length>28?names.slice(0,28)+'…':names;
+    return label+' ('+stamp+')';
+  }
+  function saveCurrent(){
+    const nameInput=document.getElementById('save-name');
+    const name=(nameInput.value||'').trim()||autoName();
+    const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, plans:JSON.parse(JSON.stringify(plans)), inflation:document.getElementById('inflation-rate').value };
+    let hist=getHistory(); hist.unshift(snap); if(hist.length>20) hist=hist.slice(0,20); setHistory(hist);
+    nameInput.value=''; renderHistory(); showToast('📌 この比較を保存しました');
+  }
+  function renderHistory(){
+    const list=document.getElementById('history-list'); list.textContent='';
+    const hist=getHistory();
+    if(!hist.length){ const e=document.createElement('div'); e.className='history-empty'; e.textContent='保存した比較はまだありません'; list.appendChild(e); return; }
+    hist.forEach(snap=>{
+      const item=document.createElement('div'); item.className='history-item';
+      const info=document.createElement('div'); info.className='history-info';
+      const nm=document.createElement('div'); nm.className='history-name'; nm.textContent=snap.name;
+      const meta=document.createElement('div'); meta.className='history-meta';
+      let top='';
+      try{ const sims=(snap.plans||[]).map(normalizePlan).map(simulate); const order=sims.map((s,i)=>({i:i,fv:s.finalValue})).sort((a,b)=>b.fv-a.fv); if(order.length){ const t=order[0]; top='トップ '+fundName(normalizePlan(snap.plans[t.i]))+' '+yen(t.fv); } }catch(e){}
+      meta.textContent=fmtDate(snap.savedAt)+(top?' ・ '+top:'');
+      info.append(nm,meta);
+      const actions=document.createElement('div'); actions.className='history-actions';
+      const load=document.createElement('button'); load.className='hist-btn hist-load'; load.textContent='読込'; load.dataset.load=snap.id;
+      const del=document.createElement('button'); del.className='hist-btn hist-del'; del.textContent='削除'; del.dataset.del=snap.id;
+      actions.append(load,del); item.append(info,actions); list.appendChild(item);
+    });
+  }
+  function onHistoryClick(e){
+    const t=e.target;
+    if(t.dataset && t.dataset.load){
+      const id=parseInt(t.dataset.load,10);
+      const snap=getHistory().find(s=>s.id===id);
+      if(snap){
+        plans=(snap.plans||[]).map(normalizePlan); if(plans.length<MIN_PLANS) plans=[defaultPlanA(),defaultPlanB()];
+        document.getElementById('inflation-rate').value = snap.inflation!=null?snap.inflation:0;
+        renderPlans(); recalc(); showToast('履歴を読み込みました'); window.scrollTo({top:0,behavior:'smooth'});
+      }
+    }else if(t.dataset && t.dataset.del){
+      const id=parseInt(t.dataset.del,10);
+      enuConfirm('履歴の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
+        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); renderHistory(); showToast('削除しました'); }
+      });
+    }
+  }
+
+  // === Export / Import (102) ===
+  function safeFileName(s){ return String(s||'data').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC-]/g,''); }
+  function appGetData(){ return { plans:plans, inflation:document.getElementById('inflation-rate').value, history:getHistory() }; }
+  function appValidateData(data){ return !!(data && Array.isArray(data.plans) && data.plans.length>=MIN_PLANS); }
+  function appApplyData(data){
+    if(Array.isArray(data.plans) && data.plans.length>=MIN_PLANS) plans=data.plans.slice(0,MAX_PLANS).map(normalizePlan);
+    if(data.inflation!=null) document.getElementById('inflation-rate').value=data.inflation;
+    if(Array.isArray(data.history)) setHistory(data.history.slice(0,20));
+    renderPlans(); renderHistory(); recalc();
+  }
+  function handleExport(){
+    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:CFG.dataVersion||1, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('📤 JSONをダウンロードしました');
+  }
+  function handleImport(){
+    const input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
+    input.addEventListener('change', async (e)=>{
+      const f=e.target.files[0]; if(!f) return;
+      try{
+        const p=JSON.parse(await f.text());
+        if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
+        if(!p.app_id) throw new Error('app_id がない古い形式のファイルです');
+        if(p.app_id!==CFG.appId) throw new Error('別アプリのファイルです（'+p.app_id+'）');
+        if(p.data_version>(CFG.dataVersion||1)) throw new Error('新しいバージョンのファイルです');
+        if(!appValidateData(p.data)) throw new Error('データ形式が違います');
+        const ok=await enuConfirm('📥 データのインポート','現在のプラン・履歴を、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+        if(!ok) return;
+        appApplyData(p.data); showToast('📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+      }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
+    });
+    input.click();
+  }
+
+  function initButtons(){
+    const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare, 'enu-btn-export':handleExport, 'enu-btn-import':handleImport };
+    Object.entries(map).forEach(([id,fn])=>{ const e=document.getElementById(id); if(e) e.addEventListener('click',fn); });
+  }
+
+  // === Goal reverse calc ===
+  function gv(id){ return parseFloat(String(document.getElementById(id).value).replace(/,/g,'')); }
+  function calcGoal(){
+    const target=Math.max(0, gv('goal-amount')||0);
+    const rate=gv('goal-rate')||0;
+    const years=Math.max(1, Math.round(gv('goal-years')||1));
+    const monthly=Math.max(0, gv('goal-monthly')||0);
+    const rm=(rate/100)/12, n=years*12;
+    let reqMonthly;
+    if(Math.abs(rm)<1e-9){ reqMonthly=target/n; }
+    else{ const f=((Math.pow(1+rm,n)-1)/rm)*(1+rm); reqMonthly = f>0 ? target/f : NaN; }
+    document.getElementById('goal-r1').textContent = (isFinite(reqMonthly)&&reqMonthly>=0) ? (yen(reqMonthly)+' / 月') : '—';
+    let txt='条件では届きません';
+    if(monthly>0){
+      if(Math.abs(rm)<1e-9){ const nm=target/monthly; if(nm>0) txt='約'+(nm/12).toFixed(1)+'年'; }
+      else if((1+rm)>0){ const ratio=1+(target*rm)/(monthly*(1+rm)); if(ratio>1){ const nm=Math.log(ratio)/Math.log(1+rm); if(isFinite(nm)&&nm>0) txt='約'+(nm/12).toFixed(1)+'年'; } }
+    }
+    document.getElementById('goal-r2').textContent = txt;
+  }
+
+  // === Presets ===
+  function applyPreset(name){
+    if(name==='orcan-sp'){
+      plans=[ {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20},
+              {fundSel:'S&P500',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20} ];
+      showToast('利回りはご自身の想定値を入力してください');
+    }else if(name==='lump-dca'){
+      const f='オルカン（全世界株式）';
+      plans=[ {fundSel:f,fundCustom:'',method:'lump',amount:1000000,rate:5,fee:0,years:20},
+              {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20} ];
+    }else if(name==='same-fee'){
+      const f='オルカン（全世界株式）';
+      plans=[ {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20},
+              {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:1,years:20} ];
+      showToast('信託報酬の有無で比較します（数値は目安）');
+    }
+    renderPlans(); recalc();
+  }
+
+  // === Recalc ===
+  function recalc(){
+    const sims=plans.map(simulate);
+    const simsNoFee=plans.map(p=>simulate(Object.assign({},p,{fee:0})));
+    renderLegend(); renderChart(sims); renderSummary(sims, simsNoFee); renderBreakdown(sims); saveInput();
+  }
+
+  // === PWA / icons (003) ===
+  function setMetaName(name, content){
+    let m=document.querySelector('meta[name="'+name+'"]');
+    if(!m){ m=document.createElement('meta'); m.setAttribute('name',name); document.head.appendChild(m); }
+    m.setAttribute('content', content);
+  }
+  function setLink(rel, href, type){
+    let l=document.querySelector('link[rel="'+rel+'"]');
+    if(!l){ l=document.createElement('link'); l.setAttribute('rel',rel); document.head.appendChild(l); }
+    l.setAttribute('href', href); if(type) l.setAttribute('type', type);
+  }
+  function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function makeIcon(size, emojiScale, rounded, bg, emoji){
+    const c=document.createElement('canvas'); c.width=size; c.height=size;
+    const ctx=c.getContext('2d'); ctx.fillStyle=bg;
+    if(rounded){ roundRectPath(ctx,0,0,size,size,size*0.22); ctx.fill(); } else { ctx.fillRect(0,0,size,size); }
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font=Math.round(size*emojiScale)+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+    ctx.fillText(emoji, size/2, size/2 + size*0.025);
+    return c.toDataURL('image/png');
+  }
+  function faviconSvg(bg, emoji){
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif">'+emoji+'</text></svg>';
+    return 'data:image/svg+xml,'+encodeURIComponent(svg);
+  }
+  function setupPWA(){
+    const ICON='📊', NAME='投資比較シミュレーター', SHORT='投資比較';
+    let bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#faf7f0';
+    document.title=NAME;
+    setMetaName('theme-color', bg);
+    setMetaName('apple-mobile-web-app-capable','yes');
+    setMetaName('apple-mobile-web-app-status-bar-style','default');
+    setMetaName('apple-mobile-web-app-title', SHORT);
+    try{
+      setLink('icon', faviconSvg(bg, ICON), 'image/svg+xml');
+      setLink('apple-touch-icon', makeIcon(180,0.55,true,bg,ICON));
+      const i192a=makeIcon(192,0.55,true,bg,ICON), i512a=makeIcon(512,0.55,true,bg,ICON);
+      const i192m=makeIcon(192,0.50,false,bg,ICON), i512m=makeIcon(512,0.50,false,bg,ICON);
+      const path=location.pathname;
+      const manifest={ id:path, name:NAME, short_name:SHORT, start_url:path, scope:path, display:'standalone', orientation:'portrait', background_color:bg, theme_color:bg,
+        icons:[ {src:i192a,sizes:'192x192',type:'image/png',purpose:'any'},
+                {src:i192m,sizes:'192x192',type:'image/png',purpose:'maskable'},
+                {src:i512a,sizes:'512x512',type:'image/png',purpose:'any'},
+                {src:i512m,sizes:'512x512',type:'image/png',purpose:'maskable'} ] };
+      setLink('manifest', 'data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
+    }catch(e){}
+  }
+
+  // === Init ===
+  function init(){
+    applyStorageType();
+    initNotices();
+    initButtons();
+    document.getElementById('copyYear').textContent=new Date().getFullYear();
+
+    restoreInput();
+    renderPlans();
+    if(pendingInflation!=null) document.getElementById('inflation-rate').value=pendingInflation;
+
+    plansEl.addEventListener('input', onPlanInput);
+    plansEl.addEventListener('change', onPlanInput);
+    plansEl.addEventListener('click', onPlanClick);
+    document.getElementById('add-plan').addEventListener('click', addPlan);
+    document.getElementById('inflation-rate').addEventListener('input', recalc);
+    document.getElementById('toggle-principal').addEventListener('change', recalc);
+    document.getElementById('toggle-allyears').addEventListener('change', recalc);
+    const bToggle=document.getElementById('breakdown-toggle'), bBody=document.getElementById('breakdown-body');
+    bToggle.addEventListener('click',()=>{ const hidden=bBody.hidden; bBody.hidden=!hidden; bToggle.setAttribute('aria-expanded', hidden?'true':'false'); });
+    document.querySelectorAll('.preset-chip').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
+    document.getElementById('save-btn').addEventListener('click', saveCurrent);
+    document.getElementById('history-list').addEventListener('click', onHistoryClick);
+    document.getElementById('goal-card').addEventListener('input',(e)=>{
+      const t=e.target;
+      if(t.id==='goal-amount'||t.id==='goal-monthly'){ const n=parseNum(t.value); t.value=(t.value===''?'':n.toLocaleString()); }
+      calcGoal();
+    });
+
+    let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(recalc,150); });
+
+    renderHistory(); recalc(); calcGoal(); setupPWA();
+  }
+
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+
+})();
+</script>
+</body>
+</html>
+
+
