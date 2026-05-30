@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="7つの質問に答えるだけで、NISAの2つの枠（つみたて投資枠・成長投資枠）の使い分けタイプを診断する参考コンテンツです。">
+<meta name="description" content="9つの質問に答えるだけで、NISAの2つの枠（つみたて投資枠・成長投資枠）の使い分けタイプを診断する参考コンテンツです。">
 <title>NISA枠 使い分け診断</title>
 
 <!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
@@ -131,8 +131,8 @@
     transition:background .18s, color .18s, border-color .18s, filter .18s, transform .08s;
   }
   .btn:active{ transform:scale(.98); }
-  .btn-primary{ background:var(--primary-dark); color:#fff; }
-  .btn-primary:hover{ filter:brightness(.93); }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-dark); }
   .btn-soft{ background:var(--primary-soft); color:var(--primary-dark); }
   .btn-soft:hover{ background:var(--primary-light); }
   .btn-ghost{
@@ -169,7 +169,6 @@
   .opt.selected .dot{ background:var(--primary); box-shadow:inset 0 0 0 3px var(--primary-soft); }
 
   .q-nav{ display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:20px; }
-  .q-foot{ text-align:center; margin-top:14px; }
 
   /* ===== 結果 ===== */
   .result-card{ text-align:center; background:linear-gradient(160deg, var(--primary-soft), var(--card)); border:1px solid var(--primary-light); }
@@ -251,7 +250,7 @@
 
   <!-- フッター -->
   <footer class="app-footer">
-    <div class="footer-home">
+    <div class="footer-home" id="footerHome">
       <a href="https://enu-tools.pages.dev/" class="btn btn-ghost">🏠 ホームへ戻る</a>
     </div>
     <div class="footer-line"></div>
@@ -296,9 +295,11 @@
   var noticeArea = document.getElementById('noticeArea');
   var main = document.getElementById('main');
 
+  var footerHome = document.getElementById('footerHome');
   function showChrome(show){
     if(appHeader)  appHeader.classList.toggle('hidden', !show);
     if(noticeArea) noticeArea.classList.toggle('hidden', !show);
+    if(footerHome) footerHome.classList.toggle('hidden', !show);
   }
 
   /* ===== 設問データ（やさしい言葉に統一・タイトルに絵文字） ===== */
@@ -308,8 +309,8 @@
       opts:[
         { t:'これから始める／ほぼ未経験', s:0 },
         { t:'毎月の積み立てを続けたことがある', s:1 },
-        { t:'自分で投資する商品を選んだことがある', s:2 },
-        { t:'株などを自分で売り買いした経験がある', s:3 }
+        { t:'積立で買う中身（商品）を自分で選んだ経験がある', s:2 },
+        { t:'値動きを見て、自分のタイミングで売り買いした経験がある', s:3 }
       ]
     },
     {
@@ -333,23 +334,32 @@
     {
       q:'💴 毎月、投資に回せそうな金額のイメージは？',
       opts:[
-        { t:'〜1万円くらい／少額コツコツ', s:0 },
-        { t:'1〜3万円くらい', s:1 },
-        { t:'3〜10万円くらい', s:2 },
-        { t:'10万円以上／まとまった額も視野', s:3 }
+        { t:'月1万円以下', s:0 },
+        { t:'月1万円超〜3万円', s:1 },
+        { t:'月3万円超〜10万円', s:2 },
+        { t:'月10万円超／まとまった額も視野', s:3 }
       ]
     },
     {
-      q:'💰 ボーナスや貯蓄など、まとまった資金を投資に回したい？',
+      q:'💰 ボーナスや貯蓄など、まとまった資金の活用は？',
       opts:[
-        { t:'特にない／毎月の積立だけで十分', s:0 },
-        { t:'少しならある', s:1 },
-        { t:'ある程度あり、活用したい', s:2 },
-        { t:'まとまった額をしっかり活用したい', s:3 }
+        { t:'考えていない／毎月の積立だけで十分', s:0 },
+        { t:'少額なら回してみたい', s:1 },
+        { t:'ある程度はまとめて投資したい', s:2 },
+        { t:'しっかり活用したい', s:3 }
       ]
     },
     {
-      q:'🛒 投資したい「対象」に近いのは？',
+      q:'🛟 投資とは別に、生活費の貯金（生活防衛資金）はある？',
+      opts:[
+        { t:'まだ準備中／これから貯めたい', s:0 },
+        { t:'数ヶ月分はある', s:1 },
+        { t:'半年〜1年分は確保している', s:2 },
+        { t:'1年分以上しっかり確保してある', s:3 }
+      ]
+    },
+    {
+      q:'🪜 投資の「進め方」として近いのは？',
       opts:[
         { t:'プロにおまかせして、シンプルに続けたい', s:0 },
         { t:'定番の積み立てをコツコツ続けたい', s:1 },
@@ -358,12 +368,21 @@
       ]
     },
     {
+      q:'🎁 投資のリターンとして、より大事なのは？',
+      opts:[
+        { t:'長期的な「値上がり」だけでいい', s:0 },
+        { t:'値上がり中心。配当はおまけ程度', s:1 },
+        { t:'値上がりと、ちょっとした配当の両方', s:2 },
+        { t:'定期的にもらえる「配当・分配」も大事にしたい', s:3 }
+      ]
+    },
+    {
       q:'🎯 投資の目的・期間に一番近いのは？',
       opts:[
-        { t:'老後資金など超長期でコツコツ', s:0 },
-        { t:'長期の資産形成がメイン', s:1 },
-        { t:'長期も短中期も両方ねらいたい', s:2 },
-        { t:'増やせるタイミングで積極的に', s:3 }
+        { t:'老後資金など、20年以上の超長期', s:0 },
+        { t:'10〜20年くらいの長期で資産形成', s:1 },
+        { t:'数年の中期と長期、両方ねらいたい', s:2 },
+        { t:'数年単位で大きく増やしたい', s:3 }
       ]
     }
   ];
@@ -371,22 +390,22 @@
   /* ===== 結果タイプ ===== */
   var RESULT_TYPES = [
     {
-      min:0, max:5, emoji:'🌱', type:'つみたて枠コツコツ型', growth:15,
+      min:0, max:7, emoji:'🌱', type:'つみたて枠コツコツ型', growth:15,
       comment:'コツコツ・ほったらかしで続けたいあなた。まずは「つみたて投資枠」を中心に、無理のない金額で長期・分散・積立を淡々と。シンプルさが、続ける一番のコツです。',
       howto:'当面は つみたて投資枠 だけでも十分。慣れて余裕が出てきたら、成長投資枠を少し試す…くらいの気持ちでOK。'
     },
     {
-      min:6, max:10, emoji:'🌿', type:'つみたて枠メイン＋成長枠サブ型', growth:40,
+      min:8, max:13, emoji:'🌿', type:'つみたて枠メイン＋成長枠サブ型', growth:40,
       comment:'土台はコツコツ積立で固めつつ、気になるものには少し挑戦したいタイプ。「つみたて投資枠」をメインにしながら、気になる投資先に「成長投資枠」を少しだけ使うバランスが心地よさそう。',
       howto:'積立で土台づくり → 余力で成長投資枠を“サブ”として活用。まずは積立の習慣を崩さないことを優先に。'
     },
     {
-      min:11, max:15, emoji:'⚖️', type:'両刀バランス型', growth:60,
+      min:14, max:19, emoji:'⚖️', type:'両刀バランス型', growth:60,
       comment:'積立の安定感も、自分で選ぶ楽しさも、どちらも大事にしたいタイプ。「つみたて投資枠」と「成長投資枠」を両輪で使い分けるのが向いていそう。年間の枠の配分を、自分なりにざっくり決めておくと迷いにくくなります。',
       howto:'積立で土台を固めつつ、成長投資枠では選びたい商品にも投資。配分のルールを自分で決めると続けやすい。'
     },
     {
-      min:16, max:21, emoji:'🚀', type:'成長枠アクティブ型', growth:85,
+      min:20, max:27, emoji:'🚀', type:'成長枠アクティブ型', growth:85,
       comment:'自分で調べて選び、自分のタイミングで動きたいタイプ。「成長投資枠」を積極活用しつつ、土台として「つみたて投資枠」も確保しておくと安心感が出ます。まとまった資金の活用も視野に。',
       howto:'成長投資枠を主役に、つみたて投資枠は“守りの土台”として併用。一点に集中しすぎないよう、投資先を分けることも意識して。'
     }
@@ -430,13 +449,13 @@
     var screen = el('div', { class:'welcome-screen screen' });
     screen.appendChild(el('div', { class:'welcome-icon', text:ICON_EMOJI }));
     screen.appendChild(el('div', { class:'welcome-title', text:'NISA枠 使い分け診断' }));
-    screen.appendChild(el('div', { class:'welcome-tagline', text:'つみたて投資枠 × 成長投資枠 — あなたはどっち寄り？7問で診断します。' }));
+    screen.appendChild(el('div', { class:'welcome-tagline', text:'つみたて投資枠 × 成長投資枠 — あなたはどっち寄り？9問で診断します。' }));
 
     var card = el('div', { class:'welcome-card' });
     card.appendChild(el('h3', { text:'この診断でできること' }));
     var feats = [
-      ['📝', '7問の選択式。1〜2分で完了します'],
-      ['🧭', 'つみたて枠／成長枠のバランスの考え方が分かる（参考）'],
+      ['📝', '9問の選択式。1〜2分で完了します'],
+      ['🧭', 'つみたて枠／成長枠のバランスの考え方が分かる'],
       ['🪪', '結果はタイプ名つきのカードで表示されます'],
       ['💾', '診断結果はこの端末に保存。前回の結果もすぐ見られます']
     ];
@@ -514,10 +533,6 @@
     nextBtn.disabled = state.answers[idx] === null;
     card.appendChild(el('div', { class:'q-nav' }, [ backBtn, nextBtn ]));
 
-    card.appendChild(el('div', { class:'q-foot' }, [
-      el('button', { class:'btn btn-ghost', text:'戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
-    ]));
-
     main.appendChild(card);
   }
 
@@ -576,7 +591,8 @@
     ]));
 
     main.appendChild(el('div', { class:'result-actions' }, [
-      el('button', { class:'btn btn-primary btn-block', text:'戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
+      el('button', { class:'btn btn-primary btn-block', text:'もう一度診断する', attrs:{ type:'button' }, on:{ click:startQuiz } }),
+      el('button', { class:'btn btn-ghost btn-block mt12', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
     ]));
 
     requestAnimationFrame(function(){
@@ -719,4 +735,5 @@
 </script>
 </body>
 </html>
+
 
