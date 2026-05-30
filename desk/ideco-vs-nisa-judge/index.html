@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="10の質問に答えるだけで、iDeCo と NISA のどちらを優先的に活用するのが向いているか、傾向をタイプ判定する参考コンテンツです。">
+<title>iDeCo vs NISA 優先度判定</title>
+
+<!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
+<meta name="theme-color" content="#f5faf8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="iDeCo×NISA">
+<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+
+<!-- フォント（enu 4種セット） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== カラーパレット：07 ミント ===== */
+  :root{
+    --primary:        #A0C5B8;
+    --primary-light:  #D8ECE3;
+    --primary-dark:   #6FA092;
+    --primary-soft:   #EAF2EE;
+    --accent:         #8AB5A2;
+    --bg:             #f5faf8;
+    --bg-soft:        #fafdfb;
+    --line:           #dceae5;
+    --card:           #fff;
+    --text:           #2C2A24;
+    --sub:            #7A756B;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{ height:100%; }
+  body{
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    padding:
+      max(16px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .wrap{
+    width:100%;
+    max-width:720px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+  }
+
+  /* ===== ヘッダー（診断・結果画面で表示） ===== */
+  .app-header{ text-align:center; padding:18px 0 6px; }
+  .app-header .badge{
+    display:inline-block; font-size:0.72rem; font-weight:600; letter-spacing:.08em;
+    color:var(--primary-dark); background:var(--primary-soft);
+    border-radius:999px; padding:4px 14px; margin-bottom:10px;
+  }
+  .app-header h1{ color:var(--primary-dark); font-size:1.5rem; font-weight:700; letter-spacing:.02em; }
+  .app-header h1 .sub{ display:block; font-size:0.75rem; font-weight:600; color:var(--sub); margin-top:6px; letter-spacing:.04em; }
+
+  /* ===== ウェルカム共通シェル ===== */
+  .welcome-screen{ text-align:center; padding-top:8px; }
+  .welcome-icon{
+    width:88px; height:88px; border-radius:50%;
+    background:linear-gradient(135deg, var(--primary-light), var(--primary));
+    display:flex; align-items:center; justify-content:center;
+    font-size:42px; line-height:1; margin:8px auto 16px;
+    box-shadow:0 6px 18px rgba(111,160,146,.28);
+  }
+  .welcome-title{ font-size:1.75rem; font-weight:700; color:var(--primary-dark); letter-spacing:.02em; }
+  .welcome-tagline{ font-size:0.95rem; color:var(--sub); margin-top:8px; }
+  .welcome-card{
+    max-width:440px; margin:20px auto 0;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); text-align:left;
+  }
+  .welcome-card h3{ font-size:0.95rem; color:var(--primary-dark); margin-bottom:12px; text-align:center; }
+  .welcome-features{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .welcome-features li{
+    display:flex; gap:10px; align-items:flex-start; font-size:0.88rem;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+  }
+  .welcome-features li .fi{ flex:0 0 auto; }
+  .welcome-actions{ max-width:440px; margin:0 auto; }
+
+  /* === Notice（101 正規仕様） === */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+  .enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+  .enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+  .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;margin-left:2px}
+  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+  /* ===== コンテンツカード ===== */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); margin:14px 0;
+  }
+  .screen{ animation:fade .35s ease; }
+  @keyframes fade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  /* ===== ボタン ===== */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:0.95rem;
+    border-radius:999px; padding:12px 26px;
+    transition:background .18s, color .18s, border-color .18s, filter .18s, transform .08s;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-dark); }
+  .btn-soft{ background:var(--primary-soft); color:var(--primary-dark); }
+  .btn-soft:hover{ background:var(--primary-light); }
+  .btn-ghost{
+    background:transparent; color:var(--sub); border:1px solid var(--sub); font-weight:600;
+    padding:7px 16px; font-size:0.75rem;
+  }
+  .btn-ghost:hover{ color:var(--primary-dark); border-color:var(--primary-dark); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-block{ display:flex; width:100%; }
+
+  .mt16{ margin-top:16px; }
+  .mt12{ margin-top:12px; }
+
+  /* ===== 進捗 ===== */
+  .progress-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.78rem; color:var(--sub); margin-bottom:8px; font-weight:600;
+  }
+  .progress-track{ height:8px; background:var(--primary-light); border-radius:999px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--primary); border-radius:999px; width:0; transition:width .35s ease; }
+
+  /* ===== 設問 ===== */
+  .q-text{ font-size:1.12rem; font-weight:700; margin:18px 0 16px; line-height:1.55; }
+  .opt-list{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    text-align:left; width:100%; background:var(--bg-soft);
+    border:1.5px solid var(--line); border-radius:12px; padding:14px 16px;
+    font-family:inherit; font-size:0.92rem; color:var(--text); cursor:pointer;
+    transition:border-color .15s, background .15s; display:flex; align-items:center; gap:12px;
+  }
+  .opt:hover{ border-color:var(--primary); }
+  .opt .dot{ flex:0 0 auto; width:18px; height:18px; border-radius:50%; border:2px solid var(--primary); position:relative; transition:.15s; }
+  .opt.selected{ border-color:var(--primary); background:var(--primary-soft); }
+  .opt.selected .dot{ background:var(--primary); box-shadow:inset 0 0 0 3px var(--primary-soft); }
+
+  .q-nav{ display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:20px; }
+  .q-foot{ text-align:center; margin-top:14px; }
+
+  /* ===== 結果 ===== */
+  .result-card{ text-align:center; background:linear-gradient(160deg, var(--primary-soft), var(--card)); border:1px solid var(--primary-light); }
+  .result-emoji{ font-size:2.6rem; line-height:1; }
+  .result-label{ font-size:0.76rem; font-weight:600; color:var(--sub); letter-spacing:.1em; margin-top:10px; }
+  .result-type{ font-size:1.5rem; font-weight:700; margin:6px 0 14px; color:var(--primary-dark); }
+  .result-comment{ font-size:0.94rem; text-align:left; margin-bottom:16px; }
+  .result-howto{ text-align:left; background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:0.88rem; }
+  .ht-title{ font-weight:700; font-size:0.82rem; color:var(--primary-dark); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .result-meter{ margin:18px 0 4px; }
+  .meter-row{ display:flex; justify-content:space-between; font-size:0.74rem; color:var(--sub); margin-bottom:6px; font-weight:600; }
+  .meter-track{ height:10px; border-radius:999px; background:var(--primary-light); position:relative; overflow:hidden; }
+  .meter-fill{ position:absolute; top:0; left:0; height:100%; background:var(--primary); border-radius:999px; transition:width .5s ease; }
+
+  /* ===== 結果：個別フィードバック ===== */
+  .result-reasons{
+    text-align:left; background:var(--bg-soft); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; margin-top:14px;
+  }
+  .reason-item{ padding:10px 0; border-bottom:1px solid var(--line); }
+  .reason-item:first-child{ padding-top:4px; }
+  .reason-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .reason-q{ display:flex; align-items:flex-start; gap:8px; font-weight:600; font-size:0.86rem; color:var(--text); }
+  .reason-q .ri{ flex:0 0 auto; }
+  .reason-ans{ margin-left:26px; margin-top:2px; font-size:0.82rem; color:var(--sub); }
+  .reason-ans::before{ content:'回答：'; color:var(--primary-dark); font-weight:600; }
+  .reason-why{ margin-left:26px; margin-top:4px; font-size:0.82rem; color:var(--primary-dark); line-height:1.65; }
+  .reason-why::before{ content:'→ '; }
+
+  /* ===== 参考カード ===== */
+  .ref-note{ font-size:0.74rem; color:var(--sub); margin-top:14px; line-height:1.7; background:var(--bg-soft); border:1px dashed var(--line); border-radius:10px; padding:10px 12px; text-align:left; }
+  .ref-list{ list-style:none; padding:0; margin:8px 0 0; display:flex; flex-direction:column; gap:6px; }
+  .ref-list li{ font-size:0.78rem; color:var(--text); padding-left:16px; position:relative; line-height:1.65; }
+  .ref-list li::before{ content:'・'; position:absolute; left:0; color:var(--primary-dark); font-weight:700; }
+  .ref-links{
+    font-size:0.82rem; margin-top:14px; padding-top:12px;
+    border-top:1px solid var(--line);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .ref-links .rl-title{ font-size:0.74rem; color:var(--sub); font-weight:600; }
+  .ref-link{
+    color:var(--primary-dark); text-decoration:underline; text-underline-offset:2px;
+    font-weight:600; word-break:break-all;
+  }
+  .ref-link:hover{ color:var(--accent); }
+  .ref-link .ext{ font-size:0.75rem; opacity:.7; margin-left:4px; }
+
+  /* ===== ざっくり違い（NISA / iDeCo比較） ===== */
+  .quick-compare{
+    display:flex; flex-direction:column; gap:0; margin-top:12px;
+  }
+  .compare-section{
+    display:flex; flex-direction:column; gap:10px; padding:14px 4px;
+  }
+  .compare-section + .compare-section{
+    border-top:1px dashed var(--line);
+  }
+  .compare-tag{
+    display:inline-flex; align-self:flex-start;
+    font-weight:700; font-size:0.78rem;
+    padding:4px 14px; border-radius:999px; letter-spacing:.04em;
+  }
+  .compare-tag.nisa{ background:var(--primary-soft); color:var(--primary-dark); }
+  .compare-tag.ideco{ background:var(--primary-dark); color:#fff; }
+  .compare-points{
+    list-style:none; padding:0 0 0 6px; margin:0;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .compare-points li{
+    font-size:0.86rem; color:var(--text); line-height:1.6;
+    padding-left:16px; position:relative;
+  }
+  .compare-points li::before{
+    content:''; position:absolute; left:4px; top:0.7em;
+    width:5px; height:5px; border-radius:50%;
+    background:var(--primary-dark);
+  }
+
+  /* ===== アコーディオン ===== */
+  .accordion-trigger{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:transparent; border:none; cursor:pointer; font-family:inherit;
+    color:var(--sub); font-size:0.82rem; font-weight:600;
+    padding:16px 4px 8px; margin-top:18px;
+    border-top:1px solid var(--line);
+    transition:color .15s;
+  }
+  .accordion-trigger:hover{ color:var(--primary-dark); }
+  .accordion-trigger .arrow{
+    display:inline-block; transition:transform .25s ease;
+    font-size:0.78rem;
+  }
+  .accordion-trigger.is-open .arrow{ transform:rotate(180deg); }
+  .accordion-body{
+    overflow:hidden; padding-top:8px;
+    animation:slidedown .3s ease;
+  }
+  @keyframes slidedown{ from{ opacity:0; transform:translateY(-4px);} to{ opacity:1; transform:none;} }
+
+  .result-actions{ margin-top:18px; }
+
+  /* ===== フッター ===== */
+  .app-footer{ margin-top:24px; text-align:center; }
+  .footer-home{ margin-bottom:12px; }
+  .footer-line{ border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent); margin-bottom:12px; }
+  .footer-credit a{ color:var(--sub); text-decoration:none; font-size:0.82rem; font-weight:600; }
+  .footer-credit a:hover{ color:var(--primary-dark); }
+  .footer-copy{ margin-top:8px; font-size:0.72rem; color:var(--sub); }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width:480px){
+    .app-header h1{ font-size:1.25rem; }
+    .app-header h1 .sub{ font-size:0.7rem; }
+    .welcome-title{ font-size:1.5rem; }
+    .result-type{ font-size:1.32rem; }
+    .btn{ font-size:0.92rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー（ウェルカムでは非表示・診断/結果で表示） -->
+  <header class="app-header hidden" id="appHeader">
+    <span class="badge">iDeCo vs NISA 優先度判定</span>
+    <h1>あなたはNISA寄り？iDeCo寄り？
+      <span class="sub">10問で優先度の傾向を判定します</span>
+    </h1>
+  </header>
+
+  <!-- 注意書きカード（101正規・ウェルカムでは非表示） -->
+  <section class="enu-notice-area hidden" id="noticeArea">
+    <!-- 🚨 免責（計算・診断系：Pattern ④ trade） -->
+    <div class="enu-notice-wrap" data-notice-id="trade">
+      <div class="enu-notice enu-notice-trade">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">この診断は「iDeCo / NISA の活用傾向」を知るための参考です。投資の助言ではありません。制度改正の可能性があるため、最新情報や個別の判断は公式情報・専門家にご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <!-- 💾 ローカル保存案内（ローカル時のみ） -->
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">診断結果はこの端末（ブラウザ）内にのみ保存されます。Googleログインなどは不要で、すぐにお使いいただけます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <!-- 📅 情報時点（Pattern ⑤・自動反映） -->
+    <div class="enu-notice-wrap" data-notice-id="date">
+      <div class="enu-notice enu-notice-date">
+        <span class="enu-icon">📅</span>
+        <span class="enu-body">掲載情報は <strong id="enu-info-date">2026年5月時点</strong> のものです。最新情報は公式サイト等でご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <!-- 📚 ヘルプ導線（全アプリ共通） -->
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方や困ったときは、<a href="" class="enu-help-link" id="enu-help-link">ヘルプページ</a>をご覧ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </section>
+
+  <!-- メイン -->
+  <main id="main"></main>
+
+  <!-- フッター -->
+  <footer class="app-footer">
+    <div class="footer-home hidden" id="footerHome">
+      <a href="https://enu-tools.pages.dev/" class="btn btn-ghost">🏠 ホームへ戻る</a>
+    </div>
+    <div class="footer-line"></div>
+    <div class="footer-credit">
+      <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+    </div>
+    <div class="footer-copy" id="footerCopy"></div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===== ENU_CONFIG ===== */
+  var ENU_CONFIG = {
+    appId:          'ideco-vs-nisa-judge',
+    appName:        'iDeCo vs NISA 優先度判定',
+    dataVersion:    2,
+    storageType:    'local',
+    helpUrl:        'https://enu-tools.pages.dev/help/',
+    helpOpenNewTab: true
+  };
+  var CFG = ENU_CONFIG;
+  var ICON_EMOJI = '🆚';
+
+  /* ===== DOMヘルパー（innerHTML不使用） ===== */
+  function el(tag, opts, children){
+    var node = document.createElement(tag);
+    opts = opts || {};
+    if(opts.class) node.className = opts.class;
+    if(opts.text != null) node.textContent = opts.text;
+    if(opts.attrs){ for(var k in opts.attrs){ node.setAttribute(k, opts.attrs[k]); } }
+    if(opts.on){ for(var ev in opts.on){ node.addEventListener(ev, opts.on[ev]); } }
+    if(children){ children.forEach(function(c){ if(c) node.appendChild(c); }); }
+    return node;
+  }
+  function _key(suffix){ return 'enu_' + CFG.appId + '_' + suffix; }
+
+  var appHeader = document.getElementById('appHeader');
+  var noticeArea = document.getElementById('noticeArea');
+  var footerHome = document.getElementById('footerHome');
+  var main = document.getElementById('main');
+
+  function showChrome(show){
+    if(appHeader)  appHeader.classList.toggle('hidden', !show);
+    if(noticeArea) noticeArea.classList.toggle('hidden', !show);
+    if(footerHome) footerHome.classList.toggle('hidden', !show);
+  }
+
+  /* ===== 設問データ（10問） ===== */
+  /* スコア設計：s=0 → NISA寄り / s=3 → iDeCo寄り */
+  /* r フィールド：個別フィードバック用の理由文 */
+  /* k フィールド：結果画面のフィードバックで使う短いラベル */
+  var QUESTIONS = [
+    {
+      q:'🎂 60歳までの時間（運用できる期間）は？',
+      k:'運用できる期間',
+      opts:[
+        { t:'30代以下', s:3, r:'運用期間が長く、iDeCoの節税メリットを最大限活かせる' },
+        { t:'40代', s:2, r:'運用期間がまだあり、節税メリットも享受しやすい' },
+        { t:'50代', s:1, r:'残りの運用期間を考えながら、流動性も意識したい年代' },
+        { t:'すでに60歳以上 ／ もうすぐ60歳', s:0, r:'運用期間が短く、すぐに引き出せるNISAの自由さが活きやすい' }
+      ]
+    },
+    {
+      q:'💼 いまの働き方に近いのは？',
+      k:'働き方',
+      opts:[
+        { t:'学生 ／ 専業主婦／主夫 ／ 扶養内パートなど', s:0, r:'課税所得がほぼないと、iDeCoの所得控除メリットが活きにくい' },
+        { t:'公務員', s:1, r:'掛金上限が比較的低めなので、NISAも併せて検討したい' },
+        { t:'会社員', s:2, r:'勤め先の制度に応じて、iDeCoも活用しやすい働き方' },
+        { t:'自営業 ／ フリーランス', s:3, r:'iDeCoの掛金上限が高めで、節税メリットを大きく取りやすい' }
+      ]
+    },
+    {
+      q:'💴 年収（額面）の目安は？',
+      k:'年収',
+      opts:[
+        { t:'ほぼなし ／ 扶養内', s:0, r:'所得税・住民税の負担が小さく、所得控除のメリットが小さい' },
+        { t:'〜400万円くらい', s:1, r:'節税効果はあるが控えめ。手元の流動性も大事にしたい' },
+        { t:'400〜800万円くらい', s:2, r:'所得控除による節税メリットを十分に享受できる水準' },
+        { t:'800万円以上', s:3, r:'高所得帯で、iDeCoの所得控除による節税効果が大きい' }
+      ]
+    },
+    {
+      q:'🚪 投資に回すお金を「老後より前に引き出す」可能性は？',
+      k:'老後より前に引き出す可能性',
+      opts:[
+        { t:'高い ／ 住宅・教育・結婚など近い予定がある', s:0, r:'近い将来お金が必要なら、いつでも引き出せるNISAが安心' },
+        { t:'ある程度ある ／ いざという時の備えにも使いたい', s:1, r:'万一に備えるなら、流動性のあるNISAを優先したい' },
+        { t:'ほぼなし ／ 老後資金として割り切れる', s:2, r:'引き出さない覚悟があれば、iDeCoの節税メリットが効く' },
+        { t:'まったくなし ／ 絶対に使わない覚悟', s:3, r:'老後まで触らない前提なら、iDeCoの強制貯蓄が最大の武器に' }
+      ]
+    },
+    {
+      q:'📖 投資の経験はどのくらい？',
+      k:'投資の経験',
+      opts:[
+        { t:'これから始める ／ ほぼ未経験', s:0, r:'まずは自由度の高いNISAで、投資に慣れるのが定石' },
+        { t:'つみたて投資など簡単なものを少し', s:1, r:'NISAを軸にしながら、慣れに応じて広げていけそう' },
+        { t:'自分で商品を選んだ経験がある', s:2, r:'制度の特性を理解した上で、iDeCoの活用も視野に入る' },
+        { t:'売買や色んな商品に慣れている', s:3, r:'制度を使い分ける力があり、両刀使いがしやすい' }
+      ]
+    },
+    {
+      q:'🏦 生活防衛資金（生活費の3〜6ヶ月分など）は確保できている？',
+      k:'生活防衛資金',
+      opts:[
+        { t:'ほとんど確保できていない', s:0, r:'まず生活防衛資金が最優先。投資は引き出せるNISAから' },
+        { t:'数ヶ月分くらいある', s:1, r:'防衛資金を増やしつつ、流動性のあるNISAを優先したい' },
+        { t:'半年〜1年分くらいある', s:2, r:'土台があるので、iDeCoの強制貯蓄も検討しやすい' },
+        { t:'十分にあり、投資資金とは分けている', s:3, r:'生活基盤が固く、iDeCoに資金を回しやすい状態' }
+      ]
+    },
+    {
+      q:'📊 投資に回せる月額の目安は？',
+      k:'投資に回せる月額',
+      opts:[
+        { t:'月1万円以下', s:0, r:'少額ならNISAの方が手数料負担が相対的に軽い' },
+        { t:'月1〜3万円くらい', s:1, r:'まずはNISAで積立を確立してから、次を考えたい範囲' },
+        { t:'月3〜5万円くらい', s:2, r:'NISA・iDeCoを併用しやすい金額帯' },
+        { t:'月5万円以上', s:3, r:'NISAとiDeCoの両方を活用できる余力がある' }
+      ]
+    },
+    {
+      q:'🏢 公的年金以外の老後の備え（退職金・企業年金・個人年金など）は？',
+      k:'公的年金以外の老後の備え',
+      opts:[
+        { t:'すでに十分にある', s:0, r:'老後の備えが整っているなら、自由度のあるNISAでも十分' },
+        { t:'ある程度ある', s:1, r:'追加の備えは無理なく、流動性も意識したい' },
+        { t:'少しある ／ 不足が気になる', s:2, r:'不足分を補うためにも、iDeCoの活用が有効' },
+        { t:'ほとんどない ／ 自分で準備したい', s:3, r:'老後資金を自力で準備するなら、iDeCoが強力な選択肢' }
+      ]
+    },
+    {
+      q:'💎 iDeCoの「原則60歳まで引き出せない」をどう感じる？',
+      k:'60歳まで引き出せない感覚',
+      opts:[
+        { t:'とても不安 ／ 自由に引き出せないのは避けたい', s:0, r:'流動性を大事にしたい人にはNISAの自由さが向く' },
+        { t:'やや不安 ／ 途中で困らないか心配', s:1, r:'不安があるならNISA中心が落ち着く' },
+        { t:'むしろ強制貯蓄として安心できる', s:2, r:'縛りをポジティブに捉えられるなら、iDeCo向き' },
+        { t:'大きなメリット ／ 絶対に使い込まない仕組みが嬉しい', s:3, r:'引き出せない仕組みを強みに変えられるタイプ' }
+      ]
+    },
+    {
+      q:'💪 いまの収入の安定性は？',
+      k:'収入の安定性',
+      opts:[
+        { t:'不安定 ／ これから変わりそう', s:0, r:'収入が読みづらいと、長期固定のiDeCoは荷が重い' },
+        { t:'ふつう', s:1, r:'まずは柔軟に動かせるNISAから始めるのが無難' },
+        { t:'比較的、安定している', s:2, r:'長期の積立が組み立てやすく、iDeCoも視野に入る' },
+        { t:'とても安定 ／ 収入源が複数ある', s:3, r:'安定収入があれば、長期固定のiDeCoを使いやすい' }
+      ]
+    }
+  ];
+
+  /* ===== 結果タイプ（10問 score 0〜30、中央バランス厚め） ===== */
+  /* meter は 0%=NISA寄り、100%=iDeCo寄り */
+  var RESULT_TYPES = [
+    {
+      min:0, max:5, emoji:'🌊', type:'NISA優先タイプ', meter:10,
+      comment:'今のあなたは「いつでも引き出せる自由さ」を大事にしたいタイプ。近い将来お金を使う可能性があったり、節税メリットが活きにくい状況だったりするので、まずはNISAでコツコツ進めるのが心地よさそうです。',
+      howto:'まずはNISA（つみたて投資枠中心）で、長期・分散・少額の積立に慣れる。生活防衛資金の確保を最優先に。iDeCoは状況が変わってから検討で十分。'
+    },
+    {
+      min:6, max:11, emoji:'🪴', type:'NISA中心＋余裕でiDeCoタイプ', meter:32,
+      comment:'NISAの自由さを土台にしながら、余裕が出てきたらiDeCoの節税メリットも取り入れていきたいタイプ。流動性とのバランスを意識すれば、無理のない範囲で「2刀流」も可能です。',
+      howto:'NISAでの積立を優先しつつ、家計に余裕があれば少額からiDeCoも開始。生活防衛資金が整ってから、無理のない掛金で。'
+    },
+    {
+      min:12, max:18, emoji:'⚖️', type:'バランスタイプ（両方活用）', meter:52,
+      comment:'NISAの「自由さ」と、iDeCoの「節税×強制貯蓄」のどちらの良さも取り込みやすいタイプ。両制度を組み合わせて、ライフプランと老後資金の準備を同時に進められそうです。',
+      howto:'NISAつみたて枠＋iDeCoを並行で。配分のルールを決めて、毎年1回くらい見直すと続けやすい。'
+    },
+    {
+      min:19, max:24, emoji:'🌳', type:'iDeCo中心＋NISAも活用タイプ', meter:72,
+      comment:'老後資金づくりへの意識が高く、節税メリットも享受しやすいタイプ。iDeCoを軸に据えつつ、自由に使える資金部分をNISAで補う構成が向いていそうです。',
+      howto:'iDeCoの掛金は無理のない範囲で多めに。並行してNISAも活用し、流動性が必要なお金はそちらで運用。'
+    },
+    {
+      min:25, max:30, emoji:'🏔️', type:'iDeCo優先タイプ', meter:90,
+      comment:'老後資金の準備を最優先にしたい、節税メリットを最大限に活かしたいタイプ。「60歳まで引き出せない」もむしろプラスに感じられる強さがあります。iDeCoを土台に、ゆとりがあればNISAも組み合わせて。',
+      howto:'iDeCoを最優先に活用。手元資金や生活防衛資金は別途確保し、ライフイベント用の余剰部分だけNISAでカバー。'
+    }
+  ];
+
+  function typeFromScore(score){
+    for(var i=0;i<RESULT_TYPES.length;i++){
+      if(score >= RESULT_TYPES[i].min && score <= RESULT_TYPES[i].max) return RESULT_TYPES[i];
+    }
+    return RESULT_TYPES[RESULT_TYPES.length-1];
+  }
+
+  /* ===== 個別フィードバック：判定タイプに寄与した上位3項目を抽出 ===== */
+  function pickReasons(typeObj, answers){
+    var items = [];
+    for(var i=0; i<answers.length; i++){
+      var oi = answers[i];
+      if(oi == null) continue;
+      var q = QUESTIONS[i];
+      var opt = q.opts[oi];
+      // 設問の絵文字とラベルを分離（先頭の絵文字 + 半角スペース）
+      var m = q.q.match(/^(\S+)\s*(.*)$/);
+      items.push({
+        icon: m ? m[1] : '',
+        label: q.k || (m ? m[2] : q.q),
+        answer: opt.t,
+        reason: opt.r || '',
+        s: opt.s
+      });
+    }
+
+    var meter = typeObj.meter;
+    var picked;
+    if(meter <= 35){
+      // NISA寄り：s=0が最優先、s=1が次。s=0だけで3つ揃わなければs=1も
+      picked = items.filter(function(x){ return x.s <= 1; })
+                    .sort(function(a, b){ return a.s - b.s; })
+                    .slice(0, 3);
+    } else if(meter >= 65){
+      // iDeCo寄り：s=3が最優先、s=2が次
+      picked = items.filter(function(x){ return x.s >= 2; })
+                    .sort(function(a, b){ return b.s - a.s; })
+                    .slice(0, 3);
+    } else {
+      // バランス：両側から混ぜる（NISA寄り2 + iDeCo寄り1 を基本）
+      var nisaSide = items.filter(function(x){ return x.s <= 1; })
+                          .sort(function(a, b){ return a.s - b.s; });
+      var idecoSide = items.filter(function(x){ return x.s >= 2; })
+                           .sort(function(a, b){ return b.s - a.s; });
+      picked = [];
+      if(nisaSide.length > 0) picked.push(nisaSide[0]);
+      if(idecoSide.length > 0) picked.push(idecoSide[0]);
+      // 残り1つは多い側から
+      if(nisaSide.length >= idecoSide.length){
+        if(nisaSide.length > 1) picked.push(nisaSide[1]);
+        else if(idecoSide.length > 1) picked.push(idecoSide[1]);
+      } else {
+        if(idecoSide.length > 1) picked.push(idecoSide[1]);
+        else if(nisaSide.length > 1) picked.push(nisaSide[1]);
+      }
+    }
+    return picked;
+  }
+
+  /* ===== 状態 ===== */
+  var state = { qIndex:0, answers:new Array(QUESTIONS.length).fill(null) };
+
+  /* ===== localStorage（前回結果） ===== */
+  var STORE_KEY = _key('lastResult');
+  function saveResult(score, typeObj, answers){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        score:score, type:typeObj.type,
+        answers: answers.slice(),
+        at:new Date().toISOString(),
+        v:CFG.dataVersion
+      }));
+    }catch(e){ /* プライベートモード等。動作は継続 */ }
+  }
+  function loadResult(){
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return null;
+      var d = JSON.parse(raw);
+      if(!d || typeof d.score !== 'number') return null;
+      if(d.v !== CFG.dataVersion) return null;   // 設問数が変わったら旧スケールの結果は無効化
+      if(!Array.isArray(d.answers) || d.answers.length !== QUESTIONS.length) return null;
+      return d;
+    }catch(e){ return null; }
+  }
+
+  function clearMain(){ while(main.firstChild) main.removeChild(main.firstChild); }
+
+  /* ===== ウェルカム（注意書き・ヘッダー非表示） ===== */
+  function renderWelcome(){
+    showChrome(false);
+    clearMain();
+
+    var screen = el('div', { class:'welcome-screen screen' });
+    screen.appendChild(el('div', { class:'welcome-icon', text:ICON_EMOJI }));
+    screen.appendChild(el('div', { class:'welcome-title', text:'iDeCo vs NISA 優先度判定' }));
+    screen.appendChild(el('div', { class:'welcome-tagline', text:'あなたはNISA寄り？iDeCo寄り？10問で優先度の傾向を判定します。' }));
+
+    var card = el('div', { class:'welcome-card' });
+    card.appendChild(el('h3', { text:'この診断でできること' }));
+    var feats = [
+      ['📝', '10問の選択式。1〜2分で完了します'],
+      ['🆚', 'NISA寄り／iDeCo寄りの優先度バランスが分かる'],
+      ['🪞', '「なぜそう判定されたか」の理由も一緒に表示します'],
+      ['💾', '診断結果はこの端末に保存。前回の結果もすぐ見られます']
+    ];
+    var ul = el('ul', { class:'welcome-features' });
+    feats.forEach(function(f){
+      ul.appendChild(el('li', {}, [ el('span', { class:'fi', text:f[0] }), el('span', { text:f[1] }) ]));
+    });
+    card.appendChild(ul);
+    screen.appendChild(card);
+
+    var actions = el('div', { class:'welcome-actions' });
+    actions.appendChild(el('button', { class:'btn btn-primary btn-block mt16', text:'診断をはじめる', attrs:{ type:'button' }, on:{ click:startQuiz } }));
+    var prev = loadResult();
+    if(prev){
+      actions.appendChild(el('button', { class:'btn btn-soft btn-block mt12', text:'前回の結果を見る（' + prev.type + '）', attrs:{ type:'button' }, on:{ click:function(){ showSavedResult(prev); } } }));
+    }
+    screen.appendChild(actions);
+    main.appendChild(screen);
+  }
+
+  /* ===== 診断 ===== */
+  function startQuiz(){
+    state.qIndex = 0;
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    showChrome(true);
+    clearMain();
+    var idx = state.qIndex;
+    var q = QUESTIONS[idx];
+    var card = el('div', { class:'card screen' });
+
+    var pct = Math.round((idx/QUESTIONS.length)*100);
+    card.appendChild(el('div', { class:'progress-head' }, [
+      el('span', { text:'質問 ' + (idx+1) + ' / ' + QUESTIONS.length }),
+      el('span', { text:pct + '%' })
+    ]));
+    var fill = el('div', { class:'progress-fill' });
+    fill.style.width = pct + '%';
+    card.appendChild(el('div', { class:'progress-track' }, [ fill ]));
+
+    card.appendChild(el('div', { class:'q-text', text:q.q }));
+
+    var optButtons = [];
+    var nextBtn;
+    function selectAt(oi){
+      state.answers[idx] = oi;
+      optButtons.forEach(function(b, i){
+        var sel = (i === oi);
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+      });
+      if(nextBtn) nextBtn.disabled = false;
+    }
+
+    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':q.q } });
+    q.opts.forEach(function(opt, oi){
+      var sel = state.answers[idx] === oi;
+      var btn = el('button', {
+        class:'opt' + (sel ? ' selected' : ''),
+        attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
+        on:{ click:function(){ selectAt(oi); } }
+      }, [ el('span', { class:'dot' }), el('span', { text:opt.t }) ]);
+      optButtons.push(btn);
+      list.appendChild(btn);
+    });
+    card.appendChild(list);
+
+    var backBtn = el('button', { class:'btn btn-ghost', text:'← 戻る', attrs:{ type:'button' }, on:{ click:goBack } });
+    if(idx === 0) backBtn.disabled = true;
+    var isLast = idx === QUESTIONS.length - 1;
+    nextBtn = el('button', { class:'btn btn-primary', text:isLast ? '結果を見る' : '次へ →', attrs:{ type:'button' }, on:{ click:goNext } });
+    nextBtn.disabled = state.answers[idx] === null;
+    card.appendChild(el('div', { class:'q-nav' }, [ backBtn, nextBtn ]));
+
+    card.appendChild(el('div', { class:'q-foot' }, [
+      el('button', { class:'btn btn-ghost', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
+    ]));
+
+    main.appendChild(card);
+  }
+
+  function goBack(){ if(state.qIndex > 0){ state.qIndex--; renderQuestion(); } }
+  function goNext(){
+    if(state.answers[state.qIndex] === null) return;
+    if(state.qIndex < QUESTIONS.length - 1){ state.qIndex++; renderQuestion(); }
+    else { finishQuiz(); }
+  }
+
+  /* ===== 結果 ===== */
+  function finishQuiz(){
+    var score = 0;
+    for(var i=0;i<QUESTIONS.length;i++){
+      var oi = state.answers[i];
+      if(oi != null) score += QUESTIONS[i].opts[oi].s;
+    }
+    var typeObj = typeFromScore(score);
+    saveResult(score, typeObj, state.answers);
+    renderResult(typeObj, state.answers.slice(), false, null);
+  }
+  function showSavedResult(prev){
+    renderResult(typeFromScore(prev.score), prev.answers, true, prev.at);
+  }
+
+  function renderResult(typeObj, answers, fromSaved, savedAt){
+    showChrome(true);
+    clearMain();
+
+    /* --- 結果カード本体 --- */
+    var card = el('div', { class:'card result-card screen' });
+    card.appendChild(el('div', { class:'result-emoji', text:typeObj.emoji }));
+    card.appendChild(el('div', { class:'result-label', text:'あなたのタイプは' }));
+    card.appendChild(el('div', { class:'result-type', text:typeObj.type }));
+
+    var meter = el('div', { class:'result-meter' }, [
+      el('div', { class:'meter-row' }, [ el('span', { text:'NISA寄り' }), el('span', { text:'iDeCo寄り' }) ]),
+      el('div', { class:'meter-track' }, [ el('div', { class:'meter-fill' }) ])
+    ]);
+    card.appendChild(meter);
+
+    card.appendChild(el('p', { class:'result-comment', text:typeObj.comment }));
+    card.appendChild(el('div', { class:'result-howto' }, [
+      el('div', { class:'ht-title' }, [ el('span', { text:'🧭' }), el('span', { text:'活用イメージ（参考）' }) ]),
+      el('div', { text:typeObj.howto })
+    ]));
+
+    /* --- 個別フィードバック（あなたがこう答えたから）--- */
+    if(answers && answers.length){
+      var reasons = pickReasons(typeObj, answers);
+      if(reasons.length){
+        var rWrap = el('div', { class:'result-reasons' });
+        rWrap.appendChild(el('div', { class:'ht-title' }, [
+          el('span', { text:'🪞' }),
+          el('span', { text:'あなたがこう答えたから' })
+        ]));
+        reasons.forEach(function(r){
+          var item = el('div', { class:'reason-item' });
+          item.appendChild(el('div', { class:'reason-q' }, [
+            el('span', { class:'ri', text:r.icon }),
+            el('span', { text:r.label })
+          ]));
+          item.appendChild(el('div', { class:'reason-ans', text:r.answer }));
+          if(r.reason){
+            item.appendChild(el('div', { class:'reason-why', text:r.reason }));
+          }
+          rWrap.appendChild(item);
+        });
+        card.appendChild(rWrap);
+      }
+    }
+
+    if(fromSaved && savedAt){
+      card.appendChild(el('div', { class:'result-label', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
+    }
+    main.appendChild(card);
+
+    /* --- iDeCo / NISA の参考カード（案B：要点＋アコーディオン） --- */
+    var refCard = el('div', { class:'card screen' });
+    refCard.appendChild(el('div', { class:'ht-title' }, [
+      el('span', { text:'📌' }),
+      el('span', { text:'ざっくり違い' })
+    ]));
+
+    // 比較ブロック（常時表示）
+    var qc = el('div', { class:'quick-compare' });
+
+    // NISA セクション
+    var nisaSection = el('div', { class:'compare-section' });
+    nisaSection.appendChild(el('span', { class:'compare-tag nisa', text:'NISA' }));
+    var nisaPoints = el('ul', { class:'compare-points' });
+    ['いつでも引き出せる', '運用益が非課税'].forEach(function(t){
+      nisaPoints.appendChild(el('li', { text:t }));
+    });
+    nisaSection.appendChild(nisaPoints);
+    qc.appendChild(nisaSection);
+
+    // iDeCo セクション
+    var idecoSection = el('div', { class:'compare-section' });
+    idecoSection.appendChild(el('span', { class:'compare-tag ideco', text:'iDeCo' }));
+    var idecoPoints = el('ul', { class:'compare-points' });
+    ['60歳まで引き出せない', '運用益が非課税', '掛金が全額所得控除（節税）'].forEach(function(t){
+      idecoPoints.appendChild(el('li', { text:t }));
+    });
+    idecoSection.appendChild(idecoPoints);
+    qc.appendChild(idecoSection);
+
+    refCard.appendChild(qc);
+
+    // 公式リンク（常時表示）
+    var links = el('div', { class:'ref-links' });
+    links.appendChild(el('div', { class:'rl-title', text:'公式情報はこちら ↓' }));
+    links.appendChild(el('a', {
+      class:'ref-link',
+      attrs:{ href:'https://www.ideco-koushiki.jp/', target:'_blank', rel:'noopener' }
+    }, [
+      el('span', { text:'iDeCo公式サイト（国民年金基金連合会）' }),
+      el('span', { class:'ext', text:'↗' })
+    ]));
+    links.appendChild(el('a', {
+      class:'ref-link',
+      attrs:{ href:'https://www.fsa.go.jp/policy/nisa2/', target:'_blank', rel:'noopener' }
+    }, [
+      el('span', { text:'NISA特設サイト（金融庁）' }),
+      el('span', { class:'ext', text:'↗' })
+    ]));
+    refCard.appendChild(links);
+
+    // アコーディオン：詳しい解説と注意事項
+    var accBody = el('div', { class:'accordion-body hidden' });
+    var moreList = el('ul', { class:'ref-list' });
+    [
+      '一般的には「NISAつみたて投資枠 → iDeCo → NISA成長投資枠」の順で活用しやすいといわれますが、最適解は職業・所得・ライフプランによって人それぞれです。',
+      '制度内容（掛金上限・加入年齢・非課税枠など）は今後も改正される可能性があります。最新情報は必ず公式情報や専門家にご確認ください。'
+    ].forEach(function(t){ moreList.appendChild(el('li', { text:t })); });
+    accBody.appendChild(moreList);
+    accBody.appendChild(el('div', { class:'ref-note', text:
+      'この結果はあくまで傾向を知るための参考です。実際の制度活用・商品選び・配分などは、最新の税制・手数料・リスクを公式情報で確認のうえ、ご自身の判断・責任で。不安な点は金融機関・税理士などの専門家にご相談ください。'
+    }));
+
+    var accBtn = el('button', {
+      class:'accordion-trigger',
+      attrs:{ type:'button', 'aria-expanded':'false' }
+    }, [
+      el('span', { text:'詳しい解説と注意事項を見る' }),
+      el('span', { class:'arrow', text:'▼' })
+    ]);
+    accBtn.addEventListener('click', function(){
+      var isOpen = accBtn.classList.toggle('is-open');
+      accBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      accBody.classList.toggle('hidden', !isOpen);
+      // 開いた時のラベル切り替え
+      var label = accBtn.firstChild;
+      if(label) label.textContent = isOpen ? '詳しい解説と注意事項を閉じる' : '詳しい解説と注意事項を見る';
+    });
+    refCard.appendChild(accBtn);
+    refCard.appendChild(accBody);
+    main.appendChild(refCard);
+
+    main.appendChild(el('div', { class:'result-actions' }, [
+      el('button', { class:'btn btn-primary btn-block', text:'もう一度診断する', attrs:{ type:'button' }, on:{ click:startQuiz } }),
+      el('button', { class:'btn btn-ghost btn-block mt12', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
+    ]));
+
+    requestAnimationFrame(function(){
+      var f = meter.querySelector('.meter-fill');
+      if(f) f.style.width = typeObj.meter + '%';
+    });
+  }
+
+  function formatDate(iso){
+    try{ var d = new Date(iso); return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate(); }
+    catch(e){ return ''; }
+  }
+
+  /* ===== 注意書きカード（101正規JS） ===== */
+  function applyStorageType(){
+    var type = CFG.storageType || 'local';
+    var wraps = document.querySelectorAll('.enu-notice-wrap[data-storage]');
+    for(var i=0;i<wraps.length;i++){
+      if(wraps[i].getAttribute('data-storage') !== type) wraps[i].style.display = 'none';
+    }
+  }
+  function initNotices(){
+    var K = _key('notice_minimized');
+    var get = function(){ try{ return JSON.parse(localStorage.getItem(K) || '[]'); }catch(e){ return []; } };
+    var set = function(l){ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
+    var help = document.getElementById('enu-help-link');
+    if(help){ help.href = CFG.helpUrl || '#'; if(CFG.helpOpenNewTab !== false){ help.target = '_blank'; help.rel = 'noopener'; } }
+    var list = get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){
+      if(list.indexOf(w.dataset.noticeId) !== -1) w.classList.add('is-mini');
+    });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(function(b){
+      b.addEventListener('click', function(){
+        var w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.add('is-mini');
+        var l = get(); if(l.indexOf(id) === -1){ l.push(id); set(l); }
+      });
+    });
+    document.querySelectorAll('.enu-notice-mini').forEach(function(m){
+      m.addEventListener('click', function(){
+        var w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.remove('is-mini');
+        set(get().filter(function(x){ return x !== id; }));
+      });
+    });
+    // Pattern ⑤ の日付を表示時点の年月で自動反映
+    var dateEl = document.getElementById('enu-info-date');
+    if(dateEl){
+      var d = new Date();
+      dateEl.textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月時点';
+    }
+  }
+
+  /* ===== フッターのコピーライト ===== */
+  function setupFooter(){
+    var copy = document.getElementById('footerCopy');
+    if(copy) copy.textContent = '© ' + new Date().getFullYear() + ' enu(エヌ) All rights reserved.';
+  }
+
+  /* ===== PWA / アイコン（003準拠：--bg を getComputedStyle で取得） ===== */
+  function bgColor(){
+    var c = '';
+    try{ c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); }catch(e){}
+    return c || '#faf7f0';
+  }
+  function emojiFont(px){ return px + "px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif"; }
+  function roundRectPath(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function makeIcon(size, maskable, bg){
+    var c = document.createElement('canvas'); c.width = size; c.height = size;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = bg;
+    if(maskable){ ctx.fillRect(0, 0, size, size); }            // フルスクエア（角丸なし）
+    else { roundRectPath(ctx, 0, 0, size, size, size*0.22); ctx.fill(); } // 角丸22%
+    var ratio = maskable ? 0.50 : 0.55;
+    ctx.font = emojiFont(size*ratio);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(ICON_EMOJI, size/2, size/2 + size*0.025);
+    return c.toDataURL('image/png');
+  }
+  function makeFavicon(bg){
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+      + "<rect width='100' height='100' rx='22' fill='" + bg + "'/>"
+      + "<text x='50' y='50' font-size='60' text-anchor='middle' dominant-baseline='central' "
+      + "font-family='Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Twemoji Mozilla, sans-serif'>"
+      + ICON_EMOJI + "</text></svg>";
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+  async function setupPWA(){
+    try{
+      if(document.fonts && document.fonts.ready) await document.fonts.ready;
+      var bg = bgColor();
+      var path = location.pathname || './';
+
+      var tc = document.querySelector('meta[name="theme-color"]');
+      if(!tc){ tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); }
+      tc.setAttribute('content', bg);
+
+      var fav = document.querySelector('link[rel="icon"]');
+      if(!fav){ fav = document.createElement('link'); fav.rel = 'icon'; document.head.appendChild(fav); }
+      fav.setAttribute('type', 'image/svg+xml');
+      fav.setAttribute('href', makeFavicon(bg));
+
+      var at = document.getElementById('appleTouchIcon');
+      if(at) at.setAttribute('href', makeIcon(180, false, bg));
+
+      var icons = await Promise.all([
+        Promise.resolve(makeIcon(192, false, bg)),
+        Promise.resolve(makeIcon(192, true,  bg)),
+        Promise.resolve(makeIcon(512, false, bg)),
+        Promise.resolve(makeIcon(512, true,  bg))
+      ]);
+      var manifest = {
+        id: path, name: CFG.appName, short_name: 'iDeCo×NISA',
+        start_url: path, scope: path, display: 'standalone', orientation: 'portrait',
+        background_color: bg, theme_color: bg,
+        icons: [
+          { src: icons[0], sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: icons[1], sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: icons[2], sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: icons[3], sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ]
+      };
+      var mhref = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+      var ml = document.querySelector('link[rel="manifest"]');
+      if(!ml){ ml = document.createElement('link'); ml.rel = 'manifest'; document.head.appendChild(ml); }
+      ml.setAttribute('href', mhref);
+    }catch(e){ /* PWA設定に失敗してもアプリ本体は動作継続 */ }
+  }
+
+  /* ===== 初期化 ===== */
+  applyStorageType();
+  initNotices();
+  setupFooter();
+  renderWelcome();
+  setupPWA();
+
+})();
+</script>
+</body>
+</html>
