@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="9つの質問に答えるだけで、あなたの「リスク許容度（どのくらいの値動きを受け入れられるか）」の傾向をタイプ判定する参考コンテンツです。">
+<title>リスク許容度診断</title>
+
+<!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
+<meta name="theme-color" content="#faf6f2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="リスク診断">
+<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+
+<!-- フォント（enu 4種セット） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== カラーパレット：05 テラコッタ ===== */
+  :root{
+    --primary:        #C9A695;
+    --primary-light:  #F0DDD2;
+    --primary-dark:   #A37D69;
+    --primary-soft:   #F7ECE5;
+    --accent:         #B88E78;
+    --bg:             #faf6f2;
+    --bg-soft:        #fdfaf7;
+    --line:           #ecdfd5;
+    --card:           #fff;
+    --text:           #2C2A24;
+    --sub:            #7A756B;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{ height:100%; }
+  body{
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    padding:
+      max(16px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .wrap{
+    width:100%;
+    max-width:720px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+  }
+
+  /* ===== ヘッダー（診断・結果画面で表示） ===== */
+  .app-header{ text-align:center; padding:18px 0 6px; }
+  .app-header .badge{
+    display:inline-block; font-size:0.72rem; font-weight:600; letter-spacing:.08em;
+    color:var(--primary-dark); background:var(--primary-soft);
+    border-radius:999px; padding:4px 14px; margin-bottom:10px;
+  }
+  .app-header h1{ color:var(--primary-dark); font-size:1.5rem; font-weight:700; letter-spacing:.02em; }
+  .app-header h1 .sub{ display:block; font-size:0.86rem; font-weight:600; color:var(--sub); margin-top:6px; letter-spacing:.04em; }
+
+  /* ===== ウェルカム共通シェル ===== */
+  .welcome-screen{ text-align:center; padding-top:8px; }
+  .welcome-icon{
+    width:88px; height:88px; border-radius:50%;
+    background:linear-gradient(135deg, var(--primary-light), var(--primary));
+    display:flex; align-items:center; justify-content:center;
+    font-size:42px; line-height:1; margin:8px auto 16px;
+    box-shadow:0 6px 18px rgba(163,125,105,.28);
+  }
+  .welcome-title{ font-size:1.75rem; font-weight:700; color:var(--primary-dark); letter-spacing:.02em; }
+  .welcome-tagline{ font-size:0.95rem; color:var(--sub); margin-top:8px; }
+  .welcome-card{
+    max-width:440px; margin:20px auto 0;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); text-align:left;
+  }
+  .welcome-card h3{ font-size:0.95rem; color:var(--primary-dark); margin-bottom:12px; text-align:center; }
+  .welcome-features{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .welcome-features li{
+    display:flex; gap:10px; align-items:flex-start; font-size:0.88rem;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+  }
+  .welcome-features li .fi{ flex:0 0 auto; }
+  .welcome-actions{ max-width:440px; margin:0 auto; }
+
+  /* === Notice（101 正規仕様） === */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+  .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;margin-left:2px}
+  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+  /* ===== コンテンツカード ===== */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); margin:14px 0;
+  }
+  .screen{ animation:fade .35s ease; }
+  @keyframes fade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  /* ===== ボタン ===== */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:0.95rem;
+    border-radius:999px; padding:12px 26px;
+    transition:background .18s, color .18s, border-color .18s, filter .18s, transform .08s;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--primary-dark); color:#fff; }
+  .btn-primary:hover{ filter:brightness(.93); }
+  .btn-soft{ background:var(--primary-soft); color:var(--primary-dark); }
+  .btn-soft:hover{ background:var(--primary-light); }
+  .btn-ghost{
+    background:transparent; color:var(--sub); border:1px solid var(--sub); font-weight:600;
+    padding:7px 16px; font-size:0.75rem;
+  }
+  .btn-ghost:hover{ color:var(--primary-dark); border-color:var(--primary-dark); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-block{ display:flex; width:100%; }
+
+  .mt16{ margin-top:16px; }
+  .mt12{ margin-top:12px; }
+
+  /* ===== 進捗 ===== */
+  .progress-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.78rem; color:var(--sub); margin-bottom:8px; font-weight:600;
+  }
+  .progress-track{ height:8px; background:var(--primary-light); border-radius:999px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--primary); border-radius:999px; width:0; transition:width .35s ease; }
+
+  /* ===== 設問 ===== */
+  .q-text{ font-size:1.12rem; font-weight:700; margin:18px 0 16px; line-height:1.55; }
+  .opt-list{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    text-align:left; width:100%; background:var(--bg-soft);
+    border:1.5px solid var(--line); border-radius:12px; padding:14px 16px;
+    font-family:inherit; font-size:0.92rem; color:var(--text); cursor:pointer;
+    transition:border-color .15s, background .15s; display:flex; align-items:center; gap:12px;
+  }
+  .opt:hover{ border-color:var(--primary); }
+  .opt .dot{ flex:0 0 auto; width:18px; height:18px; border-radius:50%; border:2px solid var(--primary); position:relative; transition:.15s; }
+  .opt.selected{ border-color:var(--primary); background:var(--primary-soft); }
+  .opt.selected .dot{ background:var(--primary); box-shadow:inset 0 0 0 3px var(--primary-soft); }
+
+  .q-nav{ display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:20px; }
+  .q-foot{ text-align:center; margin-top:14px; }
+
+  /* ===== 結果 ===== */
+  .result-card{ text-align:center; background:linear-gradient(160deg, var(--primary-soft), var(--card)); border:1px solid var(--primary-light); }
+  .result-emoji{ font-size:2.6rem; line-height:1; }
+  .result-label{ font-size:0.76rem; font-weight:600; color:var(--sub); letter-spacing:.1em; margin-top:10px; }
+  .result-type{ font-size:1.5rem; font-weight:700; margin:6px 0 14px; color:var(--primary-dark); }
+  .result-comment{ font-size:0.94rem; text-align:left; margin-bottom:16px; }
+  .result-howto{ text-align:left; background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:0.88rem; }
+  .ht-title{ font-weight:700; font-size:0.82rem; color:var(--primary-dark); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .result-meter{ margin:18px 0 4px; }
+  .meter-row{ display:flex; justify-content:space-between; font-size:0.74rem; color:var(--sub); margin-bottom:6px; font-weight:600; }
+  .meter-track{ height:10px; border-radius:999px; background:var(--primary-light); position:relative; overflow:hidden; }
+  .meter-fill{ position:absolute; top:0; left:0; height:100%; background:var(--primary); border-radius:999px; transition:width .5s ease; }
+  .ref-note{ font-size:0.74rem; color:var(--sub); margin-top:14px; line-height:1.6; background:var(--bg-soft); border:1px dashed var(--line); border-radius:10px; padding:10px 12px; text-align:left; }
+  .result-actions{ margin-top:18px; }
+
+  /* ===== フッター ===== */
+  .app-footer{ margin-top:24px; text-align:center; }
+  .footer-home{ margin-bottom:12px; }
+  .footer-line{ border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent); margin-bottom:12px; }
+  .footer-credit a{ color:var(--sub); text-decoration:none; font-size:0.82rem; font-weight:600; }
+  .footer-credit a:hover{ color:var(--primary-dark); }
+  .footer-copy{ margin-top:8px; font-size:0.72rem; color:var(--sub); }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width:480px){
+    .app-header h1{ font-size:1.25rem; }
+    .welcome-title{ font-size:1.5rem; }
+    .result-type{ font-size:1.32rem; }
+    .btn{ font-size:0.92rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー（ウェルカムでは非表示・診断/結果で表示） -->
+  <header class="app-header hidden" id="appHeader">
+    <span class="badge">リスク許容度診断</span>
+    <h1>あなたのリスクとの付き合い方は？
+      <span class="sub">安定重視 × リスク許容 タイプ診断</span>
+    </h1>
+  </header>
+
+  <!-- 注意書きカード（101正規・ウェルカムでは非表示） -->
+  <section class="enu-notice-area hidden" id="noticeArea">
+    <!-- 🚨 免責（全アプリ共通） -->
+    <div class="enu-notice-wrap" data-notice-id="disclaim">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">この診断は、あなたの「リスク許容度（どのくらいの値動き・損失を受け入れられるか）」の傾向を知るための参考コンテンツです。投資の助言・推奨や、特定の商品の提案ではありません。実際の投資判断はご自身の責任で行い、個別のご相談やリスクの確認は、金融機関・専門家などにご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <!-- 💾 ローカル保存案内（ローカル時のみ） -->
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">診断結果はこの端末（ブラウザ）内にのみ保存されます。Googleログインなどは不要で、すぐにお使いいただけます。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <!-- 📚 ヘルプ導線（全アプリ共通） -->
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方や困ったときは、<a href="" class="enu-help-link" id="enu-help-link">ヘルプページ</a>をご覧ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </section>
+
+  <!-- メイン -->
+  <main id="main"></main>
+
+  <!-- フッター -->
+  <footer class="app-footer">
+    <div class="footer-home hidden" id="footerHome">
+      <a href="https://enu-tools.pages.dev/" class="btn btn-ghost">🏠 ホームへ戻る</a>
+    </div>
+    <div class="footer-line"></div>
+    <div class="footer-credit">
+      <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+    </div>
+    <div class="footer-copy" id="footerCopy"></div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===== ENU_CONFIG ===== */
+  var ENU_CONFIG = {
+    appId:          'risk-allocation',
+    appName:        'リスク許容度診断',
+    dataVersion:    2,
+    storageType:    'local',
+    helpUrl:        'https://enu-tools.pages.dev/help/',
+    helpOpenNewTab: true
+  };
+  var CFG = ENU_CONFIG;
+  var ICON_EMOJI = '🎢';
+
+  /* ===== DOMヘルパー（innerHTML不使用） ===== */
+  function el(tag, opts, children){
+    var node = document.createElement(tag);
+    opts = opts || {};
+    if(opts.class) node.className = opts.class;
+    if(opts.text != null) node.textContent = opts.text;
+    if(opts.attrs){ for(var k in opts.attrs){ node.setAttribute(k, opts.attrs[k]); } }
+    if(opts.on){ for(var ev in opts.on){ node.addEventListener(ev, opts.on[ev]); } }
+    if(children){ children.forEach(function(c){ if(c) node.appendChild(c); }); }
+    return node;
+  }
+  function _key(suffix){ return 'enu_' + CFG.appId + '_' + suffix; }
+
+  var appHeader = document.getElementById('appHeader');
+  var noticeArea = document.getElementById('noticeArea');
+  var footerHome = document.getElementById('footerHome');
+  var main = document.getElementById('main');
+
+  function showChrome(show){
+    if(appHeader)  appHeader.classList.toggle('hidden', !show);
+    if(noticeArea) noticeArea.classList.toggle('hidden', !show);
+    if(footerHome) footerHome.classList.toggle('hidden', !show);
+  }
+
+  /* ===== 設問データ（やさしい言葉に統一・タイトルに絵文字） ===== */
+  var QUESTIONS = [
+    {
+      q:'⏳ 投資に回すお金を使う予定の時期は？',
+      opts:[
+        { t:'すぐ〜数年以内に使う予定がある', s:0 },
+        { t:'5年くらい先に使うかも', s:1 },
+        { t:'10年以上は先になりそう', s:2 },
+        { t:'当分使う予定はなく、長く育てたい', s:3 }
+      ]
+    },
+    {
+      q:'📉 投資したお金が一時的に値下がりしたら？',
+      opts:[
+        { t:'とても不安。眠れなくなりそう', s:0 },
+        { t:'少し気になるが、様子を見る', s:1 },
+        { t:'長期では戻ると考えて、あまり気にしない', s:2 },
+        { t:'むしろ買い増しのチャンスだと思う', s:3 }
+      ]
+    },
+    {
+      q:'📖 投資の経験はどのくらいですか？',
+      opts:[
+        { t:'これから始める／ほぼ未経験', s:0 },
+        { t:'積立など、簡単なものを少し', s:1 },
+        { t:'自分で商品を選んで投資したことがある', s:2 },
+        { t:'売り買いやいろいろな商品に慣れている', s:3 }
+      ]
+    },
+    {
+      q:'💼 ふだんの収入の安定性は？',
+      opts:[
+        { t:'不安定／これから変わりそう', s:0 },
+        { t:'ふつう', s:1 },
+        { t:'比較的、安定している', s:2 },
+        { t:'とても安定／収入源が複数ある', s:3 }
+      ]
+    },
+    {
+      q:'🏦 もしもの時に備える生活費（生活防衛資金）は？',
+      opts:[
+        { t:'ほとんど準備できていない', s:0 },
+        { t:'数ヶ月分くらいある', s:1 },
+        { t:'半年〜1年分くらいある', s:2 },
+        { t:'十分にあり、投資資金とは分けている', s:3 }
+      ]
+    },
+    {
+      q:'🎯 投資で一番大事にしたいのは？',
+      opts:[
+        { t:'とにかく減らさないこと（安全第一）', s:0 },
+        { t:'安定を保ちつつ、少し増やせたら', s:1 },
+        { t:'リスクとリターンのバランス', s:2 },
+        { t:'多少のリスクをとっても、大きく増やしたい', s:3 }
+      ]
+    },
+    {
+      q:'📊 いま投資に回せるのは、貯金・資産のどれくらい？',
+      opts:[
+        { t:'ごく一部（ほとんどは現金で持っておきたい）', s:0 },
+        { t:'1〜2割くらい', s:1 },
+        { t:'3〜5割くらい', s:2 },
+        { t:'半分以上／積極的に回したい', s:3 }
+      ]
+    },
+    {
+      q:'👪 経済的に支えている家族はいますか？',
+      opts:[
+        { t:'いる／収入を頼る人が複数いる', s:0 },
+        { t:'いる／収入を頼る人が1人', s:1 },
+        { t:'配偶者など、ある程度自立した相手のみ', s:2 },
+        { t:'いない／自分の分だけ考えればよい', s:3 }
+      ]
+    },
+    {
+      q:'🎂 年齢・ライフステージに近いのは？',
+      opts:[
+        { t:'退職が近い／リタイア世代', s:0 },
+        { t:'50代くらい', s:1 },
+        { t:'40代くらい', s:2 },
+        { t:'30代以下／運用できる期間が長い', s:3 }
+      ]
+    }
+  ];
+
+  /* ===== 結果タイプ（score 0〜27 の5段階） ===== */
+  var RESULT_TYPES = [
+    {
+      min:0, max:5, emoji:'🪨', type:'安定重視型', risk:12,
+      comment:'値動きで気持ちが揺れやすく、まずは「減らさないこと」を大切にしたいタイプ。生活防衛資金をしっかり確保しつつ、リスクの低い運用や少額からの積立で、無理なく経験を積むのが心地よさそうです。',
+      howto:'安全性の高い運用を中心に、まずは少額・長期・分散で「慣れる」ことから。生活防衛資金の確保を最優先に。'
+    },
+    {
+      min:6, max:10, emoji:'🌱', type:'やや安定型', risk:32,
+      comment:'できれば安定を保ちながら、少しずつ増やしていきたいタイプ。値下がりへの不安はありつつも、長期目線でコツコツ続けられそう。守りを土台に、ほんの少しだけ攻めを混ぜるバランスが合いそうです。',
+      howto:'安定資産を多めに、リスク資産は控えめに。積立で時間を味方につけるのがおすすめ。'
+    },
+    {
+      min:11, max:16, emoji:'⚖️', type:'バランス型', risk:52,
+      comment:'安全も成長も、どちらもバランスよく取り入れたいタイプ。ある程度の値動きは受け止めつつ、長期の資産形成をねらえそう。守りと攻めの配分を自分なりに決めておくと、迷いにくくなります。',
+      howto:'安定資産とリスク資産をバランスよく。配分のルールを決めて、定期的に見直すと続けやすい。'
+    },
+    {
+      min:17, max:21, emoji:'🌶️', type:'やや積極型', risk:72,
+      comment:'多少の値動きは投資の一部と捉え、リターンを積極的にねらいたいタイプ。長期目線で続けられる土台がありそう。一点に集中しすぎないよう投資先を分けて、「攻めながら守る」意識があると安心です。',
+      howto:'リスク資産を多めにしつつ、分散は忘れずに。下落局面でも計画を崩さないことが大切。'
+    },
+    {
+      min:22, max:27, emoji:'🚀', type:'積極型', risk:90,
+      comment:'値動きを前向きに受け止め、大きな成長をねらいたいタイプ。リスクへの耐性も高めです。その分、過度な集中や生活資金との混同には注意。攻めの姿勢を活かしつつ、土台となる守りも忘れずに。',
+      howto:'成長性の高い運用を主役に。ただし生活防衛資金は別で確保し、分散とリスク管理は徹底を。'
+    }
+  ];
+
+  function typeFromScore(score){
+    for(var i=0;i<RESULT_TYPES.length;i++){
+      if(score >= RESULT_TYPES[i].min && score <= RESULT_TYPES[i].max) return RESULT_TYPES[i];
+    }
+    return RESULT_TYPES[RESULT_TYPES.length-1];
+  }
+
+  /* ===== 状態 ===== */
+  var state = { qIndex:0, answers:new Array(QUESTIONS.length).fill(null) };
+  var lastResult = null;
+
+  /* ===== localStorage（前回結果） ===== */
+  var STORE_KEY = _key('lastResult');
+  function saveResult(score, typeObj){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify({ score:score, type:typeObj.type, at:new Date().toISOString(), v:CFG.dataVersion }));
+    }catch(e){ /* プライベートモード等。動作は継続 */ }
+  }
+  function loadResult(){
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return null;
+      var d = JSON.parse(raw);
+      if(!d || typeof d.score !== 'number') return null;
+      if(d.v !== CFG.dataVersion) return null;   // 設問数が変わったら旧スケールの結果は無効化
+      return d;
+    }catch(e){ return null; }
+  }
+
+  function clearMain(){ while(main.firstChild) main.removeChild(main.firstChild); }
+
+  /* ===== ウェルカム（注意書き・ヘッダー非表示） ===== */
+  function renderWelcome(){
+    showChrome(false);
+    clearMain();
+
+    var screen = el('div', { class:'welcome-screen screen' });
+    screen.appendChild(el('div', { class:'welcome-icon', text:ICON_EMOJI }));
+    screen.appendChild(el('div', { class:'welcome-title', text:'リスク許容度診断' }));
+    screen.appendChild(el('div', { class:'welcome-tagline', text:'安定重視 × リスク許容 — あなたはどっち寄り？9問で診断します。' }));
+
+    var card = el('div', { class:'welcome-card' });
+    card.appendChild(el('h3', { text:'この診断でできること' }));
+    var feats = [
+      ['📝', '9問の選択式。1〜2分で完了します'],
+      ['🎢', 'どのくらいの値動きを受け入れやすいかが分かる'],
+      ['🪪', '結果はタイプ名つきのカードで表示されます'],
+      ['💾', '診断結果はこの端末に保存。前回の結果もすぐ見られます']
+    ];
+    var ul = el('ul', { class:'welcome-features' });
+    feats.forEach(function(f){
+      ul.appendChild(el('li', {}, [ el('span', { class:'fi', text:f[0] }), el('span', { text:f[1] }) ]));
+    });
+    card.appendChild(ul);
+    screen.appendChild(card);
+
+    var actions = el('div', { class:'welcome-actions' });
+    actions.appendChild(el('button', { class:'btn btn-primary btn-block mt16', text:'診断をはじめる', attrs:{ type:'button' }, on:{ click:startQuiz } }));
+    var prev = loadResult();
+    if(prev){
+      actions.appendChild(el('button', { class:'btn btn-soft btn-block mt12', text:'前回の結果を見る（' + prev.type + '）', attrs:{ type:'button' }, on:{ click:function(){ showSavedResult(prev); } } }));
+    }
+    screen.appendChild(actions);
+    main.appendChild(screen);
+  }
+
+  /* ===== 診断 ===== */
+  function startQuiz(){
+    state.qIndex = 0;
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    showChrome(true);
+    clearMain();
+    var idx = state.qIndex;
+    var q = QUESTIONS[idx];
+    var card = el('div', { class:'card screen' });
+
+    var pct = Math.round((idx/QUESTIONS.length)*100);
+    card.appendChild(el('div', { class:'progress-head' }, [
+      el('span', { text:'質問 ' + (idx+1) + ' / ' + QUESTIONS.length }),
+      el('span', { text:pct + '%' })
+    ]));
+    var fill = el('div', { class:'progress-fill' });
+    fill.style.width = pct + '%';            // ← 生成時に確定。選択時は触らない（ちらつき防止）
+    card.appendChild(el('div', { class:'progress-track' }, [ fill ]));
+
+    card.appendChild(el('div', { class:'q-text', text:q.q }));
+
+    var optButtons = [];
+    var nextBtn;
+    function selectAt(oi){
+      state.answers[idx] = oi;
+      optButtons.forEach(function(b, i){
+        var sel = (i === oi);
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+      });
+      if(nextBtn) nextBtn.disabled = false;     // ← 再描画せず、その場で更新
+    }
+
+    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':q.q } });
+    q.opts.forEach(function(opt, oi){
+      var sel = state.answers[idx] === oi;
+      var btn = el('button', {
+        class:'opt' + (sel ? ' selected' : ''),
+        attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
+        on:{ click:function(){ selectAt(oi); } }
+      }, [ el('span', { class:'dot' }), el('span', { text:opt.t }) ]);
+      optButtons.push(btn);
+      list.appendChild(btn);
+    });
+    card.appendChild(list);
+
+    var backBtn = el('button', { class:'btn btn-ghost', text:'← 戻る', attrs:{ type:'button' }, on:{ click:goBack } });
+    if(idx === 0) backBtn.disabled = true;
+    var isLast = idx === QUESTIONS.length - 1;
+    nextBtn = el('button', { class:'btn btn-primary', text:isLast ? '結果を見る' : '次へ →', attrs:{ type:'button' }, on:{ click:goNext } });
+    nextBtn.disabled = state.answers[idx] === null;
+    card.appendChild(el('div', { class:'q-nav' }, [ backBtn, nextBtn ]));
+
+    card.appendChild(el('div', { class:'q-foot' }, [
+      el('button', { class:'btn btn-ghost', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
+    ]));
+
+    main.appendChild(card);
+  }
+
+  function goBack(){ if(state.qIndex > 0){ state.qIndex--; renderQuestion(); } }
+  function goNext(){
+    if(state.answers[state.qIndex] === null) return;
+    if(state.qIndex < QUESTIONS.length - 1){ state.qIndex++; renderQuestion(); }
+    else { finishQuiz(); }
+  }
+
+  /* ===== 結果 ===== */
+  function finishQuiz(){
+    var score = 0;
+    for(var i=0;i<QUESTIONS.length;i++){
+      var oi = state.answers[i];
+      if(oi != null) score += QUESTIONS[i].opts[oi].s;
+    }
+    var typeObj = typeFromScore(score);
+    saveResult(score, typeObj);
+    renderResult(typeObj, false);
+  }
+  function showSavedResult(prev){ renderResult(typeFromScore(prev.score), true, prev.at); }
+
+  function renderResult(typeObj, fromSaved, savedAt){
+    showChrome(true);
+    clearMain();
+    lastResult = typeObj;
+
+    var card = el('div', { class:'card result-card screen' });
+    card.appendChild(el('div', { class:'result-emoji', text:typeObj.emoji }));
+    card.appendChild(el('div', { class:'result-label', text:'あなたのタイプは' }));
+    card.appendChild(el('div', { class:'result-type', text:typeObj.type }));
+
+    var meter = el('div', { class:'result-meter' }, [
+      el('div', { class:'meter-row' }, [ el('span', { text:'安定重視' }), el('span', { text:'リスク許容（攻め）' }) ]),
+      el('div', { class:'meter-track' }, [ el('div', { class:'meter-fill' }) ])
+    ]);
+    card.appendChild(meter);
+
+    card.appendChild(el('p', { class:'result-comment', text:typeObj.comment }));
+    card.appendChild(el('div', { class:'result-howto' }, [
+      el('div', { class:'ht-title' }, [ el('span', { text:'🎢' }), el('span', { text:'リスクとの付き合い方イメージ（参考）' }) ]),
+      el('div', { text:typeObj.howto })
+    ]));
+    if(fromSaved && savedAt){
+      card.appendChild(el('div', { class:'result-label', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
+    }
+    main.appendChild(card);
+
+    main.appendChild(el('div', { class:'card screen' }, [
+      el('div', { class:'ht-title', text:'📌 リスク許容度とは（参考）' }),
+      el('div', { class:'ref-note', text:
+        'リスク許容度とは「どのくらいの値動き・損失までなら受け入れられるか」の度合いのこと。年齢・投資できる期間・収入の安定性・貯蓄（生活防衛資金）・経験・性格などによって、人それぞれ変わります。'
+        + 'この結果はあくまで傾向を知るための参考です。実際の運用方針や商品選びは、最新の制度・手数料・リスクなどを公式情報で確認のうえ、ご自身の判断・責任で。不安な点は金融機関や専門家にご相談ください。'
+      })
+    ]));
+
+    main.appendChild(el('div', { class:'result-actions' }, [
+      el('button', { class:'btn btn-primary btn-block', text:'もう一度診断する', attrs:{ type:'button' }, on:{ click:startQuiz } }),
+      el('button', { class:'btn btn-ghost btn-block mt12', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
+    ]));
+
+    requestAnimationFrame(function(){
+      var f = meter.querySelector('.meter-fill');
+      if(f) f.style.width = typeObj.risk + '%';
+    });
+  }
+
+  function formatDate(iso){
+    try{ var d = new Date(iso); return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate(); }
+    catch(e){ return ''; }
+  }
+
+  /* ===== 注意書きカード（101正規JS） ===== */
+  function applyStorageType(){
+    var type = CFG.storageType || 'local';
+    var wraps = document.querySelectorAll('.enu-notice-wrap[data-storage]');
+    for(var i=0;i<wraps.length;i++){
+      if(wraps[i].getAttribute('data-storage') !== type) wraps[i].style.display = 'none';
+    }
+  }
+  function initNotices(){
+    var K = _key('notice_minimized');
+    var get = function(){ try{ return JSON.parse(localStorage.getItem(K) || '[]'); }catch(e){ return []; } };
+    var set = function(l){ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
+    var help = document.getElementById('enu-help-link');
+    if(help){ help.href = CFG.helpUrl || '#'; if(CFG.helpOpenNewTab !== false){ help.target = '_blank'; help.rel = 'noopener'; } }
+    var list = get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){
+      if(list.indexOf(w.dataset.noticeId) !== -1) w.classList.add('is-mini');
+    });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(function(b){
+      b.addEventListener('click', function(){
+        var w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.add('is-mini');
+        var l = get(); if(l.indexOf(id) === -1){ l.push(id); set(l); }
+      });
+    });
+    document.querySelectorAll('.enu-notice-mini').forEach(function(m){
+      m.addEventListener('click', function(){
+        var w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
+        w.classList.remove('is-mini');
+        set(get().filter(function(x){ return x !== id; }));
+      });
+    });
+  }
+
+  /* ===== フッターのコピーライト ===== */
+  function setupFooter(){
+    var copy = document.getElementById('footerCopy');
+    if(copy) copy.textContent = '© ' + new Date().getFullYear() + ' enu(エヌ) All rights reserved.';
+  }
+
+  /* ===== PWA / アイコン（003準拠：--bg を getComputedStyle で取得） ===== */
+  function bgColor(){
+    var c = '';
+    try{ c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); }catch(e){}
+    return c || '#faf7f0';
+  }
+  function emojiFont(px){ return px + "px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif"; }
+  function roundRectPath(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function makeIcon(size, maskable, bg){
+    var c = document.createElement('canvas'); c.width = size; c.height = size;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = bg;
+    if(maskable){ ctx.fillRect(0, 0, size, size); }            // フルスクエア（角丸なし）
+    else { roundRectPath(ctx, 0, 0, size, size, size*0.22); ctx.fill(); } // 角丸22%
+    var ratio = maskable ? 0.50 : 0.55;
+    ctx.font = emojiFont(size*ratio);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(ICON_EMOJI, size/2, size/2 + size*0.025);
+    return c.toDataURL('image/png');
+  }
+  function makeFavicon(bg){
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+      + "<rect width='100' height='100' rx='22' fill='" + bg + "'/>"
+      + "<text x='50' y='50' font-size='60' text-anchor='middle' dominant-baseline='central' "
+      + "font-family='Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Twemoji Mozilla, sans-serif'>"
+      + ICON_EMOJI + "</text></svg>";
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+  async function setupPWA(){
+    try{
+      if(document.fonts && document.fonts.ready) await document.fonts.ready;
+      var bg = bgColor();
+      var path = location.pathname || './';
+
+      var tc = document.querySelector('meta[name="theme-color"]');
+      if(!tc){ tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); }
+      tc.setAttribute('content', bg);
+
+      var fav = document.querySelector('link[rel="icon"]');
+      if(!fav){ fav = document.createElement('link'); fav.rel = 'icon'; document.head.appendChild(fav); }
+      fav.setAttribute('type', 'image/svg+xml');
+      fav.setAttribute('href', makeFavicon(bg));
+
+      var at = document.getElementById('appleTouchIcon');
+      if(at) at.setAttribute('href', makeIcon(180, false, bg));
+
+      var icons = await Promise.all([
+        Promise.resolve(makeIcon(192, false, bg)),
+        Promise.resolve(makeIcon(192, true,  bg)),
+        Promise.resolve(makeIcon(512, false, bg)),
+        Promise.resolve(makeIcon(512, true,  bg))
+      ]);
+      var manifest = {
+        id: path, name: CFG.appName, short_name: 'リスク診断',
+        start_url: path, scope: path, display: 'standalone', orientation: 'portrait',
+        background_color: bg, theme_color: bg,
+        icons: [
+          { src: icons[0], sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: icons[1], sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: icons[2], sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: icons[3], sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ]
+      };
+      var mhref = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+      var ml = document.querySelector('link[rel="manifest"]');
+      if(!ml){ ml = document.createElement('link'); ml.rel = 'manifest'; document.head.appendChild(ml); }
+      ml.setAttribute('href', mhref);
+    }catch(e){ /* PWA設定に失敗してもアプリ本体は動作継続 */ }
+  }
+
+  /* ===== 初期化 ===== */
+  applyStorageType();
+  initNotices();
+  setupFooter();
+  renderWelcome();
+  setupPWA();
+
+})();
+</script>
+</body>
+</html>
