@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="7つの質問に答えるだけで、あなたに合いそうなクレジットカードの“タイプ”を診断する参考コンテンツです。5タイプそれぞれのマッチ度をバーで表示します。">
+<meta name="description" content="8つの質問に答えるだけで、あなたに合いそうなクレジットカードの“タイプ”を診断する参考コンテンツです。5タイプのバランスをチャートで表示します。">
 <title>クレカ診断</title>
 
 <!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
@@ -67,7 +67,6 @@
     border-radius:999px; padding:4px 14px; margin-bottom:10px;
   }
   .app-header h1{ color:var(--primary-dark); font-size:1.5rem; font-weight:700; letter-spacing:.02em; }
-  .app-header h1 .sub{ display:block; font-size:0.75rem; font-weight:600; color:var(--sub); margin-top:6px; letter-spacing:.04em; }
 
   /* ===== ウェルカム共通シェル ===== */
   .welcome-screen{ text-align:center; padding-top:8px; }
@@ -207,7 +206,6 @@
 
   @media (max-width:480px){
     .app-header h1{ font-size:1.25rem; }
-    .app-header h1 .sub{ font-size:0.7rem; }
     .welcome-title{ font-size:1.5rem; }
     .result-type{ font-size:1.32rem; }
     .btn{ font-size:0.92rem; }
@@ -220,9 +218,7 @@
   <!-- ヘッダー（ウェルカムでは非表示・診断/結果で表示） -->
   <header class="app-header hidden" id="appHeader">
     <span class="badge">クレカ診断</span>
-    <h1>あなたに合うのはどのタイプ？
-      <span class="sub">クレジットカード タイプ診断</span>
-    </h1>
+    <h1>あなたに合うのはどのタイプ？</h1>
   </header>
 
   <!-- 注意書きカード（101正規・ウェルカムでは非表示） -->
@@ -262,7 +258,7 @@
   <!-- フッター -->
   <footer class="app-footer">
     <div class="footer-home" id="footerHome">
-      <a href="https://enu-tools.pages.dev/" class="btn btn-ghost">🏠 ホームへ戻る</a>
+      <a href="https://enu-tools.pages.dev/" class="btn btn-ghost" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
     </div>
     <div class="footer-line"></div>
     <div class="footer-credit">
@@ -409,7 +405,7 @@
     var box = el('div', { class:'radar-box' });
     box.appendChild(svg);
     var wrap = el('div', { class:'radar-wrap' }, [
-      el('div', { class:'match-caption' }, [ el('span', { text:'📊' }), el('span', { text:'タイプ別バランス（参考）' }) ]),
+      el('div', { class:'match-caption' }, [ el('span', { text:'📊' }), el('span', { text:'タイプ別バランス' }) ]),
       box
     ]);
     wrap._radarData = dataG; // アニメ発火用に参照を保持
@@ -475,7 +471,7 @@
       q:'💴 年会費についての考えに近いのは？',
       opts:[
         { e:'🆓', t:'絶対に無料がいい',                           s:{ simple:2, save:1 } },
-        { e:'🪙', t:'元が取れるなら数千円はOK',                   s:{ save:1, net:1 } },
+        { e:'🪙', t:'元が取れるなら数千円はOK',                   s:{ save:2 } },
         { e:'🎫', t:'特典が良ければ1万円以上でも検討する',        s:{ travel:1, status:1 } },
         { e:'👑', t:'ステータスや体験のためなら高くても価値を感じる', s:{ status:2 } }
       ]
@@ -484,7 +480,7 @@
       q:'✈️ 旅行や出張の頻度は？',
       opts:[
         { e:'🏠', t:'ほとんど行かない',               s:{ save:1, simple:1 } },
-        { e:'🗓️', t:'年に1〜2回くらい',               s:{ net:1, save:1 } },
+        { e:'🗓️', t:'年に1〜2回くらい',               s:{ save:2 } },
         { e:'🧳', t:'年に数回〜定期的に行く',         s:{ travel:2 } },
         { e:'🌍', t:'頻繁に飛行機・ホテルを使う',     s:{ travel:2, status:1 } }
       ]
@@ -492,10 +488,19 @@
     {
       q:'🛒 ネットショッピングやサブスクの利用は？',
       opts:[
-        { e:'🙅', t:'ほとんど使わない',                         s:{ simple:1, status:1 } },
+        { e:'🙅', t:'ほとんど使わない',                         s:{ simple:2 } },
         { e:'🛍️', t:'時々利用する',                             s:{ save:1 } },
         { e:'📦', t:'よく使う（買い物・配送など）',             s:{ net:2 } },
         { e:'🎬', t:'動画・音楽など、サブスクをいくつも契約している', s:{ net:2, save:1 } }
+      ]
+    },
+    {
+      q:'📱 スマホ決済（Apple Pay／Google Pay／QRコード）の利用は？',
+      opts:[
+        { e:'💵', t:'ほとんど使わない／現金やカードで直接決済',     s:{ simple:1 } },
+        { e:'☕', t:'コンビニ・カフェなどで時々使う',               s:{ save:1 } },
+        { e:'⚡', t:'メイン決済として使う（タッチ／QRが中心）',     s:{ net:3 } },
+        { e:'🔀', t:'各種QR・タッチ決済を使い分けている',     s:{ net:2, save:1 } }
       ]
     },
     {
@@ -511,7 +516,7 @@
       q:'👑 カードに「特別感」や優待を求めますか？',
       opts:[
         { e:'🔧', t:'特に求めない、実用重視',                 s:{ simple:2, save:1 } },
-        { e:'🎀', t:'お得な優待があれば嬉しい',               s:{ save:1, net:1 } },
+        { e:'🎀', t:'お得な優待があれば嬉しい',               s:{ save:2 } },
         { e:'🛬', t:'旅行系の優待（ラウンジ等）は欲しい',     s:{ travel:1, status:1 } },
         { e:'👑', t:'ステータスや上質な体験を重視したい',     s:{ status:2 } }
       ]
@@ -566,7 +571,13 @@
     }catch(e){ return null; }
   }
 
-  function clearMain(){ while(main.firstChild) main.removeChild(main.firstChild); }
+  function clearMain(){
+    while(main.firstChild) main.removeChild(main.firstChild);
+    // 画面遷移時、上端から離れていたらスムーススクロールで戻す（次の質問・結果・はじめに戻る、すべてに適用）
+    if(typeof window !== 'undefined' && window.scrollY > 0){
+      try{ window.scrollTo({ top:0, behavior:'smooth' }); }catch(e){ window.scrollTo(0, 0); }
+    }
+  }
 
   /* ===== スタート画面（注意書き・ヘッダー非表示） ===== */
   function renderWelcome(){
@@ -576,12 +587,12 @@
     var screen = el('div', { class:'welcome-screen screen' });
     screen.appendChild(el('div', { class:'welcome-icon' }, [ el('span', { class:'wi-emoji', text:ICON_EMOJI }) ]));
     screen.appendChild(el('div', { class:'welcome-title', text:'クレカ診断' }));
-    screen.appendChild(el('div', { class:'welcome-tagline', text:'7つの質問で、あなたに合いそうなクレジットカードの“タイプ”が分かります。' }));
+    screen.appendChild(el('div', { class:'welcome-tagline', text:'8つの質問で、あなたに合いそうなクレジットカードの“タイプ”が分かります。' }));
 
     var card = el('div', { class:'welcome-card' });
     card.appendChild(el('h3', { text:'この診断でできること' }));
     var feats = [
-      ['📝', '7問の選択式。1〜2分で完了します'],
+      ['📝', '8問の選択式。1〜2分で完了します'],
       ['💳', 'ざっくりタイプが分かります'],
       ['📊', '5タイプのバランスをチャートで表示します'],
       ['💾', '診断結果はこの端末に保存。前回の結果もすぐ見られます']
@@ -617,7 +628,7 @@
     var q = QUESTIONS[idx];
     var card = el('div', { class:'card screen' });
 
-    var pct = Math.round((idx/QUESTIONS.length)*100);
+    var pct = Math.round(((idx+1)/QUESTIONS.length)*100);
     card.appendChild(el('div', { class:'progress-head' }, [
       el('span', { text:'質問 ' + (idx+1) + ' / ' + QUESTIONS.length }),
       el('span', { text:pct + '%' })
@@ -626,7 +637,14 @@
     fill.style.width = pct + '%';            // ← 生成時に確定。選択時は触らない（ちらつき防止）
     card.appendChild(el('div', { class:'progress-track' }, [ fill ]));
 
-    card.appendChild(el('div', { class:'q-text', text:q.q }));
+    // 質問文と aria-label 用に、絵文字と本文を分割（スクリーンリーダーが絵文字名を読み上げないように）
+    var qSplitIdx = q.q.indexOf(' ');
+    var qEmoji = qSplitIdx >= 0 ? q.q.slice(0, qSplitIdx) : '';
+    var qBody  = qSplitIdx >= 0 ? q.q.slice(qSplitIdx + 1) : q.q;
+    card.appendChild(el('div', { class:'q-text' }, [
+      qEmoji ? el('span', { attrs:{ 'aria-hidden':'true' }, text:qEmoji + ' ' }) : null,
+      el('span', { text:qBody })
+    ]));
 
     var optButtons = [];
     var nextBtn;
@@ -640,14 +658,20 @@
       if(nextBtn) nextBtn.disabled = false;     // ← 再描画せず、その場で更新
     }
 
-    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':q.q } });
+    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':qBody } });
     q.opts.forEach(function(opt, oi){
       var sel = state.answers[idx] === oi;
       var btn = el('button', {
         class:'opt' + (sel ? ' selected' : ''),
         attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
         on:{ click:function(){ selectAt(oi); } }
-      }, [ el('span', { class:'dot' }), el('span', { text:(opt.e ? opt.e + ' ' : '') + opt.t }) ]);
+      }, [
+        el('span', { class:'dot' }),
+        el('span', {}, [
+          opt.e ? el('span', { attrs:{ 'aria-hidden':'true' }, text:opt.e + ' ' }) : null,
+          el('span', { text:opt.t })
+        ])
+      ]);
       optButtons.push(btn);
       list.appendChild(btn);
     });
@@ -717,7 +741,7 @@
 
     // 参考カード（免責の念押し）
     main.appendChild(el('div', { class:'card screen' }, [
-      el('div', { class:'ht-title' }, [ el('span', { text:'📌' }), el('span', { text:'カード選びの前に（参考）' }) ]),
+      el('div', { class:'ht-title' }, [ el('span', { text:'📌' }), el('span', { text:'カード選びの前に' }) ]),
       el('div', { class:'ref-note', text:
         'このタイプ診断は、カード選びの“方向性”を知るための参考コンテンツで、特定カードの推奨ではありません。'
         + '還元率・年会費・特典・キャンペーン内容は変わることがあり、審査基準や付帯条件もカードごとに異なります。'
@@ -870,4 +894,5 @@
 </script>
 </body>
 </html>
+
 
