@@ -1,112 +1,194 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex"> <!-- 検索エンジンに載せない設定 -->
-    <title>enu-tools</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #fdfaf7; /* 淡いベージュ */
-            --text-color: #5b534f; /* 柔らかいブラウン */
-            --accent-color: #d8c3b3; /* ニュアンスカラー */
-            --white: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>enu-tools</title>
+<meta name="theme-color" content="#fff8f3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ヘルプページと同じパレット（明るいピンク＋ミント） */
+    --bg: #fff8f3;
+    --card: #ffffff;
+    --primary: #ff8fa3;
+    --primary-soft: #ffe1e8;
+    --accent: #7ad0c2;
+    --accent-soft: #d8f1ec;
+    --text: #3d3a38;
+    --sub: #9a9590;
+    --border: #f3e6dc;
+    --shadow: 0 6px 20px rgba(180, 140, 120, 0.10);
+    --shadow-hover: 0 10px 28px rgba(180, 140, 120, 0.18);
+  }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Quicksand', 'Noto Sans JP', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-        }
+  * { box-sizing: border-box; }
 
-        .container {
-            max-width: 400px;
-            padding: 40px 20px;
-            background-color: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            margin: 20px;
-        }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: 500;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
 
-        h1 {
-            font-size: 1.5rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: max(24px, env(safe-area-inset-top))
+             max(16px, env(safe-area-inset-right))
+             max(24px, env(safe-area-inset-bottom))
+             max(16px, env(safe-area-inset-left));
+  }
 
-        .divider {
-            width: 40px;
-            height: 1px;
-            background-color: var(--accent-color);
-            margin: 20px auto;
-        }
+  .wrap {
+    width: 100%;
+    max-width: 440px;
+  }
 
-        p {
-            font-size: 0.9rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
+  /* ヒーロー */
+  .hero {
+    text-align: center;
+    padding: 32px 24px 34px;
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--accent-soft) 100%);
+    border-radius: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .hero .icon {
+    font-size: 40px;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
 
-        .link-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+  /* コンテンツカード */
+  .card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 28px 24px 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
 
-        .btn {
-            text-decoration: none;
-            color: var(--text-color);
-            border: 1px solid var(--accent-color);
-            padding: 12px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            display: block;
-        }
+  .card p {
+    margin: 0 0 22px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--sub);
+  }
 
-        .btn:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
+  /* リンク群 */
+  .link-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .btn {
+    display: block;
+    text-decoration: none;
+    color: var(--primary);
+    background: transparent;
+    border: 1.5px solid var(--primary);
+    padding: 12px;
+    border-radius: 999px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
 
-        .id-text {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 10px;
-        }
-    </style>
+  .id-text {
+    font-size: 12px;
+    color: var(--sub);
+    opacity: 0.75;
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  /* フッター */
+  footer {
+    text-align: center;
+    padding: 24px 20px 8px;
+    font-size: 10px;
+    color: var(--sub);
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+  }
+
+  /* スマホ調整 */
+  @media (max-width: 480px) {
+    .hero {
+      padding: 26px 20px 28px;
+      border-radius: 20px;
+    }
+    .hero h1 { font-size: 24px; }
+    .hero .icon { font-size: 34px; }
+    .card {
+      padding: 24px 18px 20px;
+      border-radius: 18px;
+    }
+    .card p { font-size: 13px; }
+  }
+</style>
 </head>
 <body>
+  <div class="wrap">
 
-    <div class="container">
-        <h1>enu-tools</h1>
-        <div class="divider"></div>
-        
-        <p>
-            ご利用ありがとうございます。<br>
-            各種ツールは現在、特定のリンクからのみ<br>
-            アクセスいただける仕様となっております。
-        </p>
-
-        <div class="link-group">
-            <a href="https://www.instagram.com/enu_at_desk" class="btn" target="_blank" rel="noopener">Instagram</a>
-            <a href="https://www.threads.net/@enu_at_desk" class="btn" target="_blank" rel="noopener">Threads</a>
-        </div>
-
-        <div class="id-text">@enu_at_desk</div>
+    <div class="hero">
+      <div class="icon">✨</div>
+      <h1>enu-tools</h1>
     </div>
 
+    <div class="card">
+      <p>
+        ご利用ありがとうございます。<br>
+        各種ツールは現在、特定のリンクからのみ<br>
+        アクセスいただける仕様となっております。
+      </p>
+
+      <div class="link-group">
+        <a href="https://www.instagram.com/enu_at_desk" class="btn" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.threads.net/@enu_at_desk" class="btn" target="_blank" rel="noopener">Threads</a>
+        <a href="https://line.me/R/ti/p/%40705jivik" class="btn" target="_blank" rel="noopener">LINE公式</a>
+      </div>
+
+      <div class="id-text">@enu_at_desk</div>
+    </div>
+
+    <footer>
+      © <span id="copyYear">2026</span> enu(エヌ) All rights reserved.
+    </footer>
+
+  </div>
+
+<script>
+  document.getElementById('copyYear').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
+
