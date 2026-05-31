@@ -396,6 +396,37 @@
     color: var(--text);
   }
 
+  /* LINEボタン */
+  .line-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: #06C755;
+    color: #ffffff;
+    border-radius: 999px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 4px 12px rgba(6, 199, 85, 0.25);
+  }
+  .line-btn:hover {
+    background: #05b04b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(6, 199, 85, 0.35);
+  }
+  .line-btn .line-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+  .contact-wrap {
+    text-align: center;
+    padding: 20px 0 8px;
+  }
+
   /* 注意ボックス */
   .note {
     margin: 16px 0;
@@ -733,14 +764,43 @@
   }
 
   /* フッター */
+  /* フッター（enuTools共通形式） */
   footer {
+    margin-top: 32px;
     text-align: center;
-    padding: 40px 20px 30px;
-    font-size: 10px;
     color: var(--sub);
-    opacity: 0.7;
+    line-height: 1.4;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.85;
+    width: 100%;
     font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
-    letter-spacing: 0.05em;
+  }
+  .footer-divider {
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, var(--sub) 30%, transparent);
+    width: 100%;
+    margin: 0 0 12px 0;
+  }
+  .footer-credit {
+    margin-bottom: 8px;
+  }
+  .footer-credit a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+  }
+  .footer-credit a:hover {
+    color: var(--primary);
+  }
+  .footer-copy {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    padding-bottom: 24px;
+    margin: 0;
   }
 </style>
 </head>
@@ -766,20 +826,11 @@
       <div class="topic-arrow">→</div>
     </div>
 
-    <div class="topic-card pdf" data-target="pdf-export">
+    <div class="topic-card pdf" data-target="pdf-print">
       <div class="topic-icon">📄</div>
       <div class="topic-text">
-        <h3>PDF出力方法</h3>
-        <p>表示中の内容をPDFファイルとして保存する</p>
-      </div>
-      <div class="topic-arrow">→</div>
-    </div>
-
-    <div class="topic-card print" data-target="print">
-      <div class="topic-icon">🖨</div>
-      <div class="topic-text">
-        <h3>印刷方法</h3>
-        <p>表示中の内容をプリンターで印刷する</p>
+        <h3>PDF / 印刷</h3>
+        <p>表示中の内容をPDFファイルとして保存したり、紙に印刷したりする</p>
       </div>
       <div class="topic-arrow">→</div>
     </div>
@@ -823,7 +874,7 @@
     <div class="topic-card info" data-target="drive-app-data">
       <div class="topic-icon">☁️</div>
       <div class="topic-text">
-        <h3>Googleドライブ版アプリのデータについて<span class="sub-title">家計簿・売上・在庫など、Googleでログインするアプリ</span></h3>
+        <h3>Google保存版のデータについて<span class="sub-title">Googleでログインして使うタイプ</span></h3>
         <p>保存場所・バックアップ・機種変更・利用停止・プライバシー</p>
       </div>
       <div class="topic-arrow">→</div>
@@ -834,6 +885,15 @@
       <div class="topic-text">
         <h3>ログインがうまくいかないとき<span class="sub-title">ポップアップ／通信エラー／許可の問題</span></h3>
         <p>「Googleでログイン」が進まない・エラーが出るときの対処法</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card alt" data-target="contact">
+      <div class="topic-icon">💬</div>
+      <div class="topic-text">
+        <h3>お問い合わせ</h3>
+        <p>ご質問・ご要望・不具合のご報告などを承ります</p>
       </div>
       <div class="topic-arrow">→</div>
     </div>
@@ -967,7 +1027,7 @@
           <div class="scene-icon">🔒</div>
           <div class="scene-text">
             <h4>サーバー送信なし</h4>
-            <p>運営からは見えません</p>
+            <p>運営者は閲覧できません</p>
           </div>
         </div>
         <div class="scene-card">
@@ -990,9 +1050,9 @@
       <h3 class="sub-head">📝 大切なデータを守るには</h3>
       <p>消えてしまうと困るデータは、こまめにバックアップを取っておくと安心です。</p>
       <ol class="steps">
-        <li>ページ最下部のツールバーから <strong>📤 エクスポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「出力」）</span>をタップします。</li>
+        <li>ページ最下部のツールバーから <strong>📤 エクスポート</strong> ボタンをタップします。</li>
         <li>JSONファイルが保存されるので、メールやクラウドに保管しておきます。</li>
-        <li>復元したいときは <strong>📥 インポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「読込」）</span>から読み込みます。</li>
+        <li>復元したいときは <strong>📥 インポート</strong> ボタンから読み込みます。</li>
       </ol>
 
       <div class="note">
@@ -1049,7 +1109,7 @@
           <ol class="steps">
             <li>本アプリを開きます。</li>
             <li>ページ最下部のツールバーを表示します。</li>
-            <li><strong>📤 エクスポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「出力」）</span>をタップします。</li>
+            <li><strong>📤 エクスポート</strong> ボタンをタップします。</li>
             <li>JSONファイルが保存されます。メールやクラウド（Google Drive・iCloudなど）に保存しておくと安心です。</li>
           </ol>
         </div>
@@ -1060,7 +1120,7 @@
           <ol class="steps android">
             <li>本アプリを開きます。</li>
             <li>ページ最下部のツールバーを表示します。</li>
-            <li><strong>📥 インポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「読込」）</span>をタップします。</li>
+            <li><strong>📥 インポート</strong> ボタンをタップします。</li>
             <li>保存しておいたJSONファイルを選んで読み込みます。</li>
           </ol>
         </div>
@@ -1076,68 +1136,41 @@
     </section>
   </div>
 
-  <!-- 詳細: PDF出力方法 -->
-  <div class="topic-detail" id="pdf-export">
+  <!-- 詳細: PDF / 印刷 -->
+  <div class="topic-detail" id="pdf-print">
     <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
 
     <section>
       <div class="section-head">
         <div class="section-icon pdf">📄</div>
-        <h2>PDF出力方法</h2>
+        <h2>PDF / 印刷</h2>
       </div>
 
-      <p>表示中の内容をPDFファイルとして保存できます。保存したPDFはメールやクラウドに共有・印刷などに使えます。</p>
+      <p>表示中の内容を <strong>PDFファイルとして保存</strong> したり、<strong>プリンターで印刷</strong> したりできます。どちらも同じボタンから操作します。</p>
 
       <h3 class="sub-head">📝 操作手順</h3>
       <ol class="steps pdf-color">
-        <li>ページ最下部のツールバーから <strong>📄 PDF出力</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「PDF」）</span>をタップします。</li>
+        <li>ページ最下部のツールバーから <strong>📄 PDF / 印刷</strong> ボタンをタップします。</li>
         <li>印刷ダイアログが開きます。</li>
-        <li>出力先（プリンター選択）で <strong>「PDFとして保存」</strong> を選びます。<br><span style="font-size: 11px; color: var(--sub);">※ 端末によって「PDFに保存」「PDFで保存」など表記が異なります</span></li>
-        <li>保存場所を選んで <strong>「保存」</strong> をタップしたら完了です。</li>
-      </ol>
-
-      <div class="note">
-        <span class="label">💡 ヒント</span>iPhoneでは保存後「ファイル」アプリ、Androidでは「Files」や「Drive」などから保存したPDFを確認できます。
-      </div>
-
-      <div class="note">
-        <span class="label">💡 ヒント</span>用紙サイズを変えると見え方が変わります。A4・B5など、お好みに合わせて選んでください。
-      </div>
-    </section>
-  </div>
-
-  <!-- 詳細: 印刷方法 -->
-  <div class="topic-detail" id="print">
-    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
-
-    <section>
-      <div class="section-head">
-        <div class="section-icon print">🖨</div>
-        <h2>印刷方法</h2>
-      </div>
-
-      <p>表示中の内容をプリンターで印刷できます。あらかじめ端末がプリンターと接続されている必要があります。</p>
-
-      <h3 class="sub-head">📝 操作手順</h3>
-      <ol class="steps print-color">
-        <li>ページ最下部のツールバーから <strong>🖨 印刷</strong> ボタンをタップします。</li>
-        <li>印刷ダイアログが開きます。</li>
-        <li>使用する <strong>プリンター</strong> を選びます。</li>
+        <li>出力先（プリンター選択）で目的に合わせて選びます。<br>
+          ・<strong>📄 PDFとして保存したい</strong> → <strong>「PDFとして保存」</strong> を選択<br>
+          ・<strong>🖨 紙に印刷したい</strong> → <strong>使うプリンター</strong> を選択
+        </li>
         <li>必要に応じて部数・用紙サイズなどを設定します。</li>
-        <li><strong>「印刷」</strong> をタップしたら完了です。</li>
+        <li><strong>「保存」</strong> または <strong>「印刷」</strong> をタップしたら完了です。</li>
       </ol>
 
       <div class="note">
-        <span class="label">⚠️ ご注意</span>事前にプリンターの電源と接続をご確認ください。スマホからの印刷には、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは <strong>クラウド印刷</strong> 対応プリンターが必要です。
+        <span class="label">💡 ヒント</span>端末によって「PDFとして保存」が「PDFに保存」「PDFで保存」と表示されることがあります。同じ機能なのでそれを選んでください。
       </div>
 
       <div class="note">
-        <span class="label">💡 ヒント</span>プリンターがない環境では、代わりに <strong>📄 PDF出力</strong>（小スクエア版では「PDF」）でPDFに保存し、後で印刷することもできます。
+        <span class="label">⚠️ ご注意</span>スマホから印刷する場合は、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは <strong>クラウド印刷</strong> 対応プリンターが必要です。プリンターがない環境では、いったんPDFに保存して、後で印刷することもできます。
       </div>
     </section>
   </div>
 
-  <!-- 詳細: 共有方法 -->
+  <!-- 詳細: シェア方法 -->
   <div class="topic-detail" id="share">
     <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
 
@@ -1166,17 +1199,17 @@
     </section>
   </div>
 
-  <!-- 詳細: Googleドライブ版アプリのデータについて -->
+  <!-- 詳細: Google保存版のデータについて -->
   <div class="topic-detail" id="drive-app-data">
     <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
 
     <section>
       <div class="section-head">
         <div class="section-icon info">☁️</div>
-        <h2>Googleドライブ版アプリのデータについて<span class="sub-title">家計簿・売上・在庫など、Googleでログインするアプリ</span></h2>
+        <h2>Google保存版のデータについて<span class="sub-title">Googleでログインして使うタイプ</span></h2>
       </div>
 
-      <p>本アプリは、入力したデータを <strong>ご自身のGoogleドライブ</strong> に保存する仕組みです。運営者（enu）はあなたのデータを一切見ることができません。</p>
+      <p>本アプリは、入力したデータを <strong>ご自身のGoogleドライブ</strong> に保存する仕組みです。運営者（enu）はあなたのデータを閲覧できません。</p>
 
       <h3 class="sub-head">📌 データはどこに保存されている？</h3>
       <div class="scene-grid">
@@ -1190,8 +1223,8 @@
         <div class="scene-card">
           <div class="scene-icon">🔒</div>
           <div class="scene-text">
-            <h4>運営からは見えない</h4>
-            <p>技術的にアクセス不可</p>
+            <h4>運営者は閲覧できません</h4>
+            <p>権限を渡していないため</p>
           </div>
         </div>
         <div class="scene-card">
@@ -1313,21 +1346,50 @@
       </ol>
 
       <div class="note">
-        <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報は一切見ることができない設計です。
+        <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報にはアクセスできない設計です。
       </div>
 
       <h3 class="sub-head">④ それでも解決しないとき</h3>
-      <p>恐れ入りますが、お使いの環境（OS・ブラウザ）とエラーの状況を添えて、下記までお知らせください。</p>
+      <p>恐れ入りますが、お使いの環境（OS・ブラウザ）とエラーの状況を添えて、<button type="button" class="inline-link" onclick="showDetail('contact')" style="color: var(--info);">💬 お問い合わせ</button> からご連絡ください。</p>
+    </section>
+  </div>
+
+  <!-- 詳細: お問い合わせ -->
+  <div class="topic-detail" id="contact">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon alt">💬</div>
+        <h2>お問い合わせ</h2>
+      </div>
+
+      <p>ご質問・ご要望・不具合のご報告など、お気軽にお問い合わせください。<strong>公式LINEアカウント</strong> から直接メッセージをお送りいただけます。</p>
+
+      <div class="contact-wrap">
+        <a href="https://line.me/R/ti/p/%40705jivik" target="_blank" rel="noopener" class="line-btn">
+          <span class="line-icon">💬</span>
+          <span>公式LINEで問い合わせる</span>
+        </a>
+      </div>
 
       <div class="note">
-        <span class="label">📧 連絡先</span>（ここにご連絡先メール／X等を入れてください）
+        <span class="label">💡 ヒント</span>お問い合わせの際は、お使いの<strong>端末・OS・ブラウザ</strong>と、できれば<strong>困っている画面のスクリーンショット</strong>を添えていただけると、スムーズに対応できます。
+      </div>
+
+      <div class="note">
+        <span class="label">📝 ご注意</span>個別のご返信にはお時間をいただく場合があります。お急ぎでない場合は、まず該当のヘルプ項目をご確認いただけると幸いです。
       </div>
     </section>
   </div>
 
   <!-- フッター -->
   <footer>
-    © 2026 enu(エヌ) All rights reserved.
+    <hr class="footer-divider">
+    <div class="footer-credit">
+      <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+    </div>
+    <div class="footer-copy">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</div>
   </footer>
 
 </div>
@@ -1411,6 +1473,9 @@
     } catch (e) {
       // サンドボックス環境では無視
     }
+    // フッターの年を自動表示
+    var yearEl = document.getElementById('copyYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
   });
 </script>
 
@@ -1515,4 +1580,3 @@
 
 </body>
 </html>
-
