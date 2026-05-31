@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf6f1">
+<title>手取り見える化計算機</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* === アプリ別カラー：08 モカ（8変数）=== */
+    --primary:        #B89A85;
+    --primary-light:  #E5D5C5;
+    --primary-dark:   #8E7560;
+    --primary-soft:   #F0E8DE;
+    --accent:         #A88770;
+    --bg:             #faf6f1;
+    --bg-soft:        #fdfaf6;
+    --line:           #ebe2d5;
+    /* === 共通カラー（全アプリ固定／3変数）=== */
+    --card:  #fff;
+    --text:  #2C2A24;
+    --sub:   #7A756B;
+    /* === 内訳グラフ用セグメント色 === */
+    --seg-net:    #7BA88F;  /* 手取り */
+    --seg-social: #C99A6A;  /* 社会保険料 */
+    --seg-itax:   #C97B7B;  /* 所得税 */
+    --seg-rtax:   #8FA6C2;  /* 住民税 */
+  }
+
+  *{box-sizing:border-box}
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.7;
+    padding:max(24px,env(safe-area-inset-top))
+            max(16px,env(safe-area-inset-right))
+            max(24px,env(safe-area-inset-bottom))
+            max(16px,env(safe-area-inset-left));
+  }
+  .page-wrapper{ width:100%; max-width:960px; margin:0 auto; }
+
+  /* === Header === */
+  .app-header{ text-align:center; margin-bottom:18px; }
+  .app-header .app-icon{
+    width:62px;height:62px;border-radius:50%;margin:0 auto 10px;
+    display:flex;align-items:center;justify-content:center;font-size:1.7rem;
+    background:linear-gradient(135deg,var(--primary-light),var(--primary-soft));
+    box-shadow:0 2px 10px rgba(142,117,96,.15);
+  }
+  .app-header h1{ font-size:1.5rem; font-weight:700; color:var(--primary-dark); margin:0 0 4px; letter-spacing:0.02em; }
+  .app-header .tagline{ font-size:.75rem; color:var(--sub); margin:0; }
+  @media(max-width:650px){
+    .app-header h1{ font-size:1.25rem; }
+    .app-header .tagline{ font-size:.7rem; }
+  }
+
+  /* === Card === */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px; margin-bottom:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  h2.section-title{ font-size:1rem; font-weight:700; color:var(--primary-dark); margin:0 0 14px; }
+
+  /* === Mode tabs === */
+  .mode-tabs{ display:flex; gap:8px; margin-bottom:18px; }
+  .mode-tab{
+    flex:1; font-family:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
+    padding:11px 8px; border-radius:999px; border:1.5px solid var(--primary);
+    background:var(--card); color:var(--primary-dark); transition:all .15s;
+  }
+  .mode-tab.active{ background:var(--primary); color:#fff; }
+  .mode-tab:hover:not(.active){ background:var(--primary-soft); }
+
+  /* === Form === */
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:.78rem; font-weight:700; color:var(--text); margin-bottom:5px; }
+  .field .hint{ font-size:.64rem; color:var(--sub); margin-top:5px; line-height:1.5; overflow-wrap:break-word; }
+  .field .hint a{ color:var(--primary-dark); }
+  /* 単位つき入力：入力欄だけを基準に、右端・縦中央へ単位を配置 */
+  .ctrl{ position:relative; }
+  .ctrl input{ padding-right:34px; }
+  .ctrl::after{ content:attr(data-suffix); position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:.78rem; color:var(--sub); pointer-events:none; }
+  input[type="number"], input[type="text"], select{
+    width:100%; font-family:inherit; font-size:.95rem; color:var(--text);
+    padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--bg-soft);
+    -moz-appearance:textfield;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus{ outline:none; border-color:var(--primary); background:#fff; }
+  .row-2{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+  .row-2 > .field{ flex:1; min-width:140px; }
+
+  /* toggle */
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; margin-bottom:12px; }
+  .toggle-row .t-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .toggle-row .t-label{ font-size:.8rem; font-weight:700; line-height:1.4; }
+  .toggle-row .t-sub{ font-size:.66rem; color:var(--sub); font-weight:400; line-height:1.45; }
+  .switch{ position:relative; width:44px; height:25px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:var(--line); border-radius:999px; transition:.2s; cursor:pointer; }
+  .slider::before{ content:''; position:absolute; height:19px; width:19px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .switch input:checked + .slider{ background:var(--primary); }
+  .switch input:checked + .slider::before{ transform:translateX(19px); }
+
+  /* details (詳細設定) */
+  details.advanced{ border:1px dashed var(--line); border-radius:10px; padding:0 13px; margin-bottom:6px; }
+  details.advanced summary{ cursor:pointer; font-size:.78rem; font-weight:700; color:var(--primary-dark); padding:11px 0; list-style:none; }
+  details.advanced summary::-webkit-details-marker{ display:none; }
+  details.advanced summary::before{ content:'▸ '; }
+  details.advanced[open] summary::before{ content:'▾ '; }
+  details.advanced .adv-inner{ padding:4px 0 12px; }
+
+  /* === Result === */
+  .net-box{ text-align:center; padding:8px 0 6px; }
+  .net-box .net-label{ font-size:.75rem; color:var(--sub); }
+  .net-box .net-amount{ font-size:2.1rem; font-weight:700; color:var(--seg-net); letter-spacing:.5px; }
+  .net-box .net-amount .yen{ font-size:1.1rem; margin-left:2px; }
+  .net-box .net-of{ font-size:.72rem; color:var(--sub); }
+
+  /* stacked bar */
+  .stack-bar{ display:flex; width:100%; height:34px; border-radius:8px; overflow:hidden; margin:16px 0 10px; box-shadow:inset 0 0 0 1px var(--line); }
+  .stack-seg{ height:100%; min-width:2px; transition:width .35s ease; }
+  .legend{ display:flex; flex-wrap:wrap; gap:6px 14px; justify-content:center; margin-bottom:4px; }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:.72rem; color:var(--text); }
+  .legend-dot{ width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+
+  /* breakdown table (PC) */
+  .bk-table{ width:100%; border-collapse:collapse; margin-top:8px; }
+  .bk-table th, .bk-table td{ padding:9px 8px; font-size:.8rem; text-align:right; border-bottom:1px solid var(--line); }
+  .bk-table th:first-child, .bk-table td:first-child{ text-align:left; }
+  .bk-table thead th{ color:var(--sub); font-size:.72rem; font-weight:600; border-bottom:1.5px solid var(--line); }
+  .bk-table .grp{ background:var(--bg-soft); font-weight:700; color:var(--primary-dark); }
+  .bk-table .indent td:first-child{ padding-left:20px; color:var(--text); font-weight:400; }
+  .bk-table .total-row td{ font-weight:700; border-top:1.5px solid var(--primary); border-bottom:none; color:var(--text); }
+  .bk-table .net-row td{ font-weight:700; color:var(--seg-net); }
+  .bk-table .badge{ display:inline-block; font-size:.6rem; font-weight:700; padding:1px 6px; border-radius:999px; background:#faecec; color:#9a5a5a; margin-left:6px; vertical-align:middle; }
+  .dot-cell{ display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+
+  /* breakdown cards (mobile) */
+  .bk-cards{ display:none; }
+  .bk-card{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; background:var(--bg-soft); }
+  .bk-card .bc-name{ font-size:.8rem; font-weight:700; display:flex; align-items:center; }
+  .bk-card .bc-sub{ font-size:.66rem; color:var(--sub); font-weight:400; }
+  .bk-card .bc-amt{ font-size:.92rem; font-weight:700; white-space:nowrap; }
+  .bk-card.is-net{ border-color:var(--seg-net); background:#eef5f1; }
+  .bk-card.is-net .bc-amt{ color:var(--seg-net); }
+  .bk-card .badge{ font-size:.58rem; font-weight:700; padding:1px 6px; border-radius:999px; background:#faecec; color:#9a5a5a; margin-left:6px; }
+
+  @media(max-width:650px){
+    .bk-table{ display:none; }
+    .bk-cards{ display:block; }
+    .net-box .net-amount{ font-size:1.8rem; }
+  }
+
+  /* summary bar */
+  .summary-bar{ display:flex; gap:8px; margin-bottom:16px; }
+  .summary-bar .sb-item{ flex:1; text-align:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px 6px; }
+  .summary-bar .sb-label{ font-size:.66rem; color:var(--sub); }
+  .summary-bar .sb-val{ font-size:.95rem; font-weight:700; }
+  .summary-bar .sb-item.net .sb-val{ color:var(--seg-net); }
+
+  /* explanation box */
+  .explain{ background:var(--primary-soft); border:1px solid var(--primary-light); border-radius:12px; padding:15px 16px; margin-top:14px; font-size:.78rem; line-height:1.85; }
+  .explain h3{ margin:0 0 8px; font-size:.86rem; color:var(--primary-dark); }
+  .explain p{ margin:0 0 8px; }
+  .explain p:last-child{ margin-bottom:0; }
+  .explain .em{ font-weight:700; color:var(--primary-dark); }
+
+  /* refs */
+  .refs{ list-style:none; padding:0; margin:6px 0 0; }
+  .refs li{ font-size:.74rem; margin-bottom:7px; line-height:1.55; }
+  .refs a{ color:var(--primary-dark); text-underline-offset:2px; }
+  .refs .src{ color:var(--sub); font-size:.66rem; }
+
+  /* === Notice cards (101) === */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
+  .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
+  .enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+  .enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+  .enu-notice-privacy,.enu-notice-mini-privacy{background:#e8f1ec;border-color:#c3d8c9;color:#3d5a48}
+  .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+  /* === Toolbar / buttons (102) === */
+  .enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+  .enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+  .enu-btn-card:hover{transform:translateY(-1px)}
+  .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+  .enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+  .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+  .enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+
+  /* === Toast === */
+  .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+  .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* === Footer === */
+  .app-footer{ text-align:center; margin-top:24px; }
+  .home-btn{ display:inline-block; padding:7px 16px; font-size:.75rem; font-family:inherit; font-weight:600; border-radius:999px; background:transparent; color:var(--sub); border:1px solid var(--sub); text-decoration:none; transition:all .15s; }
+  .home-btn:hover{ color:var(--primary-dark); border-color:var(--primary-dark); transform:translateY(-1px); }
+  .footer-credit{ margin-top:0; opacity:.85; }
+  .footer-credit .divider{ border:none; border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent); margin:12px auto; max-width:960px; }
+  .footer-credit .brand{ font-size:.7rem; font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif; }
+  .footer-credit .brand a{ color:var(--sub); text-decoration:none; }
+  .footer-credit .brand a:hover{ color:var(--primary-dark); }
+  .footer-credit .copy{ font-size:.65rem; color:var(--sub); margin-top:8px; padding-bottom:24px; }
+
+  /* === Print === */
+  @media print{
+    body{background:#fff;padding:0}
+    .enu-notice-area,.enu-toolbar,.enu-toast,.mode-tabs,.input-card,.home-btn{display:none !important}
+    .card{box-shadow:none;border-color:#ccc;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ===== Header ===== -->
+  <header class="app-header">
+    <div class="app-icon">💴</div>
+    <h1>手取り見える化計算機</h1>
+    <p class="tagline">給料・ボーナスから何が引かれてる？天引きの内訳を図解します</p>
+  </header>
+
+  <!-- ===== Notice area (101) ===== -->
+  <div class="enu-notice-area">
+    <!-- Pattern ① 💾 ローカル保存案内 -->
+    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
+      <div class="enu-notice enu-notice-info">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body">入力した内容はお使いの端末・ブラウザの中にのみ保存され、次回開いたときに復元されます。サーバーには送信されません。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    </div>
+    <!-- Pattern ④ 🚨 計算結果の免責（税務向け） -->
+    <div class="enu-notice-wrap" data-notice-id="trade">
+      <div class="enu-notice enu-notice-trade">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">計算結果は<strong>概算の目安</strong>です。社会保険料は標準報酬月額の等級・上限などを簡略化、住民税は自治体差等を考慮していません。正確な金額は給与明細・お住まいの自治体・税理士等でご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+    </div>
+    <!-- Pattern ⑤ 📅 情報の時点 -->
+    <div class="enu-notice-wrap" data-notice-id="date">
+      <div class="enu-notice enu-notice-date">
+        <span class="enu-icon">📅</span>
+        <span class="enu-body">掲載の料率は<strong>令和8年度（2026年度）</strong>基準（表示時点 <strong id="enu-info-date">2026年5月時点</strong>）です。料率・税制は改正されることがあるため、最新情報は公式サイトでご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <!-- Pattern ⑥ 📚 ヘルプ導線 -->
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </div>
+
+  <!-- ===== Input card ===== -->
+  <div class="card input-card">
+    <div class="mode-tabs">
+      <button type="button" class="mode-tab active" data-mode="monthly" id="tab-monthly">📅 月給モード</button>
+      <button type="button" class="mode-tab" data-mode="bonus" id="tab-bonus">🎁 賞与モード</button>
+    </div>
+
+    <!-- 月給入力 -->
+    <div class="field mode-only mode-monthly">
+      <label for="in-gross">💴 額面月収（月の総支給額）</label>
+      <div class="ctrl" data-suffix="円"><input type="text" id="in-gross" inputmode="numeric" placeholder="例：300,000"></div>
+    </div>
+
+    <!-- 賞与入力 -->
+    <div class="field mode-only mode-bonus" hidden>
+      <label for="in-bonus">🎁 賞与額（額面）</label>
+      <div class="ctrl" data-suffix="円"><input type="text" id="in-bonus" inputmode="numeric" placeholder="例：500,000"></div>
+    </div>
+    <div class="field mode-only mode-bonus" hidden>
+      <label for="in-prevsalary">📅 前月の給与（額面）</label>
+      <div class="ctrl" data-suffix="円"><input type="text" id="in-prevsalary" inputmode="numeric" placeholder="例：300,000"></div>
+      <p class="hint">賞与の所得税率は「前月の給与」を基準に決まります。前月の額面を入れると、その仕組みを反映した概算になります。</p>
+    </div>
+
+    <!-- 共通：扶養 & 健保料率 -->
+    <div class="row-2">
+      <div class="field">
+        <label for="in-dependents">👨‍👩‍👧 扶養親族等の数</label>
+        <input type="number" id="in-dependents" inputmode="numeric" min="0" max="10" step="1" value="0">
+      </div>
+      <div class="field">
+        <label for="in-health">🏥 健康保険料率（全体）</label>
+        <div class="ctrl" data-suffix="%"><input type="number" id="in-health" inputmode="decimal" min="0" step="0.01" value="9.90"></div>
+        <p class="hint">全国平均を初期値にしています。都道府県の料率に変更できます。</p>
+      </div>
+    </div>
+
+    <!-- トグル -->
+    <div class="toggle-row">
+      <div class="t-text"><span class="t-label">🎂 40歳以上（介護保険あり）</span><span class="t-sub">40〜64歳は介護保険料が加算されます</span></div>
+      <label class="switch"><input type="checkbox" id="in-care"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="t-text"><span class="t-label">👶 子ども・子育て支援金を含める</span><span class="t-sub">2026年4月分（5月天引き）から全国一律で新設</span></div>
+      <label class="switch"><input type="checkbox" id="in-kosodate" checked><span class="slider"></span></label>
+    </div>
+
+    <!-- 詳細設定 -->
+    <details class="advanced">
+      <summary>⚙️ 詳細設定（料率の調整・税の手入力）</summary>
+      <div class="adv-inner">
+        <div class="row-2">
+          <div class="field">
+            <label for="in-pension">👵 厚生年金保険料率（全体）</label>
+            <div class="ctrl" data-suffix="%"><input type="number" id="in-pension" inputmode="decimal" min="0" step="0.01" value="18.30"></div>
+          </div>
+          <div class="field">
+            <label for="in-emp">🧑‍💼 雇用保険料率（本人負担）</label>
+            <div class="ctrl" data-suffix="%"><input type="number" id="in-emp" inputmode="decimal" min="0" step="0.01" value="0.50"></div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="in-carerate">🩺 介護保険料率（全体）</label>
+            <div class="ctrl" data-suffix="%"><input type="number" id="in-carerate" inputmode="decimal" min="0" step="0.01" value="1.62"></div>
+          </div>
+          <div class="field">
+            <label for="in-kosodaterate">👶 子育て支援金率（全体）</label>
+            <div class="ctrl" data-suffix="%"><input type="number" id="in-kosodaterate" inputmode="decimal" min="0" step="0.01" value="0.23"></div>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <div class="t-text"><span class="t-label">✏️ 所得税・住民税を手入力する</span><span class="t-sub">給与明細の正確な額がわかる場合はこちら</span></div>
+          <label class="switch"><input type="checkbox" id="in-manualtax"><span class="slider"></span></label>
+        </div>
+        <div id="manual-tax-fields" hidden>
+          <div class="row-2">
+            <div class="field">
+              <label for="in-itax">🧾 所得税（月額）</label>
+              <div class="ctrl" data-suffix="円"><input type="text" id="in-itax" inputmode="numeric" placeholder="0"></div>
+            </div>
+            <div class="field mode-only mode-monthly">
+              <label for="in-rtax">🏛️ 住民税（月額）</label>
+              <div class="ctrl" data-suffix="円"><input type="text" id="in-rtax" inputmode="numeric" placeholder="0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ===== Result card ===== -->
+  <div class="card" id="result-card">
+    <h2 class="section-title">📊 天引きの内訳</h2>
+    <div class="net-box">
+      <div class="net-label" id="net-label">手取り（月の手取り額）</div>
+      <div class="net-amount" id="net-amount">— <span class="yen">円</span></div>
+      <div class="net-of" id="net-of"></div>
+    </div>
+
+    <div class="legend" id="legend"></div>
+    <div class="stack-bar" id="stack-bar"></div>
+
+    <!-- PC: table -->
+    <table class="bk-table">
+      <thead><tr><th>項目</th><th>金額</th><th>割合</th></tr></thead>
+      <tbody id="bk-tbody"></tbody>
+    </table>
+    <!-- Mobile: cards -->
+    <div class="bk-cards" id="bk-cards"></div>
+
+    <!-- 賞与モードの解説 -->
+    <div class="explain mode-only mode-bonus" id="bonus-explain" hidden>
+      <h3>🎁 なぜ賞与は「税金が高い」と感じる？</h3>
+      <p>賞与（ボーナス）の所得税は、<span class="em">前月の給与（社会保険料を引いた後）と扶養人数</span>から「賞与の金額に乗ずべき率」を決め、その率を賞与額にそのまま掛けて計算します。前月の給与が高い人ほど高い率が適用されるため、賞与の天引きが大きく見えます。</p>
+      <p>また、毎月の給与にある<span class="em">給与所得控除のような月単位の控除が賞与にはそのまま効かない</span>ことや、社会保険料も賞与から別途引かれることが「思ったより少ない」と感じる一因です。</p>
+      <p>一方で<span class="em">住民税は賞与からは天引きされません</span>（前年の所得をもとに毎月の給与から特別徴収されるため）。年末調整・確定申告で過不足が精算されるので、引かれすぎた所得税は戻ることもあります。</p>
+      <p class="src" style="font-size:.7rem;color:var(--sub)">仕組みの詳細は下の「参考リンク（公式）」の<strong>賞与に対する源泉徴収税額の算出率の表</strong>をご覧ください。</p>
+    </div>
+  </div>
+
+  <!-- ===== Summary bar ===== -->
+  <div class="summary-bar">
+    <div class="sb-item"><div class="sb-label" id="sb-label-gross">額面</div><div class="sb-val" id="sb-gross">—</div></div>
+    <div class="sb-item"><div class="sb-label">天引き合計</div><div class="sb-val" id="sb-deduct">—</div></div>
+    <div class="sb-item net"><div class="sb-label">手取り</div><div class="sb-val" id="sb-net">—</div></div>
+  </div>
+
+  <!-- ===== References ===== -->
+  <div class="card">
+    <details class="advanced ref-details">
+      <summary>📚 参考リンク（公式）</summary>
+      <div class="adv-inner">
+        <ul class="refs">
+          <li><a href="https://www.nta.go.jp/publication/pamph/gensen/zeigakuhyo2026/01.htm" target="_blank" rel="noopener">令和8年分 源泉徴収税額表</a><br><span class="src">国税庁 ｜ 給与の所得税（月額表）</span></li>
+          <li><a href="https://www.nta.go.jp/publication/pamph/gensen/zeigakuhyo2026/data/15-16.pdf" target="_blank" rel="noopener">賞与に対する源泉徴収税額の算出率の表（令和8年分・PDF）</a><br><span class="src">国税庁 ｜ ボーナスの所得税率の仕組み</span></li>
+          <li><a href="https://www.kyoukaikenpo.or.jp/lp/2026hokenryou/" target="_blank" rel="noopener">令和8年度 保険料率のお知らせ（都道府県別）</a><br><span class="src">全国健康保険協会（協会けんぽ）｜ 健康保険・介護保険</span></li>
+          <li><a href="https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/003/index.html" target="_blank" rel="noopener">子ども・子育て支援金率について</a><br><span class="src">全国健康保険協会（協会けんぽ）</span></li>
+          <li><a href="https://www.cfa.go.jp/policies/kodomokosodateshienkinseido" target="_blank" rel="noopener">子ども・子育て支援金制度について</a><br><span class="src">こども家庭庁</span></li>
+          <li><span class="src">雇用保険料率：厚生労働省「令和8（2026）年度 雇用保険料率のご案内」（一般の事業・本人負担0.5%）</span></li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- ===== Action buttons (102) ===== -->
+  <div class="enu-toolbar">
+    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="app-footer">
+    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
+    <div class="footer-credit">
+      <hr class="divider">
+      <div class="brand"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></div>
+      <div class="copy">© <span id="copy-year">2026</span> enu(エヌ) All rights reserved.</div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- Toast -->
+<div class="enu-toast" id="enu-toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ===== ENU_CONFIG =====
+  const ENU_CONFIG = {
+    appId: 'take-home-pay-calc',
+    appName: '手取り見える化計算機',
+    storageType: 'local',
+    helpUrl: 'https://enu-tools.pages.dev/help/',
+    helpOpenNewTab: true,
+    dataVersion: 1,
+  };
+  const CFG = ENU_CONFIG;
+  const _key = (k) => `enu_${CFG.appId}_${k}`;
+  window.enuTools = window.enuTools || {};
+
+  // ===== helpers =====
+  const $ = (id) => document.getElementById(id);
+  const yen = (n) => Math.round(n).toLocaleString('ja-JP');
+  const num = (id) => { const v = parseFloat(String($(id).value).replace(/,/g,'')); return isNaN(v) ? 0 : v; };
+  const intval = (id) => { const v = parseInt(String($(id).value).replace(/,/g,''),10); return isNaN(v) ? 0 : v; };
+  // 金額入力に3桁カンマを自動付与（内部計算では num() がカンマを除去）
+  const AMOUNT_IDS = ['in-gross','in-bonus','in-prevsalary','in-itax','in-rtax'];
+  function formatAmountInput(el){
+    const raw = String(el.value).replace(/[^0-9]/g,'');
+    el.value = raw === '' ? '' : parseInt(raw,10).toLocaleString('ja-JP');
+  }
+
+  let mode = 'monthly';
+
+  // ===== 給与所得控除（令和7改正：最低保障55万→65万円）=====
+  function kyuyoKoujo(annualIncome){
+    let v;
+    if(annualIncome <= 1625000) v = 650000;
+    else if(annualIncome <= 1800000) v = annualIncome*0.4 - 100000;
+    else if(annualIncome <= 3600000) v = annualIncome*0.3 + 80000;
+    else if(annualIncome <= 6600000) v = annualIncome*0.2 + 440000;
+    else if(annualIncome <= 8500000) v = annualIncome*0.1 + 1100000;
+    else v = 1950000;
+    return Math.max(650000, v); // 令和7改正の最低保障を必ず確保
+  }
+
+  // ===== 所得税の基礎控除（令和7改正・合計所得金額に応じた段階制）=====
+  // 出典：国税庁「令和7年度税制改正による所得税の基礎控除の見直し等について」
+  // ※令和7・令和8年分の時限措置を含む（655万円以下の加算は令和9年分以後58万円に統一予定）
+  function kisoKoujoShotokuzei(goukeiShotoku){
+    if(goukeiShotoku <= 1320000)  return 950000;  // 95万円（132万以下）
+    if(goukeiShotoku <= 3360000)  return 880000;  // 88万円（132〜336万）
+    if(goukeiShotoku <= 4890000)  return 680000;  // 68万円（336〜489万）
+    if(goukeiShotoku <= 6550000)  return 630000;  // 63万円（489〜655万）
+    if(goukeiShotoku <= 23500000) return 580000;  // 58万円（655〜2,350万）
+    // 2,350万円超は改正なし（逓減）
+    if(goukeiShotoku <= 24000000) return 480000;
+    if(goukeiShotoku <= 24500000) return 320000;
+    if(goukeiShotoku <= 25000000) return 160000;
+    return 0;
+  }
+
+  // ===== 所得税の速算表（年税額・復興特別所得税込み）=====
+  function annualIncomeTax(taxable){
+    taxable = Math.max(0, Math.floor(taxable/1000)*1000);
+    let t;
+    if(taxable<=1950000) t=taxable*0.05;
+    else if(taxable<=3300000) t=taxable*0.10-97500;
+    else if(taxable<=6950000) t=taxable*0.20-427500;
+    else if(taxable<=9000000) t=taxable*0.23-636000;
+    else if(taxable<=18000000) t=taxable*0.33-1536000;
+    else if(taxable<=40000000) t=taxable*0.40-2796000;
+    else t=taxable*0.45-4796000;
+    return Math.max(0, t*1.021);
+  }
+
+  // 月給の所得税（概算・月額）令和7改正後の基礎控除（段階制）・給与所得控除（65万円下限）を使用
+  function estIncomeTaxMonthly(gross, socialMonthly, dependents){
+    const annualIncome = gross*12;
+    const annualSocial = socialMonthly*12;
+    const kyuyo = kyuyoKoujo(annualIncome);
+    const goukeiShotoku = annualIncome - kyuyo;            // 合計所得金額（給与所得のみ想定）
+    const kiso = kisoKoujoShotokuzei(goukeiShotoku);       // 令和7改正後の段階制基礎控除
+    const fuyo = 380000 * dependents;                      // 扶養控除（一般・38万円/人）
+    const taxable = goukeiShotoku - annualSocial - kiso - fuyo;
+    return Math.round(annualIncomeTax(taxable)/12);
+  }
+
+  // 住民税（概算・月額／所得割10%＋均等割5,000円目安。前年所得ベース・自治体差あり）
+  function estResidentTaxMonthly(gross, socialMonthly, dependents){
+    const annualIncome = gross*12;
+    const annualSocial = socialMonthly*12;
+    const taxable = annualIncome - kyuyoKoujo(annualIncome) - annualSocial - 430000 - 330000*dependents;
+    const incomeBased = Math.max(0, taxable)*0.10;
+    const perCapita = 5000;
+    return Math.round((incomeBased + perCapita)/12);
+  }
+
+  // 賞与の所得税率（概算）：前月給与（社保控除後）を年換算した課税ベースの限界税率で近似
+  // 令和7改正後の段階制基礎控除・給与所得控除（65万円下限）を反映
+  function estBonusRate(prevTaxableAfterSocial, dependents){
+    const annual = prevTaxableAfterSocial*12;
+    const kyuyo = kyuyoKoujo(annual);
+    const goukeiShotoku = annual - kyuyo;
+    const kiso = kisoKoujoShotokuzei(goukeiShotoku);
+    const taxable = goukeiShotoku - kiso - 380000*dependents;
+    const tb = Math.max(0, taxable);
+    let r;
+    if(tb<=1950000) r=0.05;
+    else if(tb<=3300000) r=0.10;
+    else if(tb<=6950000) r=0.20;
+    else if(tb<=9000000) r=0.23;
+    else if(tb<=18000000) r=0.33;
+    else if(tb<=40000000) r=0.40;
+    else r=0.45;
+    return r*1.021;
+  }
+
+  // ===== 社会保険料（本人負担・概算）=====
+  function socialBreakdown(base){
+    const health = base * (num('in-health')/2)/100;
+    const care   = $('in-care').checked ? base * (num('in-carerate')/2)/100 : 0;
+    const pension= base * (num('in-pension')/2)/100;
+    const emp    = base * num('in-emp')/100;
+    const koso   = $('in-kosodate').checked ? base * (num('in-kosodaterate')/2)/100 : 0;
+    return { health, care, pension, emp, koso, total: health+care+pension+emp+koso };
+  }
+
+  // ===== 計算 =====
+  function calc(){
+    const dependents = intval('in-dependents');
+    const manual = $('in-manualtax').checked;
+    let base, social, itax, rtax, items;
+
+    if(mode === 'monthly'){
+      base = num('in-gross');
+      const s = socialBreakdown(base);
+      social = s.total;
+      itax = manual ? num('in-itax') : estIncomeTaxMonthly(base, social, dependents);
+      rtax = manual ? num('in-rtax') : estResidentTaxMonthly(base, social, dependents);
+      itax = Math.min(itax, Math.max(0, base - social)); // 念のため上限
+      rtax = Math.max(0, rtax);
+      items = buildItems(s, itax, rtax, true);
+    } else {
+      base = num('in-bonus');
+      const s = socialBreakdown(base);
+      social = s.total;
+      if(manual){
+        itax = num('in-itax');
+      } else {
+        const prev = num('in-prevsalary');
+        const prevSocial = prev>0 ? socialBreakdown(prev).total : 0;
+        const prevAfter = Math.max(0, prev - prevSocial);
+        const rate = prevAfter>0 ? estBonusRate(prevAfter, dependents) : 0.05*1.021;
+        const bonusTaxable = Math.max(0, base - social);
+        itax = Math.round(bonusTaxable * rate);
+      }
+      itax = Math.min(itax, Math.max(0, base - social));
+      rtax = 0; // 賞与から住民税は天引きされない
+      items = buildItems(s, itax, rtax, false);
+    }
+
+    const deduct = social + itax + rtax;
+    const net = Math.max(0, base - deduct);
+    render(base, net, deduct, items);
+  }
+
+  function buildItems(s, itax, rtax, withResident){
+    const items = [];
+    items.push({key:'health', group:'social', name:'健康保険料', amt:s.health});
+    if(s.care>0) items.push({key:'care', group:'social', name:'介護保険料', amt:s.care});
+    items.push({key:'pension', group:'social', name:'厚生年金保険料', amt:s.pension});
+    items.push({key:'emp', group:'social', name:'雇用保険料', amt:s.emp});
+    if(s.koso>0) items.push({key:'koso', group:'social', name:'子ども・子育て支援金', amt:s.koso});
+    items.push({key:'itax', group:'tax', name:'所得税', amt:itax, est:!$('in-manualtax').checked});
+    if(withResident) items.push({key:'rtax', group:'tax', name:'住民税', amt:rtax, est:!$('in-manualtax').checked});
+    return items;
+  }
+
+  // ===== 描画 =====
+  function render(base, net, deduct, items){
+    const social = items.filter(i=>i.group==='social').reduce((a,b)=>a+b.amt,0);
+    const tax = items.filter(i=>i.group==='tax').reduce((a,b)=>a+b.amt,0);
+    const itaxAmt = items.filter(i=>i.key==='itax').reduce((a,b)=>a+b.amt,0);
+    const rtaxAmt = items.filter(i=>i.key==='rtax').reduce((a,b)=>a+b.amt,0);
+
+    // labels by mode
+    $('net-label').textContent = mode==='monthly' ? '💰 手取り（月の手取り額）' : '💰 賞与の手取り額';
+    $('sb-label-gross').textContent = mode==='monthly' ? '額面月収' : '賞与額';
+
+    if(base<=0){
+      $('net-amount').innerHTML = '— <span class="yen">円</span>';
+      $('net-of').textContent = '';
+      $('stack-bar').innerHTML = '';
+      $('legend').innerHTML = '';
+      $('bk-tbody').innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--sub);padding:18px">金額を入力してください</td></tr>';
+      $('bk-cards').innerHTML = '<div style="text-align:center;color:var(--sub);padding:14px;font-size:.8rem">金額を入力してください</div>';
+      $('sb-gross').textContent='—'; $('sb-deduct').textContent='—'; $('sb-net').textContent='—';
+      return;
+    }
+
+    const pct = (v) => base>0 ? (v/base*100) : 0;
+    $('net-amount').innerHTML = yen(net) + ' <span class="yen">円</span>';
+    $('net-of').textContent = `額面 ${yen(base)}円のうち ${pct(net).toFixed(1)}%`;
+
+    // stacked bar
+    const segs = [
+      {label:'手取り', amt:net, color:'var(--seg-net)'},
+      {label:'社会保険料', amt:social, color:'var(--seg-social)'},
+      {label:'所得税', amt:itaxAmt, color:'var(--seg-itax)'},
+    ];
+    if(rtaxAmt>0) segs.push({label:'住民税', amt:rtaxAmt, color:'var(--seg-rtax)'});
+    $('stack-bar').innerHTML = segs.filter(s=>s.amt>0).map(s=>
+      `<div class="stack-seg" style="width:${pct(s.amt)}%;background:${s.color}" title="${s.label} ${yen(s.amt)}円"></div>`
+    ).join('');
+    $('legend').innerHTML = segs.filter(s=>s.amt>0).map(s=>
+      `<span class="legend-item"><span class="legend-dot" style="background:${s.color}"></span>${s.label} ${pct(s.amt).toFixed(1)}%</span>`
+    ).join('');
+
+    // table
+    const segColor = {health:'var(--seg-social)',care:'var(--seg-social)',pension:'var(--seg-social)',emp:'var(--seg-social)',koso:'var(--seg-social)',itax:'var(--seg-itax)',rtax:'var(--seg-rtax)'};
+    let rows = '';
+    rows += `<tr class="grp"><td><span class="dot-cell" style="background:var(--seg-social)"></span>🛡️ 社会保険料</td><td>${yen(social)}</td><td>${pct(social).toFixed(1)}%</td></tr>`;
+    items.filter(i=>i.group==='social').forEach(i=>{
+      rows += `<tr class="indent"><td>${i.name}</td><td>${yen(i.amt)}</td><td>${pct(i.amt).toFixed(1)}%</td></tr>`;
+    });
+    rows += `<tr class="grp"><td><span class="dot-cell" style="background:var(--seg-itax)"></span>🧾 税金</td><td>${yen(tax)}</td><td>${pct(tax).toFixed(1)}%</td></tr>`;
+    items.filter(i=>i.group==='tax').forEach(i=>{
+      const badge = i.est ? '<span class="badge">概算</span>' : '';
+      rows += `<tr class="indent"><td>${i.name}${badge}</td><td>${yen(i.amt)}</td><td>${pct(i.amt).toFixed(1)}%</td></tr>`;
+    });
+    rows += `<tr class="total-row"><td>天引き合計</td><td>${yen(deduct)}</td><td>${pct(deduct).toFixed(1)}%</td></tr>`;
+    rows += `<tr class="net-row"><td>💰 手取り</td><td>${yen(net)}</td><td>${pct(net).toFixed(1)}%</td></tr>`;
+    $('bk-tbody').innerHTML = rows;
+
+    // cards (mobile)
+    let cards = '';
+    items.forEach(i=>{
+      const badge = i.est ? '<span class="badge">概算</span>' : '';
+      cards += `<div class="bk-card"><div class="bc-name"><span class="dot-cell" style="background:${segColor[i.key]}"></span>${i.name}${badge}</div><div class="bc-amt">${yen(i.amt)}円</div></div>`;
+    });
+    cards += `<div class="bk-card"><div class="bc-name">天引き合計</div><div class="bc-amt">${yen(deduct)}円</div></div>`;
+    cards += `<div class="bk-card is-net"><div class="bc-name">💰 手取り</div><div class="bc-amt">${yen(net)}円</div></div>`;
+    $('bk-cards').innerHTML = cards;
+
+    // summary
+    $('sb-gross').textContent = yen(base);
+    $('sb-deduct').textContent = yen(deduct);
+    $('sb-net').textContent = yen(net);
+  }
+
+  // ===== モード切替 =====
+  function setMode(m){
+    mode = m;
+    $('tab-monthly').classList.toggle('active', m==='monthly');
+    $('tab-bonus').classList.toggle('active', m==='bonus');
+    document.querySelectorAll('.mode-monthly').forEach(el=>el.hidden = (m!=='monthly'));
+    document.querySelectorAll('.mode-bonus').forEach(el=>el.hidden = (m!=='bonus'));
+    calc();
+    saveInputs();
+  }
+
+  // ===== 入力の保存・復元（ローカル）=====
+  const SAVE_IDS = ['in-gross','in-bonus','in-prevsalary','in-dependents','in-health','in-pension','in-emp','in-carerate','in-kosodaterate','in-itax','in-rtax'];
+  const SAVE_CHK = ['in-care','in-kosodate','in-manualtax'];
+  function saveInputs(){
+    try{
+      const data = { mode };
+      SAVE_IDS.forEach(id=> data[id] = $(id).value);
+      SAVE_CHK.forEach(id=> data[id] = $(id).checked);
+      localStorage.setItem(_key('inputs'), JSON.stringify(data));
+    }catch(e){ /* 保存不可環境は無視 */ }
+  }
+  function loadInputs(){
+    try{
+      const raw = localStorage.getItem(_key('inputs'));
+      if(!raw) return;
+      const data = JSON.parse(raw);
+      SAVE_IDS.forEach(id=>{ if(data[id]!==undefined && data[id]!=='') $(id).value = data[id]; });
+      SAVE_CHK.forEach(id=>{ if(typeof data[id]==='boolean') $(id).checked = data[id]; });
+      if(data.mode) mode = data.mode;
+    }catch(e){ /* 破損データは無視 */ }
+  }
+
+  // ===== 注意書きの動作（101）=====
+  function applyStorageType(){
+    const type = CFG.storageType || 'local';
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w=>{
+      if(w.dataset.storage !== type){ w.style.display='none'; }
+    });
+  }
+  function initNotices(){
+    const K = _key('notice_minimized');
+    const get = ()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const set = (l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
+    const help = $('enu-help-link');
+    if(help){ help.href = CFG.helpUrl || '#'; if(CFG.helpOpenNewTab!==false){ help.target='_blank'; help.rel='noopener'; } }
+    const list = get();
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{
+      const w=b.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.add('is-mini');
+      const l=get(); if(!l.includes(id)){ l.push(id); set(l); }
+    }));
+    document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{
+      const w=m.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.remove('is-mini'); set(get().filter(x=>x!==id));
+    }));
+    const dateEl = $('enu-info-date');
+    if(dateEl){ const d=new Date(); dateEl.textContent = `${d.getFullYear()}年${d.getMonth()+1}月時点`; }
+  }
+
+  // ===== トースト（102）=====
+  function showToast(msg){
+    const t = $('enu-toast'); if(!t) return;
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(showToast._t); showToast._t = setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  window.enuTools.toast = showToast;
+
+  // ===== 簡易シェア（外部スクリプト不要：Web Share API＋クリップボード）=====
+  function shareSummary(){
+    const base = mode==='monthly' ? num('in-gross') : num('in-bonus');
+    if(base<=0){ showToast('⚠️ 先に金額を入力してください'); return; }
+    const label = mode==='monthly' ? '額面月収' : '賞与額';
+    const text = `【手取り見える化計算機】\n${label}：${yen(base)}円\n手取り：${$('sb-net').textContent}円（天引き合計 ${$('sb-deduct').textContent}円）\n※概算です\n`;
+    const url = location.href.split('#')[0];
+    if(navigator.share){
+      navigator.share({ title:'手取り見える化計算機', text, url }).catch(()=>{});
+    } else if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text + url).then(()=>showToast('🔗 結果をコピーしました')).catch(()=>showToast('⚠️ コピーできませんでした'));
+    } else {
+      showToast('⚠️ お使いの環境ではシェアできません');
+    }
+  }
+
+  // ===== 初期化 =====
+  function init(){
+    loadInputs();
+    AMOUNT_IDS.forEach(id=>{ if($(id)) formatAmountInput($(id)); }); // 復元値にカンマ付与
+    initNotices();
+    applyStorageType();
+    setMode(mode);
+    const yEl = document.getElementById('copy-year');
+    if(yEl) yEl.textContent = new Date().getFullYear();
+
+    // 手入力トグル
+    $('in-manualtax').addEventListener('change', ()=>{ $('manual-tax-fields').hidden = !$('in-manualtax').checked; calc(); saveInputs(); });
+    $('manual-tax-fields').hidden = !$('in-manualtax').checked;
+
+    // モードタブ
+    $('tab-monthly').addEventListener('click', ()=>setMode('monthly'));
+    $('tab-bonus').addEventListener('click', ()=>setMode('bonus'));
+
+    // 入力で再計算（金額欄はカンマ整形してから計算）
+    [...SAVE_IDS, ...SAVE_CHK].forEach(id=>{
+      const el = $(id); if(!el) return;
+      const ev = el.type==='checkbox' ? 'change' : 'input';
+      el.addEventListener(ev, ()=>{ if(AMOUNT_IDS.includes(id)) formatAmountInput(el); calc(); saveInputs(); });
+    });
+
+    // ボタン
+    $('enu-btn-print').addEventListener('click', ()=>window.print());
+    $('enu-btn-share2').addEventListener('click', shareSummary);
+
+    calc();
+  }
+
+  if(document.readyState!=='loading'){ init(); } else { document.addEventListener('DOMContentLoaded', init); }
+})();
+</script>
+
+<!-- ===== favicon / PWA（003）===== -->
+<script>
+(function(){
+  function buildIcons(){
+    var bg = (getComputedStyle(document.documentElement).getPropertyValue('--bg')||'').trim() || '#faf7f0';
+    var EMOJI = '💴';
+    var NAME = '手取り見える化計算機';
+    var SHORT = '手取り計算';
+    var EFONT = "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+
+    document.title = NAME;
+
+    function meta(name, content){
+      var m = document.querySelector('meta[name="'+name+'"]');
+      if(!m){ m = document.createElement('meta'); m.setAttribute('name', name); document.head.appendChild(m); }
+      m.setAttribute('content', content);
+    }
+    meta('theme-color', bg);
+    meta('apple-mobile-web-app-capable', 'yes');
+    meta('apple-mobile-web-app-status-bar-style', 'default');
+    meta('apple-mobile-web-app-title', SHORT);
+
+    // SVG favicon（角丸22%・絵文字60%）
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+      + '<rect width="100" height="100" rx="22" ry="22" fill="'+bg+'"/>'
+      + '<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EFONT+'">'+EMOJI+'</text></svg>';
+    var fav = document.querySelector('link[rel="icon"]');
+    if(!fav){ fav = document.createElement('link'); fav.rel = 'icon'; document.head.appendChild(fav); }
+    fav.type = 'image/svg+xml';
+    fav.href = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+
+    // Canvas でアイコン生成
+    function drawIcon(size, rounded, ratio){
+      return new Promise(function(resolve){
+        var c = document.createElement('canvas'); c.width = size; c.height = size;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = bg;
+        if(rounded){
+          var r = size * 0.22;
+          ctx.beginPath();
+          ctx.moveTo(r,0);
+          ctx.arcTo(size,0,size,size,r);
+          ctx.arcTo(size,size,0,size,r);
+          ctx.arcTo(0,size,0,0,r);
+          ctx.arcTo(0,0,size,0,r);
+          ctx.closePath(); ctx.fill();
+        } else {
+          ctx.fillRect(0,0,size,size);
+        }
+        ctx.font = Math.round(size*ratio) + 'px ' + EFONT;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(EMOJI, size/2, size/2 + size*0.025);
+        resolve(c.toDataURL('image/png'));
+      });
+    }
+
+    // apple-touch-icon（180・角丸22%・絵文字55%）
+    drawIcon(180, true, 0.55).then(function(url){
+      var l = document.querySelector('link[rel="apple-touch-icon"]');
+      if(!l){ l = document.createElement('link'); l.rel = 'apple-touch-icon'; document.head.appendChild(l); }
+      l.href = url;
+    });
+
+    // manifest 用アイコン4枚（any=角丸55% / maskable=フルスクエア50%）→ 全完了後に manifest 注入
+    Promise.all([
+      drawIcon(192, true, 0.55),
+      drawIcon(192, false, 0.50),
+      drawIcon(512, true, 0.55),
+      drawIcon(512, false, 0.50)
+    ]).then(function(u){
+      var path = location.pathname;
+      var manifest = {
+        id: path, name: NAME, short_name: SHORT, start_url: path, scope: path,
+        display: 'standalone', orientation: 'portrait',
+        background_color: bg, theme_color: bg,
+        icons: [
+          { src: u[0], sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: u[1], sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: u[2], sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: u[3], sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ]
+      };
+      var ml = document.querySelector('link[rel="manifest"]');
+      if(!ml){ ml = document.createElement('link'); ml.rel = 'manifest'; document.head.appendChild(ml); }
+      ml.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+    });
+  }
+  function start(){ (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(buildIcons); }
+  if(document.readyState!=='loading'){ start(); } else { document.addEventListener('DOMContentLoaded', start); }
+})();
+</script>
+</body>
+</html>
