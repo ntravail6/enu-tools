@@ -2,8 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ヘルプ｜使い方ガイド</title>
+<meta name="theme-color" content="#fff8f3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ヘルプ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -354,6 +358,43 @@
   .steps.share-color li strong {
     color: #355a7a;
   }
+  .steps.info-color li::before {
+    color: #6b5a8f;
+    border-color: var(--info);
+  }
+  .steps.info-color li strong {
+    color: #6b5a8f;
+  }
+
+  /* OS別ラベル（▶ Chrome など） */
+  .os-label {
+    margin: 16px 0 8px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--info);
+  }
+
+  /* infoカラーリンク */
+  .info-link {
+    color: var(--info);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .info-link:hover {
+    color: #6b5a8f;
+  }
+
+  /* インラインコード */
+  code {
+    background: var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Quicksand', 'Kosugi Maru', 'Arial Rounded MT Bold', sans-serif;
+    font-size: 0.92em;
+    color: var(--text);
+  }
 
   /* 注意ボックス */
   .note {
@@ -382,7 +423,7 @@
   /* 場面別カード（こんなときに使えます） */
   .scene-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 14px;
     margin-top: 18px;
     margin-bottom: 16px;
@@ -746,8 +787,26 @@
     <div class="topic-card share" data-target="share">
       <div class="topic-icon">🔗</div>
       <div class="topic-text">
-        <h3>共有方法</h3>
-        <p>このアプリのURLを他の人に共有する</p>
+        <h3>シェア方法</h3>
+        <p>このアプリのURLを他の人に教える（シェアする）</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card alt" data-target="storage-choice">
+      <div class="topic-icon">⇄</div>
+      <div class="topic-text">
+        <h3>保存版の選び方・切り替え方<span class="sub-title">ローカル保存版とGoogle保存版</span></h3>
+        <p>2つの保存方法の違いと、あとから切り替える方法</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card alt" data-target="local-data">
+      <div class="topic-icon">📄</div>
+      <div class="topic-text">
+        <h3>ローカル保存版のデータについて<span class="sub-title">この端末・ブラウザ内に保存するタイプ</span></h3>
+        <p>保存場所・データが消える条件・バックアップのすすめ</p>
       </div>
       <div class="topic-arrow">→</div>
     </div>
@@ -757,6 +816,24 @@
       <div class="topic-text">
         <h3>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h3>
         <p>定期的にバックアップを取る／機種変更で引き継ぐ／別の端末でも使う</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card info" data-target="drive-app-data">
+      <div class="topic-icon">☁️</div>
+      <div class="topic-text">
+        <h3>Googleドライブ版アプリのデータについて<span class="sub-title">家計簿・売上・在庫など、Googleでログインするアプリ</span></h3>
+        <p>保存場所・バックアップ・機種変更・利用停止・プライバシー</p>
+      </div>
+      <div class="topic-arrow">→</div>
+    </div>
+
+    <div class="topic-card info" data-target="login-trouble">
+      <div class="topic-icon">🔐</div>
+      <div class="topic-text">
+        <h3>ログインがうまくいかないとき<span class="sub-title">ポップアップ／通信エラー／許可の問題</span></h3>
+        <p>「Googleでログイン」が進まない・エラーが出るときの対処法</p>
       </div>
       <div class="topic-arrow">→</div>
     </div>
@@ -812,6 +889,118 @@
     </section>
   </div>
 
+  <!-- 詳細: 保存版の選び方・切り替え方 -->
+  <div class="topic-detail" id="storage-choice">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon alt">⇄</div>
+        <h2>保存版の選び方・切り替え方<span class="sub-title">ローカル保存版とGoogle保存版</span></h2>
+      </div>
+
+      <p>本アプリは <strong>ローカル保存版</strong> と <strong>Google保存版</strong> の2つから、データの保存方法を選べます。最初の画面でお好きな方を選んでください。あとから切り替えることもできます。</p>
+
+      <h3 class="sub-head">📌 2つの違い</h3>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">📄</div>
+          <div class="scene-text">
+            <h4>ローカル保存版</h4>
+            <p>ログイン不要・この端末内に保存</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">☁️</div>
+          <div class="scene-text">
+            <h4>Google保存版</h4>
+            <p>Googleドライブに保存・複数端末で同期</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub-head">📝 どちらを選べばいい？</h3>
+      <ol class="steps">
+        <li><strong>サッと手軽に使いたい</strong>／ログインしたくない／1つの端末で使う → <strong>ローカル保存版</strong> がおすすめです。</li>
+        <li><strong>データを長く大切に残したい</strong>／スマホとPCなど複数の端末で使いたい → <strong>Google保存版</strong> がおすすめです。</li>
+      </ol>
+
+      <h3 class="sub-head">📝 保存版を切り替えるには</h3>
+      <ol class="steps">
+        <li>アプリ画面の右上にある <strong>「🔄 切替」</strong> または <strong>「🔓 ログアウト」</strong> ボタンをタップします。</li>
+        <li>確認メッセージが表示されるので <strong>OK</strong> を選びます。</li>
+        <li>最初の選択画面に戻るので、使いたい保存版を選び直します。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 安心ポイント</span>2つの保存版のデータは <strong>それぞれ独立して保管</strong> されます。切り替えても、もう一方のデータが消えることはありません。元の保存版を選び直せば、そのデータがそのまま表示されます。
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ ご注意</span>保存版を切り替えても、データは自動では引っ越しません。データを移したい場合は、<strong>💾 データのバックアップ・復元方法</strong>（エクスポート／インポート）をご利用ください。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: ローカル保存版のデータについて -->
+  <div class="topic-detail" id="local-data">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon alt">📄</div>
+        <h2>ローカル保存版のデータについて<span class="sub-title">この端末・ブラウザ内に保存するタイプ</span></h2>
+      </div>
+
+      <p>ローカル保存版では、入力したデータが <strong>お使いの端末・ブラウザの中だけ</strong> に保存されます。サーバーには送信されないので、手軽でプライバシーも安心です。</p>
+
+      <h3 class="sub-head">📌 データの特徴</h3>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">📱</div>
+          <div class="scene-text">
+            <h4>この端末だけ</h4>
+            <p>他の端末とは同期されません</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">🔒</div>
+          <div class="scene-text">
+            <h4>サーバー送信なし</h4>
+            <p>運営からは見えません</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">⚡</div>
+          <div class="scene-text">
+            <h4>ログイン不要</h4>
+            <p>開いてすぐ使えます</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="label">⚠️ データが消えてしまう条件</span>以下の操作・状況では、保存したデータが消えたり読めなくなることがあります：<br>
+        ・ブラウザの「履歴・キャッシュ・サイトデータ」を削除した<br>
+        ・シークレットモード／プライベートブラウズで使った<br>
+        ・別のブラウザや別の端末で開いた<br>
+        ・端末を変えた（機種変更など）
+      </div>
+
+      <h3 class="sub-head">📝 大切なデータを守るには</h3>
+      <p>消えてしまうと困るデータは、こまめにバックアップを取っておくと安心です。</p>
+      <ol class="steps">
+        <li>ページ最下部のツールバーから <strong>📤 エクスポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「出力」）</span>をタップします。</li>
+        <li>JSONファイルが保存されるので、メールやクラウドに保管しておきます。</li>
+        <li>復元したいときは <strong>📥 インポート</strong> ボタン<span style="font-size: 11px; color: var(--sub);">（小スクエア版では「読込」）</span>から読み込みます。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 ヒント</span>長く使いたいデータや、複数の端末で使いたいデータは <strong>☁️ Google保存版</strong> に切り替えるのもおすすめです。切り替え方は <strong>⇄ 保存版の選び方・切り替え方</strong> をご覧ください。
+      </div>
+    </section>
+  </div>
+
   <!-- 詳細: データバックアップ・復元 -->
   <div class="topic-detail" id="data-transfer">
     <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
@@ -822,7 +1011,7 @@
         <h2>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h2>
       </div>
 
-      <p>本アプリのデータはお使いの端末内に保存されています。<strong>JSONファイル</strong>を使ってデータを保存・復元できます。</p>
+      <p>本アプリのデータは <strong>お使いの端末内（ローカル）</strong> または <strong>Googleドライブ</strong> に保存されます。<strong>JSONファイル</strong>を使ってデータを保存・復元することができます。</p>
 
       <!-- 場面別の説明 -->
       <h3 class="sub-head">📌 こんなときに使えます</h3>
@@ -955,24 +1144,183 @@
     <section>
       <div class="section-head">
         <div class="section-icon share">🔗</div>
-        <h2>共有方法</h2>
+        <h2>シェア方法</h2>
       </div>
 
-      <p>このアプリのURLを、LINEやメール・SNSなどで他の人に共有できます。</p>
+      <p>このアプリのURLを、LINEやメール・SNSなどで他の人にシェア（共有）できます。</p>
 
       <h3 class="sub-head">📝 操作手順</h3>
       <ol class="steps share-color">
-        <li>ページ最下部のツールバーから <strong>🔗 共有</strong> ボタンをタップします。</li>
-        <li>共有メニュー（共有シート）が開きます。</li>
-        <li>共有したい <strong>アプリや相手</strong> を選んだら完了です。</li>
+        <li>ページ最下部のツールバーから <strong>🔗 シェア</strong> ボタンをタップします。</li>
+        <li>シェアメニュー（共有シート）が開きます。</li>
+        <li>シェアしたい <strong>アプリや相手</strong> を選んだら完了です。</li>
       </ol>
 
       <div class="note">
-        <span class="label">💡 ヒント</span>パソコンなど共有メニューに対応していない環境では、代わりに <strong>URLが自動でクリップボードにコピー</strong> されます。そのままメールやチャットに貼り付けてご利用ください。
+        <span class="label">💡 ヒント</span>パソコンなどシェアメニューに対応していない環境では、代わりに <strong>URLが自動でクリップボードにコピー</strong> されます。そのままメールやチャットに貼り付けてご利用ください。
       </div>
 
       <div class="note">
-        <span class="label">⚠️ ご注意</span>共有されるのは<strong>アプリのURL</strong>です。あなたの入力したデータは共有されません。データを引き継ぎたい場合は <strong>💾 データのバックアップ・復元方法</strong> をご利用ください。
+        <span class="label">⚠️ ご注意</span>シェアされるのは<strong>アプリのURL</strong>です。あなたの入力したデータはシェアされません。データを引き継ぎたい場合は <strong>💾 データのバックアップ・復元方法</strong> をご利用ください。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: Googleドライブ版アプリのデータについて -->
+  <div class="topic-detail" id="drive-app-data">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon info">☁️</div>
+        <h2>Googleドライブ版アプリのデータについて<span class="sub-title">家計簿・売上・在庫など、Googleでログインするアプリ</span></h2>
+      </div>
+
+      <p>本アプリは、入力したデータを <strong>ご自身のGoogleドライブ</strong> に保存する仕組みです。運営者（enu）はあなたのデータを一切見ることができません。</p>
+
+      <h3 class="sub-head">📌 データはどこに保存されている？</h3>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">📁</div>
+          <div class="scene-text">
+            <h4>あなた専用のシート</h4>
+            <p>Drive内にアプリごとに作成</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">🔒</div>
+          <div class="scene-text">
+            <h4>運営からは見えない</h4>
+            <p>技術的にアクセス不可</p>
+          </div>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">🌐</div>
+          <div class="scene-text">
+            <h4>端末を変えてもOK</h4>
+            <p>同じGoogleアカウントで継続</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報には一切アクセスできない設計です。
+      </div>
+
+      <h3 class="sub-head">▶ データのバックアップを取る</h3>
+      <p>大切なデータは定期的にコピーしておくと安心です。</p>
+      <ol class="steps info-color">
+        <li><a href="https://drive.google.com" target="_blank" rel="noopener" class="info-link">Googleドライブ</a> を開きます。</li>
+        <li>該当のスプレッドシート（例：<code>test-tools-hhk-kakeibo_data</code>）を開きます。</li>
+        <li>メニューの <strong>ファイル → コピーを作成</strong> をクリックします。</li>
+        <li>ファイル名を <strong>「kakeibo_backup_20260515」</strong> のように日付入りで保存します。<br><span style="font-size: 11px; color: var(--sub);">※ アプリで使うファイルとは別名にするのが大事。元の名前のままだと、アプリが間違ってバックアップ側を読みに行く可能性があります。</span></li>
+      </ol>
+
+      <h3 class="sub-head">▶ うっかり壊した・編集してしまった時の復元</h3>
+      <p>Googleスプレッドシートには変更履歴が自動で残っているので、過去の状態に戻せます。</p>
+      <ol class="steps info-color">
+        <li>該当のスプレッドシートを開きます。</li>
+        <li>メニューの <strong>ファイル → 変更履歴 → 変更履歴を表示</strong> をクリックします。</li>
+        <li>左の一覧から、戻したい時点のバージョンを選びます。</li>
+        <li>画面上部の <strong>「このバージョンを復元」</strong> をクリックします。</li>
+      </ol>
+
+      <h3 class="sub-head">▶ 機種変更・別の端末で使う</h3>
+      <p>特別な引き継ぎ操作は必要ありません。</p>
+      <ol class="steps info-color">
+        <li>新しい端末（PC・スマホ）で本アプリのURLを開きます。</li>
+        <li>同じGoogleアカウントでログインします。</li>
+        <li>これまでのデータがそのまま表示されます。</li>
+      </ol>
+
+      <h3 class="sub-head">▶ データが見当たらない・空に見える</h3>
+      <p>よくある原因と対処法：</p>
+      <ol class="steps info-color">
+        <li><strong>別のGoogleアカウントでログインしているかも</strong> → 画面右上などで現在のアカウントを確認、必要なら切り替えて再ログインしてください。</li>
+        <li><strong>誤ってファイルを削除したかも</strong> → Driveの <a href="https://drive.google.com/drive/trash" target="_blank" rel="noopener" class="info-link">ゴミ箱</a> を確認、あれば復元してください。</li>
+        <li><strong>スプレッドシートのタブ名を変えてしまったかも</strong> → タブ名を <code>Sheet1</code>（半角S大文字）に戻してください。</li>
+      </ol>
+
+      <h3 class="sub-head">▶ アプリの利用をやめたい</h3>
+      <ol class="steps info-color">
+        <li>不要なら、Drive上のスプレッドシートを削除（または別の場所に保管）します。</li>
+        <li><a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener" class="info-link">Googleアカウントのアクセス権設定</a> を開きます。</li>
+        <li>本アプリの名前を探して、<strong>「アクセス権を削除」</strong> をクリックします。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">⚠️ スプレッドシートを直接編集するときの注意</span>値の修正や、1行まるごとの削除は安全です。ただし以下を行うとアプリが正しく動作しなくなります：<br>
+        ・列の追加／削除／並べ替え<br>
+        ・「Sheet1」タブの名前変更・削除<br>
+        ・1行目（ヘッダー行）の削除<br>
+        壊してしまっても上記の「変更履歴」から戻せるので、心配しすぎなくても大丈夫です。
+      </div>
+    </section>
+  </div>
+
+  <!-- 詳細: ログインがうまくいかないとき -->
+  <div class="topic-detail" id="login-trouble">
+    <button class="back-btn" onclick="showList()">← 一覧へもどる</button>
+
+    <section>
+      <div class="section-head">
+        <div class="section-icon info">🔐</div>
+        <h2>ログインがうまくいかないとき<span class="sub-title">ポップアップ／通信エラー／許可の問題</span></h2>
+      </div>
+
+      <p>本アプリで <strong>Googleドライブにデータを保存</strong> する設定にしている場合は、Googleでのログインが必要です。ログインが進まない・エラーが出るときは、以下を順番にお試しください。</p>
+
+      <h3 class="sub-head">① ログインボタンを押しても何も起きない</h3>
+      <p>ブラウザの「ポップアップブロック」が原因の可能性があります。お使いのブラウザに合わせて解除してください。</p>
+
+      <p class="os-label">▶ Chrome（PC・スマホ共通）</p>
+      <ol class="steps info-color">
+        <li>アドレスバー右側の <strong>🚫マーク</strong>（ポップアップがブロックされたアイコン）をタップ／クリックします。</li>
+        <li><strong>「このサイトのポップアップとリダイレクトを常に許可する」</strong> を選択します。</li>
+        <li>ページを再読み込みしてから、もう一度ログインボタンを押します。</li>
+      </ol>
+
+      <p class="os-label">▶ Safari（iPhone・iPad）</p>
+      <ol class="steps info-color">
+        <li>iPhoneの <strong>「設定」</strong> アプリを開きます。</li>
+        <li>下にスクロールして <strong>「Safari」</strong> をタップします。</li>
+        <li><strong>「ポップアップブロック」</strong> のスイッチをオフにします。</li>
+        <li>本アプリのページに戻って再読み込みしてから、もう一度ログインボタンを押します。</li>
+      </ol>
+
+      <p class="os-label">▶ Safari（Mac）</p>
+      <ol class="steps info-color">
+        <li>Safariメニュー → <strong>設定</strong> → <strong>Webサイト</strong> タブを開きます。</li>
+        <li>左メニューから <strong>ポップアップウィンドウ</strong> を選択します。</li>
+        <li>本アプリのドメインを <strong>「許可」</strong> に変更します。</li>
+        <li>ページを再読み込みしてから、もう一度ログインボタンを押します。</li>
+      </ol>
+
+      <h3 class="sub-head">② ログイン後に「通信エラー」と表示される</h3>
+      <ol class="steps info-color">
+        <li>ページを再読み込みしてみます。<br><span style="font-size: 11px; color: var(--sub);">※ PCは Ctrl+R／Mac は Cmd+R</span></li>
+        <li>解決しない場合、ブラウザの <strong>シークレットウィンドウ／プライベートブラウズ</strong> で開いてみます。</li>
+        <li>それでもダメな場合、<strong>別のブラウザ</strong>（Chrome → Safari など）で試してみます。</li>
+        <li>インターネット接続を確認します。</li>
+      </ol>
+
+      <h3 class="sub-head">③ 誤って「許可しない」を押してしまった</h3>
+      <ol class="steps info-color">
+        <li><a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener" class="info-link">Googleアカウントのアクセス権設定ページ</a> を開きます。</li>
+        <li>本アプリの名前を探してタップします。</li>
+        <li><strong>「アクセス権を削除」</strong> をクリックします。</li>
+        <li>本アプリのページに戻り、もう一度ログインボタンを押します。今度は同意画面が再度表示されます。</li>
+      </ol>
+
+      <div class="note">
+        <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報は一切見ることができない設計です。
+      </div>
+
+      <h3 class="sub-head">④ それでも解決しないとき</h3>
+      <p>恐れ入りますが、お使いの環境（OS・ブラウザ）とエラーの状況を添えて、下記までお知らせください。</p>
+
+      <div class="note">
+        <span class="label">📧 連絡先</span>（ここにご連絡先メール／X等を入れてください）
       </div>
     </section>
   </div>
@@ -1066,5 +1414,105 @@
   });
 </script>
 
+<!-- ヘルプページのアイコン・PWA設定（💡） -->
+<script>
+(function () {
+  var EMOJI = '💡';
+  var APP_NAME = 'ヘルプ｜使い方ガイド';
+  var SHORT_NAME = 'ヘルプ';
+
+  function getBg() {
+    var v = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    return v || '#faf7f0';
+  }
+
+  function makeIcon(size, radiusRatio, emojiRatio, bg) {
+    var canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    // 背景
+    if (radiusRatio > 0) {
+      var r = size * radiusRatio;
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.arcTo(size, 0, size, size, r);
+      ctx.arcTo(size, size, 0, size, r);
+      ctx.arcTo(0, size, 0, 0, r);
+      ctx.arcTo(0, 0, size, 0, r);
+      ctx.closePath();
+      ctx.fillStyle = bg;
+      ctx.fill();
+    } else {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, size, size);
+    }
+    // 絵文字
+    ctx.font = (size * emojiRatio) + "px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(EMOJI, size / 2, size / 2 + size * 0.025);
+    return canvas.toDataURL('image/png');
+  }
+
+  function setLink(rel, href, extra) {
+    var link = document.querySelector('link[rel="' + rel + '"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = rel;
+      document.head.appendChild(link);
+    }
+    if (extra && extra.type) link.type = extra.type;
+    link.href = href;
+  }
+
+  function init() {
+    var bg = getBg();
+
+    // タブ favicon（SVG）
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+      '<rect width="100" height="100" rx="22" ry="22" fill="' + bg + '"/>' +
+      '<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" ' +
+      'font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif">' + EMOJI + '</text></svg>';
+    setLink('icon', 'data:image/svg+xml,' + encodeURIComponent(svg), { type: 'image/svg+xml' });
+
+    // iPhone ホーム画面（apple-touch-icon 180px）
+    setLink('apple-touch-icon', makeIcon(180, 0.22, 0.55, bg));
+
+    // PWAマニフェスト用アイコン 4枚
+    var icon192any = makeIcon(192, 0.22, 0.55, bg);
+    var icon512any = makeIcon(512, 0.22, 0.55, bg);
+    var icon192mask = makeIcon(192, 0, 0.50, bg);
+    var icon512mask = makeIcon(512, 0, 0.50, bg);
+
+    var manifest = {
+      id: location.pathname,
+      name: APP_NAME,
+      short_name: SHORT_NAME,
+      start_url: location.pathname,
+      scope: location.pathname,
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: bg,
+      theme_color: bg,
+      icons: [
+        { src: icon192any, sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: icon192mask, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+        { src: icon512any, sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: icon512mask, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      ]
+    };
+    setLink('manifest', 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest)));
+  }
+
+  if (document.readyState !== 'loading') {
+    init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
+  }
+})();
+</script>
+
 </body>
 </html>
+
