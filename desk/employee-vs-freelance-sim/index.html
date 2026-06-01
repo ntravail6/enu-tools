@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf6f4">
+<title>会社員 vs フリーランス 比較シミュレーター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#C9A0A0; --primary-light:#F0DEDE; --primary-dark:#A67878;
+  --primary-soft:#F7EDE9; --accent:#B88A8A;
+  --bg:#faf6f4; --bg-soft:#fdfaf9; --line:#ecdfdd;
+  --card:#fff; --text:#2C2A24; --sub:#7A756B;
+  --seg-take:#8FB3A6; --seg-cost:#CDBBA0; --seg-pension:#C9A0A0;
+  --seg-health:#8FA9C4; --seg-emp:#C9B26B; --seg-itax:#A493C2; --seg-rtax:#B58E73;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6;
+  padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+          max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+}
+.page-wrapper{max-width:960px;width:100%;margin:0 auto}
+
+/* ヘッダー */
+.app-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.app-icon{width:56px;height:56px;border-radius:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:30px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+.app-header h1{font-size:1.5rem;font-weight:700;color:var(--primary-dark);margin:0;line-height:1.25;letter-spacing:0.02em}
+.app-header .tagline{font-size:.74rem;color:var(--sub);margin:2px 0 0}
+
+/* カード・入力 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card h2{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 12px}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.card-head h2{margin:0}
+.field-label{display:block;font-size:.78rem;color:var(--sub);font-weight:600;margin:0 0 6px}
+.main-label{display:block;font-size:.92rem;color:var(--primary-dark);font-weight:700;margin:0 0 7px;line-height:1.45}
+input[type=text],input[type=number],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--primary)}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%237A756B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center}
+.income-input{font-size:1.15rem;font-weight:700;text-align:right}
+
+/* モード切替・表示切替 */
+.mode-ctrl,.disp-ctrl{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg-soft)}
+.mode-ctrl{margin-bottom:14px}
+.mode-btn,.seg-btn{border:none;background:transparent;color:var(--sub);font-family:inherit;font-weight:600;cursor:pointer;transition:.15s}
+.mode-btn{padding:6px 14px;font-size:.72rem}
+.seg-btn{padding:6px 14px;font-size:.72rem}
+.mode-btn.active,.seg-btn.active{background:var(--primary);color:#fff}
+
+/* プリセット（グリッド整列）*/
+.presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;margin-top:10px}
+.preset-chip{border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);border-radius:999px;padding:7px 4px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;text-align:center}
+.preset-chip:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+
+/* 前提パネル */
+.assump-toggle{background:transparent;border:1px solid var(--sub);color:var(--sub);border-radius:999px;padding:6px 14px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;margin-top:16px;white-space:nowrap}
+.assump-toggle:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+.assump-sub{font-size:.68rem;color:var(--sub);margin:6px 0 0}
+.assump-body{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.assump-body.open{display:block}
+.assump-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.assump-grid .field-label{margin-bottom:4px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);margin:4px 0 10px}
+.check-row input{width:auto}
+.assump-note{font-size:.7rem;color:var(--sub);line-height:1.6;margin-top:10px;background:var(--bg-soft);border-radius:8px;padding:10px 12px}
+
+/* 結果 */
+.disp-ctrl-wrap{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-bottom:10px}
+.disp-label{font-size:.72rem;color:var(--sub);font-weight:600;line-height:1}
+.period-note{font-size:.68rem;color:var(--sub)}
+.summary-title{font-size:.8rem;color:var(--sub);font-weight:700;margin:0 0 8px;text-align:center}
+.summary-bar{display:flex;gap:12px;margin-bottom:12px}
+.summary-box{flex:1 1 0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+.summary-box .who{font-size:.8rem;color:var(--sub);font-weight:700}
+.summary-box .amount{font-size:clamp(1.05rem,5.2vw,1.5rem);font-weight:700;color:var(--primary-dark);margin:4px 0 2px;white-space:nowrap}
+.summary-box .rate{font-size:.7rem;color:var(--sub)}
+.summary-box.winner{border-color:var(--primary);background:var(--primary-soft)}
+.diff-note{font-size:.82rem;color:var(--text);text-align:center;margin:0 0 6px;line-height:1.6}
+.diff-note strong{color:var(--primary-dark)}
+.rev-headline{background:var(--primary-soft);border:1px solid var(--primary-light);border-radius:10px;padding:13px 16px;color:var(--primary-dark);font-weight:700;line-height:1.3;margin:0 0 12px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+.rev-headline .rh-title{font-size:.82rem;color:var(--sub);font-weight:700}
+.rev-headline .rh-line{font-size:.9rem}
+.rev-headline .rh-line b{font-size:1.02rem;color:var(--primary-dark)}
+
+/* 積み上げバー */
+.bars-wrap{display:flex;gap:20px;justify-content:center;align-items:flex-end;padding:6px 0 4px}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;max-width:150px}
+.bar-track{width:100%;height:320px;display:flex;flex-direction:column-reverse;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--bg-soft)}
+.bar-seg{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;transition:height .4s ease}
+.seg-lbl{font-size:.6rem;font-weight:700;line-height:1.15;padding:0 2px}
+.seg-lbl.d{color:#3a342e}
+.bar-caption{font-size:.82rem;font-weight:700;color:var(--text);margin-top:8px;text-align:center;line-height:1.35}
+.bar-caption .sub{display:block;font-size:.7rem;color:var(--sub);font-weight:600;margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--text)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* 比較テーブル */
+.cmp-table{width:100%;border-collapse:collapse}
+.cmp-table th,.cmp-table td{text-align:right;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.82rem;vertical-align:top}
+.cmp-table th:first-child,.cmp-table td:first-child{text-align:left}
+.cmp-table thead th{font-weight:600;color:var(--primary-dark);white-space:nowrap}
+.cmp-table .rlabel{font-weight:600}
+.cmp-table .rsub{display:block;font-size:.64rem;color:var(--sub);font-weight:400;margin-top:1px;line-height:1.3}
+.cmp-table .row-ref td{color:var(--sub)}
+.cmp-table .row-total td{font-weight:700}
+.cmp-table .row-take td{font-weight:700;color:var(--primary-dark);background:var(--primary-soft)}
+.cmp-table .diffv{color:var(--sub);font-weight:600}
+.cmp-cards{display:none}
+.formula{display:none;font-size:.66rem;color:var(--sub);margin-top:3px;line-height:1.45;font-weight:400}
+.show-formula .formula{display:block}
+.cmp-hint{font-size:.7rem;color:var(--sub);line-height:1.6;margin:8px 0 0}
+.result-note{font-size:.7rem;color:var(--sub);line-height:1.65;margin-top:12px;padding:10px 12px;background:var(--bg-soft);border-radius:8px}
+.result-note b{color:var(--text)}
+.mini-toggle{background:transparent;border:1px solid var(--sub);color:var(--sub);border-radius:999px;padding:5px 12px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.mini-toggle.active{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-dark)}
+.hidden{display:none}
+
+@media(max-width:650px){
+  .app-header h1{font-size:1.25rem}
+  .cmp-table{display:none}
+  .cmp-cards{display:block}
+  .cmp-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg-soft)}
+  .cmp-card .metric{font-size:.8rem;font-weight:700;color:var(--primary-dark);margin-bottom:6px}
+  .cmp-card .metric .msub{display:block;font-size:.64rem;color:var(--sub);font-weight:400;margin-top:1px;line-height:1.3}
+  .cmp-card .vals{display:flex;justify-content:space-between;gap:8px;font-size:.82rem}
+  .cmp-card .vals .col{text-align:center;flex:1;min-width:0}
+  .cmp-card .vals .lbl{display:block;font-size:.66rem;color:var(--sub);font-weight:600;margin-bottom:2px}
+  .cmp-card.take{background:var(--primary-soft);border-color:var(--primary)}
+  .cmp-card.take .metric{color:var(--primary-dark)}
+  .bars-wrap{gap:12px}
+}
+@media(max-width:380px){
+  .card{padding:15px}
+  .mode-btn{padding:6px 14px}
+  .bars-wrap{gap:8px}
+  .summary-box{padding:12px 8px}
+  .legend{gap:5px 10px}
+  .legend-item{font-size:.66rem}
+}
+
+/* Notice（101）*/
+.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.enu-notice-wrap{width:100%}
+.enu-notice-wrap.is-mini{width:auto}
+.enu-notice-wrap > .enu-notice{display:flex}
+.enu-notice-wrap > .enu-notice-mini{display:none}
+.enu-notice-wrap.is-mini > .enu-notice{display:none}
+.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+.enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+.enu-notice .enu-body{flex:1;min-width:0}
+.enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+.enu-notice .enu-close-btn:hover{opacity:1}
+.enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
+.enu-notice-date,.enu-notice-mini-date{background:#f5f1e8;border-color:#e0d6bf;color:#6b5a3d}
+.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
+.enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
+.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+
+/* Toolbar（102）*/
+.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
+.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
+.enu-btn-card:hover{transform:translateY(-1px)}
+.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
+.enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
+.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
+.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+.enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 参照（公式・折りたたみ）*/
+.refs-card{margin-top:12px;margin-bottom:12px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:0 14px}
+.refs-card summary{cursor:pointer;font-size:.74rem;font-weight:700;color:var(--primary-dark);padding:11px 0;list-style:none}
+.refs-card summary::-webkit-details-marker{display:none}
+.refs-card summary::before{content:'▸ '}
+.refs-card[open] summary::before{content:'▾ '}
+.refs{list-style:none;margin:0;padding:0 0 12px}
+.refs li{font-size:.72rem;line-height:1.55;margin-bottom:7px}
+.refs li:last-child{margin-bottom:0}
+.refs a{color:var(--primary-dark);text-decoration:none;text-underline-offset:2px}
+.refs a:hover{text-decoration:underline}
+.refs .src{display:block;color:var(--sub);font-size:.64rem;line-height:1.4;margin-top:1px}
+
+/* フッター */
+.home-btn-wrap{margin-top:24px;text-align:center}.home-btn{display:inline-block;text-decoration:none;background:transparent;border:1px solid var(--sub);color:var(--sub);padding:7px 16px;font-size:.75rem;font-weight:600;border-radius:999px;font-family:inherit;transition:.15s}
+.home-btn:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+.app-footer{margin-top:12px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);text-align:center;opacity:.85}
+.app-footer .brand{font-size:.7rem;color:var(--sub);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif}
+.app-footer .brand a{color:var(--sub);text-decoration:none}
+.app-footer .brand a:hover{color:var(--primary-dark)}
+.app-footer .copy{font-size:.65rem;color:var(--sub);margin-top:8px;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif}
+
+@media print{
+  body{background:#fff}
+  .enu-notice-area,.enu-toolbar,.enu-toast,.presets,.assump-toggle,.assump-sub,.home-btn-wrap,.mode-ctrl,.disp-ctrl-wrap{display:none !important}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="app-header">
+    <div class="app-icon" id="appIcon">🆚</div>
+    <div>
+      <h1>会社員 vs フリーランス 比較シミュレーター</h1>
+      <p class="tagline">同じ収入でも手取りはこんなに違う。年金・保険・税金を横並びで比較</p>
+    </div>
+  </header>
+
+  <!-- 注意書き（101：④ 計算の免責 / ⑤ 情報の時点 / ⑥ ヘルプ）-->
+  <div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="trade">
+      <div class="enu-notice enu-notice-trade">
+        <span class="enu-icon">🚨</span>
+        <span class="enu-body">計算結果はあくまで概算の目安です。本アプリは税務助言ではありません。実際の金額や手続きは、お住まいの自治体や税理士などの専門家に必ずご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責を表示" title="免責を表示">🚨</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="date">
+      <div class="enu-notice enu-notice-date">
+        <span class="enu-icon">📅</span>
+        <span class="enu-body">税率・控除・保険料は <strong id="enu-info-date">2026年5月時点</strong> の情報（令和8年分 所得税／令和8年度 社会保険料）をもとにした概算です。最新の制度は公式情報でご確認ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-date" aria-label="情報の時点を表示" title="情報の時点を表示">📅</button>
+    </div>
+    <div class="enu-notice-wrap" data-notice-id="help">
+      <div class="enu-notice enu-notice-help">
+        <span class="enu-icon">📚</span>
+        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+    </div>
+  </div>
+
+  <!-- 入力カード -->
+  <div class="card">
+    <div class="mode-ctrl">
+      <button type="button" class="mode-btn active" data-m="forward">収入から</button>
+      <button type="button" class="mode-btn" data-m="reverse">手取りから</button>
+    </div>
+
+    <!-- 順算 -->
+    <div id="panelForward">
+      <label class="main-label" for="income">年収（会社員の額面）／ 売上（フリーランス・年額）</label>
+      <input type="text" id="income" class="income-input" inputmode="numeric" value="5,000,000" aria-label="年収・売上">
+      <div class="presets">
+        <button type="button" class="preset-chip" data-v="3000000">300万</button>
+        <button type="button" class="preset-chip" data-v="4000000">400万</button>
+        <button type="button" class="preset-chip" data-v="5000000">500万</button>
+        <button type="button" class="preset-chip" data-v="7000000">700万</button>
+        <button type="button" class="preset-chip" data-v="10000000">1,000万</button>
+        <button type="button" class="preset-chip" data-v="15000000">1,500万</button>
+      </div>
+    </div>
+
+    <!-- 逆算 -->
+    <div id="panelReverse" class="hidden">
+      <label class="main-label" for="revType">逆算タイプ</label>
+      <select id="revType">
+        <option value="target">目標の手取りから収入を逆算</option>
+        <option value="match">手取りを揃える収入を逆算</option>
+      </select>
+      <div id="revTargetWrap" style="margin-top:14px">
+        <label class="main-label" for="targetTake">目標の手取り（年額）</label>
+        <input type="text" id="targetTake" class="income-input" inputmode="numeric" value="4,000,000">
+      </div>
+      <div id="revMatchWrap" class="hidden" style="margin-top:14px">
+        <label class="main-label" for="revDir">方向</label>
+        <select id="revDir">
+          <option value="emp2free">会社員の年収 → フリーランスの売上</option>
+          <option value="free2emp">フリーランスの売上 → 会社員の年収</option>
+        </select>
+        <label class="main-label" for="matchVal" id="matchLabel" style="margin-top:14px">会社員の年収（年額）</label>
+        <input type="text" id="matchVal" class="income-input" inputmode="numeric" value="5,000,000">
+      </div>
+    </div>
+
+    <button type="button" class="assump-toggle" id="assumpToggle">⚙️ 前提・係数を調整する</button>
+    <p class="assump-sub">自治体・経費・年齢に合わせて調整できます</p>
+    <div class="assump-body" id="assumpBody">
+      <div class="check-row">
+        <input type="checkbox" id="over40">
+        <label for="over40">40〜64歳（介護保険料を加算）</label>
+      </div>
+      <div class="assump-grid">
+        <div><label class="field-label" for="keihiRate">経費率（フリー・売上に対する%）</label><input type="number" id="keihiRate" value="15" min="0" max="100" step="1"></div>
+        <div><label class="field-label" for="aoiro">青色申告特別控除（フリー）</label>
+          <select id="aoiro"><option value="650000" selected>65万円</option><option value="550000">55万円</option><option value="100000">10万円</option><option value="0">使わない（白色）</option></select></div>
+        <div><label class="field-label" for="kenpoRate">健康保険料率（会社員・全体%）</label><input type="number" id="kenpoRate" value="10.0" min="0" max="20" step="0.01"></div>
+        <div><label class="field-label" for="koyoRate">雇用保険料率（会社員・本人%）</label><input type="number" id="koyoRate" value="0.50" min="0" max="5" step="0.01"></div>
+        <div><label class="field-label" for="nenkinYear">国民年金（フリー・年額）</label><input type="text" id="nenkinYear" inputmode="numeric" value="215,040"></div>
+        <div><label class="field-label" for="kokuhoRate">国保 所得割率（フリー・%）</label><input type="number" id="kokuhoRate" value="10.0" min="0" max="30" step="0.1"></div>
+        <div><label class="field-label" for="kokuhoKinto">国保 均等割（フリー・年・円）</label><input type="text" id="kokuhoKinto" inputmode="numeric" value="50,000"></div>
+        <div><label class="field-label" for="kokuhoCap">国保 賦課限度額（フリー・年・円）</label><input type="text" id="kokuhoCap" inputmode="numeric" value="1,060,000"></div>
+        <div><label class="field-label" for="juminRate">住民税 所得割率（%）</label><input type="number" id="juminRate" value="10.0" min="0" max="20" step="0.1"></div>
+        <div><label class="field-label" for="juminKinto">住民税 均等割（年・円）</label><input type="text" id="juminKinto" inputmode="numeric" value="5,000"></div>
+      </div>
+      <p class="assump-note">
+        ※ 国民年金は令和8年度（月17,920円×12＝215,040円）。令和7年度は210,120円でした。<br>
+        ※ 国民健康保険・住民税は<b>お住まいの自治体で大きく異なります</b>。40〜64歳は国保にも介護分が上乗せされるため、所得割率・限度額を調整してください。<br>
+        ※ 厚生年金は18.3%（本人9.15%・標準報酬月額65万円が上限）、健康・介護保険は労使折半で計算しています（協会けんぽの料率は令和8年度の値をご確認のうえ調整してください）。<br>
+        ※ 単身・扶養なし・基礎控除と社会保険料控除のみを考慮した概算です（生命保険料控除・配偶者控除・賞与・標準報酬等級・個人事業税・消費税などは未考慮）。
+      </p>
+    </div>
+  </div>
+
+  <!-- 結果 -->
+  <div id="result" class="hidden">
+    <div class="disp-ctrl-wrap">
+      <span class="disp-label">表示</span>
+      <div class="disp-ctrl">
+        <button type="button" class="seg-btn active" data-p="year">年額</button>
+        <button type="button" class="seg-btn" data-p="month">月額</button>
+      </div>
+      <span class="period-note hidden" id="periodNote">（年額÷12）</span>
+    </div>
+
+    <p class="rev-headline hidden" id="revHeadline"></p>
+    <p class="summary-title">手取り（概算）</p>
+    <div class="summary-bar">
+      <div class="summary-box" id="boxEmp">
+        <div class="who">👔 会社員</div>
+        <div class="amount" id="empTake">¥0</div>
+        <div class="rate" id="empRate">手取り率 0%</div>
+      </div>
+      <div class="summary-box" id="boxFree">
+        <div class="who">🧑‍💻 フリーランス</div>
+        <div class="amount" id="freeTake">¥0</div>
+        <div class="rate" id="freeRate">手取り率 0%</div>
+      </div>
+    </div>
+    <p class="diff-note" id="diffNote"></p>
+
+    <div class="card">
+      <h2>手取りの内訳（積み上げ比較）</h2>
+      <div class="bars-wrap">
+        <div class="bar-col"><div class="bar-track" id="barEmp"></div><div class="bar-caption">👔 会社員<span class="sub" id="barEmpSub"></span></div></div>
+        <div class="bar-col"><div class="bar-track" id="barFree"></div><div class="bar-caption">🧑‍💻 フリーランス<span class="sub" id="barFreeSub"></span></div></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="card" id="cmpCard">
+      <div class="card-head"><h2>項目別 比較</h2><button type="button" class="mini-toggle" id="formulaToggle">計算式</button></div>
+      <table class="cmp-table"><thead><tr><th>項目</th><th>👔 会社員</th><th>🧑‍💻 フリーランス</th><th>差</th></tr></thead><tbody id="cmpTableBody"></tbody></table>
+      <div class="cmp-cards" id="cmpCards"></div>
+      <p class="cmp-hint">差は「フリーランス − 会社員」。プラスはフリーランスが多い側です（色に良し悪しの意味はありません）。</p>
+      <div class="result-note"><b>📊 グラフの見方：</b>「控除・経費」は税の計算に使う差引額で、会社員の給与所得控除は実際の出費ではありません（フリーの経費は実支出）。手取りは概算で、賞与・各種控除・自治体差により実際とは異なります。</div>
+    </div>
+  </div>
+
+  <!-- 参照（公式・折りたたみ）-->
+  <details class="refs-card">
+    <summary>📚 参照（公式）</summary>
+    <ul class="refs">
+      <li><a href="https://www.nta.go.jp/publication/pamph/koho/kurashi/index.htm" target="_blank" rel="noopener">くらしの税情報（各年度版）</a><br><span class="src">国税庁 ｜ 給与所得控除・基礎控除・所得税率</span></li>
+      <li><a href="https://www.nenkin.go.jp/" target="_blank" rel="noopener">日本年金機構 公式サイト</a><br><span class="src">国民年金・厚生年金の保険料</span></li>
+      <li><a href="https://www.kyoukaikenpo.or.jp/index.html" target="_blank" rel="noopener">全国健康保険協会（協会けんぽ）</a><br><span class="src">健康保険・介護保険・国保・住民税はお住まいの自治体</span></li>
+    </ul>
+  </details>
+
+  <!-- アクションボタン（102）-->
+  <div class="enu-toolbar">
+    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
+    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+  </div>
+
+  <div class="home-btn-wrap"><a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a></div>
+  <footer class="app-footer">
+    <div class="brand"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></div>
+    <div class="copy">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</div>
+  </footer>
+
+</div>
+
+<div class="enu-toast" id="enu-toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+const ENU_CONFIG={appId:'employee-vs-freelance-sim',appName:'会社員 vs フリーランス 比較シミュレーター',dataVersion:1,storageType:'local',helpUrl:'https://enu-tools.pages.dev/help/',helpOpenNewTab:true};
+const CFG=ENU_CONFIG;
+const _key=(s)=>'enu_'+CFG.appId+'_'+s;
+window.enuTools=window.enuTools||{};
+
+/* ===== 税・社保 係数（令和8年分 所得税 / 令和8年度 社会保険・概算）===== */
+const TAX={
+  // 給与所得控除（令和8年分：最低保障69万＋令和8・9年特例で年収220万以下は74万、それ超は従来速算表）
+  kyuyoKojo(i){ if(i<=2200000)return 740000; if(i<=3600000)return i*0.30+80000; if(i<=6600000)return i*0.20+440000; if(i<=8500000)return i*0.10+1100000; return 1950000; },
+  // 基礎控除（令和8年分：本則62万＋特例で合計所得489万以下104万/489万超655万以下67万、655万超2350万以下62万、以降は逓減＝概算）
+  kisoKojo(g){ if(g<=4890000)return 1040000; if(g<=6550000)return 670000; if(g<=23500000)return 620000; if(g<=24000000)return 480000; if(g<=24500000)return 320000; if(g<=25000000)return 160000; return 0; },
+  incomeTax(t){ t=Math.max(0,Math.floor(t/1000)*1000); let x; if(t<=1950000)x=t*0.05; else if(t<=3300000)x=t*0.10-97500; else if(t<=6950000)x=t*0.20-427500; else if(t<=9000000)x=t*0.23-636000; else if(t<=18000000)x=t*0.33-1536000; else if(t<=40000000)x=t*0.40-2796000; else x=t*0.45-4796000; return Math.floor(Math.max(0,x)*1.021); }
+};
+const JK=430000; // 住民税基礎控除（概算・要確認）
+const PCAP=650000, HCAP=1390000; // 標準報酬月額上限（厚年/健保）
+
+/* 前提（A）*/
+const A={};
+function numPct(id,def){const v=parseFloat($(id).value);return isNaN(v)?def:v;}
+function numCm(id,def){const v=parseInt(($(id).value||'').replace(/[^0-9]/g,''),10);return isNaN(v)?def:v;}
+function readAssump(){
+  A.over40=$('over40').checked;
+  A.keihiR=numPct('keihiRate',15)/100;
+  A.aoiro=parseInt($('aoiro').value,10)||0;
+  A.kenpoR=numPct('kenpoRate',10)/100;
+  A.koyoR=numPct('koyoRate',0.50)/100;
+  A.nenkin=numCm('nenkinYear',215040);
+  A.kokuhoR=numPct('kokuhoRate',10)/100;
+  A.kokuhoK=numCm('kokuhoKinto',50000);
+  A.kokuhoCap=numCm('kokuhoCap',1060000);
+  A.juminR=numPct('juminRate',10)/100;
+  A.juminK=numCm('juminKinto',5000);
+}
+
+/* 計算（会社員 / フリー）*/
+function calcEmp(X){
+  const m=X/12;
+  const kyuyoKojo=TAX.kyuyoKojo(X);
+  const shotoku=Math.max(0,X-kyuyoKojo);
+  const kosei=Math.min(m,PCAP)*0.0915*12;
+  const kenpo=Math.min(m,HCAP)*(A.kenpoR/2)*12;
+  const kaigo=A.over40?Math.min(m,HCAP)*(0.0159/2)*12:0;
+  const koyo=X*A.koyoR;
+  const shaho=kosei+kenpo+kaigo+koyo;
+  const itax=TAX.incomeTax(shotoku-shaho-TAX.kisoKojo(shotoku));
+  const rtax=Math.floor(Math.max(0,shotoku-shaho-JK)*A.juminR)+A.juminK;
+  const take=X-shaho-itax-rtax;
+  return {gross:X,kyuyoKojo,shotoku,kosei,kenpo,kaigo,koyo,shaho,itax,rtax,take};
+}
+function calcFree(X){
+  const keihi=X*A.keihiR;
+  const before=Math.max(0,X-keihi);
+  const aoiro=Math.min(A.aoiro,before);
+  const shotoku=Math.max(0,before-aoiro);
+  const nenkin=A.nenkin;
+  const kbase=Math.max(0,shotoku-430000);
+  const kokuho=Math.min(kbase*A.kokuhoR+A.kokuhoK,A.kokuhoCap);
+  const shaho=nenkin+kokuho;
+  const itax=TAX.incomeTax(shotoku-shaho-TAX.kisoKojo(shotoku));
+  const rtax=Math.floor(Math.max(0,shotoku-shaho-JK)*A.juminR)+A.juminK;
+  const take=X-keihi-shaho-itax-rtax;
+  return {gross:X,keihi,aoiro,shotoku,nenkin,kokuho,shaho,itax,rtax,take};
+}
+/* 手取りtargetになる収入を二分法で逆算 */
+function invert(fn,target){
+  let lo=0,hi=1e9;
+  if(fn(hi).take<target) return hi;
+  for(let i=0;i<60;i++){const mid=(lo+hi)/2; if(fn(mid).take<target) lo=mid; else hi=mid;}
+  return Math.round((lo+hi)/2);
+}
+
+/* 表示ヘルパ */
+const $=(id)=>document.getElementById(id);
+let period='year', mode='forward';
+const dval=(n)=>period==='month'?n/12:n;
+const dispYen=(n)=>'¥'+Math.round(dval(n)).toLocaleString();
+
+/* コンマ入力整形 */
+function fmtComma(el){
+  const n=parseInt((el.value||'').replace(/[^0-9]/g,''),10)||0;
+  el.value=n?n.toLocaleString():'';
+}
+const pInt=(el)=>parseInt((el.value||'').replace(/[^0-9]/g,''),10)||0;
+
+/* 計算ディスパッチャ */
+function calc(){
+  readAssump();
+  let empR,freeR,scaleMax,headline='';
+  if(mode==='forward'){
+    const X=pInt($('income'));
+    if(X<=0){$('result').classList.add('hidden');return;}
+    empR=calcEmp(X); freeR=calcFree(X); scaleMax=X;
+  }else{
+    const rt=$('revType').value;
+    if(rt==='target'){
+      const T=pInt($('targetTake'));
+      if(T<=0){$('result').classList.add('hidden');return;}
+      const re=invert(calcEmp,T), rf=invert(calcFree,T);
+      empR=calcEmp(re); freeR=calcFree(rf); scaleMax=Math.max(re,rf);
+      headline='<span class="rh-title">手取り '+dispYen(T)+' にするには</span><span class="rh-line">👔 会社員の額面：<b>'+dispYen(re)+'</b></span><span class="rh-line">🧑‍💻 フリーランスの売上：<b>'+dispYen(rf)+'</b></span>';
+    }else{
+      const V=pInt($('matchVal')); const dir=$('revDir').value;
+      if(V<=0){$('result').classList.add('hidden');return;}
+      if(dir==='emp2free'){
+        empR=calcEmp(V); const T=empR.take; const rf=invert(calcFree,T); freeR=calcFree(rf); scaleMax=Math.max(V,rf);
+        headline='<span class="rh-title">👔 会社員 年収 '+dispYen(V)+'（手取り '+dispYen(T)+'）と同じ手取りにするには</span><span class="rh-line">🧑‍💻 フリーランスの売上 ≒ <b>'+dispYen(rf)+'</b></span>';
+      }else{
+        freeR=calcFree(V); const T=freeR.take; const re=invert(calcEmp,T); empR=calcEmp(re); scaleMax=Math.max(V,re);
+        headline='<span class="rh-title">🧑‍💻 フリーランス 売上 '+dispYen(V)+'（手取り '+dispYen(T)+'）と同じ手取りにするには</span><span class="rh-line">👔 会社員の年収 ≒ <b>'+dispYen(re)+'</b></span>';
+      }
+    }
+  }
+  render(empR,freeR,scaleMax,headline);
+  saveLast();
+}
+
+function render(e,f,scaleMax,headline){
+  $('result').classList.remove('hidden');
+  $('periodNote').classList.toggle('hidden',period!=='month');
+
+  $('empTake').textContent=dispYen(e.take);
+  $('freeTake').textContent=dispYen(f.take);
+  $('empRate').textContent='手取り率 '+(e.gross>0?(e.take/e.gross*100).toFixed(1):'0')+'%';
+  $('freeRate').textContent='手取り率 '+(f.gross>0?(f.take/f.gross*100).toFixed(1):'0')+'%';
+  $('boxEmp').classList.toggle('winner',e.take>=f.take);
+  $('boxFree').classList.toggle('winner',f.take>e.take);
+
+  if(mode==='reverse'){
+    $('revHeadline').innerHTML=headline; $('revHeadline').classList.remove('hidden');
+    $('diffNote').classList.add('hidden');
+  }else{
+    $('revHeadline').classList.add('hidden'); $('diffNote').classList.remove('hidden');
+    const d=f.take-e.take;
+    $('diffNote').innerHTML = d===0 ? 'この条件では手取りはほぼ同じです。'
+      : (d>0 ? 'この条件では <strong>フリーランスが '+dispYen(Math.abs(d))+' 多い</strong> 手取りです。'
+             : 'この条件では <strong>会社員が '+dispYen(Math.abs(d))+' 多い</strong> 手取りです。');
+  }
+
+  const empSegs=[
+    {c:'--seg-take',l:'手取り',v:e.take},
+    {c:'--seg-pension',l:'厚生年金',v:e.kosei},
+    {c:'--seg-health',l:'健康・介護',v:e.kenpo+e.kaigo},
+    {c:'--seg-emp',l:'雇用保険',v:e.koyo},
+    {c:'--seg-itax',l:'所得税',v:e.itax},
+    {c:'--seg-rtax',l:'住民税',v:e.rtax}
+  ];
+  const freeSegs=[
+    {c:'--seg-take',l:'手取り',v:f.take},
+    {c:'--seg-cost',l:'必要経費',v:f.keihi},
+    {c:'--seg-pension',l:'国民年金',v:f.nenkin},
+    {c:'--seg-health',l:'国保',v:f.kokuho},
+    {c:'--seg-itax',l:'所得税',v:f.itax},
+    {c:'--seg-rtax',l:'住民税',v:f.rtax}
+  ];
+  drawBar('barEmp',empSegs,scaleMax);
+  drawBar('barFree',freeSegs,scaleMax);
+  $('barEmpSub').textContent='額面 '+dispYen(e.gross);
+  $('barFreeSub').textContent='売上 '+dispYen(f.gross);
+
+  const legendItems=[
+    {c:'--seg-take',l:'手取り'},{c:'--seg-cost',l:'必要経費(フリーランス)'},
+    {c:'--seg-pension',l:'年金'},{c:'--seg-health',l:'医療・介護保険'},
+    {c:'--seg-emp',l:'雇用保険(会社員)'},{c:'--seg-itax',l:'所得税'},{c:'--seg-rtax',l:'住民税'}
+  ];
+  $('legend').innerHTML=legendItems.map(i=>'<span class="legend-item"><span class="legend-dot" style="background:var('+i.c+')"></span>'+i.l+'</span>').join('');
+
+  const rows=[
+    {label:'収入（額面／売上）',sub:'働いて得る総額（天引き前）',e:e.gross,f:f.gross,formula:'会社員＝額面年収／フリーランス＝年間売上'},
+    {label:'控除・経費',sub:'税の計算で差し引ける分',e:e.kyuyoKojo,f:f.keihi+f.aoiro,ref:true,noDiff:true,formula:'会社員＝給与所得控除／フリーランス＝必要経費＋青色申告特別控除'},
+    {label:'公的年金',sub:'将来の年金のための保険料',e:e.kosei,f:f.nenkin,formula:'会社員＝厚生年金 月額×9.15%×12（上限あり）／フリーランス＝国民年金 定額'},
+    {label:'医療・介護保険',sub:'病気・介護に備える保険料',e:e.kenpo+e.kaigo,f:f.kokuho,formula:'会社員＝健保(＋介護)月額×料率÷2×12／フリーランス＝国保 (所得−43万)×所得割率＋均等割（上限あり）'},
+    {label:'雇用保険',sub:'失業などに備える保険料（会社員のみ）',e:e.koyo,f:null,formula:'会社員＝年収×雇用保険料率／フリーランスは対象外'},
+    {label:'所得税',sub:'国に納める税金',e:e.itax,f:f.itax,formula:'課税所得×税率−控除（×1.021 復興特別所得税）'},
+    {label:'住民税',sub:'自治体に納める税金',e:e.rtax,f:f.rtax,formula:'課税標準×10%＋均等割'},
+    {label:'社会保険＋税 合計',sub:'天引き・納付の合計',e:e.shaho+e.itax+e.rtax,f:f.shaho+f.itax+f.rtax,total:true},
+    {label:'手取り（概算）',sub:'実際に使えるお金',e:e.take,f:f.take,take:true,formula:'会社員＝額面−社保−税／フリーランス＝売上−経費−社保−税'}
+  ];
+
+  $('cmpTableBody').innerHTML=rows.map(row=>{
+    const cls=row.take?'row-take':row.total?'row-total':row.ref?'row-ref':'';
+    const fCell=row.f===null?'—':dispYen(row.f);
+    let diffCell='—';
+    if(row.f!==null && !row.noDiff){
+      const diff=row.f-row.e;
+      if(Math.round(diff)!==0) diffCell='<span class="diffv">'+(diff>0?'+':'−')+'¥'+Math.abs(Math.round(dval(diff))).toLocaleString()+'</span>';
+    }
+    const fm=row.formula?'<div class="formula">'+row.formula.replace(/／/g,'<br>')+'</div>':'';
+    return '<tr class="'+cls+'"><td><span class="rlabel">'+row.label+'</span>'+(row.sub?'<span class="rsub">'+row.sub+'</span>':'')+fm+'</td><td>'+dispYen(row.e)+'</td><td>'+fCell+'</td><td>'+diffCell+'</td></tr>';
+  }).join('');
+
+  $('cmpCards').innerHTML=rows.map(row=>{
+    const cls=row.take?'cmp-card take':'cmp-card';
+    const fCell=row.f===null?'—':dispYen(row.f);
+    const fm=row.formula?'<div class="formula">'+row.formula.replace(/／/g,'<br>')+'</div>':'';
+    return '<div class="'+cls+'"><div class="metric">'+row.label+(row.sub?'<span class="msub">'+row.sub+'</span>':'')+'</div><div class="vals"><div class="col"><span class="lbl">👔 会社員</span>'+dispYen(row.e)+'</div><div class="col"><span class="lbl">🧑‍💻 フリーランス</span>'+fCell+'</div></div>'+fm+'</div>';
+  }).join('');
+}
+
+function drawBar(id,segs,scaleMax){
+  const html=segs.filter(s=>s.v>0).map(s=>{
+    const pct=scaleMax>0?s.v/scaleMax*100:0;
+    let inner='';
+    if(pct>=12) inner='<span class="seg-lbl d">'+s.l+'<br>'+dispYen(s.v)+'</span>';
+    else if(pct>=6) inner='<span class="seg-lbl d">'+dispYen(s.v)+'</span>';
+    return '<div class="bar-seg" style="height:'+pct+'%;background:var('+s.c+')" title="'+s.l+' '+dispYen(s.v)+'">'+inner+'</div>';
+  }).join('');
+  $(id).innerHTML=html;
+}
+
+/* 保存・復元 */
+function saveLast(){
+  try{
+    const d={mode,period,
+      income:$('income').value,revType:$('revType').value,revDir:$('revDir').value,
+      targetTake:$('targetTake').value,matchVal:$('matchVal').value,
+      over40:$('over40').checked,keihiRate:$('keihiRate').value,aoiro:$('aoiro').value,
+      kenpoRate:$('kenpoRate').value,koyoRate:$('koyoRate').value,nenkinYear:$('nenkinYear').value,
+      kokuhoRate:$('kokuhoRate').value,kokuhoKinto:$('kokuhoKinto').value,kokuhoCap:$('kokuhoCap').value,
+      juminRate:$('juminRate').value,juminKinto:$('juminKinto').value};
+    localStorage.setItem(_key('last'),JSON.stringify(d));
+  }catch(e){}
+}
+function loadLast(){
+  try{
+    const raw=localStorage.getItem(_key('last')); if(!raw)return;
+    const d=JSON.parse(raw);
+    ['income','revType','revDir','targetTake','matchVal','keihiRate','aoiro','kenpoRate','koyoRate','nenkinYear','kokuhoRate','kokuhoKinto','kokuhoCap','juminRate','juminKinto']
+      .forEach(k=>{ if(d[k]!=null && $(k)) $(k).value=d[k]; });
+    if(d.over40!=null) $('over40').checked=d.over40;
+    if(d.period) period=d.period;
+    if(d.mode) mode=d.mode;
+  }catch(e){}
+}
+
+/* モード・表示UIの反映 */
+function applyMode(){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.m===mode));
+  $('panelForward').classList.toggle('hidden',mode!=='forward');
+  $('panelReverse').classList.toggle('hidden',mode!=='reverse');
+}
+function applyRevType(){
+  const t=$('revType').value;
+  $('revTargetWrap').classList.toggle('hidden',t!=='target');
+  $('revMatchWrap').classList.toggle('hidden',t!=='match');
+}
+function applyRevDir(){
+  const emp=$('revDir').value==='emp2free';
+  $('matchLabel').textContent=emp?'会社員の年収（年額）':'フリーランスの売上（年額）';
+}
+function applyPeriod(){
+  document.querySelectorAll('.disp-ctrl .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===period));
+}
+
+/* Notice（101）*/
+function initNotices(){
+  const K=_key('notice_minimized');
+  const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+  const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
+  const help=$('enu-help-link');
+  if(help){help.href=CFG.helpUrl||'#';if(CFG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener'}}
+  const list=get();
+  document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});
+  document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.add('is-mini');const l=get();if(!l.includes(id)){l.push(id);set(l)}}));
+  document.querySelectorAll('.enu-notice-mini').forEach(mb=>mb.addEventListener('click',()=>{const w=mb.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.remove('is-mini');set(get().filter(x=>x!==id))}));
+  const dateEl=$('enu-info-date'); if(dateEl){const dt=new Date();dateEl.textContent=dt.getFullYear()+'年'+(dt.getMonth()+1)+'月時点';}
+}
+
+/* アクションボタン（102）*/
+function showToast(msg){const t=$('enu-toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+window.enuTools.toast=showToast;
+async function handleSimpleShare(){
+  const sd={title:CFG.appName,text:CFG.appName,url:location.href};
+  try{ if(navigator.share){await navigator.share(sd);} else {await navigator.clipboard.writeText(sd.text+'\n'+sd.url);showToast('リンクをコピーしました');} }
+  catch(e){ if(e.name!=='AbortError') showToast('シェアできませんでした'); }
+}
+function initButtons(){
+  const p=$('enu-btn-print'); if(p)p.addEventListener('click',()=>window.print());
+  const s=$('enu-btn-share2'); if(s)s.addEventListener('click',handleSimpleShare);
+}
+function initFooter(){const y=$('copyYear');if(y)y.textContent=new Date().getFullYear();}
+
+/* アイコン・PWA（003）*/
+async function initPWA(){
+  const EMOJI='🆚', APP_NAME=CFG.appName, SHORT='働き方比較';
+  const EF="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+  let bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if(!bg) bg='#faf7f0';
+  document.title=APP_NAME;
+  const head=document.head;
+  const setMeta=(n,c)=>{let m=document.querySelector('meta[name="'+n+'"]');if(!m){m=document.createElement('meta');m.name=n;head.appendChild(m);}m.content=c;};
+  setMeta('theme-color',bg); setMeta('apple-mobile-web-app-capable','yes'); setMeta('apple-mobile-web-app-status-bar-style','default'); setMeta('apple-mobile-web-app-title',SHORT);
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EF.replace(/"/g,"'")+'">'+EMOJI+'</text></svg>';
+  let ico=document.querySelector('link[rel="icon"]');if(!ico){ico=document.createElement('link');ico.rel='icon';head.appendChild(ico);}
+  ico.type='image/svg+xml'; ico.href='data:image/svg+xml,'+encodeURIComponent(svg);
+  // Canvas描画はフォント確定後に
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  function mk(size,ratio,rounded){
+    const cv=document.createElement('canvas');cv.width=size;cv.height=size;const ctx=cv.getContext('2d');
+    if(rounded){const r=size*0.22;ctx.beginPath();ctx.moveTo(r,0);ctx.arcTo(size,0,size,size,r);ctx.arcTo(size,size,0,size,r);ctx.arcTo(0,size,0,0,r);ctx.arcTo(0,0,size,0,r);ctx.closePath();ctx.fillStyle=bg;ctx.fill();}
+    else{ctx.fillStyle=bg;ctx.fillRect(0,0,size,size);}
+    ctx.font=Math.round(size*ratio)+'px '+EF;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(EMOJI,size/2,size/2+size*0.025);
+    return cv.toDataURL('image/png');
+  }
+  let ap=document.querySelector('link[rel="apple-touch-icon"]');if(!ap){ap=document.createElement('link');ap.rel='apple-touch-icon';head.appendChild(ap);} ap.href=mk(180,0.55,true);
+  const manifest={id:location.pathname,name:APP_NAME,short_name:SHORT,start_url:location.pathname,scope:location.pathname,display:'standalone',orientation:'portrait',background_color:bg,theme_color:bg,
+    icons:[{src:mk(192,0.55,true),sizes:'192x192',type:'image/png',purpose:'any'},{src:mk(192,0.50,false),sizes:'192x192',type:'image/png',purpose:'maskable'},{src:mk(512,0.55,true),sizes:'512x512',type:'image/png',purpose:'any'},{src:mk(512,0.50,false),sizes:'512x512',type:'image/png',purpose:'maskable'}]};
+  let ml=document.querySelector('link[rel="manifest"]');if(!ml){ml=document.createElement('link');ml.rel='manifest';head.appendChild(ml);}
+  ml.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest));
+}
+
+
+/* 初期化 */
+function init(){
+  initNotices(); initButtons(); initFooter(); initPWA();
+  loadLast();
+  applyMode(); applyRevType(); applyRevDir(); applyPeriod();
+  fmtComma($('income'));
+  fmtComma($('targetTake'));
+  fmtComma($('matchVal'));
+  // 復元した前提パネルの金額欄もコンマ整形（古い保存値対策）
+  ['nenkinYear','kokuhoKinto','kokuhoCap','juminKinto'].forEach(id=>fmtComma($(id)));
+
+  // 自動再計算（手入力・前提変更）
+  $('income').addEventListener('input',()=>{fmtComma($('income'));calc();});
+  $('targetTake').addEventListener('input',()=>{fmtComma($('targetTake'));calc();});
+  $('matchVal').addEventListener('input',()=>{fmtComma($('matchVal'));calc();});
+  ['nenkinYear','kokuhoKinto','kokuhoCap','juminKinto'].forEach(id=>$(id).addEventListener('input',()=>{fmtComma($(id));calc();}));
+  ['keihiRate','aoiro','kenpoRate','koyoRate','kokuhoRate','juminRate'].forEach(id=>$(id).addEventListener('input',calc));
+  $('over40').addEventListener('change',calc);
+
+  document.querySelectorAll('.preset-chip').forEach(c=>c.addEventListener('click',()=>{$('income').value=parseInt(c.dataset.v,10).toLocaleString();fmtComma($('income'));calc();}));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.m;applyMode();calc();}));
+  $('revType').addEventListener('change',()=>{applyRevType();calc();});
+  $('revDir').addEventListener('change',()=>{applyRevDir();calc();});
+  document.querySelectorAll('.disp-ctrl .seg-btn').forEach(b=>b.addEventListener('click',()=>{period=b.dataset.p;applyPeriod();calc();}));
+  $('formulaToggle').addEventListener('click',()=>{const c=$('cmpCard');c.classList.toggle('show-formula');$('formulaToggle').classList.toggle('active',c.classList.contains('show-formula'));});
+  $('assumpToggle').addEventListener('click',()=>$('assumpBody').classList.toggle('open'));
+
+  calc();
+}
+if(document.readyState!=='loading'){init();}else{document.addEventListener('DOMContentLoaded',init);}
+})();
+</script>
+</body>
+</html>
