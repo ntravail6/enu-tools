@@ -117,7 +117,7 @@ body.framed .device-scroll::-webkit-scrollbar{width:0}
 .enu-notice-help .enu-help-link{color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;margin-left:4px}
 
 /* ===== APP ===== */
-.app-header{position:sticky;top:0;z-index:200;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:max(12px,env(safe-area-inset-top)) 0 12px}
+.app-header{background:var(--bg);border-bottom:1px solid var(--line);padding:max(12px,env(safe-area-inset-top)) 0 12px}
 .app-header .inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:8px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
 .app-header .h-icon{font-size:22px;flex-shrink:0;line-height:1}
 .app-header h1{font-size:1.05rem;font-weight:700;color:var(--primary-dark);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -128,7 +128,7 @@ body.framed .device-scroll::-webkit-scrollbar{width:0}
 .icon-btn:hover{background:var(--primary-light)}
 @media(max-width:500px){.user-info{width:32px;padding:0;justify-content:center} .user-info .user-email{display:none}}
 
-.summary{position:sticky;top:58px;z-index:100;margin-top:14px}
+.summary{margin-top:14px}
 .summary-card{background:linear-gradient(140deg,var(--primary),var(--accent));border-radius:16px;padding:12px 16px;color:#fff;box-shadow:0 8px 20px -8px rgba(149,88,88,.5)}
 .summary-card .lab{font-size:.66rem;opacity:.9;font-weight:600}
 .summary-card .big{font-size:1.6rem;font-weight:700;line-height:1.1;margin-top:1px}
@@ -419,6 +419,7 @@ body.framed .device-scroll::-webkit-scrollbar{width:0}
   <button id="menuFrame">📱 スマホ枠</button>
   <button id="menuShare">🔗 このアプリをシェア</button>
   <button id="menuSwitch">🔄 保存方法を切り替え</button>
+  <button id="menuClearAll">🗑 サブスクを全て削除</button>
 </div>
 
 <div class="overlay" id="picker">
@@ -711,6 +712,13 @@ async function switchMode(){
   $('appScreen').classList.add('hidden'); $('welcomeScreen').classList.remove('hidden');
   const sc=document.querySelector('.device-screen'); if(sc) sc.scrollTop=0; window.scrollTo(0,0);
 }
+async function clearAllSubs(){
+  $('menuPop').classList.remove('show');
+  if(!subs.length){ showToast('削除するサブスクがありません'); return; }
+  const ok=await enuConfirm('全て削除の確認','登録された全てのサブスク（'+subs.length+'件）を削除します。この操作は取り消せません。','全て削除する','キャンセル');
+  if(!ok) return;
+  subs=[]; save(); render(); showToast('全てのサブスクを削除しました');
+}
 async function simpleShare(){
   $('menuPop').classList.remove('show'); const data={title:CFG.appName,text:CFG.appName,url:location.href};
   try{ if(navigator.share){ await navigator.share(data); } else { await navigator.clipboard.writeText(data.text+'\n'+data.url); showToast('リンクをコピーしました'); } }
@@ -786,7 +794,7 @@ function bind(){
   $('fCat').onchange=e=>{ $('fCatOtherWrap').style.display=e.target.value==='その他'?'block':'none'; };
   $('fPay').onchange=e=>{ $('fPayOtherWrap').style.display=e.target.value==='その他'?'block':'none'; };
   $('fTrial').onchange=e=>{ $('fTrialEndWrap').style.display=e.target.checked?'block':'none'; };
-  $('menuFrame').onclick=toggleFrame; $('menuShare').onclick=simpleShare; $('menuSwitch').onclick=switchMode;
+  $('menuFrame').onclick=toggleFrame; $('menuShare').onclick=simpleShare; $('menuSwitch').onclick=switchMode; $('menuClearAll').onclick=clearAllSubs;
   document.addEventListener('click',()=>$('menuPop').classList.remove('show'));
   $('menuPop').addEventListener('click',e=>e.stopPropagation());
   $('search').addEventListener('input',e=>{ searchQ=e.target.value.trim(); renderList(); });
