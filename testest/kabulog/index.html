@@ -1,1 +1,2675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>株ログ - 損益トラッカー</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="株式売買の損益・配当を記録し、銘柄別・年月別に分析できるアプリ">
+<meta name="theme-color" content="#8E7F75">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS Variables — enuTools パレットシステム
+   ============================================================
+   ▼ パレット差し替え：下の primary 系 + ニュートラル系 8変数を
+     901-enu-color-palettes.md の好みのパレットに書き換えるだけ。
+     現在のデフォルト：06 グレージュ
+   ============================================================ */
+:root {
+  /* --- 共通カラー（固定・全パレット共通） --- */
+  --card:  #fff;
+  --text:  #2C2A24;
+  --sub:   #7A756B;
 
+  /* --- 06 グレージュ（デフォルト）--- */
+  --primary:        #B5A89F;
+  --primary-light:  #E0D8D0;
+  --primary-dark:   #8E7F75;
+  --primary-soft:   #EFEBE5;
+  --accent:         #A8998E;
+  --bg:             #faf7f3;
+  --bg-soft:        #fdfaf6;
+  --line:           #ebe4dd;
+
+  /* --- フォント --- */
+  --font-ja: 'Kosugi Maru', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-num: 'Futura', 'Century Gothic', 'Trebuchet MS', Arial, 'Kosugi Maru', sans-serif;
+  /* 基本の文字：英数字は Futura、日本語は Kosugi Maru */
+  --font-base: 'Futura', 'Century Gothic', 'Trebuchet MS', 'Kosugi Maru', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+
+  /* --- 損益カラー --- */
+  --profit:  #4A8C6F;
+  --loss:    #C25B5B;
+  --zero:    var(--sub);
+
+  /* --- UI --- */
+  --radius:  12px;
+  --radius-s: 8px;
+  --shadow:  0 1px 4px rgba(44,42,36,.06);
+  --nav-h:   60px;
+  --header-h: 52px;
+}
+
+/* ============================================================
+   Base / Reset
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  font-family: var(--font-base);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+.num, .price, .amount, .quantity,
+input[type="number"], input[type="date"] {
+  font-family: var(--font-num);
+  letter-spacing: .02em;
+}
+
+h1 { font-size: 1.25rem; font-weight: 700; }
+h2 { font-size: 1.1rem; font-weight: 700; }
+h3 { font-size: .95rem; font-weight: 700; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+#app { display: none; }
+#login-view { display: flex; }
+
+.app-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: none;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.app-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.app-header .logo svg { width: 28px; height: 28px; }
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: var(--sub);
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  cursor: pointer;
+}
+
+.main-content {
+  padding: 16px 16px calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px));
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* ============================================================
+   Bottom Nav
+   ============================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--card);
+  border-top: none;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 16px rgba(44,42,36,.04);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px 6px;
+  gap: 2px;
+  font-size: .65rem;
+  color: var(--sub);
+  text-decoration: none;
+  transition: color .2s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-item svg { width: 22px; height: 22px; }
+.nav-item.active { color: var(--primary-dark); }
+
+/* ============================================================
+   Login View
+   ============================================================ */
+#login-view {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  padding: calc(1.2rem + env(safe-area-inset-top, 0px)) 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+}
+.login-content {
+  background: var(--card);
+  border-radius: 20px;
+  /* 下だけ少し広め：よくばりかけいぼはデモ説明が1行多いので、カードの高さと位置をそろえる */
+  padding: 2.2rem 1.6rem calc(2.2rem + 1.1rem);
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  line-height: normal;
+}
+.login-icon { width: 80px; height: 80px; margin: 0 auto .8rem; }
+.login-icon img { width: 100%; height: 100%; display: block; border-radius: 18px; box-shadow: 0 4px 12px rgba(142,127,117,.25); }
+.login-title { font-size: 1.5rem; line-height: 1.5; color: var(--text); letter-spacing: .05em; margin-bottom: .3rem; font-weight: 700; }
+.login-subtitle { font-size: .85rem; line-height: 1.55; color: var(--sub); margin-bottom: 1.8rem; }
+.login-note { font-size: .72rem; color: var(--sub); line-height: 1.7; margin-bottom: 1.8rem; padding: .8rem 1rem; background: var(--bg-soft); border-radius: 8px; }
+.google-signin-btn {
+  width: 100%;
+  min-height: 46px; /* Google のマークがないお試し版のボタンも同じ高さに */
+  padding: .8rem 1.5rem;
+  background: #fff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  font-size: .9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto', var(--font-ja);
+  transition: box-shadow .2s, background .2s;
+}
+.google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+.google-signin-btn:active { background: #f1f3f4; }
+.google-signin-btn:disabled { opacity: .6; cursor: not-allowed; }
+.google-signin-btn svg { width: 18px; height: 18px; margin-right: 8px; }
+.login-error { margin-top: 1rem; padding: .6rem .8rem; background: #fce8e8; color: var(--loss); border-radius: 6px; font-size: .75rem; line-height: 1.5; }
+.login-status { margin-top: 1rem; font-size: .75rem; line-height: 1.6; color: var(--sub); min-height: 1.2em; }
+/* 何も出ていないときは場所を取らない（ボタンの下に空きができないように） */
+.login-status:empty { display: none; }
+.login-divider { display: flex; align-items: center; gap: .5rem; margin: 1.2rem 0; color: var(--sub); font-size: .7rem; line-height: 1.52; }
+.login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.demo-btn {
+  width: 100%;
+  padding: .7rem 1.5rem;
+  background: transparent;
+  color: var(--primary-dark);
+  border: 1px dashed var(--primary);
+  border-radius: 24px;
+  font-size: .85rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  font-family: var(--font-base);
+  transition: background .2s;
+}
+.demo-btn:hover { background: var(--primary-soft); }
+.demo-note { font-size: .68rem; color: var(--sub); line-height: 1.6; margin-top: .6rem; }
+/* リンクはカードの下に出し、カードの大きさ・位置には影響させない */
+.login-content { position: relative; }
+#login-view .legal-links { position: absolute; left: 0; right: 0; top: calc(100% + 14px); }
+#login-view .legal-links, #login-view .legal-links a { color: rgba(255,255,255,.85); }
+
+.demo-banner {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  text-align: center;
+  font-size: .72rem;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.demo-banner a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ============================================================
+   Cards
+   ============================================================ */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: none;
+  padding: 20px;
+  box-shadow: none;
+}
+
+.card + .card { margin-top: 4px; }
+
+.card-title {
+  font-size: .75rem;
+  color: var(--sub);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-value {
+  font-family: var(--font-num);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.card-value.profit { color: var(--profit); }
+.card-value.loss { color: var(--loss); }
+.card-value.zero { color: var(--zero); }
+
+/* Summary row */
+.summary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.summary-item {
+  background: transparent;
+  border-left: 2px solid var(--primary-light);
+  border-radius: 0;
+  padding: 4px 0 4px 12px;
+}
+
+.summary-label { font-size: .7rem; color: var(--sub); }
+.summary-value {
+  font-family: var(--font-num);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   Lists / Tables
+   ============================================================ */
+.list-section { margin-top: 20px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-title { font-size: .95rem; font-weight: 700; }
+
+.list-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 14px 4px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.list-item:last-child { border-bottom: none; }
+.list-item:active { background: var(--primary-soft); }
+
+.item-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-base);
+  font-size: .7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.item-badge.buy { background: #E8F0EB; color: var(--profit); }
+.item-badge.sell { background: #F5E5E5; color: var(--loss); }
+.item-badge.dividend { background: #EDE8D4; color: #8A7548; }
+
+.item-body { flex: 1; min-width: 0; }
+.item-name { font-weight: 700; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-meta { font-size: .7rem; color: var(--sub); font-family: var(--font-num); margin-top: 1px; }
+.item-amount {
+  text-align: right;
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: .9rem;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-family: var(--font-base);
+  font-size: .85rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active { transform: scale(.97); }
+
+.btn-primary { background: var(--primary-dark); color: #fff; }
+.btn-primary:hover { opacity: .9; }
+.btn-secondary { background: var(--primary-soft); color: var(--primary-dark); }
+.btn-danger { background: #F5E5E5; color: var(--loss); }
+
+.btn-sm { padding: 6px 14px; font-size: .78rem; }
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(44,42,36,.15);
+  cursor: pointer;
+  z-index: 90;
+  transition: transform .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab:active { transform: scale(.92); }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44,42,36,.35);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  animation: slideUp .25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-title { font-size: 1rem; font-weight: 700; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: var(--sub);
+}
+
+/* Form */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: .75rem; color: var(--sub); margin-bottom: 4px; font-weight: 700; }
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  border-radius: 0;
+  font-family: var(--font-base);
+  font-size: .9rem;
+  color: var(--text);
+  background: transparent;
+  outline: none;
+  transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--primary-dark); }
+.form-input.auto-filled {
+  animation: autoFillFlash .5s ease;
+}
+@keyframes autoFillFlash {
+  0%   { background: var(--primary-light); }
+  100% { background: transparent; }
+}
+.form-input[type="number"],
+.form-input[type="date"] { font-family: var(--font-num); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.form-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: var(--bg);
+  border-radius: 20px;
+  font-family: var(--font-base);
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--sub);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.toggle-btn.active { background: var(--primary-dark); color: #fff; }
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.form-actions .btn { flex: 1; padding: 12px; }
+
+/* ============================================================
+   Analysis Tab
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.filter-chip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--bg-soft);
+  font-family: var(--font-base);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--sub);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+
+.filter-chip.active {
+  background: var(--primary-dark);
+  color: #fff;
+}
+
+.analysis-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+
+.analysis-table th {
+  text-align: left;
+  font-size: .7rem;
+  color: var(--sub);
+  font-weight: 700;
+  padding: 8px 6px;
+  border-bottom: 1.5px solid var(--primary-light);
+}
+
+.analysis-table th.num-col,
+.analysis-table td.num-col {
+  text-align: right;
+  font-family: var(--font-num);
+}
+
+.analysis-table td {
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.analysis-table tr:last-child td { border-bottom: none; }
+.analysis-table .total-row { font-weight: 700; background: var(--primary-soft); }
+
+/* ============================================================
+   Calendar
+   ============================================================ */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.cal-nav-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--primary-dark); font-size: 1.1rem; padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.cal-nav-title {
+  font-family: var(--font-num);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-dow {
+  text-align: center;
+  font-size: .65rem;
+  color: var(--sub);
+  padding: 4px 0 6px;
+  font-weight: 700;
+}
+.cal-dow:first-child { color: var(--loss); }
+.cal-dow:last-child  { color: var(--profit); }
+
+.cal-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background .15s;
+  gap: 0;
+  -webkit-tap-highlight-color: transparent;
+  padding: 2px;
+}
+.cal-cell:active { opacity: .7; }
+.cal-cell.empty { cursor: default; }
+.cal-cell.today { outline: 2px solid var(--primary); outline-offset: -2px; }
+.cal-cell.other-month .cal-date { opacity: .3; }
+
+.cal-date {
+  font-family: var(--font-num);
+  font-size: .6rem;
+  color: var(--sub);
+  line-height: 1;
+  position: absolute;
+  top: 3px;
+  left: 5px;
+}
+.cal-amount {
+  font-family: var(--font-num);
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+  margin-top: 2px;
+}
+.cal-div-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #C4A85A;
+  position: absolute;
+  bottom: 3px;
+}
+
+/* Heatmap colors */
+.cal-cell.profit-1 { background: rgba(74,140,111,.08); }
+.cal-cell.profit-2 { background: rgba(74,140,111,.16); }
+.cal-cell.profit-3 { background: rgba(74,140,111,.25); }
+.cal-cell.profit-1 .cal-amount,
+.cal-cell.profit-2 .cal-amount,
+.cal-cell.profit-3 .cal-amount { color: var(--profit); }
+
+.cal-cell.loss-1 { background: rgba(194,91,91,.08); }
+.cal-cell.loss-2 { background: rgba(194,91,91,.16); }
+.cal-cell.loss-3 { background: rgba(194,91,91,.25); }
+.cal-cell.loss-1 .cal-amount,
+.cal-cell.loss-2 .cal-amount,
+.cal-cell.loss-3 .cal-amount { color: var(--loss); }
+
+/* Monthly summary */
+.cal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 16px;
+}
+.cal-stat {
+  text-align: center;
+  padding: 10px 4px;
+}
+.cal-stat-label { font-size: .65rem; color: var(--sub); }
+.cal-stat-value {
+  font-family: var(--font-num);
+  font-size: .95rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   Settings
+   ============================================================ */
+.settings-section { margin-bottom: 24px; }
+.settings-section-title {
+  font-size: .72rem;
+  color: var(--sub);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.settings-item:last-child { border-bottom: none; }
+.settings-label { font-size: .88rem; }
+.settings-desc { font-size: .72rem; color: var(--sub); margin-top: 2px; }
+.settings-input {
+  width: 100px;
+  padding: 6px 10px;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  border-radius: 0;
+  font-family: var(--font-num);
+  font-size: .9rem;
+  text-align: right;
+  color: var(--text);
+  background: transparent;
+  outline: none;
+}
+.settings-input:focus { border-color: var(--primary-dark); }
+.settings-action {
+  width: 100%;
+  padding: 14px;
+  border-radius: 20px;
+  font-family: var(--font-base);
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 8px;
+  transition: opacity .15s;
+}
+.settings-action:active { opacity: .8; }
+.settings-action.export { background: var(--primary-soft); color: var(--primary-dark); }
+.settings-action.danger { background: #F5E5E5; color: var(--loss); }
+
+/* ============================================================
+   PWA Install Banner
+   ============================================================ */
+.install-banner {
+  display: none;
+  position: fixed;
+  bottom: calc(var(--nav-h) + 8px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  z-index: 150;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(44,42,36,.15);
+  animation: slideUp .3s ease-out;
+}
+.install-banner.show { display: block; }
+.install-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.install-banner-title {
+  font-size: .9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.install-banner-title svg { width: 28px; height: 28px; }
+.install-banner-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--sub);
+  cursor: pointer;
+  padding: 4px;
+}
+.install-banner-steps {
+  font-size: .8rem;
+  color: var(--sub);
+  line-height: 1.6;
+}
+.install-banner-steps .step-icon {
+  display: inline-block;
+  font-size: 1rem;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+  position: fixed;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: var(--text);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: .82rem;
+  z-index: 300;
+  transition: transform .3s ease;
+  white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+   Empty / Loading
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--sub);
+}
+
+.empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: .4; }
+.empty-state p { font-size: .85rem; }
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--line);
+  border-top-color: var(--primary-dark);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 40px auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   Confirm Dialog
+   ============================================================ */
+.confirm-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44,42,36,.4);
+  z-index: 250;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.confirm-overlay.open { display: flex; }
+.confirm-box {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+}
+.legal-links { font-size: .68rem; color: var(--sub); }
+.legal-links a { color: var(--sub); }
+.confirm-msg { font-size: .85rem; margin-bottom: 20px; line-height: 1.5; white-space: pre-line; text-wrap: pretty; }
+.confirm-actions { display: flex; gap: 8px; }
+.confirm-actions .btn { flex: 1; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+/* 金額・日付は途中で折り返さない。文章は意味のまとまりで折り返す */
+.nw { white-space: nowrap; }
+.phrase { display: inline-block; }
+.analysis-table td.num-col,
+.analysis-table td.num,
+.cal-stat-value,
+.confirm-actions .btn { white-space: nowrap; }
+.settings-item { gap: 12px; }
+.settings-item > div:last-child { flex-shrink: 0; }
+.settings-input { width: 80px; }
+
+/* 幅の狭いスマホ（iPhone SE など） */
+@media (max-width: 360px) {
+  .card:has(.analysis-table) { padding: 12px 10px; }
+  .analysis-table { font-size: .72rem; }
+  .analysis-table th, .analysis-table td { padding-left: 3px; padding-right: 3px; }
+  .cal-stat-value { font-size: .82rem; }
+  .confirm-overlay { padding: 16px; }
+  .confirm-box { padding: 24px 14px; }
+  .confirm-msg { font-size: .78rem; }
+  .confirm-actions .btn { padding-left: 10px; padding-right: 10px; }
+}
+
+@media (min-width: 768px) {
+  .main-content { padding: 24px 24px calc(var(--nav-h) + 24px); }
+  /* PC ではヘッダーと下のメニューも中身の幅にそろえる */
+  .app-header { padding: 0 max(24px, calc(50% - 300px)); }
+  .bottom-nav { padding-left: calc(50% - 300px); padding-right: calc(50% - 300px); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     Login View
+     ============================================================ -->
+<div id="login-view">
+  <div class="login-content">
+    <div class="login-icon"><img src="icon.svg" alt=""></div>
+    <h1 class="login-title">株ログ</h1>
+    <p class="login-subtitle">株の損益と配当を記録・分析</p>
+    <div class="login-note">
+      <span class="phrase">Googleアカウントでログインすると、</span><br>
+      <span class="phrase">データが自動で</span><span class="phrase">Googleドライブに保存されます。</span><br>
+      <span class="phrase">端末を変えても、</span><span class="phrase">同じアカウントで</span><span class="phrase">同じデータにアクセスできます。</span>
+    </div>
+    <button class="google-signin-btn" id="google-signin-btn" onclick="handleLogin()">
+      <svg viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+      </svg>
+      Google でログイン
+    </button>
+    <div class="login-error" id="login-error" style="display:none"></div>
+    <div class="login-status" id="login-status"></div>
+    <div class="login-divider"><span>または</span></div>
+    <button class="demo-btn" onclick="startDemo()">デモモードで試す</button>
+    <div class="demo-note">ログインせずに機能を試せます。<br>サンプルのデータで表示され、<br>入力した内容は保存されません。</div>
+    <p class="legal-links"><a href="./privacy.html">プライバシーポリシー</a>　|　<a href="./terms.html">利用規約</a></p>
+  </div>
+</div>
+
+<!-- ============================================================
+     App Shell
+     ============================================================ -->
+<div id="app">
+  <div class="demo-banner" id="demo-banner" style="display:none">
+    🎨 デモモード — データは保存されません　<a onclick="exitDemo()">終了</a>
+  </div>
+  <header class="app-header">
+    <div class="logo">
+      <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" rx="18" fill="var(--primary-light)"/><path d="M20 48 L28 28 L36 38 L44 22 L52 48" stroke="var(--primary-dark)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="44" cy="22" r="3.5" fill="var(--primary-dark)"/></svg>
+      株ログ
+    </div>
+    <div class="user-area">
+      <span id="user-name"></span>
+      <img id="user-avatar" class="user-avatar" alt="" onclick="handleLogout()" style="display:none">
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- ====== ダッシュボード ====== -->
+    <div id="view-dash" class="view active">
+      <div id="dash-content"></div>
+      <div id="dash-analysis" style="margin-top:20px">
+        <div class="filter-bar" id="analysis-filters"></div>
+        <div id="analysis-content"></div>
+      </div>
+    </div>
+
+    <!-- ====== カレンダー ====== -->
+    <div id="view-calendar" class="view">
+      <div id="calendar-content"></div>
+    </div>
+
+    <!-- ====== 取引 ====== -->
+    <div id="view-trades" class="view">
+      <div class="section-header">
+        <h2 class="section-title">取引履歴</h2>
+        <button class="btn btn-sm btn-secondary" onclick="openTradeModal()">＋ 追加</button>
+      </div>
+      <div id="trades-list"></div>
+    </div>
+
+    <!-- ====== 配当 ====== -->
+    <div id="view-dividends" class="view">
+      <div class="section-header">
+        <h2 class="section-title">配当金</h2>
+        <button class="btn btn-sm btn-secondary" onclick="openDividendModal()">＋ 追加</button>
+      </div>
+      <div id="dividends-list"></div>
+    </div>
+
+    <!-- ====== 設定 ====== -->
+    <div id="view-settings" class="view">
+      <div id="settings-content"></div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="dash" onclick="switchView('dash')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
+      ホーム
+    </button>
+    <button class="nav-item" data-view="calendar" onclick="switchView('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      カレンダー
+    </button>
+    <button class="nav-item" data-view="trades" onclick="switchView('trades')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M6 20V4"/><path d="M18 20v-6"/></svg>
+      取引
+    </button>
+    <button class="nav-item" data-view="dividends" onclick="switchView('dividends')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      配当
+    </button>
+    <button class="nav-item" data-view="settings" onclick="switchView('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      設定
+    </button>
+  </nav>
+
+  <!-- FAB (hidden on dash) -->
+  <button class="fab" id="fab" onclick="handleFab()">＋</button>
+</div>
+
+<!-- ============================================================
+     Day Detail Modal
+     ============================================================ -->
+<div class="modal-overlay" id="modal-day">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="day-modal-title">2026/01/15 の記録</h3>
+      <button class="modal-close" onclick="closeModal('modal-day')">✕</button>
+    </div>
+    <div id="day-detail-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Trade Modal
+     ============================================================ -->
+<div class="modal-overlay" id="modal-trade">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="trade-modal-title">取引を追加</h3>
+      <button class="modal-close" onclick="closeModal('modal-trade')">✕</button>
+    </div>
+    <form onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">売買種別</label>
+        <div class="form-toggle">
+          <button type="button" class="toggle-btn active" data-val="buy" onclick="setTradeType('buy')">買い</button>
+          <button type="button" class="toggle-btn" data-val="sell" onclick="setTradeType('sell')">売り</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">日付</label>
+        <input type="date" class="form-input" id="t-date">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">銘柄コード</label>
+          <input type="text" class="form-input" id="t-ticker" placeholder="7203" inputmode="numeric" oninput="onTickerInput('t-ticker','t-name')">
+        </div>
+        <div class="form-group">
+          <label class="form-label">銘柄名</label>
+          <input type="text" class="form-input" id="t-name" placeholder="自動入力されます">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">数量（株）</label>
+          <input type="number" class="form-input" id="t-qty" placeholder="100" min="0" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">単価（円）</label>
+          <input type="number" class="form-input" id="t-price" placeholder="2500" min="0" step="0.1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">手数料（円）</label>
+        <input type="number" class="form-input" id="t-fees" placeholder="0" min="0" step="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">メモ（任意）</label>
+        <input type="text" class="form-input" id="t-notes" placeholder="">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-trade')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="saveTrade()">保存</button>
+      </div>
+      <div class="form-actions" id="trade-delete-area" style="display:none;margin-top:8px;">
+        <button type="button" class="btn btn-danger" onclick="deleteTrade()" style="width:100%">この取引を削除</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     Dividend Modal
+     ============================================================ -->
+<div class="modal-overlay" id="modal-dividend">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="div-modal-title">配当を追加</h3>
+      <button class="modal-close" onclick="closeModal('modal-dividend')">✕</button>
+    </div>
+    <form onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">受取日</label>
+        <input type="date" class="form-input" id="d-date">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">銘柄コード</label>
+          <input type="text" class="form-input" id="d-ticker" placeholder="7203" inputmode="numeric" oninput="onTickerInput('d-ticker','d-name')">
+        </div>
+        <div class="form-group">
+          <label class="form-label">銘柄名</label>
+          <input type="text" class="form-input" id="d-name" placeholder="自動入力されます">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">配当金額（税引前・円）</label>
+          <input type="number" class="form-input" id="d-amount" placeholder="12000" min="0" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">源泉徴収税（円）</label>
+          <input type="number" class="form-input" id="d-tax" placeholder="2400" min="0" step="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">メモ（任意）</label>
+        <input type="text" class="form-input" id="d-notes" placeholder="">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-dividend')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="saveDividend()">保存</button>
+      </div>
+      <div class="form-actions" id="div-delete-area" style="display:none;margin-top:8px;">
+        <button type="button" class="btn btn-danger" onclick="deleteDividend()" style="width:100%">この配当を削除</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     Confirm Dialog
+     ============================================================ -->
+<div class="confirm-overlay" id="confirm-dialog">
+  <div class="confirm-box">
+    <p class="confirm-msg" id="confirm-msg"></p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" onclick="confirmResolve(false)">キャンセル</button>
+      <button class="btn btn-danger" id="confirm-ok" onclick="confirmResolve(true)">削除</button>
+    </div>
+  </div>
+</div>
+
+<!-- PWA Install Banner -->
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-header">
+    <div class="install-banner-title">
+      <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" rx="18" fill="var(--primary-light)"/><path d="M20 48 L28 28 L36 38 L44 22 L52 48" stroke="var(--primary-dark)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="44" cy="22" r="3.5" fill="var(--primary-dark)"/></svg>
+      アプリとして追加
+    </div>
+    <button class="install-banner-close" onclick="dismissInstallBanner()">✕</button>
+  </div>
+  <div class="install-banner-steps" id="install-steps"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     JavaScript
+     ============================================================ -->
+<script>
+/* =============================================================
+   Config & Constants
+   ============================================================= */
+// ▼▼▼ Google Cloud Console で取得した Client ID をここに貼る ▼▼▼
+const CLIENT_ID = '600230944307-30j571ncbi72gq0sa1rcf8hb1c6fk1pa.apps.googleusercontent.com';
+// ▲▲▲ ここだけ変更すれば動きます ▲▲▲
+
+const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = 'kabulog-data.json';
+const CURRENT_DATA_VERSION = 1;
+const AUTOSAVE_DELAY = 800; // ms
+// お試し版（test/kabulog）では true。ログインせず、どこにも保存しない。
+// 開発用/make-test.py が書き換えるので、ここは false のままにする
+const TEST_MODE = true;
+
+/* =============================================================
+   State
+   ============================================================= */
+const state = {
+  user: null,
+  accessToken: null,
+  driveFileId: null,
+  data: null,
+  currentView: 'dash',
+  editingTradeId: null,
+  editingDividendId: null,
+  tradeType: 'buy',
+  analysisMode: 'stock', // 'stock' | 'monthly' | 'yearly'
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth() + 1,
+  dirty: false,
+};
+
+let saveTimer = null;
+let tokenClient = null;
+let confirmResolveFn = null;
+
+/* =============================================================
+   Stock Dictionary — 銘柄コード→銘柄名の自動入力
+   ============================================================= */
+let stockDict = {};      // stocks.json から読み込む辞書
+let userStockDict = {};  // ユーザーが手入力した銘柄名を学習
+
+async function loadStockDict() {
+  try {
+    const res = await fetch('stocks.json');
+    if (res.ok) stockDict = await res.json();
+  } catch (e) {
+    console.log('stocks.json not found — using empty dict');
+  }
+  // ローカルに保存されたユーザー辞書を復元
+  if (TEST_MODE) return;
+  try {
+    const saved = localStorage.getItem('kabulog_user_stocks');
+    if (saved) userStockDict = JSON.parse(saved);
+  } catch { /* ignore */ }
+}
+
+/** 銘柄コードから銘柄名を引く（ユーザー辞書 > 公式辞書 > 過去の入力） */
+function lookupStock(ticker) {
+  if (!ticker) return '';
+  const code = ticker.trim();
+  // 1. ユーザー辞書（手入力で学習したもの）
+  if (userStockDict[code]) return userStockDict[code];
+  // 2. 公式辞書（stocks.json）
+  if (stockDict[code]) return stockDict[code];
+  // 3. 過去の取引・配当データから
+  if (state.data) {
+    const t = state.data.trades.find(x => x.ticker === code && x.name);
+    if (t) return t.name;
+    const d = state.data.dividends.find(x => x.ticker === code && x.name);
+    if (d) return d.name;
+  }
+  return '';
+}
+
+/** ユーザーが手入力した銘柄名を記憶 */
+function learnStock(ticker, name) {
+  if (!ticker || !name) return;
+  const code = ticker.trim();
+  const n = name.trim();
+  // 公式辞書と同じなら保存不要
+  if (stockDict[code] === n) return;
+  userStockDict[code] = n;
+  if (TEST_MODE) return;
+  try {
+    localStorage.setItem('kabulog_user_stocks', JSON.stringify(userStockDict));
+  } catch { /* ignore */ }
+}
+
+/** コード入力時の自動入力ハンドラ */
+function onTickerInput(tickerInputId, nameInputId) {
+  const tickerEl = document.getElementById(tickerInputId);
+  const nameEl = document.getElementById(nameInputId);
+  const code = tickerEl.value.trim();
+  const found = lookupStock(code);
+  if (found && !nameEl.value.trim()) {
+    nameEl.value = found;
+    nameEl.classList.add('auto-filled');
+    setTimeout(() => nameEl.classList.remove('auto-filled'), 600);
+  }
+}
+
+/* =============================================================
+   Data Versioning & Migration
+   古い形式のデータが来ても壊れない工夫
+   ============================================================= */
+function createEmptyData() {
+  return {
+    version: CURRENT_DATA_VERSION,
+    trades: [],
+    dividends: [],
+    settings: {},
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+/**
+ * データマイグレーション
+ * どんな形式が来ても壊れないように防御的に処理
+ */
+function migrateData(raw) {
+  // null / undefined / 配列 / 非オブジェクト → 空データ
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return createEmptyData();
+
+  let data = {};
+  try {
+    data = JSON.parse(JSON.stringify(raw)); // deep clone
+  } catch { return createEmptyData(); }
+
+  // version なし = レガシーフォーマット → v1 に変換（"1" のような文字列も数字にする）
+  data.version = Math.floor(Number(data.version)) || 1;
+
+  // Future migrations（古い順に1段ずつ上げる。各関数の最後で data.version を上げる）:
+  // if (data.version < 2) { data = migrateV1toV2(data); }
+
+  return validateAndFillDefaults(data);
+}
+
+/**
+ * 全フィールドにデフォルト値を補完
+ * 欠損・型不正があっても動くようにする
+ * 知らない項目（新しい版のアプリが足したもの）は消さずに残す。
+ * 古いアプリで開いて保存しても、新しい版のデータが失われないようにするため
+ */
+function validateAndFillDefaults(data) {
+  const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+  const safeArr = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
+  const safeNum = (v) => {
+    const n = Number(typeof v === 'string' ? v.replace(/[,，\s]/g, '') : v);
+    return isFinite(n) ? n : 0;
+  };
+  const safeStr = (v) => (typeof v === 'string' ? v : (typeof v === 'number' && isFinite(v)) ? String(v) : '');
+  const settings = isObj(data.settings) ? { ...data.settings } : {};
+  if ('defaultFees' in settings) settings.defaultFees = safeNum(settings.defaultFees);
+
+  return {
+    ...data,
+    version: data.version || CURRENT_DATA_VERSION,
+    trades: safeArr(data.trades).map(t => ({
+      ...t,
+      id:       safeStr(t.id) || generateId(),
+      date:     safeStr(t.date),
+      ticker:   safeStr(t.ticker),
+      name:     safeStr(t.name),
+      type:     (t.type === 'sell') ? 'sell' : 'buy',
+      quantity: safeNum(t.quantity),
+      price:    safeNum(t.price),
+      fees:     safeNum(t.fees),
+      notes:    safeStr(t.notes),
+    })),
+    dividends: safeArr(data.dividends).map(d => ({
+      ...d,
+      id:     safeStr(d.id) || generateId(),
+      date:   safeStr(d.date),
+      ticker: safeStr(d.ticker),
+      name:   safeStr(d.name),
+      amount: safeNum(d.amount),
+      tax:    safeNum(d.tax),
+      notes:  safeStr(d.notes),
+    })),
+    settings,
+    updatedAt: safeStr(data.updatedAt) || new Date().toISOString(),
+  };
+}
+
+/* =============================================================
+   Google Auth
+   ============================================================= */
+function initGoogleAuth() {
+  if (typeof google === 'undefined' || !google.accounts) {
+    // GIS がまだ読み込まれていない → リトライ
+    setTimeout(initGoogleAuth, 300);
+    return;
+  }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: handleTokenResponse,
+    error_callback: () => {
+      setLoginStatus('ログインがキャンセルされたか失敗しました。', true);
+      document.getElementById('google-signin-btn').disabled = false;
+    },
+  });
+  // 同じタブで前にログインしていれば、許可画面なしでログインし直す
+  let lastEmail = '';
+  try { lastEmail = sessionStorage.getItem('kabulog_last_email') || ''; } catch {}
+  if (lastEmail) {
+    setLoginStatus('セッションを復元中...');
+    tokenClient.requestAccessToken({ prompt: '', hint: lastEmail });
+  }
+}
+
+/** ログイン画面の状態表示（isError のときは赤い枠で出す） */
+function setLoginStatus(msg, isError) {
+  document.getElementById('login-status').textContent = (!isError && msg) || '';
+  const err = document.getElementById('login-error');
+  err.style.display = isError && msg ? 'block' : 'none';
+  err.textContent = isError ? (msg || '') : '';
+}
+
+function handleLogin() {
+  if (!tokenClient) {
+    setLoginStatus('Googleサービスの読み込み中です...', true);
+    initGoogleAuth();
+    return;
+  }
+  document.getElementById('google-signin-btn').disabled = true;
+  setLoginStatus('Googleに接続中...');
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+async function handleTokenResponse(resp) {
+  if (resp.error) {
+    document.getElementById('google-signin-btn').disabled = false;
+    setLoginStatus('ログイン失敗：' + resp.error, true);
+    console.error(resp);
+    return;
+  }
+  state.accessToken = resp.access_token;
+
+  // ユーザー情報を取得（Drive の権限だけで取れる about を使う）
+  try {
+    setLoginStatus('ユーザー情報を取得中...');
+    const r = await driveRequest('https://www.googleapis.com/drive/v3/about?fields=user(displayName,emailAddress,photoLink)');
+    const u = (await r.json()).user || {};
+    state.user = u;
+    try { if (u.emailAddress) sessionStorage.setItem('kabulog_last_email', u.emailAddress); } catch {}
+    document.getElementById('user-name').textContent = u.displayName || u.emailAddress || '';
+    const avatar = document.getElementById('user-avatar');
+    avatar.src = u.photoLink || '';
+    avatar.style.display = u.photoLink ? 'block' : 'none';
+  } catch (e) {
+    console.error('userinfo error', e);
+  }
+
+  // Drive からデータ読み込み
+  setLoginStatus('データを読み込み中...');
+  await loadFromDrive();
+
+  // UI 切り替え
+  setLoginStatus('');
+  document.getElementById('google-signin-btn').disabled = false;
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+  showInstallBanner();
+}
+
+function handleLogout() {
+  if (TEST_MODE) return;
+  if (isDemo) { exitDemo(); return; }
+  showConfirm('ログアウトしますか？', 'ログアウト').then(ok => {
+    if (!ok) return;
+    if (state.accessToken) {
+      google.accounts.oauth2.revoke(state.accessToken);
+    }
+    state.user = null;
+    state.accessToken = null;
+    state.driveFileId = null;
+    state.data = null;
+    try { sessionStorage.removeItem('kabulog_last_email'); } catch {}
+    setLoginStatus('');
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-view').style.display = 'flex';
+  });
+}
+
+/* =============================================================
+   Google Drive API
+   ============================================================= */
+async function driveRequest(url, options = {}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${state.accessToken}`,
+      ...(options.headers || {}),
+    },
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`${res.status}|${body}`);
+  }
+  return res;
+}
+
+async function loadFromDrive() {
+  state.driveLoadFailed = false;
+  try {
+    // ファイルを検索
+    const searchUrl = `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${DRIVE_FILE_NAME}'&fields=files(id,name,modifiedTime)&orderBy=modifiedTime%20desc`;
+    const searchRes = await driveRequest(searchUrl);
+    const searchData = await searchRes.json();
+
+    if (searchData.files && searchData.files.length > 0) {
+      state.driveFileId = searchData.files[0].id;
+      showToast('Drive: データ読込中…');
+      // ファイル内容を取得
+      const contentRes = await driveRequest(
+        `https://www.googleapis.com/drive/v3/files/${state.driveFileId}?alt=media`
+      );
+      const raw = await contentRes.json();
+      state.data = migrateData(raw);
+
+      // ローカルにもキャッシュ
+      saveToLocal();
+    } else {
+      // ファイルなし → ローカルキャッシュを確認
+      showToast('Drive: データなし（新規作成）');
+      const local = loadFromLocal();
+      state.data = local || createEmptyData();
+      // Drive に初回保存
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error('Drive load error:', e);
+    const msg = e.message || String(e);
+    // エラー詳細をそのまま表示（5秒間）
+    showToast('エラー: ' + msg.slice(0, 100), 5000);
+    // オフラインフォールバック
+    const local = loadFromLocal();
+    state.data = local || createEmptyData();
+    // Drive の中身を読めていないので、上書き（空データで消してしまう）を防ぐ
+    state.driveLoadFailed = true;
+  }
+}
+
+async function saveToDrive() {
+  if (!state.accessToken || !state.data) return;
+  if (state.driveLoadFailed) {
+    saveToLocal();
+    showToast('Googleドライブを読み込めなかったため、保存できませんでした。通信を確認して、ページを再読み込みしてください', 5000);
+    return;
+  }
+  state.data.updatedAt = new Date().toISOString();
+
+  try {
+    const content = JSON.stringify(state.data);
+    if (state.driveFileId) {
+      // 既存ファイルを更新
+      await driveRequest(
+        `https://www.googleapis.com/upload/drive/v3/files/${state.driveFileId}?uploadType=media`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: content,
+        }
+      );
+    } else {
+      // 新規作成
+      const metadata = { name: DRIVE_FILE_NAME, parents: ['appDataFolder'] };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', new Blob([content], { type: 'application/json' }));
+      const res = await driveRequest(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+        { method: 'POST', body: form }
+      );
+      const result = await res.json();
+      state.driveFileId = result.id;
+    }
+
+    saveToLocal();
+    state.dirty = false;
+  } catch (e) {
+    console.error('Drive save error:', e);
+    showToast('保存に失敗しました。リトライします…');
+    // ローカルには保存しておく
+    saveToLocal();
+  }
+}
+
+function scheduleSave() {
+  if (isDemo) return; // デモモードでは保存しない
+  state.dirty = true;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveToDrive(), AUTOSAVE_DELAY);
+}
+
+/* =============================================================
+   Local Storage (オフラインキャッシュ)
+   ============================================================= */
+function saveToLocal() {
+  try {
+    localStorage.setItem('kabulog_data', JSON.stringify(state.data));
+  } catch (e) { /* quota exceeded — ignore */ }
+}
+
+function loadFromLocal() {
+  try {
+    const raw = localStorage.getItem('kabulog_data');
+    if (!raw) return null;
+    return migrateData(JSON.parse(raw));
+  } catch { return null; }
+}
+
+/* =============================================================
+   Portfolio Calculation (移動平均法)
+   ============================================================= */
+function calculatePortfolio() {
+  const trades = [...(state.data?.trades || [])].sort((a, b) => a.date.localeCompare(b.date));
+  const holdings = {};
+  const realized = {};
+
+  for (const t of trades) {
+    const key = t.ticker || t.name || 'unknown';
+    if (!holdings[key]) holdings[key] = { quantity: 0, totalCost: 0, avgCost: 0, name: t.name || t.ticker, ticker: t.ticker };
+    if (!realized[key]) realized[key] = { total: 0, fees: 0, trades: [], name: t.name || t.ticker, ticker: t.ticker };
+
+    const h = holdings[key];
+    h.name = t.name || h.name;
+    h.ticker = t.ticker || h.ticker;
+
+    if (t.type === 'buy') {
+      h.totalCost += t.price * t.quantity + t.fees;
+      h.quantity += t.quantity;
+      h.avgCost = h.quantity > 0 ? h.totalCost / h.quantity : 0;
+    } else {
+      // 売り
+      const sellAmount = t.price * t.quantity;
+      const costBasis = h.avgCost * t.quantity;
+      const pl = sellAmount - costBasis - t.fees;
+      realized[key].total += pl;
+      realized[key].fees += t.fees;
+      realized[key].trades.push({ ...t, pl });
+
+      h.totalCost -= costBasis;
+      h.quantity -= t.quantity;
+      if (h.quantity <= 0) { h.quantity = 0; h.totalCost = 0; h.avgCost = 0; }
+    }
+  }
+
+  // 配当集計
+  const dividends = {};
+  let totalDivGross = 0, totalDivTax = 0;
+  for (const d of (state.data?.dividends || [])) {
+    const key = d.ticker || d.name || 'unknown';
+    if (!dividends[key]) dividends[key] = { gross: 0, tax: 0, net: 0, name: d.name || d.ticker, ticker: d.ticker };
+    dividends[key].gross += d.amount;
+    dividends[key].tax += d.tax;
+    dividends[key].net += d.amount - d.tax;
+    totalDivGross += d.amount;
+    totalDivTax += d.tax;
+  }
+
+  // 合計
+  let totalRealized = 0;
+  for (const k in realized) totalRealized += realized[k].total;
+
+  return { holdings, realized, dividends, totalRealized, totalDivGross, totalDivTax, totalDivNet: totalDivGross - totalDivTax };
+}
+
+/* =============================================================
+   Formatting
+   ============================================================= */
+function fmtYen(n) {
+  if (!isFinite(n)) return '¥0';
+  const abs = Math.abs(Math.round(n));
+  const str = abs.toLocaleString('ja-JP');
+  return (n < 0 ? '-¥' : '¥') + str;
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const parts = d.split('-');
+  if (parts.length === 3) return `${parts[0]}/${parts[1]}/${parts[2]}`;
+  return d;
+}
+
+function plClass(n) {
+  if (n > 0) return 'profit';
+  if (n < 0) return 'loss';
+  return 'zero';
+}
+
+function plSign(n) {
+  if (n > 0) return '+';
+  return '';
+}
+
+/** カレンダーセル用の金額表示（数字のみ・短縮） */
+function fmtCalAmount(n) {
+  const abs = Math.abs(Math.round(n));
+  const sign = n > 0 ? '+' : '';
+  if (abs >= 1000000) {
+    // 100万以上 → 1.2M
+    const m = n / 1000000;
+    return sign + (Math.abs(m) >= 10 ? Math.round(m) : m.toFixed(1).replace(/\.0$/, '')) + 'M';
+  }
+  if (abs >= 10000) {
+    // 1万以上 → 20k, 150k
+    return sign + Math.round(n / 1000) + 'k';
+  }
+  // 1万未満 → 5,000
+  return sign + Math.round(n).toLocaleString();
+}
+
+/* =============================================================
+   Render — Dashboard
+   ============================================================= */
+function renderDashboard() {
+  const p = calculatePortfolio();
+  const totalPL = p.totalRealized + p.totalDivNet;
+
+  // 保有銘柄
+  const holdingEntries = Object.entries(p.holdings).filter(([,h]) => h.quantity > 0);
+
+  let html = `
+    <div class="card">
+      <div class="card-title">📊 トータル損益（実現＋配当）</div>
+      <div class="card-value ${plClass(totalPL)}">${plSign(totalPL)}${fmtYen(totalPL)}</div>
+      <div class="summary-row">
+        <div class="summary-item">
+          <div class="summary-label">実現損益</div>
+          <div class="summary-value num" style="color:var(--${plClass(p.totalRealized)})">${plSign(p.totalRealized)}${fmtYen(p.totalRealized)}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">配当（税引後）</div>
+          <div class="summary-value num" style="color:var(--${plClass(p.totalDivNet)})">${fmtYen(p.totalDivNet)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="card-title">💼 保有銘柄（${holdingEntries.length}件）</div>
+  `;
+
+  if (holdingEntries.length === 0) {
+    html += `<p style="color:var(--sub);font-size:.85rem;">保有銘柄はありません</p>`;
+  } else {
+    for (const [, h] of holdingEntries) {
+      html += `
+        <div class="list-item" style="cursor:default">
+          <div class="item-body">
+            <div class="item-name">${esc(h.name || h.ticker)}</div>
+            <div class="item-meta">${esc(h.ticker)} ・ ${h.quantity.toLocaleString()}株</div>
+          </div>
+          <div class="item-amount">
+            <div class="num">平均 ¥${Math.round(h.avgCost).toLocaleString()}</div>
+            <div style="font-size:.7rem;color:var(--sub)">簿価 ${fmtYen(h.totalCost)}</div>
+          </div>
+        </div>`;
+    }
+  }
+  html += `</div>`;
+
+  // 直近取引
+  const recent = [...(state.data?.trades || [])].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+  if (recent.length > 0) {
+    html += `
+      <div class="list-section">
+        <div class="section-header"><h3 class="section-title">直近の取引</h3></div>`;
+    for (const t of recent) {
+      const total = t.price * t.quantity;
+      html += tradeListItem(t, total);
+    }
+    html += `</div>`;
+  }
+
+  document.getElementById('dash-content').innerHTML = html;
+}
+
+function tradeListItem(t, total) {
+  return `
+    <div class="list-item" onclick="openTradeModal('${t.id}')">
+      <div class="item-badge ${t.type}">${t.type === 'buy' ? '買' : '売'}</div>
+      <div class="item-body">
+        <div class="item-name">${esc(t.name || t.ticker)}</div>
+        <div class="item-meta"><span class="nw">${fmtDate(t.date)}</span> ・ <span class="nw">${t.quantity.toLocaleString()}株 × ¥${t.price.toLocaleString()}</span></div>
+      </div>
+      <div class="item-amount num">${fmtYen(total)}</div>
+    </div>`;
+}
+
+/* =============================================================
+   Render — Trades
+   ============================================================= */
+function renderTrades() {
+  const trades = [...(state.data?.trades || [])].sort((a, b) => b.date.localeCompare(a.date));
+  const el = document.getElementById('trades-list');
+
+  if (trades.length === 0) {
+    el.innerHTML = `<div class="empty-state"><p>取引がまだありません。<br>「＋ 追加」で最初の取引を記録しましょう。</p></div>`;
+    return;
+  }
+
+  let html = '';
+  for (const t of trades) {
+    const total = t.price * t.quantity;
+    html += tradeListItem(t, total);
+  }
+  el.innerHTML = html;
+}
+
+/* =============================================================
+   Render — Dividends
+   ============================================================= */
+function renderDividends() {
+  const divs = [...(state.data?.dividends || [])].sort((a, b) => b.date.localeCompare(a.date));
+  const el = document.getElementById('dividends-list');
+
+  if (divs.length === 0) {
+    el.innerHTML = `<div class="empty-state"><p>配当がまだありません。<br>「＋ 追加」で配当金を記録しましょう。</p></div>`;
+    return;
+  }
+
+  let html = '';
+  for (const d of divs) {
+    const net = d.amount - d.tax;
+    html += `
+      <div class="list-item" onclick="openDividendModal('${d.id}')">
+        <div class="item-badge dividend">配</div>
+        <div class="item-body">
+          <div class="item-name">${esc(d.name || d.ticker)}</div>
+          <div class="item-meta">${fmtDate(d.date)} ・ 税 ${fmtYen(d.tax)}</div>
+        </div>
+        <div class="item-amount num" style="color:var(--profit)">${fmtYen(net)}</div>
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+
+/* =============================================================
+   Render — Analysis
+   ============================================================= */
+function renderAnalysis() {
+  // Filter chips
+  const modes = [
+    { key: 'stock', label: '銘柄別' },
+    { key: 'monthly', label: '月別' },
+    { key: 'yearly', label: '年別' },
+  ];
+  const filtersEl = document.getElementById('analysis-filters');
+  filtersEl.innerHTML = modes.map(m =>
+    `<button class="filter-chip ${m.key === state.analysisMode ? 'active' : ''}" onclick="setAnalysisMode('${m.key}')">${m.label}</button>`
+  ).join('');
+
+  const contentEl = document.getElementById('analysis-content');
+  const p = calculatePortfolio();
+
+  if (state.analysisMode === 'stock') {
+    contentEl.innerHTML = renderStockAnalysis(p);
+  } else if (state.analysisMode === 'monthly') {
+    contentEl.innerHTML = renderPeriodAnalysis('month');
+  } else {
+    contentEl.innerHTML = renderPeriodAnalysis('year');
+  }
+}
+
+function renderStockAnalysis(p) {
+  // 全銘柄のキーを統合
+  const allKeys = new Set([...Object.keys(p.realized), ...Object.keys(p.dividends)]);
+  if (allKeys.size === 0) return `<div class="empty-state"><p>データがありません</p></div>`;
+
+  const rows = [];
+  for (const key of allKeys) {
+    const r = p.realized[key] || { total: 0, name: key, ticker: key };
+    const d = p.dividends[key] || { net: 0 };
+    const total = r.total + d.net;
+    rows.push({ name: r.name || d.name || key, ticker: r.ticker || d.ticker || key, realized: r.total, dividend: d.net, total });
+  }
+  rows.sort((a, b) => b.total - a.total);
+
+  const grandTotal = rows.reduce((s, r) => s + r.total, 0);
+
+  let html = `<div class="card"><table class="analysis-table">
+    <thead><tr><th>銘柄</th><th class="num-col">実現損益</th><th class="num-col">配当</th><th class="num-col">合計</th></tr></thead><tbody>`;
+  for (const r of rows) {
+    html += `<tr>
+      <td><strong>${esc(r.name)}</strong><br><span style="font-size:.7rem;color:var(--sub)">${esc(r.ticker)}</span></td>
+      <td class="num-col" style="color:var(--${plClass(r.realized)})">${plSign(r.realized)}${fmtYen(r.realized)}</td>
+      <td class="num-col" style="color:var(--${plClass(r.dividend)})">${fmtYen(r.dividend)}</td>
+      <td class="num-col" style="color:var(--${plClass(r.total)});font-weight:700">${plSign(r.total)}${fmtYen(r.total)}</td>
+    </tr>`;
+  }
+  html += `<tr class="total-row">
+    <td>合計</td><td class="num-col" colspan="2"></td>
+    <td class="num-col" style="color:var(--${plClass(grandTotal)})">${plSign(grandTotal)}${fmtYen(grandTotal)}</td>
+  </tr>`;
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+function renderPeriodAnalysis(mode) {
+  const trades = state.data?.trades || [];
+  const divs = state.data?.dividends || [];
+  const p = calculatePortfolio();
+  const buckets = {};
+
+  // 売り取引の損益を期間別に集計
+  for (const key in p.realized) {
+    for (const t of p.realized[key].trades) {
+      const period = mode === 'month' ? t.date.slice(0, 7) : t.date.slice(0, 4);
+      if (!period) continue;
+      if (!buckets[period]) buckets[period] = { realized: 0, dividend: 0, total: 0 };
+      buckets[period].realized += t.pl;
+    }
+  }
+
+  // 配当を期間別に集計
+  for (const d of divs) {
+    const period = mode === 'month' ? d.date.slice(0, 7) : d.date.slice(0, 4);
+    if (!period) continue;
+    if (!buckets[period]) buckets[period] = { realized: 0, dividend: 0, total: 0 };
+    buckets[period].dividend += (d.amount - d.tax);
+  }
+
+  const keys = Object.keys(buckets).sort().reverse();
+  if (keys.length === 0) return `<div class="empty-state"><p>データがありません</p></div>`;
+
+  for (const k of keys) buckets[k].total = buckets[k].realized + buckets[k].dividend;
+  const grandTotal = keys.reduce((s, k) => s + buckets[k].total, 0);
+
+  const periodLabel = mode === 'month' ? '年月' : '年';
+
+  let html = `<div class="card"><table class="analysis-table">
+    <thead><tr><th>${periodLabel}</th><th class="num-col">実現損益</th><th class="num-col">配当</th><th class="num-col">合計</th></tr></thead><tbody>`;
+  for (const k of keys) {
+    const b = buckets[k];
+    const label = mode === 'month' ? k.replace('-', '/') : k + '年';
+    html += `<tr>
+      <td class="num">${label}</td>
+      <td class="num-col" style="color:var(--${plClass(b.realized)})">${plSign(b.realized)}${fmtYen(b.realized)}</td>
+      <td class="num-col" style="color:var(--${plClass(b.dividend)})">${fmtYen(b.dividend)}</td>
+      <td class="num-col" style="color:var(--${plClass(b.total)});font-weight:700">${plSign(b.total)}${fmtYen(b.total)}</td>
+    </tr>`;
+  }
+  html += `<tr class="total-row">
+    <td>合計</td><td class="num-col" colspan="2"></td>
+    <td class="num-col" style="color:var(--${plClass(grandTotal)})">${plSign(grandTotal)}${fmtYen(grandTotal)}</td>
+  </tr>`;
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+/* =============================================================
+   Render — All
+   ============================================================= */
+function renderAll() {
+  renderDashboard();
+  renderCalendar();
+  renderTrades();
+  renderDividends();
+  renderAnalysis();
+  renderSettings();
+}
+
+/* =============================================================
+   View Switching
+   ============================================================= */
+function switchView(name) {
+  state.currentView = name;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === name));
+  // FAB 表示制御
+  const fab = document.getElementById('fab');
+  fab.style.display = (name === 'trades' || name === 'dividends') ? 'flex' : 'none';
+}
+
+function handleFab() {
+  if (state.currentView === 'trades') openTradeModal();
+  else if (state.currentView === 'dividends') openDividendModal();
+}
+
+function setAnalysisMode(mode) {
+  state.analysisMode = mode;
+  renderAnalysis();
+}
+
+/* =============================================================
+   Calendar
+   ============================================================= */
+function renderCalendar() {
+  const el = document.getElementById('calendar-content');
+  const year = state.calYear;
+  const month = state.calMonth;
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  // 日別損益を集計
+  const dayPL = {};
+  const dayDiv = {};
+  const p = calculatePortfolio();
+  for (const key in p.realized) {
+    for (const t of p.realized[key].trades) {
+      if (!dayPL[t.date]) dayPL[t.date] = 0;
+      dayPL[t.date] += t.pl;
+    }
+  }
+  for (const d of (state.data?.dividends || [])) {
+    if (!dayDiv[d.date]) dayDiv[d.date] = 0;
+    dayDiv[d.date] += (d.amount - d.tax);
+    if (!dayPL[d.date]) dayPL[d.date] = 0;
+    dayPL[d.date] += (d.amount - d.tax);
+  }
+
+  // 最大値を求めてヒートマップ強度を計算
+  const vals = Object.values(dayPL).filter(v => v !== 0);
+  const maxAbs = vals.length > 0 ? Math.max(...vals.map(Math.abs)) : 1;
+
+  function heatClass(val) {
+    if (!val || val === 0) return '';
+    const ratio = Math.abs(val) / maxAbs;
+    const level = ratio > .6 ? 3 : ratio > .25 ? 2 : 1;
+    return val > 0 ? `profit-${level}` : `loss-${level}`;
+  }
+
+  // カレンダーグリッド生成
+  const firstDay = new Date(year, month - 1, 1);
+  const startDow = firstDay.getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const prevDays = new Date(year, month - 1, 0).getDate();
+
+  const monthLabel = `${year}年${month}月`;
+  const dow = ['日','月','火','水','木','金','土'];
+
+  let html = `
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calNav(-1)">◀</button>
+      <span class="cal-nav-title">${monthLabel}</span>
+      <button class="cal-nav-btn" onclick="calNav(1)">▶</button>
+    </div>
+    <div class="cal-grid">
+      ${dow.map((d,i) => `<div class="cal-dow">${d}</div>`).join('')}
+  `;
+
+  // 月間集計用
+  let monthTotal = 0, winDays = 0, lossDays = 0;
+
+  // 前月の埋め草
+  for (let i = startDow - 1; i >= 0; i--) {
+    const d = prevDays - i;
+    html += `<div class="cal-cell empty other-month"><span class="cal-date">${d}</span></div>`;
+  }
+
+  // 当月
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const pl = dayPL[dateStr] || 0;
+    const hasDiv = !!dayDiv[dateStr];
+    const isToday = dateStr === todayStr;
+    const heat = heatClass(pl);
+
+    if (pl > 0) { winDays++; monthTotal += pl; }
+    else if (pl < 0) { lossDays++; monthTotal += pl; }
+    else if (hasDiv) { monthTotal += 0; }
+
+    const amountHtml = pl !== 0
+      ? `<span class="cal-amount">${fmtCalAmount(pl)}</span>`
+      : '';
+    const divDot = hasDiv ? '<span class="cal-div-dot"></span>' : '';
+
+    html += `<div class="cal-cell ${heat} ${isToday ? 'today' : ''}" onclick="openDayDetail('${dateStr}')">
+      <span class="cal-date">${d}</span>
+      ${amountHtml}
+      ${divDot}
+    </div>`;
+  }
+
+  // 翌月の埋め草
+  const totalCells = startDow + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let d = 1; d <= remaining; d++) {
+    html += `<div class="cal-cell empty other-month"><span class="cal-date">${d}</span></div>`;
+  }
+
+  html += `</div>`;
+
+  // 月間サマリー
+  const totalDays = winDays + lossDays;
+  const winRate = totalDays > 0 ? Math.round(winDays / totalDays * 100) : 0;
+
+  html += `
+    <div class="cal-summary">
+      <div class="cal-stat">
+        <div class="cal-stat-label">月間損益</div>
+        <div class="cal-stat-value" style="color:var(--${plClass(monthTotal)})">${plSign(monthTotal)}${fmtYen(monthTotal)}</div>
+      </div>
+      <div class="cal-stat">
+        <div class="cal-stat-label">勝ち日</div>
+        <div class="cal-stat-value" style="color:var(--profit)">${winDays}日</div>
+      </div>
+      <div class="cal-stat">
+        <div class="cal-stat-label">負け日</div>
+        <div class="cal-stat-value" style="color:var(--loss)">${lossDays}日</div>
+      </div>
+      <div class="cal-stat">
+        <div class="cal-stat-label">勝率</div>
+        <div class="cal-stat-value">${winRate}%</div>
+      </div>
+    </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+function calNav(delta) {
+  state.calMonth += delta;
+  if (state.calMonth > 12) { state.calMonth = 1; state.calYear++; }
+  if (state.calMonth < 1)  { state.calMonth = 12; state.calYear--; }
+  renderCalendar();
+}
+
+function openDayDetail(dateStr) {
+  const trades = (state.data?.trades || []).filter(t => t.date === dateStr);
+  const divs = (state.data?.dividends || []).filter(d => d.date === dateStr);
+
+  if (trades.length === 0 && divs.length === 0) return;
+
+  document.getElementById('day-modal-title').textContent = `${fmtDate(dateStr)} の記録`;
+  let html = '';
+
+  if (trades.length > 0) {
+    html += '<div style="margin-bottom:8px;font-size:.75rem;color:var(--sub);font-weight:700">取引</div>';
+    for (const t of trades) {
+      const total = t.price * t.quantity;
+      html += tradeListItem(t, total);
+    }
+  }
+  if (divs.length > 0) {
+    html += '<div style="margin-top:12px;margin-bottom:8px;font-size:.75rem;color:var(--sub);font-weight:700">配当</div>';
+    for (const d of divs) {
+      const net = d.amount - d.tax;
+      html += `<div class="list-item" onclick="closeModal('modal-day');openDividendModal('${d.id}')">
+        <div class="item-badge dividend">配</div>
+        <div class="item-body">
+          <div class="item-name">${esc(d.name || d.ticker)}</div>
+          <div class="item-meta">${fmtYen(d.amount)} − 税 ${fmtYen(d.tax)}</div>
+        </div>
+        <div class="item-amount num" style="color:var(--profit)">${fmtYen(net)}</div>
+      </div>`;
+    }
+  }
+
+  document.getElementById('day-detail-content').innerHTML = html;
+  document.getElementById('modal-day').classList.add('open');
+}
+
+/* =============================================================
+   Settings
+   ============================================================= */
+function renderSettings() {
+  const fees = state.data?.settings?.defaultFees ?? 0;
+  const el = document.getElementById('settings-content');
+
+  el.innerHTML = `
+    <div class="settings-section">
+      <div class="settings-section-title">取引設定</div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-label">デフォルト手数料</div>
+          <div class="settings-desc"><span class="phrase">新規取引で</span><span class="phrase">自動入力される手数料</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <input type="number" class="settings-input" id="set-fees" value="${fees}" min="0" step="1" onchange="saveDefaultFees()">
+          <span style="font-size:.8rem;color:var(--sub)">円</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">データ</div>
+      <button class="settings-action export" onclick="exportCSV()">📄 CSVエクスポート</button>
+      <button class="settings-action danger" onclick="resetData()">🗑 すべてのデータ・設定をリセット</button>
+    </div>
+
+    <div class="settings-section" style="text-align:center;padding-top:16px">
+      <p style="font-size:.72rem;color:var(--sub)">株ログ v1.0</p>
+      ${TEST_MODE ? `<p style="font-size:.65rem;color:var(--sub);margin-top:4px"><span class="phrase">お試し版です。</span><span class="phrase">入力した内容はどこにも保存されず、</span><span class="phrase">ページを閉じると消えます</span></p>` : `
+      <p style="font-size:.65rem;color:var(--sub);margin-top:4px">リセットするとGoogleドライブ上のデータも削除され、<br>ログアウトします</p>`}
+      <p class="legal-links" style="margin-top:12px"><a href="./privacy.html">プライバシーポリシー</a>　|　<a href="./terms.html">利用規約</a></p>
+    </div>
+  `;
+}
+
+function saveDefaultFees() {
+  const fees = parseFloat(document.getElementById('set-fees').value) || 0;
+  if (!state.data.settings) state.data.settings = {};
+  state.data.settings.defaultFees = fees;
+  scheduleSave();
+  showToast('手数料を保存しました');
+}
+
+function exportCSV() {
+  const BOM = '\uFEFF';
+  let csv = BOM;
+
+  // 取引
+  csv += '=== 取引 ===\n';
+  csv += '日付,種別,銘柄コード,銘柄名,数量,単価,手数料,メモ\n';
+  const trades = [...(state.data?.trades || [])].sort((a,b) => a.date.localeCompare(b.date));
+  for (const t of trades) {
+    csv += `${t.date},${t.type === 'buy' ? '買' : '売'},${t.ticker},"${t.name}",${t.quantity},${t.price},${t.fees},"${t.notes}"\n`;
+  }
+
+  csv += '\n=== 配当 ===\n';
+  csv += '受取日,銘柄コード,銘柄名,配当金額（税引前）,源泉徴収税,メモ\n';
+  const divs = [...(state.data?.dividends || [])].sort((a,b) => a.date.localeCompare(b.date));
+  for (const d of divs) {
+    csv += `${d.date},${d.ticker},"${d.name}",${d.amount},${d.tax},"${d.notes}"\n`;
+  }
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kabulog_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSVをダウンロードしました');
+}
+
+function resetData() {
+  const msg = TEST_MODE
+    ? '入力した内容をすべて消します。\nこの操作は取り消せません。'
+    : 'すべてのデータ・設定を完全に削除します。\nGoogleドライブ上のデータも削除されます。\nこの操作は取り消せません。';
+  showConfirm(msg, '完全リセット').then(async (ok) => {
+    if (!ok) return;
+
+    // 1. Google Drive のファイルを削除
+    if (state.accessToken && state.driveFileId) {
+      try {
+        await driveRequest(
+          `https://www.googleapis.com/drive/v3/files/${state.driveFileId}`,
+          { method: 'DELETE' }
+        );
+      } catch (e) { console.error('Drive delete error:', e); }
+    }
+
+    // 2. localStorage を全クリア
+    try {
+      localStorage.removeItem('kabulog_data');
+      localStorage.removeItem('kabulog_user_stocks');
+      sessionStorage.removeItem('kabulog_last_email');
+    } catch { /* ignore */ }
+
+    // 3. 学習した銘柄辞書をクリア
+    userStockDict = {};
+
+    // 4. アプリ状態をリセット
+    state.data = createEmptyData();
+    state.driveFileId = null;
+    state.calYear = new Date().getFullYear();
+    state.calMonth = new Date().getMonth() + 1;
+
+    // 5. 画面をリセット
+    renderAll();
+    showToast('すべてのデータをリセットしました');
+
+    // 6. ログアウトしてログイン画面に戻る
+    if (!isDemo && state.accessToken) {
+      try { google.accounts.oauth2.revoke(state.accessToken); } catch {}
+      state.user = null;
+      state.accessToken = null;
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('login-view').style.display = 'flex';
+    }
+    if (isDemo && !TEST_MODE) exitDemo();
+  });
+}
+
+/* =============================================================
+   Modal — Trade
+   ============================================================= */
+function openTradeModal(id) {
+  state.editingTradeId = id || null;
+  const modal = document.getElementById('modal-trade');
+  const title = document.getElementById('trade-modal-title');
+  const delArea = document.getElementById('trade-delete-area');
+
+  if (id) {
+    const t = state.data.trades.find(x => x.id === id);
+    if (!t) return;
+    title.textContent = '取引を編集';
+    delArea.style.display = 'block';
+    setTradeType(t.type);
+    document.getElementById('t-date').value = t.date;
+    document.getElementById('t-ticker').value = t.ticker;
+    document.getElementById('t-name').value = t.name;
+    document.getElementById('t-qty').value = t.quantity || '';
+    document.getElementById('t-price').value = t.price || '';
+    document.getElementById('t-fees').value = t.fees || '';
+    document.getElementById('t-notes').value = t.notes;
+  } else {
+    title.textContent = '取引を追加';
+    delArea.style.display = 'none';
+    setTradeType('buy');
+    document.getElementById('t-date').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('t-ticker').value = '';
+    document.getElementById('t-name').value = '';
+    document.getElementById('t-qty').value = '';
+    document.getElementById('t-price').value = '';
+    document.getElementById('t-fees').value = state.data?.settings?.defaultFees || '0';
+    document.getElementById('t-notes').value = '';
+  }
+  modal.classList.add('open');
+}
+
+function setTradeType(type) {
+  state.tradeType = type;
+  document.querySelectorAll('#modal-trade .toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === type);
+  });
+}
+
+function saveTrade() {
+  const date = document.getElementById('t-date').value;
+  const ticker = document.getElementById('t-ticker').value.trim();
+  const name = document.getElementById('t-name').value.trim();
+  const quantity = parseFloat(document.getElementById('t-qty').value) || 0;
+  const price = parseFloat(document.getElementById('t-price').value) || 0;
+  const fees = parseFloat(document.getElementById('t-fees').value) || 0;
+  const notes = document.getElementById('t-notes').value.trim();
+
+  if (!date || (!ticker && !name) || quantity <= 0 || price <= 0) {
+    showToast('日付・銘柄・数量・単価は必須です');
+    return;
+  }
+
+  const trade = {
+    id: state.editingTradeId || generateId(),
+    date, ticker, name,
+    type: state.tradeType,
+    quantity, price, fees, notes,
+  };
+
+  if (state.editingTradeId) {
+    const idx = state.data.trades.findIndex(x => x.id === state.editingTradeId);
+    if (idx >= 0) state.data.trades[idx] = { ...state.data.trades[idx], ...trade }; // 知らない項目は残す
+  } else {
+    state.data.trades.push(trade);
+  }
+
+  closeModal('modal-trade');
+  learnStock(ticker, name);
+  renderAll();
+  scheduleSave();
+  showToast('保存しました');
+}
+
+function deleteTrade() {
+  showConfirm('この取引を削除しますか？').then(ok => {
+    if (!ok) return;
+    state.data.trades = state.data.trades.filter(t => t.id !== state.editingTradeId);
+    closeModal('modal-trade');
+    renderAll();
+    scheduleSave();
+    showToast('削除しました');
+  });
+}
+
+/* =============================================================
+   Modal — Dividend
+   ============================================================= */
+function openDividendModal(id) {
+  state.editingDividendId = id || null;
+  const modal = document.getElementById('modal-dividend');
+  const title = document.getElementById('div-modal-title');
+  const delArea = document.getElementById('div-delete-area');
+
+  if (id) {
+    const d = state.data.dividends.find(x => x.id === id);
+    if (!d) return;
+    title.textContent = '配当を編集';
+    delArea.style.display = 'block';
+    document.getElementById('d-date').value = d.date;
+    document.getElementById('d-ticker').value = d.ticker;
+    document.getElementById('d-name').value = d.name;
+    document.getElementById('d-amount').value = d.amount || '';
+    document.getElementById('d-tax').value = d.tax || '';
+    document.getElementById('d-notes').value = d.notes;
+  } else {
+    title.textContent = '配当を追加';
+    delArea.style.display = 'none';
+    document.getElementById('d-date').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('d-ticker').value = '';
+    document.getElementById('d-name').value = '';
+    document.getElementById('d-amount').value = '';
+    document.getElementById('d-tax').value = '';
+    document.getElementById('d-notes').value = '';
+  }
+  modal.classList.add('open');
+}
+
+function saveDividend() {
+  const date = document.getElementById('d-date').value;
+  const ticker = document.getElementById('d-ticker').value.trim();
+  const name = document.getElementById('d-name').value.trim();
+  const amount = parseFloat(document.getElementById('d-amount').value) || 0;
+  const tax = parseFloat(document.getElementById('d-tax').value) || 0;
+  const notes = document.getElementById('d-notes').value.trim();
+
+  if (!date || (!ticker && !name) || amount <= 0) {
+    showToast('受取日・銘柄・配当金額は必須です');
+    return;
+  }
+
+  const div = {
+    id: state.editingDividendId || generateId(),
+    date, ticker, name, amount, tax, notes,
+  };
+
+  if (state.editingDividendId) {
+    const idx = state.data.dividends.findIndex(x => x.id === state.editingDividendId);
+    if (idx >= 0) state.data.dividends[idx] = { ...state.data.dividends[idx], ...div }; // 知らない項目は残す
+  } else {
+    state.data.dividends.push(div);
+  }
+
+  closeModal('modal-dividend');
+  learnStock(ticker, name);
+  renderAll();
+  scheduleSave();
+  showToast('保存しました');
+}
+
+function deleteDividend() {
+  showConfirm('この配当を削除しますか？').then(ok => {
+    if (!ok) return;
+    state.data.dividends = state.data.dividends.filter(d => d.id !== state.editingDividendId);
+    closeModal('modal-dividend');
+    renderAll();
+    scheduleSave();
+    showToast('削除しました');
+  });
+}
+
+/* =============================================================
+   Modal Utils
+   ============================================================= */
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+/* =============================================================
+   Toast
+   ============================================================= */
+function showToast(msg, duration = 2200) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+/* =============================================================
+   Confirm Dialog
+   ============================================================= */
+function showConfirm(msg, okLabel = '削除') {
+  return new Promise(resolve => {
+    confirmResolveFn = resolve;
+    document.getElementById('confirm-msg').textContent = msg;
+    document.getElementById('confirm-ok').textContent = okLabel;
+    document.getElementById('confirm-dialog').classList.add('open');
+  });
+}
+
+function confirmResolve(val) {
+  document.getElementById('confirm-dialog').classList.remove('open');
+  if (confirmResolveFn) { confirmResolveFn(val); confirmResolveFn = null; }
+}
+
+/* =============================================================
+   Escape HTML
+   ============================================================= */
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* =============================================================
+   Demo Mode — Google設定なしでデザイン確認用
+   ============================================================= */
+function createDemoData() {
+  return {
+    version: CURRENT_DATA_VERSION,
+    trades: [
+      { id: 'd1', date: '2026-01-15', ticker: '7203', name: 'トヨタ自動車', type: 'buy',  quantity: 100, price: 2580, fees: 275, notes: '' },
+      { id: 'd2', date: '2026-02-10', ticker: '6758', name: 'ソニーG', type: 'buy',  quantity: 50,  price: 3420, fees: 275, notes: '決算前に購入' },
+      { id: 'd3', date: '2026-03-05', ticker: '7203', name: 'トヨタ自動車', type: 'buy',  quantity: 100, price: 2450, fees: 275, notes: '押し目買い' },
+      { id: 'd4', date: '2026-04-20', ticker: '7203', name: 'トヨタ自動車', type: 'sell', quantity: 100, price: 2780, fees: 275, notes: '利確' },
+      { id: 'd5', date: '2026-05-12', ticker: '9984', name: 'ソフトバンクG', type: 'buy',  quantity: 200, price: 8950, fees: 275, notes: '' },
+      { id: 'd6', date: '2026-06-15', ticker: '6758', name: 'ソニーG', type: 'sell', quantity: 50,  price: 3850, fees: 275, notes: '全株売却' },
+      { id: 'd7', date: '2026-07-08', ticker: '8306', name: '三菱UFJ', type: 'buy',  quantity: 300, price: 1680, fees: 275, notes: '高配当狙い' },
+      { id: 'd8', date: '2026-08-20', ticker: '9984', name: 'ソフトバンクG', type: 'sell', quantity: 100, price: 8500, fees: 275, notes: '半分損切り' },
+      { id: 'd9', date: '2026-09-10', ticker: '4502', name: '武田薬品', type: 'buy',  quantity: 100, price: 4120, fees: 275, notes: '' },
+    ],
+    dividends: [
+      { id: 'dd1', date: '2026-03-25', ticker: '7203', name: 'トヨタ自動車', amount: 7500, tax: 1523, notes: '中間配当' },
+      { id: 'dd2', date: '2026-06-25', ticker: '8306', name: '三菱UFJ', amount: 12600, tax: 2559, notes: '期末配当' },
+      { id: 'dd3', date: '2026-09-25', ticker: '7203', name: 'トヨタ自動車', amount: 7500, tax: 1523, notes: '中間配当' },
+      { id: 'dd4', date: '2026-09-25', ticker: '4502', name: '武田薬品', amount: 9400, tax: 1909, notes: '中間配当' },
+    ],
+    settings: {},
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+let isDemo = false;
+
+function startDemo() {
+  isDemo = true;
+  state.data = createDemoData();
+  state.user = { name: 'デモユーザー' };
+
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('demo-banner').style.display = 'block';
+  document.getElementById('user-name').textContent = 'デモ';
+  document.getElementById('user-avatar').style.display = 'none';
+  renderAll();
+  showInstallBanner();
+}
+
+function exitDemo() {
+  isDemo = false;
+  state.data = null;
+  state.user = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('demo-banner').style.display = 'none';
+  document.getElementById('login-view').style.display = 'flex';
+}
+
+/* =============================================================
+   PWA Install Banner
+   ============================================================= */
+function showInstallBanner() {
+  if (TEST_MODE) return;
+  // すでにPWAとして開いている場合は表示しない
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  if (navigator.standalone) return; // iOS Safari standalone
+
+  // 一度閉じたら表示しない
+  try { if (localStorage.getItem('kabulog_install_dismissed')) return; } catch {}
+
+  const stepsEl = document.getElementById('install-steps');
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  if (isIOS) {
+    stepsEl.innerHTML = `
+      ① 下の <span class="step-icon">□↑</span> 共有ボタンをタップ<br>
+      ② 「ホーム画面に追加」を選択<br>
+      ③ アプリとして使えます
+    `;
+  } else if (isAndroid) {
+    stepsEl.innerHTML = `
+      ① 右上の <span class="step-icon">⋮</span> メニューをタップ<br>
+      ② 「ホーム画面に追加」を選択<br>
+      ③ アプリとして使えます
+    `;
+  } else {
+    // PC
+    stepsEl.innerHTML = `
+      アドレスバー右の <span class="step-icon">⊕</span> アイコンから<span class="phrase">インストールできます</span>
+    `;
+  }
+
+  // 少し遅延してから表示
+  setTimeout(() => {
+    document.getElementById('install-banner').classList.add('show');
+  }, 2000);
+}
+
+function dismissInstallBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+  try { localStorage.setItem('kabulog_install_dismissed', '1'); } catch {}
+}
+
+/* =============================================================
+   PWA Registration
+   ============================================================= */
+if ('serviceWorker' in navigator && !TEST_MODE) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW registration failed:', e));
+  });
+}
+
+/* =============================================================
+   Init
+   ============================================================= */
+window.addEventListener('load', () => {
+  // FAB 初期非表示
+  document.getElementById('fab').style.display = 'none';
+  // 銘柄辞書を読み込み
+  loadStockDict();
+  if (TEST_MODE) { showTestLanding(); return; }
+  // Google Auth を初期化
+  initGoogleAuth();
+});
+
+/* =============================================================
+   お試し版 — ログインなし・保存なし（ページを閉じると消える）
+   ============================================================= */
+/** お試し版の最初の画面（ログイン画面のカードをお試し版用に差し替える） */
+function showTestLanding() {
+  const box = document.querySelector('#login-view .login-content');
+  box.querySelector('.login-note').innerHTML =
+    '<span class="phrase">これはお試し版です。</span><br>' +
+    '<span class="phrase">ログインなしで、</span><span class="phrase">すべての機能を試せます。</span><br>' +
+    '<span class="phrase">入力した内容はどこにも保存されず、</span><span class="phrase">ページを閉じると消えます。</span>';
+  const btn = document.getElementById('google-signin-btn');
+  btn.textContent = '空の状態ではじめる';
+  btn.onclick = () => startTest(false);
+  const demo = box.querySelector('.demo-btn');
+  demo.textContent = 'サンプルのデータで試す';
+  demo.onclick = () => startTest(true);
+  box.querySelector('.demo-note').innerHTML = 'ログインせずに機能を試せます。<br>例の取引・配当が入った状態ではじまり、<br>入力した内容は保存されません。';
+  document.getElementById('login-view').style.display = 'flex';
+}
+
+function startTest(withSample) {
+  isDemo = true; // 保存処理を止める
+  state.data = withSample ? createDemoData() : createEmptyData();
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const banner = document.getElementById('demo-banner');
+  banner.innerHTML = '<span class="phrase">お試し版 — 入力した内容は保存されません</span>　<a onclick="loadSampleData()">サンプルを入れる</a>';
+  banner.style.display = 'block';
+  document.getElementById('user-name').textContent = 'お試し';
+  document.getElementById('user-avatar').style.display = 'none';
+  renderAll();
+}
+
+function loadSampleData() {
+  const d = state.data;
+  const go = () => { state.data = createDemoData(); renderAll(); showToast('サンプルを入れました'); };
+  if (d.trades.length || d.dividends.length) {
+    showConfirm('入力した内容をサンプルに置き換えます。', '置き換える').then(ok => ok && go());
+  } else go();
+}
+
+// 入力した内容があるときは、ページを閉じる前に確認する
+window.addEventListener('beforeunload', e => {
+  if (!TEST_MODE || !state.data) return;
+  if (state.data.trades.length || state.data.dividends.length) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// モーダル背景クリックで閉じる
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+</script>
+
+
+</body>
+</html>
