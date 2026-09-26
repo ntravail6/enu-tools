@@ -2,7 +2,7 @@
    株ログ — Service Worker
    キャッシュ戦略: Cache First + Network Fallback
    ============================================================= */
-const CACHE_NAME = 'kabulog-v3';
+const CACHE_NAME = 'kabulog-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -66,7 +66,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // アプリ本体: Cache First
+  // HTML: Network First（常に最新を取得、オフライン時のみキャッシュ）
+  if (request.destination === 'document' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
+    event.respondWith(
+      fetch(request).then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(request) || caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // その他の静的ファイル: Cache First
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
@@ -76,11 +90,6 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
-      }).catch(() => {
-        // オフラインでキャッシュもない場合
-        if (request.destination === 'document') {
-          return caches.match('./index.html');
-        }
       });
     })
   );
