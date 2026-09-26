@@ -1,0 +1,25 @@
+{
+  "name": "よくばりかけいぼ - あなたと一緒に育つ、欲張り家計簿",
+  "short_name": "よくばりかけいぼ",
+  "description": "作った本人が本気で欲しかった機能を全部詰め込んだ、欲張り家計簿アプリ。NoMoneyDayスタンプ、カード自動決済、資産推移、月次締めなど。あなたの声で育てていきます。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fefcf8",
+  "theme_color": "#c4a892",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
