@@ -1339,7 +1339,18 @@ async function driveRequest(url, options = {}) {
       ...(options.headers || {}),
     },
   });
-  if (!res.ok) throw new Error(`Drive API ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const body = await res.text();
+    const err = new Error(`Drive API ${res.status}: ${body}`);
+    // 403の場合は詳細をトーストで表示
+    if (res.status === 403) {
+      try {
+        const detail = JSON.parse(body);
+        showToast('403: ' + (detail.error?.message || body).slice(0, 80), 5000);
+      } catch { showToast('403: ' + body.slice(0, 80), 5000); }
+    }
+    throw err;
+  }
   return res;
 }
 
