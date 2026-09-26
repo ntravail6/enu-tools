@@ -38,7 +38,9 @@
 
   /* --- フォント --- */
   --font-ja: 'Kosugi Maru', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
-  --font-num: 'Futura', 'Century Gothic', 'Trebuchet MS', Arial, sans-serif;
+  --font-num: 'Futura', 'Century Gothic', 'Trebuchet MS', Arial, 'Kosugi Maru', sans-serif;
+  /* 基本の文字：英数字は Futura、日本語は Kosugi Maru */
+  --font-base: 'Futura', 'Century Gothic', 'Trebuchet MS', 'Kosugi Maru', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
 
   /* --- 損益カラー --- */
   --profit:  #4A8C6F;
@@ -63,7 +65,7 @@ html {
 }
 
 body {
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   color: var(--text);
   background: var(--bg);
   line-height: 1.6;
@@ -181,54 +183,77 @@ h3 { font-size: .95rem; font-weight: 700; }
    Login View
    ============================================================ */
 #login-view {
-  min-height: 100dvh;
-  flex-direction: column;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  padding: calc(1.2rem + env(safe-area-inset-top, 0px)) 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+}
+.login-content {
+  background: var(--card);
+  border-radius: 20px;
+  /* 下だけ少し広め：よくばりかけいぼはデモ説明が1行多いので、カードの高さと位置をそろえる */
+  padding: 2.2rem 1.6rem calc(2.2rem + 1.1rem);
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  line-height: normal;
+}
+.login-icon { width: 80px; height: 80px; margin: 0 auto .8rem; }
+.login-icon img { width: 100%; height: 100%; display: block; border-radius: 18px; box-shadow: 0 4px 12px rgba(142,127,117,.25); }
+.login-title { font-size: 1.5rem; line-height: 1.5; color: var(--text); letter-spacing: .05em; margin-bottom: .3rem; font-weight: 700; }
+.login-subtitle { font-size: .85rem; line-height: 1.55; color: var(--sub); margin-bottom: 1.8rem; }
+.login-note { font-size: .72rem; color: var(--sub); line-height: 1.7; margin-bottom: 1.8rem; padding: .8rem 1rem; background: var(--bg-soft); border-radius: 8px; }
+.google-signin-btn {
+  width: 100%;
+  min-height: 46px; /* Google のマークがないお試し版のボタンも同じ高さに */
+  padding: .8rem 1.5rem;
+  background: #fff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  font-size: .9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 32px;
-  padding: 32px;
-  text-align: center;
-  background: var(--bg);
+  font-family: 'Roboto', var(--font-ja);
+  transition: box-shadow .2s, background .2s;
 }
-
-.login-logo svg { width: 72px; height: 72px; }
-.login-title { font-size: 1.5rem; font-weight: 700; margin-top: 8px; }
-.login-sub { color: var(--sub); font-size: .85rem; margin-top: 4px; max-width: 280px; }
-
-.btn-google {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 32px;
-  border: none;
-  border-radius: 28px;
-  background: var(--card);
-  font-family: var(--font-ja);
-  font-size: .9rem;
-  font-weight: 700;
-  color: var(--text);
-  cursor: pointer;
-  transition: box-shadow .2s;
-  box-shadow: 0 2px 12px rgba(44,42,36,.08);
-}
-
-.btn-google:hover { box-shadow: 0 4px 16px rgba(44,42,36,.13); }
-.btn-google svg { width: 20px; height: 20px; }
-
-.login-note { font-size: .72rem; color: var(--sub); max-width: 260px; }
-
-.btn-demo {
-  padding: 10px 24px;
-  border: 1px dashed var(--primary);
-  border-radius: var(--radius-s);
+.google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+.google-signin-btn:active { background: #f1f3f4; }
+.google-signin-btn:disabled { opacity: .6; cursor: not-allowed; }
+.google-signin-btn svg { width: 18px; height: 18px; margin-right: 8px; }
+.login-error { margin-top: 1rem; padding: .6rem .8rem; background: #fce8e8; color: var(--loss); border-radius: 6px; font-size: .75rem; line-height: 1.5; }
+.login-status { margin-top: 1rem; font-size: .75rem; line-height: 1.6; color: var(--sub); min-height: 1.2em; }
+/* 何も出ていないときは場所を取らない（ボタンの下に空きができないように） */
+.login-status:empty { display: none; }
+.login-divider { display: flex; align-items: center; gap: .5rem; margin: 1.2rem 0; color: var(--sub); font-size: .7rem; line-height: 1.52; }
+.login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.demo-btn {
+  width: 100%;
+  padding: .7rem 1.5rem;
   background: transparent;
-  font-family: var(--font-ja);
-  font-size: .82rem;
   color: var(--primary-dark);
+  border: 1px dashed var(--primary);
+  border-radius: 24px;
+  font-size: .85rem;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
-  transition: background .15s;
+  font-family: var(--font-base);
+  transition: background .2s;
 }
-.btn-demo:hover { background: var(--primary-soft); }
+.demo-btn:hover { background: var(--primary-soft); }
+.demo-note { font-size: .68rem; color: var(--sub); line-height: 1.6; margin-top: .6rem; }
+/* リンクはカードの下に出し、カードの大きさ・位置には影響させない */
+.login-content { position: relative; }
+#login-view .legal-links { position: absolute; left: 0; right: 0; top: calc(100% + 14px); }
+#login-view .legal-links, #login-view .legal-links a { color: rgba(255,255,255,.85); }
 
 .demo-banner {
   background: var(--primary-soft);
@@ -339,7 +364,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .7rem;
   font-weight: 700;
   flex-shrink: 0;
@@ -370,7 +395,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   gap: 6px;
   padding: 10px 20px;
   border-radius: 20px;
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .85rem;
   font-weight: 700;
   border: none;
@@ -473,7 +498,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   border: none;
   border-bottom: 1.5px solid var(--line);
   border-radius: 0;
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .9rem;
   color: var(--text);
   background: transparent;
@@ -504,7 +529,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   border: none;
   background: var(--bg);
   border-radius: 20px;
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .85rem;
   font-weight: 700;
   color: var(--sub);
@@ -539,7 +564,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   border-radius: 20px;
   border: none;
   background: var(--bg-soft);
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .78rem;
   font-weight: 700;
   color: var(--sub);
@@ -737,7 +762,7 @@ h3 { font-size: .95rem; font-weight: 700; }
   width: 100%;
   padding: 14px;
   border-radius: 20px;
-  font-family: var(--font-ja);
+  font-family: var(--font-base);
   font-size: .88rem;
   font-weight: 700;
   cursor: pointer;
@@ -861,20 +886,47 @@ h3 { font-size: .95rem; font-weight: 700; }
   background: var(--card);
   border-radius: 20px;
   padding: 28px 24px;
-  max-width: 320px;
+  max-width: 340px;
   width: 100%;
   text-align: center;
 }
-.confirm-msg { font-size: .9rem; margin-bottom: 20px; line-height: 1.5; }
+.legal-links { font-size: .68rem; color: var(--sub); }
+.legal-links a { color: var(--sub); }
+.confirm-msg { font-size: .85rem; margin-bottom: 20px; line-height: 1.5; white-space: pre-line; text-wrap: pretty; }
 .confirm-actions { display: flex; gap: 8px; }
 .confirm-actions .btn { flex: 1; }
 
 /* ============================================================
    Responsive
    ============================================================ */
+/* 金額・日付は途中で折り返さない。文章は意味のまとまりで折り返す */
+.nw { white-space: nowrap; }
+.phrase { display: inline-block; }
+.analysis-table td.num-col,
+.analysis-table td.num,
+.cal-stat-value,
+.confirm-actions .btn { white-space: nowrap; }
+.settings-item { gap: 12px; }
+.settings-item > div:last-child { flex-shrink: 0; }
+.settings-input { width: 80px; }
+
+/* 幅の狭いスマホ（iPhone SE など） */
+@media (max-width: 360px) {
+  .card:has(.analysis-table) { padding: 12px 10px; }
+  .analysis-table { font-size: .72rem; }
+  .analysis-table th, .analysis-table td { padding-left: 3px; padding-right: 3px; }
+  .cal-stat-value { font-size: .82rem; }
+  .confirm-overlay { padding: 16px; }
+  .confirm-box { padding: 24px 14px; }
+  .confirm-msg { font-size: .78rem; }
+  .confirm-actions .btn { padding-left: 10px; padding-right: 10px; }
+}
+
 @media (min-width: 768px) {
   .main-content { padding: 24px 24px calc(var(--nav-h) + 24px); }
-  .summary-row { grid-template-columns: repeat(4, 1fr); }
+  /* PC ではヘッダーと下のメニューも中身の幅にそろえる */
+  .app-header { padding: 0 max(24px, calc(50% - 300px)); }
+  .bottom-nav { padding-left: calc(50% - 300px); padding-right: calc(50% - 300px); }
 }
 </style>
 </head>
@@ -884,23 +936,31 @@ h3 { font-size: .95rem; font-weight: 700; }
      Login View
      ============================================================ -->
 <div id="login-view">
-  <div>
-    <div class="login-logo">
-      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="72" height="72" rx="18" fill="var(--primary-light)"/>
-        <path d="M20 48 L28 28 L36 38 L44 22 L52 48" stroke="var(--primary-dark)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <circle cx="44" cy="22" r="3.5" fill="var(--primary-dark)"/>
-      </svg>
+  <div class="login-content">
+    <div class="login-icon"><img src="icon.svg" alt=""></div>
+    <h1 class="login-title">株ログ</h1>
+    <p class="login-subtitle">株の損益と配当を記録・分析</p>
+    <div class="login-note">
+      <span class="phrase">Googleアカウントでログインすると、</span><br>
+      <span class="phrase">データが自動で</span><span class="phrase">Googleドライブに保存されます。</span><br>
+      <span class="phrase">端末を変えても、</span><span class="phrase">同じアカウントで</span><span class="phrase">同じデータにアクセスできます。</span>
     </div>
-    <div class="login-title">株ログ</div>
-    <p class="login-sub">株式売買の損益と配当を記録。銘柄別・年月別に分析できます。</p>
+    <button class="google-signin-btn" id="google-signin-btn" onclick="handleLogin()">
+      <svg viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+      </svg>
+      Google でログイン
+    </button>
+    <div class="login-error" id="login-error" style="display:none"></div>
+    <div class="login-status" id="login-status"></div>
+    <div class="login-divider"><span>または</span></div>
+    <button class="demo-btn" onclick="startDemo()">デモモードで試す</button>
+    <div class="demo-note">ログインせずに機能を試せます。<br>サンプルのデータで表示され、<br>入力した内容は保存されません。</div>
+    <p class="legal-links"><a href="./privacy.html">プライバシーポリシー</a>　|　<a href="./terms.html">利用規約</a></p>
   </div>
-  <button class="btn-google" onclick="handleLogin()">
-    <svg viewBox="0 0 20 20"><path d="M19.6 10.2c0-.7-.1-1.4-.2-2H10v3.8h5.4c-.2 1.2-1 2.3-2.1 3v2.5h3.3c2-1.8 3-4.5 3-7.3z" fill="#4285F4"/><path d="M10 20c2.8 0 5.2-.9 6.9-2.5l-3.3-2.5c-.9.6-2.1 1-3.6 1-2.8 0-5.1-1.9-5.9-4.4H.7v2.6C2.4 17.8 5.9 20 10 20z" fill="#34A853"/><path d="M4.1 11.6c-.4-1.2-.4-2.5 0-3.7V5.3H.7C-.6 7.8-.6 12.2.7 14.7l3.4-3.1z" fill="#FBBC05"/><path d="M10 3.9c1.5 0 2.9.5 4 1.5l3-3C15.1.9 12.8 0 10 0 5.9 0 2.4 2.2.7 5.3l3.4 2.6C4.9 5.8 7.2 3.9 10 3.9z" fill="#EA4335"/></svg>
-    Googleでログイン
-  </button>
-  <p class="login-note">データはあなたのGoogleドライブに保存されます。他の端末からもアクセスできます。</p>
-  <button class="btn-demo" onclick="startDemo()">デモモードで試す</button>
 </div>
 
 <!-- ============================================================
@@ -994,7 +1054,7 @@ h3 { font-size: .95rem; font-weight: 700; }
 <div class="modal-overlay" id="modal-day">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title" id="day-modal-title">2026/01/15 の取引</h3>
+      <h3 class="modal-title" id="day-modal-title">2026/01/15 の記録</h3>
       <button class="modal-close" onclick="closeModal('modal-day')">✕</button>
     </div>
     <div id="day-detail-content"></div>
@@ -1153,6 +1213,9 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 const DRIVE_FILE_NAME = 'kabulog-data.json';
 const CURRENT_DATA_VERSION = 1;
 const AUTOSAVE_DELAY = 800; // ms
+// お試し版（test/kabulog）では true。ログインせず、どこにも保存しない。
+// 開発用/make-test.py が書き換えるので、ここは false のままにする
+const TEST_MODE = false;
 
 /* =============================================================
    State
@@ -1190,6 +1253,7 @@ async function loadStockDict() {
     console.log('stocks.json not found — using empty dict');
   }
   // ローカルに保存されたユーザー辞書を復元
+  if (TEST_MODE) return;
   try {
     const saved = localStorage.getItem('kabulog_user_stocks');
     if (saved) userStockDict = JSON.parse(saved);
@@ -1222,6 +1286,7 @@ function learnStock(ticker, name) {
   // 公式辞書と同じなら保存不要
   if (stockDict[code] === n) return;
   userStockDict[code] = n;
+  if (TEST_MODE) return;
   try {
     localStorage.setItem('kabulog_user_stocks', JSON.stringify(userStockDict));
   } catch { /* ignore */ }
@@ -1263,20 +1328,18 @@ function generateId() {
  * どんな形式が来ても壊れないように防御的に処理
  */
 function migrateData(raw) {
-  // null / undefined / 非オブジェクト → 空データ
-  if (!raw || typeof raw !== 'object') return createEmptyData();
+  // null / undefined / 配列 / 非オブジェクト → 空データ
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return createEmptyData();
 
   let data = {};
   try {
     data = JSON.parse(JSON.stringify(raw)); // deep clone
   } catch { return createEmptyData(); }
 
-  // version なし = レガシーフォーマット → v1 に変換
-  if (!data.version) {
-    data.version = 1;
-  }
+  // version なし = レガシーフォーマット → v1 に変換（"1" のような文字列も数字にする）
+  data.version = Math.floor(Number(data.version)) || 1;
 
-  // Future migrations:
+  // Future migrations（古い順に1段ずつ上げる。各関数の最後で data.version を上げる）:
   // if (data.version < 2) { data = migrateV1toV2(data); }
 
   return validateAndFillDefaults(data);
@@ -1285,15 +1348,25 @@ function migrateData(raw) {
 /**
  * 全フィールドにデフォルト値を補完
  * 欠損・型不正があっても動くようにする
+ * 知らない項目（新しい版のアプリが足したもの）は消さずに残す。
+ * 古いアプリで開いて保存しても、新しい版のデータが失われないようにするため
  */
 function validateAndFillDefaults(data) {
-  const safeArr = (v) => (Array.isArray(v) ? v : []);
-  const safeNum = (v) => { const n = Number(v); return isFinite(n) ? n : 0; };
-  const safeStr = (v) => (typeof v === 'string' ? v : '');
+  const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+  const safeArr = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
+  const safeNum = (v) => {
+    const n = Number(typeof v === 'string' ? v.replace(/[,，\s]/g, '') : v);
+    return isFinite(n) ? n : 0;
+  };
+  const safeStr = (v) => (typeof v === 'string' ? v : (typeof v === 'number' && isFinite(v)) ? String(v) : '');
+  const settings = isObj(data.settings) ? { ...data.settings } : {};
+  if ('defaultFees' in settings) settings.defaultFees = safeNum(settings.defaultFees);
 
   return {
+    ...data,
     version: data.version || CURRENT_DATA_VERSION,
     trades: safeArr(data.trades).map(t => ({
+      ...t,
       id:       safeStr(t.id) || generateId(),
       date:     safeStr(t.date),
       ticker:   safeStr(t.ticker),
@@ -1305,6 +1378,7 @@ function validateAndFillDefaults(data) {
       notes:    safeStr(t.notes),
     })),
     dividends: safeArr(data.dividends).map(d => ({
+      ...d,
       id:     safeStr(d.id) || generateId(),
       date:   safeStr(d.date),
       ticker: safeStr(d.ticker),
@@ -1313,7 +1387,7 @@ function validateAndFillDefaults(data) {
       tax:    safeNum(d.tax),
       notes:  safeStr(d.notes),
     })),
-    settings: (typeof data.settings === 'object' && data.settings) ? { ...data.settings } : {},
+    settings,
     updatedAt: safeStr(data.updatedAt) || new Date().toISOString(),
   };
 }
@@ -1331,45 +1405,70 @@ function initGoogleAuth() {
     client_id: CLIENT_ID,
     scope: SCOPES,
     callback: handleTokenResponse,
+    error_callback: () => {
+      setLoginStatus('ログインがキャンセルされたか失敗しました。', true);
+      document.getElementById('google-signin-btn').disabled = false;
+    },
   });
+  // 同じタブで前にログインしていれば、許可画面なしでログインし直す
+  let lastEmail = '';
+  try { lastEmail = sessionStorage.getItem('kabulog_last_email') || ''; } catch {}
+  if (lastEmail) {
+    setLoginStatus('セッションを復元中...');
+    tokenClient.requestAccessToken({ prompt: '', hint: lastEmail });
+  }
+}
+
+/** ログイン画面の状態表示（isError のときは赤い枠で出す） */
+function setLoginStatus(msg, isError) {
+  document.getElementById('login-status').textContent = (!isError && msg) || '';
+  const err = document.getElementById('login-error');
+  err.style.display = isError && msg ? 'block' : 'none';
+  err.textContent = isError ? (msg || '') : '';
 }
 
 function handleLogin() {
   if (!tokenClient) {
-    showToast('Google認証を読み込み中…少し待ってください');
+    setLoginStatus('Googleサービスの読み込み中です...', true);
     initGoogleAuth();
     return;
   }
+  document.getElementById('google-signin-btn').disabled = true;
+  setLoginStatus('Googleに接続中...');
   tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
 async function handleTokenResponse(resp) {
   if (resp.error) {
-    showToast('ログインに失敗しました');
+    document.getElementById('google-signin-btn').disabled = false;
+    setLoginStatus('ログイン失敗：' + resp.error, true);
     console.error(resp);
     return;
   }
   state.accessToken = resp.access_token;
 
-  // ユーザー情報を取得
+  // ユーザー情報を取得（Drive の権限だけで取れる about を使う）
   try {
-    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: `Bearer ${state.accessToken}` },
-    });
-    const u = await r.json();
+    setLoginStatus('ユーザー情報を取得中...');
+    const r = await driveRequest('https://www.googleapis.com/drive/v3/about?fields=user(displayName,emailAddress,photoLink)');
+    const u = (await r.json()).user || {};
     state.user = u;
-    document.getElementById('user-name').textContent = u.name || '';
+    try { if (u.emailAddress) sessionStorage.setItem('kabulog_last_email', u.emailAddress); } catch {}
+    document.getElementById('user-name').textContent = u.displayName || u.emailAddress || '';
     const avatar = document.getElementById('user-avatar');
-    avatar.src = u.picture || '';
-    avatar.style.display = u.picture ? 'block' : 'none';
+    avatar.src = u.photoLink || '';
+    avatar.style.display = u.photoLink ? 'block' : 'none';
   } catch (e) {
     console.error('userinfo error', e);
   }
 
   // Drive からデータ読み込み
+  setLoginStatus('データを読み込み中...');
   await loadFromDrive();
 
   // UI 切り替え
+  setLoginStatus('');
+  document.getElementById('google-signin-btn').disabled = false;
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   renderAll();
@@ -1377,6 +1476,7 @@ async function handleTokenResponse(resp) {
 }
 
 function handleLogout() {
+  if (TEST_MODE) return;
   if (isDemo) { exitDemo(); return; }
   showConfirm('ログアウトしますか？', 'ログアウト').then(ok => {
     if (!ok) return;
@@ -1387,6 +1487,8 @@ function handleLogout() {
     state.accessToken = null;
     state.driveFileId = null;
     state.data = null;
+    try { sessionStorage.removeItem('kabulog_last_email'); } catch {}
+    setLoginStatus('');
     document.getElementById('app').style.display = 'none';
     document.getElementById('login-view').style.display = 'flex';
   });
@@ -1411,6 +1513,7 @@ async function driveRequest(url, options = {}) {
 }
 
 async function loadFromDrive() {
+  state.driveLoadFailed = false;
   try {
     // ファイルを検索
     const searchUrl = `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${DRIVE_FILE_NAME}'&fields=files(id,name,modifiedTime)&orderBy=modifiedTime%20desc`;
@@ -1445,11 +1548,18 @@ async function loadFromDrive() {
     // オフラインフォールバック
     const local = loadFromLocal();
     state.data = local || createEmptyData();
+    // Drive の中身を読めていないので、上書き（空データで消してしまう）を防ぐ
+    state.driveLoadFailed = true;
   }
 }
 
 async function saveToDrive() {
   if (!state.accessToken || !state.data) return;
+  if (state.driveLoadFailed) {
+    saveToLocal();
+    showToast('Googleドライブを読み込めなかったため、保存できませんでした。通信を確認して、ページを再読み込みしてください', 5000);
+    return;
+  }
   state.data.updatedAt = new Date().toISOString();
 
   try {
@@ -1684,7 +1794,7 @@ function tradeListItem(t, total) {
       <div class="item-badge ${t.type}">${t.type === 'buy' ? '買' : '売'}</div>
       <div class="item-body">
         <div class="item-name">${esc(t.name || t.ticker)}</div>
-        <div class="item-meta">${fmtDate(t.date)} ・ ${t.quantity.toLocaleString()}株 × ¥${t.price.toLocaleString()}</div>
+        <div class="item-meta"><span class="nw">${fmtDate(t.date)}</span> ・ <span class="nw">${t.quantity.toLocaleString()}株 × ¥${t.price.toLocaleString()}</span></div>
       </div>
       <div class="item-amount num">${fmtYen(total)}</div>
     </div>`;
@@ -2044,7 +2154,7 @@ function openDayDetail(dateStr) {
         <div class="item-badge dividend">配</div>
         <div class="item-body">
           <div class="item-name">${esc(d.name || d.ticker)}</div>
-          <div class="item-meta">${fmtYen(d.amount)} - 税${fmtYen(d.tax)}</div>
+          <div class="item-meta">${fmtYen(d.amount)} − 税 ${fmtYen(d.tax)}</div>
         </div>
         <div class="item-amount num" style="color:var(--profit)">${fmtYen(net)}</div>
       </div>`;
@@ -2068,7 +2178,7 @@ function renderSettings() {
       <div class="settings-item">
         <div>
           <div class="settings-label">デフォルト手数料</div>
-          <div class="settings-desc">新規取引で自動入力される手数料</div>
+          <div class="settings-desc"><span class="phrase">新規取引で</span><span class="phrase">自動入力される手数料</span></div>
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <input type="number" class="settings-input" id="set-fees" value="${fees}" min="0" step="1" onchange="saveDefaultFees()">
@@ -2085,7 +2195,9 @@ function renderSettings() {
 
     <div class="settings-section" style="text-align:center;padding-top:16px">
       <p style="font-size:.72rem;color:var(--sub)">株ログ v1.0</p>
-      <p style="font-size:.65rem;color:var(--sub);margin-top:4px">リセットするとGoogle Drive上のデータも削除され<br>ログアウトします</p>
+      ${TEST_MODE ? `<p style="font-size:.65rem;color:var(--sub);margin-top:4px"><span class="phrase">お試し版です。</span><span class="phrase">入力した内容はどこにも保存されず、</span><span class="phrase">ページを閉じると消えます</span></p>` : `
+      <p style="font-size:.65rem;color:var(--sub);margin-top:4px">リセットするとGoogleドライブ上のデータも削除され、<br>ログアウトします</p>`}
+      <p class="legal-links" style="margin-top:12px"><a href="./privacy.html">プライバシーポリシー</a>　|　<a href="./terms.html">利用規約</a></p>
     </div>
   `;
 }
@@ -2111,7 +2223,7 @@ function exportCSV() {
   }
 
   csv += '\n=== 配当 ===\n';
-  csv += '日付,銘柄コード,銘柄名,金額,源泉税,メモ\n';
+  csv += '受取日,銘柄コード,銘柄名,配当金額（税引前）,源泉徴収税,メモ\n';
   const divs = [...(state.data?.dividends || [])].sort((a,b) => a.date.localeCompare(b.date));
   for (const d of divs) {
     csv += `${d.date},${d.ticker},"${d.name}",${d.amount},${d.tax},"${d.notes}"\n`;
@@ -2128,7 +2240,10 @@ function exportCSV() {
 }
 
 function resetData() {
-  showConfirm('すべてのデータ・設定を完全に削除します。\nGoogle Drive上のデータも消去されます。\nこの操作は取り消せません。', '完全リセット').then(async (ok) => {
+  const msg = TEST_MODE
+    ? '入力した内容をすべて消します。\nこの操作は取り消せません。'
+    : 'すべてのデータ・設定を完全に削除します。\nGoogleドライブ上のデータも削除されます。\nこの操作は取り消せません。';
+  showConfirm(msg, '完全リセット').then(async (ok) => {
     if (!ok) return;
 
     // 1. Google Drive のファイルを削除
@@ -2145,6 +2260,7 @@ function resetData() {
     try {
       localStorage.removeItem('kabulog_data');
       localStorage.removeItem('kabulog_user_stocks');
+      sessionStorage.removeItem('kabulog_last_email');
     } catch { /* ignore */ }
 
     // 3. 学習した銘柄辞書をクリア
@@ -2168,7 +2284,7 @@ function resetData() {
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-view').style.display = 'flex';
     }
-    if (isDemo) exitDemo();
+    if (isDemo && !TEST_MODE) exitDemo();
   });
 }
 
@@ -2239,7 +2355,7 @@ function saveTrade() {
 
   if (state.editingTradeId) {
     const idx = state.data.trades.findIndex(x => x.id === state.editingTradeId);
-    if (idx >= 0) state.data.trades[idx] = trade;
+    if (idx >= 0) state.data.trades[idx] = { ...state.data.trades[idx], ...trade }; // 知らない項目は残す
   } else {
     state.data.trades.push(trade);
   }
@@ -2304,7 +2420,7 @@ function saveDividend() {
   const notes = document.getElementById('d-notes').value.trim();
 
   if (!date || (!ticker && !name) || amount <= 0) {
-    showToast('日付・銘柄・金額は必須です');
+    showToast('受取日・銘柄・配当金額は必須です');
     return;
   }
 
@@ -2315,7 +2431,7 @@ function saveDividend() {
 
   if (state.editingDividendId) {
     const idx = state.data.dividends.findIndex(x => x.id === state.editingDividendId);
-    if (idx >= 0) state.data.dividends[idx] = div;
+    if (idx >= 0) state.data.dividends[idx] = { ...state.data.dividends[idx], ...div }; // 知らない項目は残す
   } else {
     state.data.dividends.push(div);
   }
@@ -2438,6 +2554,7 @@ function exitDemo() {
    PWA Install Banner
    ============================================================= */
 function showInstallBanner() {
+  if (TEST_MODE) return;
   // すでにPWAとして開いている場合は表示しない
   if (window.matchMedia('(display-mode: standalone)').matches) return;
   if (navigator.standalone) return; // iOS Safari standalone
@@ -2464,7 +2581,7 @@ function showInstallBanner() {
   } else {
     // PC
     stepsEl.innerHTML = `
-      アドレスバー右の <span class="step-icon">⊕</span> アイコンからインストールできます
+      アドレスバー右の <span class="step-icon">⊕</span> アイコンから<span class="phrase">インストールできます</span>
     `;
   }
 
@@ -2482,7 +2599,7 @@ function dismissInstallBanner() {
 /* =============================================================
    PWA Registration
    ============================================================= */
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !TEST_MODE) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(e => console.log('SW registration failed:', e));
   });
@@ -2496,8 +2613,56 @@ window.addEventListener('load', () => {
   document.getElementById('fab').style.display = 'none';
   // 銘柄辞書を読み込み
   loadStockDict();
+  if (TEST_MODE) { showTestLanding(); return; }
   // Google Auth を初期化
   initGoogleAuth();
+});
+
+/* =============================================================
+   お試し版 — ログインなし・保存なし（ページを閉じると消える）
+   ============================================================= */
+/** お試し版の最初の画面（ログイン画面のカードをお試し版用に差し替える） */
+function showTestLanding() {
+  const box = document.querySelector('#login-view .login-content');
+  box.querySelector('.login-note').innerHTML =
+    '<span class="phrase">これはお試し版です。</span><br>' +
+    '<span class="phrase">ログインなしで、</span><span class="phrase">すべての機能を試せます。</span><br>' +
+    '<span class="phrase">入力した内容はどこにも保存されず、</span><span class="phrase">ページを閉じると消えます。</span>';
+  const btn = document.getElementById('google-signin-btn');
+  btn.textContent = '空の状態ではじめる';
+  btn.onclick = () => startTest(false);
+  const demo = box.querySelector('.demo-btn');
+  demo.textContent = 'サンプルのデータで試す';
+  demo.onclick = () => startTest(true);
+  box.querySelector('.demo-note').innerHTML = 'ログインせずに機能を試せます。<br>例の取引・配当が入った状態ではじまり、<br>入力した内容は保存されません。';
+  document.getElementById('login-view').style.display = 'flex';
+}
+
+function startTest(withSample) {
+  isDemo = true; // 保存処理を止める
+  state.data = withSample ? createDemoData() : createEmptyData();
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const banner = document.getElementById('demo-banner');
+  banner.innerHTML = '<span class="phrase">お試し版 — 入力した内容は保存されません</span>　<a onclick="loadSampleData()">サンプルを入れる</a>';
+  banner.style.display = 'block';
+  document.getElementById('user-name').textContent = 'お試し';
+  document.getElementById('user-avatar').style.display = 'none';
+  renderAll();
+}
+
+function loadSampleData() {
+  const d = state.data;
+  const go = () => { state.data = createDemoData(); renderAll(); showToast('サンプルを入れました'); };
+  if (d.trades.length || d.dividends.length) {
+    showConfirm('入力した内容をサンプルに置き換えます。', '置き換える').then(ok => ok && go());
+  } else go();
+}
+
+// 入力した内容があるときは、ページを閉じる前に確認する
+window.addEventListener('beforeunload', e => {
+  if (!TEST_MODE || !state.data) return;
+  if (state.data.trades.length || state.data.dividends.length) { e.preventDefault(); e.returnValue = ''; }
 });
 
 // モーダル背景クリックで閉じる

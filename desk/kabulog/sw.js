@@ -2,7 +2,7 @@
    株ログ — Service Worker
    キャッシュ戦略: Cache First + Network Fallback
    ============================================================= */
-const CACHE_NAME = 'kabulog-v4';
+const CACHE_NAME = 'kabulog-v5';
 const ASSETS = [
   './',
   './index.html',
