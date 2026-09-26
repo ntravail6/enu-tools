@@ -24,7 +24,7 @@
   --bg:#fefcf8;--bg-soft:#ffffff;--line:#ecdfce;
   --c-expense:#b76b6b;--c-income:#5a8ab5;--c-transfer:#8a7d70;
   --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.05);
-  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);--demo-h:1.75rem;--safe-bottom:env(safe-area-inset-bottom,0px);
 }
 html{height:100%;scroll-padding-top:var(--safe-top)}
 body{font-family:var(--font-en),var(--font-ja);background:var(--bg);color:var(--text);height:100%;
@@ -33,7 +33,7 @@ body{font-family:var(--font-en),var(--font-ja);background:var(--bg);color:var(--
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit;font-size:1rem}
 
-#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+#app{display:flex;flex-direction:column;height:calc(100vh - var(--safe-top) - var(--safe-bottom));height:calc(100dvh - var(--safe-top) - var(--safe-bottom))}
 .app-header{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;background:#c4a892;color:#fff;position:sticky;top:0;z-index:100}
 .app-header h1{font-size:1.05rem;letter-spacing:.03em}
 .app-title-stack{display:flex;flex-direction:column;gap:.15rem}
@@ -84,7 +84,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .summary-cell{text-align:center;padding:0 .5rem;position:relative}
 .summary-cell:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:var(--line)}
 .summary-cell .label{font-size:.65rem;color:var(--sub);margin-bottom:.15rem;font-weight:500}
-.summary-cell .amount{font-size:1rem;font-weight:700;font-family:var(--font-en)}
+.summary-cell .amount{font-size:1rem;font-weight:700;font-family:var(--font-en);white-space:nowrap}
 .summary-cell .amount.income{color:var(--c-income)}
 .summary-cell .amount.expense{color:var(--c-expense)}
 
@@ -118,16 +118,16 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .chart-container{background:var(--card);margin:.4rem .8rem;border-radius:var(--radius);padding:.7rem;box-shadow:var(--shadow);border:1px solid var(--line)}
 .chart-container h3{font-size:.7rem;color:var(--sub);margin-bottom:.5rem;font-weight:600}
 .pie-wrap{display:flex;gap:.7rem;align-items:center}
-.pie-svg{width:80px;height:80px;flex-shrink:0}
-.pie-legend{flex:1;min-width:0;display:flex;flex-direction:column;gap:.2rem}
+.chart-card svg.pie-svg,.pie-svg{width:96px;height:96px;flex-shrink:0;margin:0}
+.pie-legend{flex:1;min-width:0;max-width:440px;display:flex;flex-direction:column;gap:.2rem}
 .pie-leg-row{display:flex;align-items:center;gap:.35rem;font-size:.68rem}
 .pie-leg-color{width:9px;height:9px;border-radius:2px;flex-shrink:0}
 .pie-leg-name{flex:1;min-width:0;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pie-leg-pct{font-family:var(--font-en);color:var(--sub);font-size:.62rem;min-width:24px;text-align:right}
-.pie-leg-amt{font-family:var(--font-en);font-weight:700;color:var(--c-expense);font-size:.68rem;min-width:60px;text-align:right}
+.pie-leg-amt{font-family:var(--font-en);font-weight:700;color:var(--c-expense);font-size:.68rem;min-width:52px;text-align:right;white-space:nowrap}
 /* Larger pie on wider screens */
 @media(min-width:900px){
-  .pie-svg{width:120px;height:120px}
+  .chart-card svg.pie-svg,.pie-svg{width:130px;height:130px}
   .pie-leg-row{font-size:.75rem}
   .pie-leg-amt{font-size:.75rem}
 }
@@ -135,7 +135,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 /* SVG charts */
 .chart-card{background:var(--card);margin:.5rem 0;border-radius:var(--radius);padding:.6rem .7rem;box-shadow:var(--shadow);border:1px solid var(--line)}
 .chart-card h3{font-size:.7rem;color:var(--sub);margin-bottom:.4rem}
-.chart-card svg{width:100%;height:auto}
+.chart-card svg{width:100%;height:auto;display:block;max-width:560px;margin:0 auto}
 .chart-legend{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.35rem;font-size:.66rem;color:var(--sub)}
 .chart-legend span{display:flex;align-items:center;gap:.2rem}
 .chart-legend .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
@@ -211,7 +211,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .tx-detail .tx-memo{font-size:.65rem;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tx-amount{font-family:var(--font-en);font-weight:700;font-size:.88rem;white-space:nowrap}
 .tx-amount.expense{color:var(--c-expense)}.tx-amount.income{color:var(--c-income)}.tx-amount.transfer{color:var(--c-transfer)}
-.tx-badge{font-size:.5rem;color:var(--accent);margin-left:.15rem}
+.tx-badge{font-size:.62rem;color:var(--accent);margin-left:.3rem;font-weight:500}
 .tx-badge.pending-badge{background:var(--primary-soft);color:var(--sub);padding:0 .3rem;border-radius:8px;font-weight:600}
 .tx-item.pending{opacity:.7}
 .tx-item.pending .tx-cat{color:var(--sub);font-weight:500}
@@ -250,8 +250,8 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .btn-delete{background:none;color:var(--c-expense);font-size:.78rem;padding:.35rem}
 
 /* Settings */
-.settings-panel{position:fixed;top:0;bottom:0;left:0;right:0;background:var(--bg);z-index:300;transform:translateX(100%);transition:transform .3s ease;overflow-y:auto;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
-.settings-panel.open{transform:translateX(0)}
+.settings-panel{position:fixed;top:0;bottom:0;left:0;right:0;background:var(--bg);z-index:300;transform:translateX(100%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s;overflow-y:auto;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
+.settings-panel.open{transform:translateX(0);visibility:visible;transition:transform .3s ease,visibility 0s}
 .settings-header{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;background:var(--primary-dark);color:#fff;position:sticky;top:0;z-index:1}
 .settings-header h2{font-size:.95rem;flex:1}.settings-header button{color:#fff;font-size:1.1rem}
 .settings-section{padding:.7rem 1rem;border-bottom:1px solid var(--line)}
@@ -288,7 +288,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
   #app{max-width:600px;margin:0 auto;background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.08);min-height:100vh;min-height:100dvh}
   .modal{max-width:520px;border-radius:var(--radius);margin-bottom:2rem}
   .month-picker{width:340px}
-  .settings-panel{max-width:600px;left:50%;right:auto;width:100%;transform:translateX(-50%) translateX(100%)}
+  .settings-panel{max-width:600px;left:50%;right:auto;width:100%;transform:translateX(-50%) translateX(100vw)}
   .settings-panel.open{transform:translateX(-50%) translateX(0)}
   .summary{grid-template-columns:repeat(3,1fr);gap:.6rem;padding:.8rem 1rem}
   .summary{padding:.9rem 0;margin:.6rem}
@@ -309,11 +309,19 @@ input,select,textarea{font-family:inherit;font-size:1rem}
   .tx-item{padding:.65rem 0}
   .tx-icon{width:36px;height:36px;font-size:1rem}
   .summary-cell .amount{font-size:1.3rem}
+  .home-col-main .summary-cell .amount{font-size:clamp(1rem,1.6vw,1.3rem)}
   .asset-total .amount{font-size:1.7rem}
 }
 
 @media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){--card:#252220;--text:#e8e5e0;--sub:#999590;--bg:#1a1816;--bg-soft:#201e1b;--line:#3a3530;--primary-soft:rgba(184,154,133,.15);--primary-light:rgba(184,154,133,.25);--shadow:0 2px 12px rgba(0,0,0,.3)}
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .app-header{background:#6f5b4b}
+  :root:not([data-theme="light"]) .tx-budget-info.warn{background:rgba(201,153,90,.16)}
+  :root:not([data-theme="light"]) .tx-budget-info.over{background:rgba(183,107,107,.18)}
+  :root:not([data-theme="light"]) .login-error{background:rgba(183,107,107,.18)}
+  :root:not([data-theme="light"]) .login-title{color:var(--primary)}
 }
 @media(min-width:600px) and (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) body{background:#0a0908}
@@ -321,9 +329,9 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* Login Overlay */
-.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#c4a892,#8E7560);z-index:1000;display:flex;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#c4a892,#8E7560);z-index:1000;display:flex;padding:calc(1.2rem + var(--safe-top)) 1rem calc(1.2rem + var(--safe-bottom));overflow-y:auto}
 .login-overlay.hidden{display:none}
-.login-content{background:var(--card);border-radius:20px;padding:2.5rem 2rem;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login-content{background:var(--card);border-radius:20px;padding:2.2rem 1.6rem;max-width:400px;width:100%;margin:auto;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .login-icon{width:80px;height:80px;margin:0 auto .8rem}
 .login-icon svg{width:100%;height:100%;display:block;border-radius:18px;box-shadow:0 4px 12px rgba(142,117,96,.25)}
 .login-title{font-size:1.5rem;color:var(--primary-dark);letter-spacing:.05em;margin-bottom:.3rem;font-weight:700}
@@ -358,8 +366,10 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .demo-btn:hover{background:var(--primary-soft)}
 .demo-note{font-size:.68rem;color:var(--sub);line-height:1.6;margin-top:.6rem}
 
-.demo-indicator{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#c9995a,#b88a4f);color:#fff;padding:.35rem .8rem;font-size:.7rem;text-align:center;z-index:200;cursor:pointer;display:none;justify-content:center;gap:.6rem;align-items:center;padding-top:calc(.35rem + var(--safe-top))}
+.demo-indicator{position:fixed;top:0;left:0;right:0;height:calc(var(--demo-h) + var(--safe-top));background:linear-gradient(90deg,#c9995a,#b88a4f);color:#fff;padding:.35rem .8rem;font-size:.7rem;text-align:center;z-index:200;cursor:pointer;display:none;justify-content:center;gap:.6rem;align-items:center;padding-top:var(--safe-top);padding-bottom:0;white-space:nowrap}
 .demo-indicator.visible{display:flex}
+body.demo-on{padding-top:calc(var(--safe-top) + var(--demo-h))}
+body.demo-on #app{height:calc(100vh - var(--safe-top) - var(--safe-bottom) - var(--demo-h));height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - var(--demo-h))}
 .demo-signin{text-decoration:underline;font-weight:600}
 
 /* Install banner */
@@ -688,7 +698,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
       </div>
       <button onclick="doSignOut()" style="color:var(--c-expense);font-weight:600;font-size:.75rem">サインアウト</button>
     </div>
-    <div style="font-size:.68rem;color:var(--sub);margin-top:.3rem;line-height:1.5">データはあなたのGoogle Driveに自動保存されています</div>
+    <div style="font-size:.68rem;color:var(--sub);margin-top:.3rem;line-height:1.5" id="settings-save-note">データはあなたのGoogle Driveに自動保存されています</div>
   </div>
   <div class="settings-section">
     <h3>家計簿の開始日</h3>
@@ -726,10 +736,10 @@ input,select,textarea{font-family:inherit;font-size:1rem}
     <div class="settings-row" style="margin-top:.4rem"><span style="font-size:.75rem;color:var(--sub)">支払予定を更新</span><button onclick="runSettlements(true)">今すぐ更新</button></div>
   </div>
   <div class="settings-section"><h3>メモ候補</h3>
-    <p style="font-size:.72rem;color:var(--sub);margin-bottom:.4rem">店名や人名などをカテゴリ別・共通で登録できます。取引追加時にチップで選べます。</p>
+    <p style="font-size:.72rem;color:var(--sub);margin-bottom:.4rem">店名や人名などをカテゴリ別・共通で追加できます。取引追加時にチップで選べます。</p>
     <button onclick="openMemoSuggestModal()" style="color:var(--primary-dark);font-weight:600;font-size:.8rem">✎ 編集</button>
   </div>
-  <div class="settings-section"><h3>固定費・自動振替（毎月自動登録）</h3><div id="recurring-list"></div>
+  <div class="settings-section"><h3>固定費・自動振替（毎月自動で追加）</h3><div id="recurring-list"></div>
     <button onclick="openRecurringModal()" style="color:var(--primary-dark);font-weight:600;font-size:.8rem;margin-top:.35rem">＋ 追加</button></div>
   <div class="settings-section"><h3>支出カテゴリ</h3><div id="expense-cat-settings"></div>
     <div style="margin-top:.4rem;display:flex;gap:.25rem">
@@ -1227,7 +1237,7 @@ function renderMonth(){
   if(btn){
     btn.classList.toggle('locked',locked);
     btn.querySelector('.lock-icon').textContent=locked?'🔒':'🔓';
-    btn.title=locked?'この月は締め済（タップで詳細）':'この月を締める';
+    btn.title=locked?'この月は締め済み（タップで詳細）':'この月を締める';
   }
 }
 
@@ -1554,21 +1564,21 @@ function renderAssetsPage(){
     return{label:`${m+1}月`,total:totalA-totalC,accTotal:totalA,cardTotal:totalC,perAcc};
   });
 
-  const maxT=Math.max(...data.map(d=>d.accTotal),1);
+  const maxT=Math.max(...data.map(d=>Math.max(d.accTotal,d.perAcc.reduce((s,a)=>s+Math.max(a.bal,0),0))),1);
   const nMonths=data.length;
   const W=340,H=180,PT=18,PB=20,PL=6,PR=6,cH=H-PT-PB,gw=(W-PL-PR)/Math.max(nMonths,1);
   let svg='';
-  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;svg+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxT*(1-i/4));svg+=`<text x="${PL+2}" y="${yy-3}" font-size="6.5" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
+  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;svg+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxT*(1-i/4));svg+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
 
   data.forEach((d,i)=>{
-    const cx=PL+gw*i+gw/2;const bw=gw*.55;
+    const cx=PL+gw*i+gw/2;const bw=Math.min(gw*.55,34);
     let stackY=PT+cH;
     d.perAcc.forEach((a,ai)=>{
       if(a.bal<=0)return;
       const h=(a.bal/maxT)*cH;stackY-=h;
       svg+=`<rect x="${cx-bw/2}" y="${stackY}" width="${bw}" height="${h}" fill="${ACCT_COLORS[ai%ACCT_COLORS.length]}" opacity=".75" rx="1"/>`;
     });
-    svg+=`<text x="${cx}" y="${H-4}" text-anchor="middle" font-size="8.5" fill="var(--sub)">${d.label}</text>`;
+    svg+=`<text x="${cx}" y="${H-4}" text-anchor="middle" font-size="10" fill="var(--sub)">${d.label}</text>`;
   });
 
   // Net asset line
@@ -1623,10 +1633,10 @@ function renderTrend(){
   });
   const maxVal=Math.max(...data.map(d=>Math.max(d.inc,d.exp)),1);
   const nMonths=data.length;
-  const W=360,H=200,PT=20,PB=22,PL=8,PR=8,cH=H-PT-PB,gw=(W-PL-PR)/Math.max(nMonths,1),bw=gw*.28;
+  const W=360,H=200,PT=20,PB=22,PL=8,PR=8,cH=H-PT-PB,gw=(W-PL-PR)/Math.max(nMonths,1),bw=Math.min(gw*.28,20);
   let s='';
-  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;s+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxVal*(1-i/4));s+=`<text x="${PL+2}" y="${yy-3}" font-size="7" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
-  data.forEach((d,i)=>{const cx=PL+gw*i+gw/2;s+=`<rect x="${cx-bw-1}" y="${PT+cH-(d.inc/maxVal)*cH}" width="${bw}" height="${(d.inc/maxVal)*cH}" rx="2" fill="var(--c-income)" opacity=".7"/>`;s+=`<rect x="${cx+1}" y="${PT+cH-(d.exp/maxVal)*cH}" width="${bw}" height="${(d.exp/maxVal)*cH}" rx="2" fill="var(--c-expense)" opacity=".7"/>`;s+=`<text x="${cx}" y="${H-5}" text-anchor="middle" font-size="9" fill="var(--sub)">${d.label}</text>`});
+  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;s+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxVal*(1-i/4));s+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
+  data.forEach((d,i)=>{const cx=PL+gw*i+gw/2;s+=`<rect x="${cx-bw-1}" y="${PT+cH-(d.inc/maxVal)*cH}" width="${bw}" height="${(d.inc/maxVal)*cH}" rx="2" fill="var(--c-income)" opacity=".7"/>`;s+=`<rect x="${cx+1}" y="${PT+cH-(d.exp/maxVal)*cH}" width="${bw}" height="${(d.exp/maxVal)*cH}" rx="2" fill="var(--c-expense)" opacity=".7"/>`;s+=`<text x="${cx}" y="${H-5}" text-anchor="middle" font-size="10" fill="var(--sub)">${d.label}</text>`});
 
   // Pie chart for current month (moved from home)
   let html=buildPieChartHTML();
@@ -1874,7 +1884,7 @@ function openEditModal(id){
   }
   document.getElementById('modal-title').textContent='取引を編集';document.getElementById('tx-edit-id').value=id;document.getElementById('tx-date').value=tx.date;document.getElementById('tx-amount').value=tx.amount.toLocaleString();document.getElementById('tx-memo').value=tx.memo||'';document.getElementById('tx-billing-delay').value=tx.billingDelay||0;document.getElementById('btn-delete').classList.remove('hidden');setTxType(tx.type);if(tx.cardId)document.getElementById('tx-account').value='card:'+tx.cardId;else if(tx.accountId)document.getElementById('tx-account').value='acc:'+tx.accountId;if(tx.toAccountId)document.getElementById('tx-to-account').value='acc:'+tx.toAccountId;if(tx.type!=='transfer')document.getElementById('tx-category').value=tx.category;onAccountChange();renderMemoSuggestions();updateBudgetInfo();om('modal-tx');
 }
-function setTxType(t){document.getElementById('btn-type-expense').className=t==='expense'?'active-expense':'';document.getElementById('btn-type-income').className=t==='income'?'active-income':'';document.getElementById('btn-type-transfer').className=t==='transfer'?'active-transfer':'';document.getElementById('type-toggle').dataset.type=t;document.getElementById('fg-to-account').style.display=t==='transfer'?'':'none';document.getElementById('fg-category').style.display=t==='transfer'?'none':'';document.getElementById('acc-label').textContent=t==='transfer'?'振替元':t==='expense'?'支払い方法':'口座';popAccSel('tx-account','',t==='expense');popAccSel('tx-to-account','',false);if(t!=='transfer')popCatSel('tx-category',t);onAccountChange();renderMemoSuggestions();updateBudgetInfo()}
+function setTxType(t){document.getElementById('btn-type-expense').className=t==='expense'?'active-expense':'';document.getElementById('btn-type-income').className=t==='income'?'active-income':'';document.getElementById('btn-type-transfer').className=t==='transfer'?'active-transfer':'';document.getElementById('type-toggle').dataset.type=t;document.getElementById('fg-to-account').style.display=t==='transfer'?'':'none';document.getElementById('fg-category').style.display=t==='transfer'?'none':'';document.getElementById('acc-label').textContent=t==='transfer'?'振替元':t==='expense'?'支払方法':'口座';popAccSel('tx-account','',t==='expense');popAccSel('tx-to-account','',false);if(t!=='transfer')popCatSel('tx-category',t);onAccountChange();renderMemoSuggestions();updateBudgetInfo()}
 
 function saveTx(){
   const type=document.getElementById('type-toggle').dataset.type||'expense';
@@ -1996,7 +2006,7 @@ function saveCard(){
 }
 function deleteCard(){
   const id=document.getElementById('card-edit-id').value;
-  if(!id||!confirm('カードを削除しますか？（このカードで登録された取引は残りますが、口座への支払は行われなくなります）'))return;
+  if(!id||!confirm('カードを削除しますか？（このカードで追加した取引は残りますが、口座への支払は行われなくなります）'))return;
   D.cards=D.cards.filter(c=>c.id!==id);
   cm('modal-card');save();runSettlements(false);render();renderSettingsCards();
 }
@@ -2006,7 +2016,7 @@ function renderSettingsCards(){
   el.innerHTML=D.cards.map(c=>{
     const unpaid=calcCardBalance(c.id);
     const accName=c.paymentAccountId?getAccName(c.paymentAccountId):'口座未設定';
-    return`<div class="acc-item" onclick="openCardModal('${c.id}')"><div style="flex:1"><div>${esc(c.name)}</div><div style="font-size:.65rem;color:var(--sub)">${accName}・${c.closingDay===31?'月末':c.closingDay+'日'}締／翌月${c.paymentDay}日</div></div><span class="acc-bal-set" style="color:${unpaid>0?'var(--c-expense)':'var(--sub)'}">未払い ¥${unpaid.toLocaleString()}</span></div>`;
+    return`<div class="acc-item" onclick="openCardModal('${c.id}')"><div style="flex:1"><div>${esc(c.name)}</div><div style="font-size:.65rem;color:var(--sub)">${accName}・${c.closingDay===31?'月末':c.closingDay+'日'}締め／翌月${c.paymentDay}日</div></div><span class="acc-bal-set" style="color:${unpaid>0?'var(--c-expense)':'var(--sub)'}">未払い ¥${unpaid.toLocaleString()}</span></div>`;
   }).join('');
 }
 
@@ -2131,7 +2141,7 @@ function setRecType(t){
   document.getElementById('rec-type-toggle').dataset.type=t;
   document.getElementById('fg-rec-category').style.display=t==='transfer'?'none':'';
   document.getElementById('fg-rec-to-account').style.display=t==='transfer'?'':'none';
-  document.getElementById('rec-acc-label').textContent=t==='transfer'?'振替元口座':t==='expense'?'支払い方法':'口座';
+  document.getElementById('rec-acc-label').textContent=t==='transfer'?'振替元口座':t==='expense'?'支払方法':'口座';
   if(t!=='transfer')popCatSel('rec-category',t);
   popAccSel('rec-account','',t==='expense');
   // to-account: only regular accounts
@@ -2161,7 +2171,7 @@ function saveRecurring(){
 function deleteRecurring(){const id=document.getElementById('rec-edit-id').value;if(!id||!confirm('削除？'))return;D.recurring=D.recurring.filter(r=>r.id!==id);cm('modal-recurring');save();renderRecurringList()}
 function renderRecurringList(){
   const el=document.getElementById('recurring-list');
-  if(!D.recurring.length){el.innerHTML='<p style="font-size:.75rem;color:var(--sub)">まだ登録なし</p>';return}
+  if(!D.recurring.length){el.innerHTML='<p style="font-size:.75rem;color:var(--sub)">まだありません</p>';return}
   el.innerHTML=D.recurring.map(r=>{
     const emoji=r.type==='transfer'?'↔️':getCatEmoji(r.category||'');
     const dest=r.type==='transfer'?` → ${getAccName(r.toAccountId)}`:'';
@@ -2174,7 +2184,7 @@ function renderRecurringList(){
 function openMemoSuggestModal(){
   const sel=document.getElementById('memo-target');
   const cCount=(D.memoSuggestions.common||[]).length;
-  let opts=`<option value="__common__">共通メモ (${cCount})</option>`;
+  let opts=`<option value="__common__">共通メモ（${cCount}）</option>`;
   opts+='<optgroup label="支出カテゴリ">';
   for(const g of ['fixed','variable','special']){
     (D.categories.expense[g]||[]).forEach(c=>{
@@ -2248,8 +2258,10 @@ function deleteIncomeCatEdit(){
 function openSettings(){
   const nameEl=document.getElementById('settings-user-name');
   const emailEl=document.getElementById('settings-user-email');
-  if(nameEl)nameEl.textContent=AUTH.name||'-';
-  if(emailEl)emailEl.textContent=AUTH.email||'-';
+  if(nameEl)nameEl.textContent=DEMO_MODE?'デモモード':(AUTH.name||'-');
+  const noteEl=document.getElementById('settings-save-note');
+  if(noteEl)noteEl.textContent=DEMO_MODE?'デモのデータはこの端末のブラウザにだけ保存されています':'データはあなたのGoogle Driveに自動保存されています';
+  if(emailEl)emailEl.textContent=DEMO_MODE?'Googleにはログインしていません':(AUTH.email||'-');
   updateStartDateDisplay();updateStampEmojiDisplay();updateWeekStartDisplay();renderCatSettings();renderRecurringList();renderSettingsAccounts();renderSettingsCards();document.getElementById('settings-panel').classList.add('open')
 }
 
@@ -2266,7 +2278,7 @@ function renderSettingsAccounts(){document.getElementById('settings-accounts').i
 
 /* Import/Export */
 function exportData(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kakeibo_${today()}.json`;a.click();URL.revokeObjectURL(a.href)}
-function importData(e){const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{D=migrate(JSON.parse(t));save();render();alert('インポートしました')}catch(err){alert('失敗: '+err.message)}});e.target.value=''}
+function importData(e){const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{D=migrate(JSON.parse(t));save();render();alert('インポートしました')}catch(err){alert('失敗：'+err.message)}});e.target.value=''}
 
 /* Modal helpers */
 function om(id){document.getElementById(id).classList.add('open')}
@@ -2319,6 +2331,7 @@ function startDemoMode(){
   try{localStorage.setItem('kakeibo_data',JSON.stringify(D))}catch(e){}
   document.getElementById('login-overlay').classList.add('hidden');
   document.getElementById('demo-indicator').classList.add('visible');
+  document.body.classList.add('demo-on');
   document.getElementById('sync-indicator').style.display='none';
   applyRecurring();runSettlements(false);render();
   // Show install banner after 2s
@@ -2439,7 +2452,7 @@ function doSignIn(){
 async function handleAuthResponse(resp){
   if(resp.error){
     document.getElementById('google-signin-btn').disabled=false;
-    setLoginStatus('ログイン失敗: '+resp.error,true);
+    setLoginStatus('ログイン失敗：'+resp.error,true);
     return;
   }
   AUTH.token=resp.access_token;
@@ -2451,7 +2464,7 @@ async function handleAuthResponse(resp){
     AUTH.email=info.user.emailAddress;
     AUTH.name=info.user.displayName||info.user.emailAddress;
     sessionStorage.setItem('yk_last_email',AUTH.email);
-    setLoginStatus('データを読込中...');
+    setLoginStatus('データを読み込み中...');
     await loadFromDrive();
     // Hide login overlay
     document.getElementById('login-overlay').classList.add('hidden');
@@ -2463,7 +2476,7 @@ async function handleAuthResponse(resp){
     // Show install banner after 2s
     setTimeout(showInstallBanner,2000);
   }catch(e){
-    setLoginStatus('データの読み込みに失敗: '+e.message,true);
+    setLoginStatus('データの読み込みに失敗：'+e.message,true);
     document.getElementById('google-signin-btn').disabled=false;
     AUTH.signedIn=false;
   }
