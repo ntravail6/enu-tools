@@ -2,13 +2,13 @@
    株ログ — Service Worker
    キャッシュ戦略: Cache First + Network Fallback
    ============================================================= */
-const CACHE_NAME = 'kabulog-v2';
+const CACHE_NAME = 'kabulog-v3';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon.svg',
-  '/stocks.json',
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.svg',
+  './stocks.json',
 ];
 
 // Google Fonts はネットワーク優先（キャッシュフォールバック）
@@ -79,7 +79,7 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // オフラインでキャッシュもない場合
         if (request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       });
     })
