@@ -324,7 +324,8 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#c4a892,#8E7560);z-index:1000;display:flex;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
 .login-overlay.hidden{display:none}
 .login-content{background:var(--card);border-radius:20px;padding:2.5rem 2rem;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.login-icon{font-size:3rem;margin-bottom:.5rem}
+.login-icon{width:80px;height:80px;margin:0 auto .8rem}
+.login-icon svg{width:100%;height:100%;display:block;border-radius:18px;box-shadow:0 4px 12px rgba(142,117,96,.25)}
 .login-title{font-size:1.5rem;color:var(--primary-dark);letter-spacing:.05em;margin-bottom:.3rem;font-weight:700}
 .login-subtitle{font-size:.85rem;color:var(--sub);margin-bottom:1.8rem}
 .login-note{font-size:.72rem;color:var(--sub);line-height:1.7;margin-bottom:1.8rem;padding:.8rem 1rem;background:var(--bg-soft);border-radius:8px}
@@ -377,7 +378,26 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 <!-- Login Overlay -->
 <div id="login-overlay" class="login-overlay">
   <div class="login-content">
-    <div class="login-icon">💰</div>
+    <div class="login-icon">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg-bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#c4a892"/>
+            <stop offset="1" stop-color="#8E7560"/>
+          </linearGradient>
+          <linearGradient id="lg-coin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f5e6c8"/>
+            <stop offset="1" stop-color="#e5cfa0"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#lg-bg)"/>
+        <circle cx="32" cy="34" r="18" fill="url(#lg-coin)" stroke="#8E7560" stroke-width="1.5"/>
+        <text x="32" y="42" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="24" font-weight="700" fill="#8E7560">¥</text>
+        <path d="M22 18 Q26 12 32 14 Q38 12 42 18" fill="none" stroke="#f5e6c8" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="24" cy="16" r="2" fill="#f5e6c8"/>
+        <circle cx="40" cy="16" r="2" fill="#f5e6c8"/>
+      </svg>
+    </div>
     <h1 class="login-title">よくばりかけいぼ</h1>
     <p class="login-subtitle">あなたと一緒に育つ、欲張り家計簿</p>
     <div class="login-note">
@@ -551,20 +571,22 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 
 <!-- Reset All Data Modal -->
 <div class="modal-overlay" id="modal-reset" onclick="cmo(event,'modal-reset')"><div class="modal">
-  <h2 style="color:var(--c-expense)">⚠️ 全データを削除</h2>
-  <div style="background:#fce8e8;padding:.7rem;border-radius:8px;font-size:.78rem;color:var(--c-expense);margin-bottom:.7rem;line-height:1.5">
-    以下のデータすべてが削除されます：<br>
-    ・全取引履歴<br>
-    ・口座・カード・カテゴリ<br>
-    ・予算・固定費<br>
-    ・開始日・スタンプ設定<br>
-    ・月次締め情報<br><br>
+  <h2 style="color:var(--c-expense)">⚠️ 全データを完全削除</h2>
+  <div style="background:#fce8e8;padding:.7rem;border-radius:8px;font-size:.78rem;color:var(--c-expense);margin-bottom:.7rem;line-height:1.6">
+    以下のデータすべてが完全に削除されます：<br>
+    ・全取引履歴・口座・カード・カテゴリ<br>
+    ・予算・固定費・自動振替<br>
+    ・開始日・スタンプ設定・月次締め情報<br>
+    ・<b>この端末のブラウザキャッシュ</b><br>
+    ・<b>Google Drive上のデータファイル</b><br>
+    ・Googleアカウントへのアクセス許可（サインアウト）<br><br>
     <b>この操作は取り消せません。</b>
   </div>
-  <div style="font-size:.72rem;color:var(--sub);margin-bottom:.5rem">削除前にバックアップを取ることをおすすめします。</div>
+  <div style="font-size:.72rem;color:var(--sub);margin-bottom:.5rem">削除前にバックアップ（設定→エクスポート）を取ることをおすすめします。</div>
+  <div id="reset-status" style="font-size:.72rem;color:var(--primary-dark);text-align:center;margin-bottom:.5rem;min-height:1em;font-weight:600"></div>
   <div class="modal-actions">
     <button class="btn-cancel" onclick="cm('modal-reset')">キャンセル</button>
-    <button class="btn-save" style="background:var(--c-expense)" onclick="doResetAll()">🗑 削除する</button>
+    <button class="btn-save" style="background:var(--c-expense)" onclick="doResetAll()">🗑 完全に削除する</button>
   </div>
 </div></div>
 
@@ -723,7 +745,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
   <div class="settings-section"><h3>データ管理</h3>
     <div class="settings-row"><span>JSONエクスポート</span><button onclick="exportData()">ダウンロード</button></div>
     <div class="settings-row"><span>JSONインポート</span><button onclick="document.getElementById('import-file').click()">ファイル選択</button><input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)"></div>
-    <div class="settings-row"><span style="color:var(--c-expense)">全データを削除</span><button onclick="openResetModal()" style="color:var(--c-expense);border:1px solid var(--c-expense);padding:.2rem .6rem;border-radius:6px">削除</button></div>
+    <div class="settings-row"><span style="color:var(--c-expense)">全データを完全削除</span><button onclick="openResetModal()" style="color:var(--c-expense);border:1px solid var(--c-expense);padding:.2rem .6rem;border-radius:6px">削除</button></div>
   </div>
 </div>
 
@@ -909,18 +931,45 @@ function save(){try{localStorage.setItem('kakeibo_data',JSON.stringify(D))}catch
 
 /* ===== FULL DATA RESET ===== */
 function openResetModal(){om('modal-reset')}
-function doResetAll(){
-  // Clear everything
-  try{localStorage.removeItem('kakeibo_data')}catch(e){}
-  // Reset D to full defaults (belt-and-suspenders in addition to reload)
+async function doResetAll(){
+  // Show progress
+  const modal=document.getElementById('modal-reset');
+  const status=document.getElementById('reset-status');
+  if(status)status.textContent='削除中...';
+
+  // Delete Drive file if signed in
+  if(AUTH.signedIn&&AUTH.fileId){
+    try{
+      if(status)status.textContent='Google Drive のデータを削除中...';
+      await driveApiCall(`https://www.googleapis.com/drive/v3/files/${AUTH.fileId}`,{method:'DELETE'});
+    }catch(e){
+      console.error('Drive delete failed:',e);
+      if(!confirm('Google Drive のデータ削除に失敗しました。\nローカルのみ削除して続行しますか？')){
+        if(status)status.textContent='';
+        return;
+      }
+    }
+  }
+
+  // Clear local storage
+  try{
+    localStorage.removeItem('kakeibo_data');
+    localStorage.removeItem('yk_install_dismissed');
+    sessionStorage.removeItem('yk_last_email');
+  }catch(e){}
+
+  // Revoke Google token if signed in
+  if(AUTH.signedIn&&AUTH.token){
+    try{google.accounts.oauth2.revoke(AUTH.token,()=>{})}catch(e){}
+  }
+
+  // Reset state
   D=structuredClone(DD);
-  // Reset in-memory tab/state
+  AUTH={signedIn:false,token:null,tokenExpiry:0,email:'',name:'',fileId:null};
   CY=new Date().getFullYear();
   CM=new Date().getMonth();
-  // Close modal & settings
   cm('modal-reset');
   closeSettings();
-  // Reload to ensure clean state
   setTimeout(()=>{location.reload()},100);
 }
 
