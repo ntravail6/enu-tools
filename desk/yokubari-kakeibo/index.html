@@ -8,8 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>よくばりかけいぼ</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -17,8 +18,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --font-ja:'Kosugi Maru',sans-serif;
-  --font-en:'Futura','Century Gothic','Trebuchet MS',sans-serif;
-  --card:#fff;--text:#2C2A24;--sub:#7A756B;
+  --font-en:'Futura','Century Gothic','Trebuchet MS','Kosugi Maru',sans-serif;
+  --card:#fff;--text:#54473c;--sub:#7A756B;
   --primary:#B89A85;--primary-light:#E5D5C5;--primary-dark:#8E7560;
   --primary-soft:#F0E8DE;--accent:#A88770;
   --bg:#fefcf8;--bg-soft:#ffffff;--line:#ecdfce;
@@ -27,7 +28,7 @@
   --safe-top:env(safe-area-inset-top,0px);--demo-h:1.75rem;--safe-bottom:env(safe-area-inset-bottom,0px);
 }
 html{height:100%;scroll-padding-top:var(--safe-top)}
-body{font-family:var(--font-en),var(--font-ja);background:var(--bg);color:var(--text);height:100%;
+body{font-family:var(--font-en);background:var(--bg);color:var(--text);height:100%;
   padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .num{font-family:var(--font-en)}.hidden{display:none!important}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
@@ -81,7 +82,8 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 
 /* Summary */
 .summary{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--card);border-radius:var(--radius);padding:.7rem 0;margin:.8rem .8rem 1rem;box-shadow:var(--shadow);border:1px solid var(--line)}
-.summary-cell{text-align:center;padding:0 .5rem;position:relative}
+.summary-cell{text-align:right;padding:0 .75rem;position:relative}
+.summary-cell .label{text-align:left}
 .summary-cell:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:var(--line)}
 .summary-cell .label{font-size:.65rem;color:var(--sub);margin-bottom:.15rem;font-weight:500}
 .summary-cell .amount{font-size:1rem;font-weight:700;font-family:var(--font-en);white-space:nowrap}
@@ -200,7 +202,17 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .tx-day-count{font-size:.65rem;color:var(--sub);font-weight:400}
 .tx-day-amount{font-family:var(--font-en);font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:.3rem}
 .tx-day-caret{color:var(--primary-dark);font-size:.7rem}
-.tx-date-group{margin-bottom:.6rem}
+.tx-date-group{display:flex;align-items:flex-start;border-bottom:1px solid var(--line)}
+.tx-date-group:last-child{border-bottom:none}
+.tx-dcol{width:2.4rem;flex-shrink:0;padding-top:.5rem;display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.tx-dcol .d{font-size:1rem;font-weight:700;color:var(--text)}
+.tx-dcol .w{font-size:.6rem;color:var(--sub);margin-top:.1rem}
+.tx-dcol .w.sun{color:var(--c-expense)}.tx-dcol .w.sat{color:var(--c-income)}
+.tx-ditems{flex:1;min-width:0}
+.tx-date-group .tx-item{padding:.45rem 0;border-bottom:1px solid var(--bg-soft)}
+.tx-date-group .tx-item:last-of-type{border-bottom:none}
+.tx-daytotal{text-align:right;font-size:.62rem;color:var(--sub);padding:0 0 .4rem}
+.tx-daytotal .num{font-weight:700}
 .tx-date-header{font-size:.68rem;color:var(--sub);margin-bottom:.2rem;padding-bottom:.15rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
 .tx-item{display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
 .tx-item:last-child{border-bottom:none}.tx-item:active{background:var(--primary-soft)}
@@ -229,9 +241,9 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .tx-budget-info{margin-top:.3rem;padding:.4rem .55rem;background:var(--bg-soft);border-radius:6px;font-size:.68rem;color:var(--sub);font-family:var(--font-en);display:flex;flex-wrap:wrap;gap:.35rem;align-items:baseline}
 .tx-budget-info.warn{background:#fff4e8;color:var(--accent)}
 .tx-budget-info.over{background:#fce8e8;color:var(--c-expense)}
-.tx-budget-info .bi-label{font-family:var(--font-jp);font-size:.65rem}
+.tx-budget-info .bi-label{font-family:var(--font-ja);font-size:.65rem}
 .tx-budget-info .bi-num{font-weight:700}
-.tx-budget-info .bi-preview{margin-left:auto;font-family:var(--font-jp);font-size:.65rem;color:var(--primary-dark)}
+.tx-budget-info .bi-preview{margin-left:auto;font-family:var(--font-ja);font-size:.65rem;color:var(--primary-dark)}
 .tx-budget-info .bi-preview .bi-arrow{color:var(--sub);margin:0 .2rem}
 .tx-budget-info .bi-preview .bi-after{font-family:var(--font-en);font-weight:700}
 .form-group label{display:block;font-size:.72rem;color:var(--sub);margin-bottom:.15rem}
@@ -306,11 +318,30 @@ input,select,textarea{font-family:inherit;font-size:1rem}
   .modal{max-width:640px}
 }
 @media(min-width:1024px){
-  .tx-item{padding:.65rem 0}
-  .tx-icon{width:36px;height:36px;font-size:1rem}
+  .tx-icon{width:32px;height:32px;font-size:.95rem}
   .summary-cell .amount{font-size:1.3rem}
   .home-col-main .summary-cell .amount{font-size:clamp(1rem,1.6vw,1.3rem)}
   .asset-total .amount{font-size:1.7rem}
+}
+
+/* Wide desktop: 1200px〜 は最大1280pxまで広げ、列を増やす */
+@media(min-width:1200px){
+  #app{max-width:1280px}
+  .fab{right:max(1rem,calc(50% - 640px + 1rem))}
+  .settings-panel{max-width:1280px}
+  .settings-panel>.settings-section{max-width:880px;margin-left:auto;margin-right:auto}
+  .settings-header{padding-left:max(1rem,calc((100% - 880px) / 2 + 1rem))}
+  .home-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;align-items:start}
+  .home-col-main{display:contents}
+  .home-col-main>.summary{grid-column:1 / 3;grid-row:1;margin:0}
+  .home-col-main>.budget-section{grid-column:1;grid-row:2;padding:0}
+  .home-col-main>.stamp-section{grid-column:2;grid-row:2;padding:0}
+  .home-col-main>.budget-section.hidden+.stamp-section{grid-column:1 / 3}
+  .home-col-main>.budget-section.hidden+.stamp-section .cal-day:not(.header){aspect-ratio:2.6}
+  .home-col-side{grid-column:3;grid-row:1 / 4}
+  .wide-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start}
+  .wide-col>:first-child{margin-top:0!important}
+  .tx-section{max-width:860px;margin:0 auto}
 }
 
 @media(prefers-color-scheme:dark){
@@ -322,6 +353,7 @@ input,select,textarea{font-family:inherit;font-size:1rem}
   :root:not([data-theme="light"]) .tx-budget-info.over{background:rgba(183,107,107,.18)}
   :root:not([data-theme="light"]) .login-error{background:rgba(183,107,107,.18)}
   :root:not([data-theme="light"]) .login-title{color:var(--primary)}
+  :root:not([data-theme="light"]) .demo-btn{color:var(--primary);border-color:rgba(184,154,133,.45)}
 }
 @media(min-width:600px) and (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) body{background:#0a0908}
@@ -329,20 +361,22 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* Login Overlay */
-.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#c4a892,#8E7560);z-index:1000;display:flex;padding:calc(1.2rem + var(--safe-top)) 1rem calc(1.2rem + var(--safe-bottom));overflow-y:auto}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(150deg,#cdb4a0 0%,#a88770 60%,#8E7560 100%);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:calc(1.5rem + var(--safe-top)) 1.1rem calc(1.2rem + var(--safe-bottom));overflow-y:auto}
 .login-overlay.hidden{display:none}
-.login-content{background:var(--card);border-radius:20px;padding:2.2rem 1.6rem;max-width:400px;width:100%;margin:auto;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.login-icon{width:80px;height:80px;margin:0 auto .8rem}
+.login-content{background:var(--card);border-radius:24px;padding:2.4rem 1.8rem 1.8rem;max-width:380px;width:100%;flex-shrink:0;text-align:center;box-shadow:0 24px 60px rgba(60,40,25,.28)}
+.login-icon{width:76px;height:76px;margin:0 auto 1rem}
 .login-icon svg{width:100%;height:100%;display:block;border-radius:18px;box-shadow:0 4px 12px rgba(142,117,96,.25)}
-.login-title{font-size:1.5rem;color:var(--primary-dark);letter-spacing:.05em;margin-bottom:.3rem;font-weight:700}
-.login-subtitle{font-size:.85rem;color:var(--sub);margin-bottom:1.8rem}
-.login-note{font-size:.72rem;color:var(--sub);line-height:1.7;margin-bottom:1.8rem;padding:.8rem 1rem;background:var(--bg-soft);border-radius:8px}
-.google-signin-btn{width:100%;padding:.8rem 1.5rem;background:#fff;color:#3c4043;border:1px solid #dadce0;border-radius:24px;font-size:.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Roboto','Kosugi Maru',sans-serif;transition:box-shadow .2s,background .2s}
+.login-title{font-size:1.5rem;color:var(--primary-dark);letter-spacing:.06em;margin-bottom:.35rem;font-weight:700}
+.login-subtitle{font-size:.82rem;color:var(--sub);margin-bottom:1.6rem;letter-spacing:.02em}
+.login-note{font-size:.74rem;color:var(--text);line-height:1.85;margin-bottom:1.5rem;padding:.9rem 1rem;background:var(--primary-soft);border-radius:14px}
+.ln{display:inline-block}
+.google-signin-btn{width:100%;padding:.85rem 1.5rem;min-height:50px;box-shadow:0 1px 3px rgba(0,0,0,.08);background:#fff;color:#3c4043;border:1px solid #dadce0;border-radius:24px;font-size:.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-en);transition:box-shadow .2s,background .2s}
 .google-signin-btn:hover{background:#f8f9fa;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .google-signin-btn:active{background:#f1f3f4}
 .google-signin-btn:disabled{opacity:.6;cursor:not-allowed}
-.login-error{margin-top:1rem;padding:.6rem .8rem;background:#fce8e8;color:var(--c-expense);border-radius:6px;font-size:.75rem;line-height:1.5}
-.login-status{margin-top:1rem;font-size:.75rem;color:var(--sub);min-height:1.2em}
+.login-error{margin-top:.8rem;padding:.6rem .8rem;background:#fce8e8;color:var(--c-expense);border-radius:6px;font-size:.75rem;line-height:1.5}
+.login-status{margin-top:.7rem;font-size:.75rem;color:var(--sub)}
+.login-status:empty{display:none}
 
 /* Sync indicator in header */
 .sync-indicator{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ccc;margin-right:.6rem;transition:background .3s}
@@ -360,11 +394,16 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .signed-in-email{font-size:.7rem;color:var(--sub)}
 
 /* Demo mode */
-.login-divider{display:flex;align-items:center;gap:.5rem;margin:1.2rem 0;color:var(--sub);font-size:.7rem}
+.login-divider{display:flex;align-items:center;gap:.7rem;margin:1.3rem 0;color:var(--sub);font-size:.68rem}
 .login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--line)}
-.demo-btn{width:100%;padding:.7rem 1.5rem;background:transparent;color:var(--primary-dark);border:1px dashed var(--primary);border-radius:24px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'Kosugi Maru',sans-serif;transition:background .2s}
+.demo-btn{width:100%;padding:.75rem 1.5rem;min-height:46px;background:transparent;color:var(--primary-dark);border:1.5px solid var(--primary-light);border-radius:24px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font-en);transition:background .2s}
 .demo-btn:hover{background:var(--primary-soft)}
-.demo-note{font-size:.68rem;color:var(--sub);line-height:1.6;margin-top:.6rem}
+.demo-note{font-size:.66rem;color:var(--sub);line-height:1.75;margin-top:.7rem}
+.demo-warn{color:var(--c-expense)}
+.login-overlay::before,.login-overlay::after{content:'';flex:1 0 0}
+.login-links{margin-top:1rem;flex-shrink:0;font-size:.68rem;color:rgba(255,255,255,.8);display:flex;gap:.3rem}
+.login-links a{color:rgba(255,255,255,.92);text-decoration:none}
+.login-links a:hover{text-decoration:underline}
 
 .demo-indicator{position:fixed;top:0;left:0;right:0;height:calc(var(--demo-h) + var(--safe-top));background:linear-gradient(90deg,#c9995a,#b88a4f);color:#fff;padding:.35rem .8rem;font-size:.7rem;text-align:center;z-index:200;cursor:pointer;display:none;justify-content:center;gap:.6rem;align-items:center;padding-top:var(--safe-top);padding-bottom:0;white-space:nowrap}
 .demo-indicator.visible{display:flex}
@@ -411,9 +450,9 @@ body.demo-on #app{height:calc(100vh - var(--safe-top) - var(--safe-bottom) - var
     <h1 class="login-title">よくばりかけいぼ</h1>
     <p class="login-subtitle">あなたと一緒に育つ、欲張り家計簿</p>
     <div class="login-note">
-      Googleアカウントでログインすると、<br>
-      データが自動でGoogle Driveに保存されます。<br>
-      端末を変えても、同じアカウントで同じデータにアクセスできます。
+      <span class="ln">Googleアカウントでログインすると、</span><br>
+      <span class="ln">データが自動で</span><span class="ln">Google Driveに保存されます。</span><br>
+      <span class="ln">端末を変えても、</span><span class="ln">同じアカウントで</span><span class="ln">同じデータにアクセスできます。</span>
     </div>
     <button class="google-signin-btn" id="google-signin-btn" onclick="doSignIn()">
       <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px">
@@ -428,8 +467,9 @@ body.demo-on #app{height:calc(100vh - var(--safe-top) - var(--safe-bottom) - var
     <div class="login-status" id="login-status"></div>
     <div class="login-divider"><span>または</span></div>
     <button class="demo-btn" onclick="startDemoMode()">デモモードで試す</button>
-    <div class="demo-note">ログインせずに機能を試せます。<br>データはこの端末のブラウザに保存されます。<br><span style="color:var(--c-expense)">※ キャッシュ削除・シークレットモード・別ブラウザ使用で消える可能性があります</span></div>
+    <div class="demo-note"><span class="ln">ログインせずに機能を試せます。</span><br><span class="ln">データはこの端末のブラウザに保存されます。</span><br><span class="demo-warn"><span class="ln">※ キャッシュ削除・シークレットモード・</span><span class="ln">別ブラウザ使用で消える可能性があります</span></span></div>
   </div>
+  <div class="login-links"><a href="privacy.html">プライバシーポリシー</a><span>・</span><a href="terms.html">利用規約</a></div>
 </div>
 
 <!-- Install Banner -->
@@ -787,7 +827,7 @@ const DD={schemaVersion:V,
 function migrate(d){
   if(!d||typeof d!=='object')return structuredClone(DD);
   if(Array.isArray(d))d={schemaVersion:0,transactions:d};
-  const v=d.schemaVersion||0;
+  const v=Number(d.schemaVersion)||0;
   if(v<1){d.schemaVersion=1;if(!d.categories)d.categories={expense:['🍽 食費'],income:['💼 給与']};if(Array.isArray(d.transactions))d.transactions=d.transactions.map(normTx);}
   if(v<2){d.schemaVersion=2;(d.transactions||[]).forEach(t=>{if(!t.id)t.id=uid()});}
   if(v<3){d.schemaVersion=3;if(!d.budget)d.budget={defaultAmount:0,overrides:{}};if(!d.recurring)d.recurring=[];}
@@ -907,28 +947,58 @@ function migrate(d){
       if(!hasFurniture)d.accounts.push({id:uid(),name:'🏠 家具家電用積立',initialBalance:0});
     }
   }
-  // Safety
-  if(!d.categories)d.categories=structuredClone(DD.categories);
+  // Safety：どの版から来ても、足りない項目・壊れた型を補って画面が落ちないようにする
+  const isObj=x=>x&&typeof x==='object'&&!Array.isArray(x);
+  const arr=x=>Array.isArray(x)?x:[];
+  const str=(x,def)=>typeof x==='string'?x:(typeof x==='number'?String(x):def);
+  const num=(x,def)=>{const n=Number(x);return Number.isFinite(n)?n:def};
+  const validDate=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x);
+  // カテゴリ
+  if(!isObj(d.categories))d.categories=structuredClone(DD.categories);
   const ec=d.categories.expense;
-  if(!ec||Array.isArray(ec))d.categories.expense=structuredClone(DD.categories.expense);
-  else{if(!ec.fixed)ec.fixed=[];if(!ec.variable)ec.variable=[];if(!ec.special)ec.special=[];}
+  if(!isObj(ec))d.categories.expense=structuredClone(DD.categories.expense);
+  else ['fixed','variable','special'].forEach(k=>{ec[k]=arr(ec[k]).filter(c=>typeof c==='string'&&c)});
   if(!Array.isArray(d.categories.income))d.categories.income=structuredClone(DD.categories.income);
-  if(!Array.isArray(d.transactions))d.transactions=[];
-  if(!d.budget||typeof d.budget!=='object')d.budget={categoryDefaults:{},monthOverrides:{}};
-  if(!d.budget.categoryDefaults)d.budget.categoryDefaults={};
-  if(!d.budget.monthOverrides)d.budget.monthOverrides={};
-  if(!Array.isArray(d.recurring))d.recurring=[];
-  if(!d.memoSuggestions||typeof d.memoSuggestions!=='object')d.memoSuggestions={common:[],byCategory:{}};
-  if(!Array.isArray(d.memoSuggestions.common))d.memoSuggestions.common=[];
-  if(!d.memoSuggestions.byCategory)d.memoSuggestions.byCategory={};
-  if(!Array.isArray(d.recentMemos))d.recentMemos=[];
-  if(!d.monthlyLocks||typeof d.monthlyLocks!=='object')d.monthlyLocks={};
-  if(d.startDate===undefined)d.startDate=null;
-  if(!d.noMoneyEmoji)d.noMoneyEmoji='🌟';
-  if(!d.weekStart)d.weekStart='sun';
+  else d.categories.income=d.categories.income.filter(c=>typeof c==='string'&&c);
+  // 口座
   if(!Array.isArray(d.accounts))d.accounts=structuredClone(DD.accounts);
-  if(!Array.isArray(d.cards))d.cards=[];
-  d.schemaVersion=V;return d;
+  d.accounts=d.accounts.filter(isObj).map(a=>({...a,id:str(a.id,'')||uid(),name:str(a.name,'')||'口座',initialBalance:num(a.initialBalance,0)}));
+  // カード
+  d.cards=arr(d.cards).filter(isObj).map(c=>({...c,id:str(c.id,'')||uid(),name:str(c.name,'')||'💳 カード',paymentAccountId:str(c.paymentAccountId,null)||null,
+    closingDay:Math.min(Math.max(Math.round(num(c.closingDay,31)),1),31),paymentDay:Math.min(Math.max(Math.round(num(c.paymentDay,27)),1),31)}));
+  // 取引（既にある正しい値は変えず、欠けている・壊れている項目だけ補う）
+  d.transactions=arr(d.transactions).filter(isObj).map(t=>{
+    const type=['income','expense','transfer'].includes(t.type)?t.type:'expense';
+    return{...t,id:str(t.id,'')||uid(),date:validDate(t.date)?t.date:today(),amount:Math.abs(num(t.amount,0)),type,
+      category:str(t.category,type==='transfer'?'':'📦 その他'),memo:str(t.memo,''),
+      accountId:str(t.accountId,null)||null,toAccountId:str(t.toAccountId,null)||null,cardId:str(t.cardId,null)||null,
+      isCardPayment:t.isCardPayment===true,billingDelay:Math.max(0,Math.round(num(t.billingDelay,0))),isPending:t.isPending===true,fromRecurring:str(t.fromRecurring,null)||null};
+  });
+  // 固定費・自動振替
+  d.recurring=arr(d.recurring).filter(isObj).map(r=>{
+    const type=['income','expense','transfer'].includes(r.type)?r.type:'expense';
+    return{...r,id:str(r.id,'')||uid(),name:str(r.name,''),amount:Math.abs(num(r.amount,0)),type,category:str(r.category,type==='transfer'?'':'📦 その他'),
+      accountId:str(r.accountId,null)||null,toAccountId:str(r.toAccountId,null)||null,cardId:str(r.cardId,null)||null,
+      dayOfMonth:Math.min(Math.max(Math.round(num(r.dayOfMonth,1)),1),31),useLastDay:r.useLastDay===true};
+  });
+  // 予算
+  if(!isObj(d.budget))d.budget={categoryDefaults:{},monthOverrides:{}};
+  if(!isObj(d.budget.categoryDefaults))d.budget.categoryDefaults={};
+  if(!isObj(d.budget.monthOverrides))d.budget.monthOverrides={};
+  Object.keys(d.budget.monthOverrides).forEach(k=>{if(!isObj(d.budget.monthOverrides[k]))delete d.budget.monthOverrides[k]});
+  // メモ候補・締め・設定
+  if(!isObj(d.memoSuggestions))d.memoSuggestions={common:[],byCategory:{}};
+  d.memoSuggestions.common=arr(d.memoSuggestions.common).filter(m=>typeof m==='string');
+  if(!isObj(d.memoSuggestions.byCategory))d.memoSuggestions.byCategory={};
+  Object.keys(d.memoSuggestions.byCategory).forEach(k=>{d.memoSuggestions.byCategory[k]=arr(d.memoSuggestions.byCategory[k]).filter(m=>typeof m==='string')});
+  d.recentMemos=arr(d.recentMemos).filter(m=>typeof m==='string');
+  if(!isObj(d.monthlyLocks))d.monthlyLocks={};
+  Object.keys(d.monthlyLocks).forEach(k=>{if(!isObj(d.monthlyLocks[k]))d.monthlyLocks[k]={lockedAt:new Date().toISOString(),memo:''}});
+  if(!validDate(d.startDate))d.startDate=null;
+  if(typeof d.noMoneyEmoji!=='string'||!d.noMoneyEmoji)d.noMoneyEmoji='🌟';
+  if(d.weekStart!=='sun'&&d.weekStart!=='mon')d.weekStart='sun';
+  // 新しい版のアプリで保存されたデータは、版番号を下げない（知らない項目もそのまま残す）
+  d.schemaVersion=Math.max(V,Number(d.schemaVersion)||0);return d;
 }
 function normTx(t){return{id:t.id||uid(),date:t.date||today(),amount:Math.abs(Number(t.amount)||0),type:['income','expense','transfer'].includes(t.type)?t.type:'expense',category:t.category||'📦 その他',memo:t.memo||'',fromRecurring:t.fromRecurring||null,accountId:t.accountId||null,toAccountId:t.toAccountId||null,cardId:t.cardId||null,isCardPayment:t.isCardPayment||false,billingDelay:Number(t.billingDelay)||0,isPending:t.isPending||false}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
@@ -1514,7 +1584,9 @@ function renderTransactionsInto(el){
       const items=grouped[date];
       const dd=new Date(date+'T00:00:00');const dl=`${dd.getMonth()+1}/${dd.getDate()} (${['日','月','火','水','木','金','土'][dd.getDay()]})`;
       const dt=items.reduce((s,t)=>t.isPending?s:s+(t.type==='expense'?-t.amount:t.type==='income'?t.amount:0),0);
-      return`<div class="tx-date-group"><div class="tx-date-header"><span>${dl}</span><span class="num" style="color:${dt>=0?'var(--c-income)':'var(--c-expense)'}">${dt>0?'+':dt<0?'-':''}¥${Math.abs(dt).toLocaleString()}</span></div>${items.map(renderTxItem).join('')}</div>`;
+      const wd=dd.getDay();
+      const total=items.length>1?`<div class="tx-daytotal">この日 <span class="num" style="color:${dt>=0?'var(--c-income)':'var(--c-expense)'}">${dt>0?'+':dt<0?'-':''}¥${Math.abs(dt).toLocaleString()}</span></div>`:'';
+      return`<div class="tx-date-group"><div class="tx-dcol"><span class="d num">${dd.getDate()}</span><span class="w${wd===0?' sun':wd===6?' sat':''}">${['日','月','火','水','木','金','土'][wd]}</span></div><div class="tx-ditems">${items.map(renderTxItem).join('')}${total}</div></div>`;
     }).join('');
   } else {
     body=dates.map(date=>{
@@ -1568,7 +1640,7 @@ function renderAssetsPage(){
   const nMonths=data.length;
   const W=340,H=180,PT=18,PB=20,PL=6,PR=6,cH=H-PT-PB,gw=(W-PL-PR)/Math.max(nMonths,1);
   let svg='';
-  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;svg+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxT*(1-i/4));svg+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
+  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;svg+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxT*(1-i/4));svg+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" style="font-family:var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
 
   data.forEach((d,i)=>{
     const cx=PL+gw*i+gw/2;const bw=Math.min(gw*.55,34);
@@ -1589,7 +1661,8 @@ function renderAssetsPage(){
   }
 
   html+=`<div class="chart-card" style="margin:.6rem 0"><h3>資産推移（月末時点・過去6ヶ月）</h3><svg viewBox="0 0 ${W} ${H}">${svg}</svg>
-    <div class="chart-legend"><span><span class="dot" style="background:var(--text);opacity:.6"></span> 純資産（ライン）</span><span style="color:var(--sub);font-size:.6rem">※ 積み上げバー＝下の口座リストと対応</span></div></div>`;
+    <div class="chart-legend"><span><span class="dot" style="background:var(--text);opacity:.6"></span> 純資産（ライン）</span><span style="color:var(--sub);font-size:.6rem">※ 積み上げバーの色＝口座リストの色</span></div></div>`;
+  const leftEnd=html.length;
 
   // Account list (after chart) - color dots serve as chart legend
   html+=`<div style="font-size:.72rem;color:var(--sub);margin:.4rem 0 .2rem;font-weight:600">口座（現在）</div>`;
@@ -1601,7 +1674,7 @@ function renderAssetsPage(){
     html+=`<div class="asset-acc-list">${D.cards.map(c=>{const b=calcCardBalance(c.id);return`<div class="asset-acc-row"><span>${esc(c.name)}</span><span class="acc-bal num" style="color:${b>0?'var(--c-expense)':'var(--sub)'}">-¥${b.toLocaleString()}</span></div>`}).join('')}</div>`;
   }
 
-  el.innerHTML=html;
+  el.innerHTML=`<div class="asset-cols wide-cols"><div class="wide-col">${html.slice(0,leftEnd)}</div><div class="wide-col">${html.slice(leftEnd)}</div></div>`;
 }
 
 /* ===== TREND ===== */
@@ -1635,7 +1708,7 @@ function renderTrend(){
   const nMonths=data.length;
   const W=360,H=200,PT=20,PB=22,PL=8,PR=8,cH=H-PT-PB,gw=(W-PL-PR)/Math.max(nMonths,1),bw=Math.min(gw*.28,20);
   let s='';
-  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;s+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxVal*(1-i/4));s+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" font-family="var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
+  for(let i=0;i<=4;i++){const yy=PT+(cH/4)*i;s+=`<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width=".5"/>`;if(i<4){const v=Math.round(maxVal*(1-i/4));s+=`<text x="${PL+2}" y="${yy-3}" font-size="9" fill="var(--sub)" style="font-family:var(--font-en)">${v>=10000?Math.round(v/10000)+'万':v.toLocaleString()}</text>`}}
   data.forEach((d,i)=>{const cx=PL+gw*i+gw/2;s+=`<rect x="${cx-bw-1}" y="${PT+cH-(d.inc/maxVal)*cH}" width="${bw}" height="${(d.inc/maxVal)*cH}" rx="2" fill="var(--c-income)" opacity=".7"/>`;s+=`<rect x="${cx+1}" y="${PT+cH-(d.exp/maxVal)*cH}" width="${bw}" height="${(d.exp/maxVal)*cH}" rx="2" fill="var(--c-expense)" opacity=".7"/>`;s+=`<text x="${cx}" y="${H-5}" text-anchor="middle" font-size="10" fill="var(--sub)">${d.label}</text>`});
 
   // Pie chart for current month (moved from home)
@@ -1644,6 +1717,7 @@ function renderTrend(){
   // 6-month trend chart card
   html+=`<div class="chart-card"><h3>月別収支推移（過去6ヶ月）</h3><svg id="trend-svg" viewBox="0 0 360 200">${s}</svg>
     <div class="chart-legend"><span><span class="dot" style="background:var(--c-income)"></span> 収入</span><span><span class="dot" style="background:var(--c-expense)"></span> 支出</span></div></div>`;
+  const leftEnd=html.length;
 
   // Monthly cards (most recent first, skip months with no income and no expense)
   const cardsData=[...data].reverse().filter(d=>d.inc>0||d.exp>0);
@@ -1680,7 +1754,7 @@ function renderTrend(){
   }).join('');
   }
 
-  el.innerHTML=html;
+  el.innerHTML=`<div class="trend-cols wide-cols"><div class="wide-col">${html.slice(0,leftEnd)}</div><div class="wide-col">${html.slice(leftEnd)}</div></div>`;
 }
 
 /* Month nav */
@@ -2278,7 +2352,7 @@ function renderSettingsAccounts(){document.getElementById('settings-accounts').i
 
 /* Import/Export */
 function exportData(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kakeibo_${today()}.json`;a.click();URL.revokeObjectURL(a.href)}
-function importData(e){const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{D=migrate(JSON.parse(t));save();render();alert('インポートしました')}catch(err){alert('失敗：'+err.message)}});e.target.value=''}
+function importData(e){const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const j=JSON.parse(t);if(!Array.isArray(j)&&!(j&&typeof j==='object'&&(Array.isArray(j.transactions)||j.schemaVersion!==undefined))){alert('よくばりかけいぼのデータではないため、読み込みませんでした');return}D=migrate(j);save();render();alert('インポートしました')}catch(err){alert('失敗：'+err.message)}});e.target.value=''}
 
 /* Modal helpers */
 function om(id){document.getElementById(id).classList.add('open')}

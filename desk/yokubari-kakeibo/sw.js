@@ -1,8 +1,9 @@
-const CACHE_VERSION = 'kakeibo-v3';
+const CACHE_VERSION = 'kakeibo-v11';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './icons/icon-192.png',
   'https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap'
 ];
 
