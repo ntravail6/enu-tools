@@ -349,6 +349,27 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 .signed-in-details{flex:1}
 .signed-in-name{font-size:.85rem;color:var(--text);font-weight:600}
 .signed-in-email{font-size:.7rem;color:var(--sub)}
+
+/* Demo mode */
+.login-divider{display:flex;align-items:center;gap:.5rem;margin:1.2rem 0;color:var(--sub);font-size:.7rem}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--line)}
+.demo-btn{width:100%;padding:.7rem 1.5rem;background:transparent;color:var(--primary-dark);border:1px dashed var(--primary);border-radius:24px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'Kosugi Maru',sans-serif;transition:background .2s}
+.demo-btn:hover{background:var(--primary-soft)}
+.demo-note{font-size:.68rem;color:var(--sub);line-height:1.6;margin-top:.6rem}
+
+.demo-indicator{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#c9995a,#b88a4f);color:#fff;padding:.35rem .8rem;font-size:.7rem;text-align:center;z-index:200;cursor:pointer;display:none;justify-content:center;gap:.6rem;align-items:center;padding-top:calc(.35rem + var(--safe-top))}
+.demo-indicator.visible{display:flex}
+.demo-signin{text-decoration:underline;font-weight:600}
+
+/* Install banner */
+.install-banner{position:fixed;bottom:-200px;left:50%;transform:translateX(-50%);background:var(--card);border-radius:14px 14px 0 0;padding:1rem 1.2rem calc(1rem + var(--safe-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:400;max-width:400px;width:calc(100% - 20px);transition:bottom .4s cubic-bezier(.2,.9,.3,1);border:1px solid var(--line);border-bottom:none}
+.install-banner.visible{bottom:0}
+.install-title{font-size:.9rem;font-weight:700;color:var(--primary-dark);margin-bottom:.5rem}
+.install-body{font-size:.75rem;color:var(--text);line-height:1.6}
+.install-body b{color:var(--primary-dark)}
+.install-body .step{background:var(--bg-soft);padding:.4rem .6rem;border-radius:6px;margin:.3rem 0;font-size:.72rem}
+.install-close{position:absolute;top:.5rem;right:.8rem;background:transparent;border:none;font-size:1.3rem;color:var(--sub);cursor:pointer;line-height:1;padding:.2rem .4rem}
+.install-close:hover{color:var(--text)}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -375,7 +396,23 @@ input,select,textarea{font-family:inherit;font-size:1rem}
     </button>
     <div class="login-error" id="login-error" style="display:none"></div>
     <div class="login-status" id="login-status"></div>
+    <div class="login-divider"><span>または</span></div>
+    <button class="demo-btn" onclick="startDemoMode()">デモモードで試す</button>
+    <div class="demo-note">ログインせずに機能を試せます。<br>データはこの端末のブラウザに保存されます。<br><span style="color:var(--c-expense)">※ キャッシュ削除・シークレットモード・別ブラウザ使用で消える可能性があります</span></div>
   </div>
+</div>
+
+<!-- Install Banner -->
+<div id="install-banner" class="install-banner">
+  <button class="install-close" onclick="dismissInstallBanner()">×</button>
+  <div class="install-title">📱 ホーム画面に追加</div>
+  <div class="install-body" id="install-body"></div>
+</div>
+
+<!-- Demo mode indicator -->
+<div id="demo-indicator" class="demo-indicator" onclick="exitDemoMode()">
+  <span>📝 デモモード中</span>
+  <span class="demo-signin">Googleでログインする →</span>
 </div>
 
 <div id="app">
@@ -2187,6 +2224,110 @@ function om(id){document.getElementById(id).classList.add('open')}
 function cm(id){document.getElementById(id).classList.remove('open')}
 function cmo(e,id){if(e.target===e.currentTarget)cm(id)}
 
+/* ===== Demo Mode ===== */
+let DEMO_MODE=false;
+
+function generateDemoData(){
+  const d=structuredClone(DD);
+  const today=new Date();
+  const ym=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
+  d.startDate=ym+'-01';
+  d.budget.categoryDefaults={'🏠 家賃':85000,'💡 水道光熱費':15000,'📱 通信費':7000,'📺 サブスク':3500,'🍽 食費':45000,'🛒 日用品・雑貨':12000,'🎉 交際費':20000,'👕 衣服美容費':10000};
+  // Sample transactions for current month
+  const cash=d.accounts[0].id, pay=d.accounts[1].id, bank=d.accounts[3].id;
+  const txs=[
+    {amount:280000,type:'income',category:'💼 給与',memo:'',accountId:bank,day:25},
+    {amount:85000,type:'expense',category:'🏠 家賃',memo:'',accountId:bank,day:1},
+    {amount:14200,type:'expense',category:'💡 水道光熱費',memo:'電気代',accountId:bank,day:5},
+    {amount:6500,type:'expense',category:'📱 通信費',memo:'',accountId:bank,day:10},
+    {amount:1500,type:'expense',category:'📺 サブスク',memo:'Netflix',accountId:bank,day:3},
+    {amount:3800,type:'expense',category:'🍽 食費',memo:'スーパー',accountId:cash,day:2},
+    {amount:1200,type:'expense',category:'🍽 食費',memo:'ランチ',accountId:pay,day:4},
+    {amount:4200,type:'expense',category:'🍽 食費',memo:'スーパー',accountId:cash,day:7},
+    {amount:2800,type:'expense',category:'🍽 食費',memo:'カフェ',accountId:pay,day:9},
+    {amount:5600,type:'expense',category:'🍽 食費',memo:'外食',accountId:pay,day:12},
+    {amount:3400,type:'expense',category:'🍽 食費',memo:'スーパー',accountId:cash,day:14},
+    {amount:2200,type:'expense',category:'🍽 食費',memo:'',accountId:pay,day:17},
+    {amount:1800,type:'expense',category:'🛒 日用品・雑貨',memo:'洗剤等',accountId:cash,day:6},
+    {amount:2400,type:'expense',category:'🛒 日用品・雑貨',memo:'ドラッグストア',accountId:pay,day:15},
+    {amount:8500,type:'expense',category:'🎉 交際費',memo:'飲み会',accountId:pay,day:11},
+    {amount:5800,type:'expense',category:'👕 衣服美容費',memo:'美容院',accountId:pay,day:8},
+    {amount:12000,type:'transfer',category:'',memo:'旅行のために',accountId:bank,toAccountId:d.accounts[6].id,day:1},
+  ];
+  d.transactions=txs.map((t,i)=>({
+    id:'demo_'+i,
+    date:ym+'-'+String(t.day).padStart(2,'0'),
+    amount:t.amount,type:t.type,category:t.category,memo:t.memo,
+    accountId:t.accountId,toAccountId:t.toAccountId||null,cardId:null,
+    isCardPayment:false,billingDelay:0,isPending:false,fromRecurring:null
+  }));
+  return d;
+}
+
+function startDemoMode(){
+  DEMO_MODE=true;
+  D=generateDemoData();
+  try{localStorage.setItem('kakeibo_data',JSON.stringify(D))}catch(e){}
+  document.getElementById('login-overlay').classList.add('hidden');
+  document.getElementById('demo-indicator').classList.add('visible');
+  document.getElementById('sync-indicator').style.display='none';
+  applyRecurring();runSettlements(false);render();
+  // Show install banner after 2s
+  setTimeout(showInstallBanner,2000);
+}
+
+function exitDemoMode(){
+  if(!confirm('デモモードを終了してGoogleでログインしますか？\n（デモデータは削除されます）'))return;
+  DEMO_MODE=false;
+  localStorage.removeItem('kakeibo_data');
+  location.reload();
+}
+
+/* ===== Install Banner ===== */
+function detectDevice(){
+  const ua=navigator.userAgent;
+  if(/iPad|iPhone|iPod/.test(ua)&&!window.MSStream)return'ios';
+  if(/Android/.test(ua))return'android';
+  return'desktop';
+}
+
+function isInstalled(){
+  return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+}
+
+function showInstallBanner(){
+  if(isInstalled())return;
+  // Check if dismissed within 7 days
+  const dismissed=localStorage.getItem('yk_install_dismissed');
+  if(dismissed){
+    const days=(Date.now()-parseInt(dismissed))/(1000*60*60*24);
+    if(days<7)return;
+  }
+  const device=detectDevice();
+  const bodyEl=document.getElementById('install-body');
+  let html='';
+  if(device==='ios'){
+    html=`アプリのように使えます。<br>
+    <div class="step">1. 下部の <b>共有ボタン</b>（□↑）をタップ</div>
+    <div class="step">2. メニューから <b>「ホーム画面に追加」</b> をタップ</div>`;
+  }else if(device==='android'){
+    html=`アプリのように使えます。<br>
+    <div class="step">1. 右上の <b>⋮ メニュー</b> をタップ</div>
+    <div class="step">2. <b>「ホーム画面に追加」</b> または「アプリをインストール」をタップ</div>`;
+  }else{
+    html=`ブラウザで開く代わりに、独立したアプリのように起動できます。<br>
+    <div class="step">アドレスバー右の <b>⊕ インストールアイコン</b> をクリック</div>
+    <div class="step">または、メニューから <b>「アプリをインストール」</b> を選択</div>`;
+  }
+  bodyEl.innerHTML=html;
+  document.getElementById('install-banner').classList.add('visible');
+}
+
+function dismissInstallBanner(){
+  document.getElementById('install-banner').classList.remove('visible');
+  try{localStorage.setItem('yk_install_dismissed',String(Date.now()))}catch(e){}
+}
+
 /* ===== Google Auth + Drive Sync ===== */
 const GOOGLE_CLIENT_ID='259735302124-li2fl1gfbqau90vhi1jpgs1rcprqevoj.apps.googleusercontent.com';
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata';
@@ -2270,6 +2411,8 @@ async function handleAuthResponse(resp){
     applyRecurring();
     runSettlements(false);
     render();
+    // Show install banner after 2s
+    setTimeout(showInstallBanner,2000);
   }catch(e){
     setLoginStatus('データの読み込みに失敗: '+e.message,true);
     document.getElementById('google-signin-btn').disabled=false;
@@ -2373,6 +2516,7 @@ async function loadFromDrive(){
 }
 
 function scheduleSync(){
+  if(DEMO_MODE)return;
   if(!AUTH.signedIn)return;
   clearTimeout(syncTimer);
   setSyncStatus('syncing');
