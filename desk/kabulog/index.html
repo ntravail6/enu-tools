@@ -750,6 +750,57 @@ h3 { font-size: .95rem; font-weight: 700; }
 .settings-action.danger { background: #F5E5E5; color: var(--loss); }
 
 /* ============================================================
+   PWA Install Banner
+   ============================================================ */
+.install-banner {
+  display: none;
+  position: fixed;
+  bottom: calc(var(--nav-h) + 8px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  z-index: 150;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(44,42,36,.15);
+  animation: slideUp .3s ease-out;
+}
+.install-banner.show { display: block; }
+.install-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.install-banner-title {
+  font-size: .9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.install-banner-title svg { width: 28px; height: 28px; }
+.install-banner-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--sub);
+  cursor: pointer;
+  padding: 4px;
+}
+.install-banner-steps {
+  font-size: .8rem;
+  color: var(--sub);
+  line-height: 1.6;
+}
+.install-banner-steps .step-icon {
+  display: inline-block;
+  font-size: 1rem;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+/* ============================================================
    Toast
    ============================================================ */
 .toast {
@@ -1072,6 +1123,18 @@ h3 { font-size: .95rem; font-weight: 700; }
   </div>
 </div>
 
+<!-- PWA Install Banner -->
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-header">
+    <div class="install-banner-title">
+      <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" rx="18" fill="var(--primary-light)"/><path d="M20 48 L28 28 L36 38 L44 22 L52 48" stroke="var(--primary-dark)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="44" cy="22" r="3.5" fill="var(--primary-dark)"/></svg>
+      アプリとして追加
+    </div>
+    <button class="install-banner-close" onclick="dismissInstallBanner()">✕</button>
+  </div>
+  <div class="install-banner-steps" id="install-steps"></div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1310,6 +1373,7 @@ async function handleTokenResponse(resp) {
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   renderAll();
+  showInstallBanner();
 }
 
 function handleLogout() {
@@ -2358,6 +2422,7 @@ function startDemo() {
   document.getElementById('user-name').textContent = 'デモ';
   document.getElementById('user-avatar').style.display = 'none';
   renderAll();
+  showInstallBanner();
 }
 
 function exitDemo() {
@@ -2367,6 +2432,51 @@ function exitDemo() {
   document.getElementById('app').style.display = 'none';
   document.getElementById('demo-banner').style.display = 'none';
   document.getElementById('login-view').style.display = 'flex';
+}
+
+/* =============================================================
+   PWA Install Banner
+   ============================================================= */
+function showInstallBanner() {
+  // すでにPWAとして開いている場合は表示しない
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  if (navigator.standalone) return; // iOS Safari standalone
+
+  // 一度閉じたら表示しない
+  try { if (localStorage.getItem('kabulog_install_dismissed')) return; } catch {}
+
+  const stepsEl = document.getElementById('install-steps');
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  if (isIOS) {
+    stepsEl.innerHTML = `
+      ① 下の <span class="step-icon">□↑</span> 共有ボタンをタップ<br>
+      ② 「ホーム画面に追加」を選択<br>
+      ③ アプリとして使えます
+    `;
+  } else if (isAndroid) {
+    stepsEl.innerHTML = `
+      ① 右上の <span class="step-icon">⋮</span> メニューをタップ<br>
+      ② 「ホーム画面に追加」を選択<br>
+      ③ アプリとして使えます
+    `;
+  } else {
+    // PC
+    stepsEl.innerHTML = `
+      アドレスバー右の <span class="step-icon">⊕</span> アイコンからインストールできます
+    `;
+  }
+
+  // 少し遅延してから表示
+  setTimeout(() => {
+    document.getElementById('install-banner').classList.add('show');
+  }, 2000);
+}
+
+function dismissInstallBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+  try { localStorage.setItem('kabulog_install_dismissed', '1'); } catch {}
 }
 
 /* =============================================================
