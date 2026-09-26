@@ -1352,6 +1352,7 @@ async function loadFromDrive() {
 
     if (searchData.files && searchData.files.length > 0) {
       state.driveFileId = searchData.files[0].id;
+      showToast('Drive: データ読込中…');
       // ファイル内容を取得
       const contentRes = await driveRequest(
         `https://www.googleapis.com/drive/v3/files/${state.driveFileId}?alt=media`
@@ -1363,6 +1364,7 @@ async function loadFromDrive() {
       saveToLocal();
     } else {
       // ファイルなし → ローカルキャッシュを確認
+      showToast('Drive: データなし（新規作成）');
       const local = loadFromLocal();
       state.data = local || createEmptyData();
       // Drive に初回保存
