@@ -1341,15 +1341,7 @@ async function driveRequest(url, options = {}) {
   });
   if (!res.ok) {
     const body = await res.text();
-    const err = new Error(`Drive API ${res.status}: ${body}`);
-    // 403の場合は詳細をトーストで表示
-    if (res.status === 403) {
-      try {
-        const detail = JSON.parse(body);
-        showToast('403: ' + (detail.error?.message || body).slice(0, 80), 5000);
-      } catch { showToast('403: ' + body.slice(0, 80), 5000); }
-    }
-    throw err;
+    throw new Error(`${res.status}|${body}`);
   }
   return res;
 }
@@ -1383,17 +1375,9 @@ async function loadFromDrive() {
     }
   } catch (e) {
     console.error('Drive load error:', e);
-    // 詳細なエラーメッセージ
     const msg = e.message || String(e);
-    if (msg.includes('401')) {
-      showToast('認証エラー：再ログインしてください');
-    } else if (msg.includes('403')) {
-      showToast('権限エラー：Driveへのアクセスが拒否されました');
-    } else if (msg.includes('404')) {
-      showToast('データファイルが見つかりません');
-    } else {
-      showToast('読込失敗: ' + msg.slice(0, 60));
-    }
+    // エラー詳細をそのまま表示（5秒間）
+    showToast('エラー: ' + msg.slice(0, 100), 5000);
     // オフラインフォールバック
     const local = loadFromLocal();
     state.data = local || createEmptyData();
