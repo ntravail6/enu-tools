@@ -1083,7 +1083,7 @@ h3 { font-size: .95rem; font-weight: 700; }
    Config & Constants
    ============================================================= */
 // ▼▼▼ Google Cloud Console で取得した Client ID をここに貼る ▼▼▼
-const CLIENT_ID = '600230944307-30j571ncbi72gq0sa1rcf8hb1c6fk1pa.apps.googleusercontent.com';
+const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
 // ▲▲▲ ここだけ変更すれば動きます ▲▲▲
 
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
@@ -1370,10 +1370,20 @@ async function loadFromDrive() {
     }
   } catch (e) {
     console.error('Drive load error:', e);
+    // 詳細なエラーメッセージ
+    const msg = e.message || String(e);
+    if (msg.includes('401')) {
+      showToast('認証エラー：再ログインしてください');
+    } else if (msg.includes('403')) {
+      showToast('権限エラー：Driveへのアクセスが拒否されました');
+    } else if (msg.includes('404')) {
+      showToast('データファイルが見つかりません');
+    } else {
+      showToast('読込失敗: ' + msg.slice(0, 60));
+    }
     // オフラインフォールバック
     const local = loadFromLocal();
     state.data = local || createEmptyData();
-    showToast('オフラインモードで起動しました');
   }
 }
 
