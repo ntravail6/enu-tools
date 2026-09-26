@@ -1277,7 +1277,7 @@ function handleLogin() {
     initGoogleAuth();
     return;
   }
-  tokenClient.requestAccessToken();
+  tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
 async function handleTokenResponse(resp) {
