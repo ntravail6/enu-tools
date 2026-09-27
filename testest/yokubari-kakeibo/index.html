@@ -466,6 +466,7 @@ body.demo-on #app{height:calc(100vh - var(--safe-top) - var(--safe-bottom) - var
     <div style="height:.7rem"></div>
     <button class="demo-btn" onclick="startBlankTrial()">まっさらな状態から試す</button>
   </div>
+  <div class="login-links"><a href="privacy.html">プライバシーポリシー</a><span>・</span><a href="terms.html">利用規約</a></div>
 </div>
 
 <!-- Install Banner -->
@@ -988,7 +989,9 @@ function migrate(d){
 }
 function normTx(t){return{id:t.id||uid(),date:t.date||today(),amount:Math.abs(Number(t.amount)||0),type:['income','expense','transfer'].includes(t.type)?t.type:'expense',category:t.category||'📦 その他',memo:t.memo||'',fromRecurring:t.fromRecurring||null,accountId:t.accountId||null,toAccountId:t.toAccountId||null,cardId:t.cardId||null,isCardPayment:t.isCardPayment||false,billingDelay:Number(t.billingDelay)||0,isPending:t.isPending||false}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function today(){return new Date().toISOString().slice(0,10)}
+// 端末の時刻（日本時間）で YYYY-MM-DD にする。toISOString は世界標準時になり、日本では1日ずれるので使わない
+function ymd(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function today(){return ymd(new Date())}
 
 let D=structuredClone(DD),CY,CM;
 const now=new Date();CY=now.getFullYear();CM=now.getMonth();
@@ -1247,7 +1250,7 @@ function fmtPeriod(dateStr){
 function getCatEmoji(c){const m=c.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);return m?m[0]:'💰'}
 function stripEmoji(c){return c.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u,'')}
 function getAccName(id){const a=D.accounts.find(x=>x.id===id);return a?a.name:'—'}
-function lastDayOfMonth(y,m){return new Date(y,m+1,0).toISOString().slice(0,10)}
+function lastDayOfMonth(y,m){return ymd(new Date(y,m+1,0))}
 
 /* ===== MONTH PICKER ===== */
 let mpYear=CY;
@@ -1890,7 +1893,7 @@ function updateBudgetInfo(){
   // Only show for expense
   if(type!=='expense'){info.classList.add('hidden');return}
   const cat=document.getElementById('tx-category').value;
-  const dateStr=document.getElementById('tx-date').value||new Date().toISOString().slice(0,10);
+  const dateStr=document.getElementById('tx-date').value||today();
   const ym=dateStr.slice(0,7);
   // Get budget for this category (month override wins)
   const monthOverride=(D.budget.monthOverrides||{})[ym]||{};
@@ -2085,7 +2088,7 @@ function renderSettingsCards(){
    Also promotes pending settlements to confirmed if their date has passed. */
 function runSettlements(showAlert){
   const today=new Date();
-  const todayStr=today.toISOString().slice(0,10);
+  const todayStr=ymd(today);
   let generated=0,promoted=0;
 
   // First: promote pending settlements whose date has passed
@@ -2111,7 +2114,7 @@ function runSettlements(showAlert){
       const closeDate=`${closeYear}-${String(closeMonth+1).padStart(2,'0')}-${String(closeDay).padStart(2,'0')}`;
 
       const payDate=new Date(closeYear,closeMonth+1,card.paymentDay);
-      const payDateStr=payDate.toISOString().slice(0,10);
+      const payDateStr=ymd(payDate);
 
       const settlementTag=`settle:${card.id}:${closeYear}-${String(closeMonth+1).padStart(2,'0')}`;
       if(D.transactions.some(t=>t.fromRecurring===settlementTag))continue;
@@ -2120,7 +2123,7 @@ function runSettlements(showAlert){
       const prevCloseYear=closeMonth===0?closeYear-1:closeYear;
       const prevCloseMonth=closeMonth===0?11:closeMonth-1;
       const prevCloseDay=card.closingDay===31?new Date(prevCloseYear,prevCloseMonth+1,0).getDate():Math.min(card.closingDay,new Date(prevCloseYear,prevCloseMonth+1,0).getDate());
-      const periodStart=new Date(prevCloseYear,prevCloseMonth,prevCloseDay+1).toISOString().slice(0,10);
+      const periodStart=ymd(new Date(prevCloseYear,prevCloseMonth,prevCloseDay+1));
 
       const total=D.transactions.filter(t=>{
         if(t.cardId!==card.id||t.type!=='expense'||t.isCardPayment)return false;
@@ -2128,7 +2131,7 @@ function runSettlements(showAlert){
         if(delay===0)return t.date>=periodStart&&t.date<=closeDate;
         const d=new Date(t.date+'T00:00:00');
         const shifted=new Date(d.getFullYear(),d.getMonth()+delay,d.getDate());
-        const shiftedStr=shifted.toISOString().slice(0,10);
+        const shiftedStr=ymd(shifted);
         return shiftedStr>=periodStart&&shiftedStr<=closeDate;
       }).reduce((s,t)=>s+t.amount,0);
 
@@ -2694,6 +2697,151 @@ function startBlankTrial(){
   applyRecurring();runSettlements(false);render();
 }
 window.addEventListener('beforeunload',e=>{if(DEMO_MODE&&D&&D.transactions&&D.transactions.length){e.preventDefault();e.returnValue=''}});
+</script>
+<script>
+// テスト版だけのサンプルデータ（make_test_version.py が index.html の最後に埋め込む）
+// 過去12か月＋今月。予算・月ごとの予算・カード2枚・請求月のズラし・固定費と自動振替・特別費・
+// 賞与や副業などの収入・口座間の振替・メモ候補・締めた月（メモつき）まで、全機能が入った状態にする
+let DEMO_LOCKS=null;
+generateDemoData=function(){
+  const d=structuredClone(DD);
+  let seed=11;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+  const amt=(lo,hi)=>Math.round((lo+rnd()*(hi-lo))/10)*10;
+  const pad=n=>String(n).padStart(2,'0');
+  const now=new Date(),MONTHS=12;
+  const first=new Date(now.getFullYear(),now.getMonth()-MONTHS,1);
+  d.startDate=`${first.getFullYear()}-${pad(first.getMonth()+1)}-01`;
+
+  const init={a1:30000,a2:8000,a3:2000,a4:420000,a5:180000,a6:500000,a7:60000,a8:40000,a9:600000,a10:350000};
+  d.accounts.forEach(a=>{a.initialBalance=init[a.id]||0});
+  d.cards=[
+    {id:'c1',name:'💳 ○○カード',paymentAccountId:'a4',closingDay:15,paymentDay:10},
+    {id:'c2',name:'💳 ▲︎▲︎カード',paymentAccountId:'a5',closingDay:31,paymentDay:27},
+  ];
+  const R=(id,name,amount,type,category,accountId,toAccountId,cardId,dayOfMonth,useLastDay)=>({id,name,amount,type,category,accountId,toAccountId,cardId,dayOfMonth,useLastDay:!!useLastDay});
+  d.recurring=[
+    R('r1','給与',280000,'income','💼 給与','a4',null,null,25),
+    R('r2','家賃',85000,'expense','🏠 家賃','a4',null,null,27),
+    R('r3','スマホ',6500,'expense','📱 通信費',null,null,'c1',10),
+    R('r4','Netflix',1590,'expense','📺 サブスク',null,null,'c2',3),
+    R('r5','ヨガ教室',8800,'expense','📖 習い事','a5',null,null,5),
+    R('r6','お小遣い',20000,'expense','💴 ○○お小遣い','a4',null,null,1,true),
+    R('r7','NISA積立',30000,'transfer','','a4','a9',null,1),
+    R('r8','iDeCo',12000,'transfer','','a4','a10',null,26),
+    R('r9','旅行積立',15000,'transfer','','a4','a7',null,26),
+    R('r10','家具家電積立',5000,'transfer','','a4','a8',null,26),
+  ];
+  d.budget.categoryDefaults={'🏠 家賃':85000,'💡 水道光熱費':15000,'📱 通信費':7000,'📖 習い事':8800,'📺 サブスク':2000,'💴 ○○お小遣い':20000,
+    '🍽 食費':45000,'🛒 日用品・雑貨':10000,'🎉 交際費':15000,'👕 衣服美容費':12000,'📚 書籍・教育費':4000,'🚃 交通費':5000,'🏥 医療費':5000,'🎮 趣味・娯楽費':8000};
+  d.memoSuggestions={common:['コンビニ','ネットショッピング'],byCategory:{
+    '🍽 食費':['スーパー','ランチ','カフェ','外食'],'🛒 日用品・雑貨':['ドラッグストア','100均'],
+    '🎉 交際費':['飲み会','ランチ会'],'👕 衣服美容費':['美容院','服'],'🎮 趣味・娯楽費':['映画','ゲーム']}};
+
+  const txs=[];
+  const add=(date,amount,type,category,memo,accountId,o)=>txs.push(Object.assign({date,amount,type,category,memo,accountId:accountId||null,toAccountId:null,cardId:null,isCardPayment:false,billingDelay:0,isPending:false,fromRecurring:null},o||{}));
+  const pay=src=>src[0]==='c'?[null,{cardId:src}]:[src,{}];
+  const spend=(date,amount,cat,memo,src,o)=>{const [a,x]=pay(src);add(date,amount,'expense',cat,memo,a,Object.assign(x,o||{}))};
+  const move=(date,amount,memo,from,to,o)=>add(date,amount,'transfer','',memo,from,Object.assign({toAccountId:to},o||{}));
+
+  for(let k=MONTHS;k>=0;k--){
+    const m=new Date(now.getFullYear(),now.getMonth()-k,1);
+    const y=m.getFullYear(),mo=m.getMonth()+1,ym=`${y}-${pad(mo)}`;
+    const last=new Date(y,mo,0).getDate(),maxDay=k===0?now.getDate():last;
+    const D_=n=>`${ym}-${pad(Math.min(n,last))}`;
+    const on=(n,f)=>{if(n<=maxDay)f(D_(n))};
+
+    // 固定費・自動振替（今月はアプリが自動で追加する）
+    if(k>0)d.recurring.forEach(r=>{
+      const day=r.useLastDay?last:Math.min(r.dayOfMonth,last);
+      add(D_(day),r.amount,r.type,r.type==='transfer'?'振替':r.category,`🔄 ${r.name}`,r.accountId,{toAccountId:r.toAccountId,cardId:r.cardId,fromRecurring:`rec:${r.id}:${ym}`});
+    });
+
+    // 水道光熱費（冬と夏は高め）
+    const season=[1,2,12].includes(mo)?1.6:[7,8].includes(mo)?1.4:1;
+    on(5,dt=>spend(dt,amt(6000,8000)*season|0,'💡 水道光熱費','電気代','a4'));
+    on(12,dt=>spend(dt,amt(2800,4200)*season|0,'💡 水道光熱費','ガス代','a4'));
+    if(mo%2)on(20,dt=>spend(dt,amt(4500,5500),'💡 水道光熱費','水道代','a4'));
+
+    // 振替：ATM・●●Pay と Suica のチャージ
+    on(3,dt=>move(dt,20000,'ATM','a4','a1'));
+    on(4,dt=>move(dt,10000,'チャージ','a4','a2'));
+    on(8,dt=>move(dt,3000,'チャージ','a1','a3'));
+
+    // 毎日の支出（約4割の日は使わない＝NoMoneyDay）
+    for(let day=1;day<=maxDay;day++){
+      if(rnd()<0.42)continue;
+      const dt=D_(day),n=rnd()<0.3?2:1;
+      for(let i=0;i<n;i++){
+        const r=rnd();
+        if(r<0.30)spend(dt,amt(1800,4800),'🍽 食費','スーパー',pick(['a1','a2','c1']));
+        else if(r<0.45)spend(dt,amt(800,1400),'🍽 食費','ランチ',pick(['a2','a1']));
+        else if(r<0.55)spend(dt,amt(450,900),'🍽 食費','カフェ',pick(['a2','a3']));
+        else if(r<0.62)spend(dt,amt(300,800),'🍽 食費','コンビニ',pick(['a2','a3']));
+        else if(r<0.72)spend(dt,amt(180,600),'🚃 交通費','','a3');
+        else if(r<0.80)spend(dt,amt(800,2800),'🛒 日用品・雑貨',pick(['ドラッグストア','100均','']),pick(['a1','c1']));
+        else if(r<0.86)spend(dt,amt(1200,5000),'🎮 趣味・娯楽費',pick(['映画','ゲーム','']),'c2');
+        else if(r<0.91)spend(dt,amt(900,2400),'📚 書籍・教育費',pick(['本','']),'c2');
+        else spend(dt,amt(300,1200),'🍽 食費','',pick(['a1','a2']));
+      }
+    }
+    on(9,dt=>spend(dt,amt(4000,7000),'🍽 食費','外食','c1'));
+    on(23,dt=>spend(dt,amt(3000,6000),'🍽 食費','外食','c1'));
+    on(14,dt=>spend(dt,amt(4000,8000),'🎉 交際費','飲み会','c1'));
+    if(rnd()<0.6)on(21,dt=>spend(dt,amt(2000,4000),'🎉 交際費','ランチ会','a2'));
+    if(mo%2===0)on(16,dt=>spend(dt,6600,'👕 衣服美容費','美容院','c2'));
+    on(19,dt=>spend(dt,amt(2500,8000),'👕 衣服美容費','服','c2'));
+    if(rnd()<0.3)on(11,dt=>spend(dt,amt(1500,3500),'🏥 医療費','','a1'));
+
+    // 収入：ポイント・副業・賞与・配当・フリマ
+    on(28,dt=>add(dt,amt(300,1200),'income','⭐ ポイント','ポイント還元','a2'));
+    if(mo%2)on(15,dt=>add(dt,amt(15000,40000),'income','💵 副業','イラスト納品','a5'));
+    if(mo===6||mo===12)on(10,dt=>add(dt,450000,'income','💰 賞与','','a4'));
+    if(mo===3||mo===9)on(20,dt=>add(dt,3200,'income','📈 投資','配当金','a9'));
+    if(rnd()<0.3)on(7,dt=>add(dt,amt(1500,4000),'income','📦 その他','フリマ売上','a2'));
+    if(mo===1)on(3,dt=>add(dt,10000,'income','🎁 お小遣い','実家から','a1'));
+
+    // 特別費（旅行・家具家電はそれぞれの積立口座から）
+    if(k===10)on(17,dt=>spend(dt,18000,'✈️ 旅行','日帰り温泉','a7'));
+    if(k===8){on(6,dt=>spend(dt,30000,'💒 冠婚葬祭','ご祝儀','a4'));on(6,dt=>move(dt,30000,'定期へ','a4','a6'))}
+    if(k===7)on(13,dt=>spend(dt,39800,'🏠 家具・家電','掃除機','a8'));
+    if(k===6)on(22,dt=>spend(dt,18000,'🏥 大きな医療費','歯の治療','a4'));
+    if(k===4){on(12,dt=>spend(dt,28000,'✈️ 旅行','新幹線','a7'));on(13,dt=>spend(dt,32000,'✈️ 旅行','ホテル','a7'));on(14,dt=>spend(dt,6000,'✈️ 旅行','お土産','a7'))}
+    if(k===3)on(24,dt=>spend(dt,8000,'🎁 プレゼント','誕生日プレゼント','c2'));
+    // 請求月のズラし（カード会社の都合で次の締めに回った買い物）
+    if(k===1)on(30,dt=>spend(dt,4980,'🛒 日用品・雑貨','ネットショッピング','c1',{billingDelay:1}));
+  }
+
+  // 月ごとの予算：12月は交際費と食費を多めに、旅行の月は食費を少なめに
+  const keyOf=k=>{const m=new Date(now.getFullYear(),now.getMonth()-k,1);return`${m.getFullYear()}-${pad(m.getMonth()+1)}`};
+  for(let k=MONTHS;k>=0;k--){const key=keyOf(k);if(key.endsWith('-12'))d.budget.monthOverrides[key]=Object.assign({},d.budget.categoryDefaults,{'🍽 食費':55000,'🎉 交際費':40000})}
+  d.budget.monthOverrides[keyOf(4)]=Object.assign({},d.budget.categoryDefaults,{'🍽 食費':35000});
+
+  d.transactions=txs.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0).map((t,i)=>Object.assign({id:'demo_'+i},t));
+  d.recentMemos=[...new Set(d.transactions.slice().reverse().map(t=>t.memo).filter(m=>m&&!m.startsWith('🔄')))].slice(0,10);
+
+  // 現金・●●Pay・Suica が途中でマイナスにならないよう、はじめの残高を足しておく
+  ['a1','a2','a3'].forEach(id=>{
+    let bal=0,min=0;
+    d.transactions.forEach(t=>{
+      if(t.accountId===id)bal-=t.type==='income'?-t.amount:t.amount;
+      if(t.toAccountId===id)bal+=t.amount;
+      min=Math.min(min,bal);
+    });
+    const a=d.accounts.find(a=>a.id===id);a.initialBalance+=Math.ceil(-min/1000)*1000;
+  });
+
+  // 締めた月（先月と今月以外）。カード支払を作ったあとで締める（startDemoMode 参照）
+  const notes=['カード明細とレシート確認済み','通帳と残高一致','','ボーナス月。貯金多め','旅行の月'];
+  DEMO_LOCKS={};
+  for(let k=MONTHS;k>=2;k--){const m=new Date(now.getFullYear(),now.getMonth()-k,1);DEMO_LOCKS[keyOf(k)]={lockedAt:new Date(m.getFullYear(),m.getMonth()+1,3).toISOString(),memo:k===4?notes[4]:(m.getMonth()===5||m.getMonth()===11)?notes[3]:notes[k%3]}}
+  return d;
+};
+const _startDemoMode=startDemoMode;
+startDemoMode=function(){
+  _startDemoMode();
+  if(DEMO_LOCKS){D.monthlyLocks=DEMO_LOCKS;render()}
+};
 </script>
 </body>
 </html>
