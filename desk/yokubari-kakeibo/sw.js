@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'kakeibo-v11';
+const CACHE_VERSION = 'kakeibo-v12';
 const STATIC_ASSETS = [
   './',
   './index.html',

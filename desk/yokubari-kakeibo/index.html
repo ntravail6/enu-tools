@@ -1002,7 +1002,9 @@ function migrate(d){
 }
 function normTx(t){return{id:t.id||uid(),date:t.date||today(),amount:Math.abs(Number(t.amount)||0),type:['income','expense','transfer'].includes(t.type)?t.type:'expense',category:t.category||'📦 その他',memo:t.memo||'',fromRecurring:t.fromRecurring||null,accountId:t.accountId||null,toAccountId:t.toAccountId||null,cardId:t.cardId||null,isCardPayment:t.isCardPayment||false,billingDelay:Number(t.billingDelay)||0,isPending:t.isPending||false}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function today(){return new Date().toISOString().slice(0,10)}
+// 端末の時刻（日本時間）で YYYY-MM-DD にする。toISOString は世界標準時になり、日本では1日ずれるので使わない
+function ymd(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function today(){return ymd(new Date())}
 
 let D=structuredClone(DD),CY,CM;
 const now=new Date();CY=now.getFullYear();CM=now.getMonth();
@@ -1261,7 +1263,7 @@ function fmtPeriod(dateStr){
 function getCatEmoji(c){const m=c.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);return m?m[0]:'💰'}
 function stripEmoji(c){return c.replace(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u,'')}
 function getAccName(id){const a=D.accounts.find(x=>x.id===id);return a?a.name:'—'}
-function lastDayOfMonth(y,m){return new Date(y,m+1,0).toISOString().slice(0,10)}
+function lastDayOfMonth(y,m){return ymd(new Date(y,m+1,0))}
 
 /* ===== MONTH PICKER ===== */
 let mpYear=CY;
@@ -1904,7 +1906,7 @@ function updateBudgetInfo(){
   // Only show for expense
   if(type!=='expense'){info.classList.add('hidden');return}
   const cat=document.getElementById('tx-category').value;
-  const dateStr=document.getElementById('tx-date').value||new Date().toISOString().slice(0,10);
+  const dateStr=document.getElementById('tx-date').value||today();
   const ym=dateStr.slice(0,7);
   // Get budget for this category (month override wins)
   const monthOverride=(D.budget.monthOverrides||{})[ym]||{};
@@ -2099,7 +2101,7 @@ function renderSettingsCards(){
    Also promotes pending settlements to confirmed if their date has passed. */
 function runSettlements(showAlert){
   const today=new Date();
-  const todayStr=today.toISOString().slice(0,10);
+  const todayStr=ymd(today);
   let generated=0,promoted=0;
 
   // First: promote pending settlements whose date has passed
@@ -2125,7 +2127,7 @@ function runSettlements(showAlert){
       const closeDate=`${closeYear}-${String(closeMonth+1).padStart(2,'0')}-${String(closeDay).padStart(2,'0')}`;
 
       const payDate=new Date(closeYear,closeMonth+1,card.paymentDay);
-      const payDateStr=payDate.toISOString().slice(0,10);
+      const payDateStr=ymd(payDate);
 
       const settlementTag=`settle:${card.id}:${closeYear}-${String(closeMonth+1).padStart(2,'0')}`;
       if(D.transactions.some(t=>t.fromRecurring===settlementTag))continue;
@@ -2134,7 +2136,7 @@ function runSettlements(showAlert){
       const prevCloseYear=closeMonth===0?closeYear-1:closeYear;
       const prevCloseMonth=closeMonth===0?11:closeMonth-1;
       const prevCloseDay=card.closingDay===31?new Date(prevCloseYear,prevCloseMonth+1,0).getDate():Math.min(card.closingDay,new Date(prevCloseYear,prevCloseMonth+1,0).getDate());
-      const periodStart=new Date(prevCloseYear,prevCloseMonth,prevCloseDay+1).toISOString().slice(0,10);
+      const periodStart=ymd(new Date(prevCloseYear,prevCloseMonth,prevCloseDay+1));
 
       const total=D.transactions.filter(t=>{
         if(t.cardId!==card.id||t.type!=='expense'||t.isCardPayment)return false;
@@ -2142,7 +2144,7 @@ function runSettlements(showAlert){
         if(delay===0)return t.date>=periodStart&&t.date<=closeDate;
         const d=new Date(t.date+'T00:00:00');
         const shifted=new Date(d.getFullYear(),d.getMonth()+delay,d.getDate());
-        const shiftedStr=shifted.toISOString().slice(0,10);
+        const shiftedStr=ymd(shifted);
         return shiftedStr>=periodStart&&shiftedStr<=closeDate;
       }).reduce((s,t)=>s+t.amount,0);
 
