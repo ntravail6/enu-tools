@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="enu-family" content="desk">
+<!-- 系統：デスク用（運用者向けの印。画面の文には出さない） -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>enu-tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  /* ヘルプと同じ色・形（2026-10-14）。ホームはアプリ一覧を出さず、案内と3つのボタンだけ */
+  :root{--bg:#faf7f3;--card:#ffffff;--primary:#9c8470;--primary-soft:#f1e9e0;--accent:#7f9a90;--accent-soft:#e8efeb;--text:#2C2A24;--sub:#7A756B;--border:#ebe4dd}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Quicksand','Kosugi Maru','Arial Rounded MT Bold',sans-serif;color:var(--text);background:var(--bg);line-height:1.8;padding:max(32px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+  .wrap{max-width:760px;margin:0 auto}
+  /* ヘルプの見出しと同じ：帯の色なし・左寄せ・下に1本線（ヘルプの「落ち着いた見た目」） */
+  .hero{text-align:left;padding:8px 0 18px;border-bottom:1px solid var(--border);margin-bottom:24px}
+  .hero .icon{display:none}
+  .hero h1{font-size:1.3rem;margin:0 0 6px}
+  .hero p{font-size:.85rem;color:var(--sub);margin-bottom:2px}
+  .hero .lead{color:var(--text)}
+  .hero .links{margin-top:18px}
+  .links{display:flex;flex-wrap:wrap;gap:10px}
+  .links a{display:inline-block;padding:9px 18px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);text-decoration:none;font-size:15px}
+  .links a:hover{background:var(--bg)}
+  footer{margin-top:32px;text-align:center;color:var(--sub);line-height:1.4;font-size:.7rem}
+  .footer-divider{border:0;border-top:1px solid #e0d7cc;margin:0 0 12px}
+  .footer-credit{margin-bottom:8px}
+  .footer-credit a{color:inherit;text-decoration:none}
+  .footer-legal{margin-bottom:8px;font-size:.68rem}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal span{margin:0 4px;opacity:.6}
+  .footer-copy{font-size:.65rem;opacity:.7}
+</style>
+</head>
+<body>
+<div class="wrap">
 
+  <div class="hero">
+    <div class="icon">✨</div>
+    <h1>enu-tools</h1>
+    <p class="lead">ご利用ありがとうございます。</p>
+    <p>各種ツールは現在、特定のリンクからのみアクセスいただける仕様となっております。</p>
+    <div class="links">
+      <a href="https://www.instagram.com/enu_at_desk" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.threads.net/@enu_at_desk" target="_blank" rel="noopener">Threads</a>
+      <a href="https://line.me/R/ti/p/%40705jivik" target="_blank" rel="noopener">LINE公式</a>
+    </div>
+  </div>
+
+  <footer>
+    <hr class="footer-divider">
+    <div class="footer-credit"><a href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a></div>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="https://enu-tools.pages.dev/desk/disclaimer/" target="_blank" rel="noopener">免責事項</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/help/" target="_blank" rel="noopener">ヘルプ</a></nav>
+    <div class="footer-copy">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.</div>
+  </footer>
+  <script>(function(){var y=document.getElementById('copyYear');if(y)y.textContent=new Date().getFullYear();})();</script>
+
+</div>
+</body>
+</html>
