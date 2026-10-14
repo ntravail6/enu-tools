@@ -9,313 +9,326 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
-:root{
-  /* 共通固定3変数（全アプリ共通）*/
-  --card:#fff; --text:#2C2A24; --sub:#7A756B;
-  /* パレット01 くすみピンク（primary系5＋ニュートラル系3）*/
-  --primary:#C9A0A0; --primary-light:#F0DEDE; --primary-dark:#A67878; --primary-soft:#F7EDE9; --accent:#B88A8A;
-  --bg:#faf6f4; --bg-soft:#fdfaf9; --line:#ecdfdd;
-  /* 方向セマンティック（増やす=くすみ赤・減らす=くすみ青）*/
-  --inc-bg:#f4dada; --inc-fg:#8a4848;
-  --dec-bg:#dee7ef; --dec-fg:#4f6b85;
-  /* 状態色（OK/警告）*/
-  --ok-bg:#e7efe0; --ok-fg:#506b48;
-  --warn-bg:#fef0d4; --warn-fg:#8a5a14; --warn-bd:#f0d896;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-.page-wrapper{max-width:960px;margin:0 auto;width:100%}
-.hidden{display:none !important}
+  :root{
+    /* 共通固定3変数（全アプリ共通）*/
+    --card:#fff; --text:#2C2A24; --sub:#7A756B;
+    /* パレット01 くすみピンク（primary系5＋ニュートラル系3）*/
+    --primary:#C9A0A0; --primary-light:#F0DEDE; --primary-dark:#A67878; --primary-soft:#F7EDE9; --accent:#B88A8A;
+    --bg:#faf6f4; --bg-soft:#fdfaf9; --line:#ecdfdd;
+    /* 方向セマンティック（増やす=くすみ赤・減らす=くすみ青）*/
+    --inc-bg:#f4dada; --inc-fg:#8a4848;
+    --dec-bg:#dee7ef; --dec-fg:#4f6b85;
+    /* 状態色（OK/警告）*/
+    --ok-bg:#e7efe0; --ok-fg:#506b48;
+    --warn-bg:#fef0d4; --warn-fg:#8a5a14; --warn-bd:#f0d896;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;
+    padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+            max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+  }
+  .page-wrapper{max-width:960px;margin:0 auto;width:100%}
+  .hidden{display:none !important}
 
-#loading{padding:24px;text-align:center;color:var(--sub);font-size:.85rem}
+  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+  .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
+  .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
+  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 
-/* Header */
-.app-header{margin-bottom:18px}
-.app-header .titles h1{font-size:1.5rem;font-weight:700;color:var(--primary-dark);margin:0 0 3px;line-height:1.25;letter-spacing:.02em}
-.app-header .titles p{font-size:.75rem;color:var(--sub);margin:0;line-height:1.6}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px}
+  .section-note{font-size:.75rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6;text-wrap:balance}
+  .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
 
-/* Card */
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.card-head{margin:0 0 14px}
-.card-head h2{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin:0}
-.card-head .hint{display:block;font-size:.7rem;color:var(--sub);margin-top:4px;line-height:1.6}
+  /* 入力欄 */
+  input[type="text"],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+  select{cursor:pointer}
+  .cell-input.num{text-align:right}
+  .cell-input.tiny{max-width:96px}
+  .field-error{font-size:.75rem;color:#a33;margin:4px 0 0;text-align:left;white-space:normal}
+  input[aria-invalid="true"]{border-color:#c0666a}
+  .asset-table .field-error{text-align:right} /* 表では欄（右揃え）の下にそろえる */
+  .name-field{display:flex;flex-direction:column}
+  .name-free{margin-top:6px}
 
-/* Asset table (PC) */
-.asset-table{width:100%;border-collapse:collapse}
-.asset-table thead th{font-size:.68rem;color:var(--sub);font-weight:700;text-align:center;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-.asset-table thead th.num{text-align:center}
-.asset-table thead th:first-child,.asset-table tbody td:first-child{min-width:150px}
-.asset-table tbody td{padding:8px 8px;border-bottom:1px solid var(--line);font-size:.82rem;vertical-align:middle}
-.asset-table .num{text-align:right;white-space:nowrap}
-/* Calculated cells: center to match header alignment */
-.asset-table td.js-curratio,.asset-table td.js-dev,.asset-table td.js-need{text-align:center}
-.asset-table .col-act{width:38px}
+  /* 資産の入力：入力欄は1組だけ。PCと印刷は表、画面の幅が920px以下は同じ行をカードの形に並べかえる（CSSだけ） */
+  .asset-table{width:100%;border-collapse:collapse}
+  .asset-table thead th{font-size:.75rem;color:var(--primary-dark);font-weight:600;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .asset-table thead th:first-child,.asset-table tbody td:first-child{min-width:150px}
+  .asset-table tbody td{padding:8px;border-bottom:1px solid var(--line);font-size:.875rem;vertical-align:middle}
+  .asset-table .num{text-align:right;white-space:nowrap}
+  /* 見出しと文字は左、金額・比率は右（.num）*/
+  .asset-table .col-act{width:38px}
+  .asset-table thead th.th-wrap{white-space:normal;min-width:92px}
+  .asset-table td.c-amt{min-width:180px}  /* 現在額の欄が細くなって数字が切れないように（上限の14けた＋カンマが入る幅） */
+  .cell-lbl{display:none}
 
-/* Asset cards (mobile) */
-.asset-cards{display:none;flex-direction:column;gap:10px}
-.a-card{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--bg-soft)}
-.a-card .ac-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.a-card .ac-top .name-field{flex:1;min-width:0}
-.a-card .ac-inputs{display:flex;gap:10px;margin-bottom:11px}
-.a-card .ac-field{flex:1;min-width:0}
-.a-card .ac-field label{display:block;font-size:.7rem;color:var(--sub);margin-bottom:3px;font-weight:600}
-.a-card .ac-calc{border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:7px}
-.a-card .ac-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.78rem}
-.a-card .ac-row .lbl{color:var(--sub);font-size:.78rem;white-space:nowrap}
+  /* 行の削除 */
+  .del-btn{min-width:28px;white-space:nowrap;border:none;background:transparent;cursor:pointer;font-size:1rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:6px 4px;opacity:.55;transition:opacity .15s}
+  .del-btn:hover,.del-btn:focus-visible{opacity:1}
 
-/* Inputs */
-.name-field{display:flex;flex-direction:column}
-.cell-select{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 32px 10px 12px;font-family:inherit;font-size:.85rem;color:var(--text);background:var(--bg-soft);cursor:pointer}
-.cell-select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--primary-soft)}
-.cell-input{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:.85rem;color:var(--text);background:var(--bg-soft)}
-.cell-input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--primary-soft)}
-.cell-input.num{text-align:right}
-.cell-input.tiny{max-width:84px}
-.name-free{margin-top:6px}
-.name-free.hidden{display:none}
+  /* 必要調整額のしるし */
+  .chip{display:inline-block;padding:3px 9px;border-radius:10px;font-size:.75rem;font-weight:600;white-space:nowrap}
+  .chip-inc{background:var(--inc-bg);color:var(--inc-fg)}
+  .chip-dec{background:var(--dec-bg);color:var(--dec-fg)}
+  .chip-ok{background:var(--bg-soft);color:var(--sub)}
 
-/* Delete button (trash icon only, no chrome) */
-.del-btn{width:28px;height:28px;border:none;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;opacity:.55;transition:opacity .15s,transform .15s}
-.del-btn:hover{opacity:1;transform:scale(1.15)}
-.del-btn:focus-visible{opacity:1}
+  /* 過不足 */
+  .dev{white-space:nowrap;font-weight:700;font-size:.875rem}
+  .dev.over{color:var(--dec-fg)}    /* 多い→青 */
+  .dev.under{color:var(--inc-fg)}   /* 少ない→赤 */
+  .dev.flat,.dev.muted{color:var(--sub);font-weight:600}
+  .curratio{color:var(--text);font-weight:600}
 
-/* Chip (necessary adjustment) */
-.chip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600;white-space:nowrap}
-.chip-inc{background:var(--inc-bg);color:var(--inc-fg)}
-.chip-dec{background:var(--dec-bg);color:var(--dec-fg)}
-.chip-ok{background:var(--bg-soft);color:var(--sub)}
+  .add-row-btn{display:block;width:100%;margin-top:12px;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;transition:background .15s}
+  .add-row-btn:hover{background:var(--primary-light)}
+  .empty-hint{margin:12px 0 0;font-size:.75rem;color:var(--sub);line-height:1.6}
+  .save-status{margin:8px 0 0;font-size:.6875rem;color:var(--sub);text-align:right;min-height:1.2em}
+  .save-status:empty{min-height:0;margin:0}  /* 何もないときは場所をとらない（カードの下の余白を20pxに） */
+  .add-row-btn:disabled{opacity:.45;cursor:not-allowed}
+  .result-fix{font-size:.875rem;color:#a33;margin:0 0 12px}
+  .chart-note{font-size:.75rem;color:var(--sub);margin:8px 0 0;line-height:1.6}
 
-/* Deviation pt */
-.dev{white-space:nowrap;font-weight:700;font-size:.82rem}
-.dev.over{color:var(--dec-fg)}    /* 多い→青 */
-.dev.under{color:var(--inc-fg)}   /* 少ない→赤 */
-.dev.flat{color:var(--sub);font-weight:600}
-.dev.muted{color:var(--sub);font-weight:600}
-.curratio{color:var(--text);font-weight:600}
+  /* 結果 */
+  .summary{display:flex;align-items:flex-start;flex-wrap:wrap;gap:16px 40px;margin-bottom:12px}
+  .summary-block{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:120px}
+  .summary-label{font-size:.75rem;color:var(--sub);font-weight:600}
+  .summary-value{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.3;white-space:nowrap}
+  .summary-pill{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:4px 12px;font-size:1rem;font-weight:700;white-space:nowrap}
+  .summary-pill.ok{background:var(--ok-bg);color:var(--ok-fg)}
+  .summary-pill.warn{background:var(--warn-bg);color:var(--warn-fg)}
+  .summary-pill.none{background:var(--bg-soft);color:var(--sub)}
+  .ratio-warn{font-size:.75rem;color:var(--warn-fg);background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:10px;padding:9px 12px;line-height:1.6;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+  .ratio-fix-btn{padding:5px 13px;border:1px solid var(--warn-bd);border-radius:10px;background:#fff;color:var(--warn-fg);font-family:inherit;font-size:.875rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+  .ratio-fix-btn:hover{background:#fdf0cf}
 
-/* Add row */
-.add-row-btn{margin-top:14px;width:100%;padding:11px;border:1.5px dashed var(--primary-light);border-radius:10px;background:var(--primary-soft);color:var(--primary-dark);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s}
-.add-row-btn:hover{background:var(--primary-light);border-color:var(--primary)}
-.empty-hint{margin:14px 2px 0;font-size:.74rem;color:var(--sub);line-height:1.6;text-align:center}
-.empty-hint.hidden{display:none}
+  /* 構成比のグラフ */
+  .chart-part{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
+  .donut-wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:flex-start}
+  .donut-col{flex:1 1 130px;min-width:118px;max-width:210px;text-align:center}
+  .donut-title{font-size:.75rem;color:var(--sub);font-weight:700;margin:0 0 6px}
+  .donut-box{width:100%;max-width:168px;margin:0 auto;aspect-ratio:1/1}
+  .donut-legend{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:.75rem}
+  .legend-swatch{width:11px;height:11px;border-radius:2px;flex-shrink:0}
+  .legend-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+  .legend-vals{color:var(--sub);white-space:nowrap}
+  .chart-empty{font-size:.75rem;color:var(--sub);margin:8px 0 0;line-height:1.6}
 
-/* Summary (B案: 左右に「ラベル+値」対称構造) */
-.summary{background:var(--primary-soft);border:1px solid var(--primary-light);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.summary-block{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:120px}
-.summary-label{font-size:.72rem;color:var(--sub);line-height:1.2;font-weight:600}
-.summary-value{font-size:1.6rem;font-weight:700;color:var(--primary-dark);line-height:1.1;white-space:nowrap}
-.summary-pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 14px;font-size:1rem;font-weight:700;white-space:nowrap}
-.summary-pill.ok{background:var(--ok-bg);color:var(--ok-fg)}
-.summary-pill.warn{background:var(--warn-bg);color:var(--warn-fg)}
-.summary-pill .si{font-size:1.05rem;line-height:1}
+  /* 📌 保存（H3）*/
+  .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
+  .save-row input{flex:1 1 auto;min-width:0}
+  .save-row .save-btn{flex-shrink:0}
+  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn:hover{background:var(--primary-dark)}
+  .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hist-chips[hidden]{display:none}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .15s}
+  .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
+  .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
+  .hist-current[hidden]{display:none}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button:hover{color:var(--inc-fg)}
+  .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
 
-/* Ratio warn (with auto-adjust button) */
-.ratio-warn{font-size:.76rem;color:var(--warn-fg);background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:10px;padding:9px 12px;line-height:1.6;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
-.ratio-warn.hidden{display:none}
-.ratio-fix-btn{padding:5px 13px;border:1px solid var(--warn-bd);border-radius:999px;background:#fff;color:var(--warn-fg);font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
-.ratio-fix-btn:hover{background:#fdf0cf}
+  /* === enu アクションボタン（102 B4）=== */
+  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-fill{background:var(--primary);color:#fff}
+  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .enu-tb-line{background:transparent;color:var(--primary-dark)}
+  .enu-tb-line:hover{background:var(--primary-soft)}
+  .enu-tb-data{font-size:.75rem;color:var(--sub)}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text:hover{color:var(--primary-dark)}
 
-/* Save status */
-.save-status{margin:0 4px 14px;font-size:.7rem;color:var(--sub);text-align:right;min-height:1em}
+  /* === フッター（004）=== */
+  .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
+  .brand-link:hover{color:var(--primary-dark)}
+  .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
+  .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a:hover{color:var(--primary-dark)}
+  .footer-legal span{margin:0 4px;opacity:.6}
+  .footer-ver{margin-left:8px;white-space:nowrap}
 
-/* Donut */
-.donut-wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:flex-start}
-.donut-col{flex:1 1 130px;min-width:118px;max-width:210px;text-align:center}
-.donut-title{font-size:.74rem;color:var(--sub);font-weight:700;margin:0 0 6px}
-.donut-box{width:100%;max-width:168px;margin:0 auto;aspect-ratio:1/1}
-.donut-legend{display:flex;flex-direction:column;gap:7px;margin-top:16px}
-.legend-item{display:flex;align-items:center;gap:8px;font-size:.76rem}
-.legend-swatch{width:11px;height:11px;border-radius:2px;flex-shrink:0}
-.legend-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
-.legend-vals{color:var(--sub);white-space:nowrap;font-size:.72rem}
-.chart-empty{font-size:.78rem;color:var(--sub);text-align:center;margin:6px 2px 0;line-height:1.6}
-.chart-empty.hidden{display:none}
+  /* === enu 注意書きカード（101）=== */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:box-shadow .15s}
+  .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
-/* History */
-.history-controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.history-memo{flex:1;min-width:160px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-family:inherit;font-size:.78rem;color:var(--text);background:var(--bg-soft)}
-.history-memo:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--primary-soft)}
-.history-save-btn{padding:9px 18px;border:none;border-radius:999px;background:var(--primary);color:#fff;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
-.history-save-btn:hover{background:var(--primary-dark)}
-.history-list{display:flex;flex-direction:column;gap:8px}
-.history-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);flex-wrap:wrap}
-.history-main{flex:1;min-width:140px}
-.history-date{font-size:.78rem;font-weight:700;color:var(--primary-dark);line-height:1.2}
-.history-meta{font-size:.7rem;color:var(--sub);margin-top:2px;line-height:1.4}
-.history-actions{display:flex;gap:6px;flex-shrink:0}
-.history-btn{padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--sub);font-family:inherit;font-size:.7rem;font-weight:600;cursor:pointer;transition:color .15s,border-color .15s}
-.history-btn:hover{color:var(--primary-dark);border-color:var(--primary)}
-.history-btn-del:hover{color:var(--inc-fg);border-color:var(--inc-bg)}
-.history-empty{font-size:.76rem;color:var(--sub);text-align:center;margin:10px 0 0;line-height:1.6}
-.history-empty.hidden{display:none}
+  .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
+  .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Notice area (101) */
-.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.enu-notice-wrap{width:100%}
-.enu-notice-wrap.is-mini{width:auto}
-.enu-notice-wrap > .enu-notice{display:flex}
-.enu-notice-wrap > .enu-notice-mini{display:none}
-.enu-notice-wrap.is-mini > .enu-notice{display:none}
-.enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
-.enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-.enu-notice .enu-body{flex:1;min-width:0}
-.enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-.enu-notice .enu-close-btn:hover{opacity:1}
-.enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-.enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-.enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-.enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+  .enu-confirm-modal[hidden]{display:none}
+  .enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+  .enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+  .enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:inherit}
+  .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
+  .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6;white-space:pre-line}
+  .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
+  .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
-/* Toolbar (102) */
-.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
-.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
-.enu-btn-card:hover{transform:translateY(-1px)}
-.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
-.enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
-.enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
+  @media (max-width:650px){
+    .app-title{font-size:1.25rem}
+    .app-sub{font-size:.6875rem}
+  }
+  /* 画面の幅が920px以下はカードの形：表の7列が入りきらず、現在額の欄が細くなって数字が切れるため（印刷は下の @media print で表を詰めて出す） */
+  @media screen and (max-width:920px){
+    .asset-table thead{display:none}
+    .asset-table,.asset-table tbody{display:block}
+    .asset-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"name name act" "amt rat rat" "cur cur cur" "dev dev dev" "need need need";column-gap:10px;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--bg-soft);margin-bottom:10px}
+    .asset-table tbody td,.asset-table tbody td.num{display:block;padding:0;border:none;text-align:left;min-width:0;white-space:normal}
+    .asset-table tbody td:first-child{min-width:0}
+    /* 199行（td.num）より強くするため tbody を付ける（付けないと名前と値がくっつき、上の線も出ない） */
+    .asset-table tbody td.c-name{grid-area:name}
+    .asset-table tbody td.c-act{grid-area:act;width:auto;align-self:center}
+    .asset-table tbody td.c-amt{grid-area:amt;margin-top:10px}
+    .asset-table tbody td.c-rat{grid-area:rat;margin-top:10px}
+    .asset-table tbody td.c-cur{grid-area:cur;border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+    .asset-table tbody td.c-dev{grid-area:dev;margin-top:6px}
+    .asset-table tbody td.c-need{grid-area:need;margin-top:6px}
+    .asset-table tbody td.c-cur,.asset-table tbody td.c-dev,.asset-table tbody td.c-need{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .asset-table td.c-amt .cell-lbl,.asset-table td.c-rat .cell-lbl{display:block;font-size:.875rem;color:var(--sub);margin-bottom:4px;font-weight:600}
+    .asset-table td.c-cur .cell-lbl,.asset-table td.c-dev .cell-lbl,.asset-table td.c-need .cell-lbl{display:inline;color:var(--sub);white-space:nowrap}
+    .asset-table .cell-input.num{text-align:left}
+    .asset-table .cell-input.tiny{max-width:none}
+    .asset-table .field-error{text-align:left}
+    /* 必要調整額のしるし：とても大きな額（11けた以上）でもカードからはみ出さないよう、「金額」と「増やす／減らす」の間で折り返す */
+    .asset-table tbody td.c-need .js-need{min-width:0;text-align:right}
+    .asset-table tbody td.c-need .chip{white-space:normal;max-width:100%}
+    /* 「−」「+」と金額は離さない。名前の横に入りきらないときは、しるしごと次の行（右寄せ）に回す（320px・14けたで「−」だけ前の行に残っていた） */
+    .asset-table tbody td.c-need{flex-wrap:wrap;row-gap:4px}
+    .asset-table tbody td.c-need .js-need{margin-left:auto}
+    .asset-table tbody td.c-need .chip .nb:first-child{white-space:nowrap}
+  }
+  /* 480px以下は現在額と目標比率を縦に並べる（441〜480pxで横に並べると、14けたの現在額が欄からはみ出して切れるため） */
+  @media screen and (max-width:480px){
+    .asset-table tbody tr{grid-template-areas:"name name act" "amt amt amt" "rat rat rat" "cur cur cur" "dev dev dev" "need need need"}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.add-row-btn,.save-status,.col-act,.del-btn,.save-card,.ratio-fix-btn{display:none !important}
+    .card{break-inside:avoid}
+    .cell-input,select,.asset-table input.cell-input{border:none;background:transparent;padding:2px 0} /* 47行の input[type="text"] より強くする（金額・比率の欄の枠を消す） */
+    /* 紙の幅（A4）でも表の7列が入るよう詰める。現在額の欄は数字が切れない幅を保つ */
+    .card{padding:14px}
+    .asset-table thead th,.asset-table tbody td{padding:6px 4px}
+    .asset-table thead th:first-child,.asset-table tbody td:first-child{min-width:96px}
+    .asset-table td.c-amt{min-width:156px}
+    .asset-table thead th.th-wrap{min-width:64px}
+    .asset-table .cell-input.tiny{max-width:64px}
+    .asset-table .chip{white-space:normal;padding:2px 6px}
+    .asset-table thead th .nb{white-space:nowrap} /* 見出し「（現在−目標）」が言葉の途中で折れない */
+    /* 背景を印刷しない設定でも、凡例の色の印が消えないよう線で描く */
+    .legend-swatch{-webkit-print-color-adjust:exact;print-color-adjust:exact;height:0;border-top:11px solid}
+  }
 
-/* Toast (z-index 3000) */
-.enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center;display:flex;align-items:center;gap:10px;justify-content:center}
-.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.enu-toast .enu-toast-help{color:#fff;text-decoration:underline;font-weight:700;white-space:nowrap}
 
-/* Confirm modal (z-index 2500) */
-.enu-confirm-modal[hidden]{display:none}
-.enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
-.enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-.enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px 22px 18px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif}
-.enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 10px;line-height:1.4}
-.enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin:0 0 20px;line-height:1.65;white-space:pre-line}
-.enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-.enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;transition:opacity .15s,transform .1s}
-.enu-confirm-btn:hover{transform:translateY(-1px)}
-.enu-confirm-btn--cancel{background:transparent;border:1px solid var(--line);color:var(--sub)}
-.enu-confirm-btn--ok{background:var(--primary);border:1px solid var(--primary);color:#fff}
-
-/* App home + footer */
-.app-home{margin-top:24px;text-align:center}
-.home-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:.75rem;font-weight:600;border-radius:999px;background:transparent;color:var(--sub);border:1px solid var(--sub);text-decoration:none;font-family:inherit;transition:color .15s,border-color .15s}
-.home-btn:hover{color:var(--primary-dark);border-color:var(--primary-dark)}
-.enu-footer{text-align:center;opacity:.85;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:var(--sub);line-height:1.4}
-.enu-footer .divider{border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent);margin:12px auto 0}
-.enu-footer .credit{font-size:.7rem;padding-top:12px;margin:0}
-.enu-footer .credit a{color:inherit;text-decoration:none;transition:color .15s}
-.enu-footer .credit a:hover{color:var(--primary-dark)}
-.enu-footer .copyr{font-size:.65rem;padding-top:8px;padding-bottom:0;margin:0;opacity:.7}
-
-/* Mobile */
-@media (max-width:650px){
-  .asset-table{display:none}
-  .asset-cards{display:flex}
-  .app-header .titles h1{font-size:1.25rem}
-  .app-header .titles p{font-size:.7rem}
-  /* Summary: stack vertically, center-aligned on mobile */
-  .summary{flex-direction:column;align-items:center;text-align:center;gap:14px}
-  .summary-block{align-items:center}
-  .summary-value{font-size:1.4rem}
-  /* Toolbar: lock to 2x2 grid on narrow viewports */
-  .enu-toolbar{grid-template-columns:repeat(2,1fr)}
-  /* Mobile card numeric inputs: left-align to fix "謎の空白" */
-  .a-card .cell-input.num{text-align:left}
-  /* Release "tiny" max-width so ratio input fills its field */
-  .a-card .cell-input.tiny{max-width:none}
-}
-
-/* Print */
-@media print{
-  body{background:#fff;padding:0}
-  .enu-notice-area,.enu-toolbar,.enu-toast,.enu-confirm-modal,.app-home,.add-row-btn,.save-status,.col-act,.del-btn,#loading,#history-card{display:none !important}
-  .card,.summary{box-shadow:none}
-  .cell-input,.cell-select{border:none;background:transparent;padding:2px 0}
-}
+/* enu-a2hs ホーム画面の案内（2回目に開いたとき・スマホだけ・下から出る） */
+.enu-a2hs{position:fixed;inset:0;z-index:1800;display:flex;align-items:flex-end;background:rgba(44,42,36,.35)}
+.enu-a2hs[hidden]{display:none}
+.enu-a2hs-card{width:100%;max-width:560px;margin:0 auto;background:var(--card);border-radius:14px 14px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));animation:enuA2hsUp .3s ease-out}
+@keyframes enuA2hsUp{from{transform:translateY(100%)}to{transform:none}}
+.enu-a2hs-grip{width:36px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.enu-a2hs-row{display:flex;gap:14px;align-items:flex-start}
+.enu-a2hs-ico{font-size:24px;line-height:1.2;flex:none}
+.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--primary-dark);line-height:1.5}
+.enu-a2hs-sub{font-size:.75rem;color:var(--sub);margin:4px 0 0;line-height:1.7}
+.enu-a2hs-steps{list-style:none;counter-reset:a;margin:12px 0 0;padding:0}
+.enu-a2hs-steps[hidden]{display:none}
+.enu-a2hs-steps li{counter-increment:a;position:relative;padding-left:24px;font-size:.75rem;line-height:1.8;color:var(--text)}
+.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.enu-a2hs-btns{display:flex;gap:10px;margin-top:16px}
+.enu-a2hs-btns button{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;padding:0 8px;font-family:inherit;font-size:.875rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.enu-a2hs-later{background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.enu-a2hs-later:hover{color:var(--primary-dark);border-color:var(--primary)}
+.enu-a2hs-go{flex-grow:1.5 !important;background:var(--primary);border:1px solid var(--primary);color:#fff}
+.enu-a2hs-go:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.enu-a2hs .nb{display:inline-block}
+@media print{.enu-a2hs{display:none !important}}
+/* /enu-a2hs */
 </style>
 </head>
 <body>
 <div class="page-wrapper">
-  <div id="loading">読み込み中...</div>
-  <div id="app" class="hidden">
-    <header class="app-header">
-      <div class="titles">
-        <h1>⚖️ ポートフォリオリバランス計算機</h1>
-        <p>各資産の現在額を入れるだけで、目標比率からのズレと必要調整額を自動計算</p>
-      </div>
-    </header>
 
-    <div class="enu-notice-area">
-      <div class="enu-notice-wrap" data-notice-id="info">
-        <div class="enu-notice enu-notice-info">
-          <span class="enu-icon">💾</span>
-          <span class="enu-body">データはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
-          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-        </div>
-        <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
-      </div>
-      <div class="enu-notice-wrap" data-notice-id="warn">
-        <div class="enu-notice enu-notice-warn">
-          <span class="enu-icon">⚠️</span>
-          <span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードではデータが引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>重要なデータは「📤 エクスポート」ボタンからバックアップを取ることをおすすめします。</span>
-          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-        </div>
-        <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
-      </div>
-      <div class="enu-notice-wrap" data-notice-id="offline">
-        <div class="enu-notice enu-notice-info">
-          <span class="enu-icon">🌐</span>
-          <span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、データの追加・編集が可能です。</span>
-          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-        </div>
-        <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="オフライン動作を表示" title="オフライン動作を表示">🌐</button>
-      </div>
-      <div class="enu-notice-wrap" data-notice-id="trade">
-        <div class="enu-notice enu-notice-trade">
-          <span class="enu-icon">🚨</span>
-          <span class="enu-body">計算結果は目安です。実際の取引における最終判断はご自身でお願いいたします。取引結果について責任を負いかねますのでご了承ください。</span>
-          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-        </div>
-        <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="取引の免責を表示" title="取引の免責を表示">🚨</button>
-      </div>
-      <div class="enu-notice-wrap" data-notice-id="help">
-        <div class="enu-notice enu-notice-help">
-          <span class="enu-icon">📚</span>
-          <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
-          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-        </div>
-        <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
-      </div>
+  <header class="app-header">
+    <div class="app-icon">⚖️</div>
+    <div>
+      <h1 class="app-title"><span class="nb">ポートフォリオ</span><span class="nb">リバランス計算機</span></h1>
+      <p class="app-sub"><span class="nb">現在額と目標比率を</span><span class="nb">入れると、</span><span class="nb">目標からのズレと</span><span class="nb">必要調整額を自動計算</span></p>
     </div>
+  </header>
 
-    <div class="card">
-      <div class="card-head">
-        <h2>💴 資産の入力</h2>
-        <span class="hint">現在額と目標比率を入れると自動で計算します</span>
+  <div class="enu-notice-area">
+    <div class="enu-notice-wrap" data-notice-id="storage-local" data-storage="local">
+      <div class="enu-notice enu-notice-warn">
+        <span class="enu-icon">💾</span>
+        <span class="enu-body"><span class="nb">データは</span><span class="nb">この</span><span class="nb">ブラウザだけに</span><span class="nb">保存されます。</span><span class="nb">ブラウザの</span><span class="nb">データ削除や、</span><span class="nb">しばらく</span><span class="nb">使わなかった</span><span class="nb">とき</span><span class="nb">（Safariは約7日）に</span><span class="nb">消える</span><span class="nb">ことが</span><span class="nb">あります。</span><span class="nb">📤エクスポートで</span><span class="nb">バックアップできます。</span></span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <table class="asset-table">
-        <thead>
-          <tr>
-            <th>資産名</th>
-            <th class="num">現在額</th>
-            <th class="num">目標比率(%)</th>
-            <th class="num">現在比率</th>
-            <th class="num">過不足</th>
-            <th class="num">必要調整額</th>
-            <th class="col-act"></th>
-          </tr>
-        </thead>
-        <tbody id="asset-tbody"></tbody>
-      </table>
-      <div class="asset-cards" id="asset-cardlist"></div>
-      <button id="add-row" class="add-row-btn" type="button">＋ 資産を追加</button>
-      <p class="empty-hint" id="empty-hint">👆 資産名・現在額・目標比率を入力すると、過不足と必要な調整額が自動で計算されます。</p>
+      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="保存の注意を表示" title="保存の注意を表示">💾</button>
     </div>
+    <div class="enu-notice-wrap" data-notice-id="disclaimer">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">📝</span>
+        <span class="enu-body">結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。</span>
+        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+      </div>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
+    </div>
+  </div>
 
+  <!-- 入力 -->
+  <div class="card">
+    <h2 class="section-title">✏️ 資産の入力</h2>
+    <p class="section-note"><span class="nb">現在額と目標比率を入れると</span><span class="nb">自動で計算します</span></p>
+    <table class="asset-table">
+      <thead>
+        <tr>
+          <th>資産名</th>
+          <th class="num">現在額</th>
+          <th class="num">目標比率（%）</th>
+          <th class="num">現在比率</th>
+          <th class="num th-wrap"><span class="nb">過不足</span><span class="nb">（現在−目標）</span></th>
+          <th class="num">必要調整額</th>
+          <th class="col-act"></th>
+        </tr>
+      </thead>
+      <tbody id="asset-tbody"></tbody>
+    </table>
+    <button id="add-row" class="add-row-btn" type="button">＋ 資産を追加（最大10）</button>
+    <p class="empty-hint" id="empty-hint"><span class="nb">👆 資産名・現在額・目標比率を</span><span class="nb">入力すると、</span><span class="nb">過不足と必要な調整額が</span><span class="nb">自動で計算されます。</span></p>
+    <div class="save-status" id="save-status" role="status" aria-live="polite"></div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="card" id="result-card">
+    <h2 class="section-title">💴 結果</h2>
+    <p class="result-fix hidden" id="result-fix"><span class="nb">赤い文字の欄を直すと、</span><span class="nb">結果が出ます</span></p>
     <div class="summary">
       <div class="summary-block">
         <div class="summary-label">合計現在額</div>
@@ -323,18 +336,17 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
       </div>
       <div class="summary-block">
         <div class="summary-label">目標比率</div>
-        <div class="summary-pill ok" id="sum-status">
-          <span class="si" id="sum-status-icon">✓</span>
-          <span id="sum-status-text">0.0%</span>
+        <div class="summary-pill none" id="sum-status">
+          <span class="si" id="sum-status-icon"></span>
+          <span id="sum-status-text">—</span>
         </div>
       </div>
     </div>
     <div class="ratio-warn hidden" id="ratio-warn"></div>
+    <p class="empty-hint hidden" id="adj-hint" style="margin:0 0 12px">現在額を入れると、過不足と必要調整額が出ます。</p>
 
-    <div class="save-status" id="save-status" role="status" aria-live="polite"></div>
-
-    <div class="card" id="chart-card">
-      <div class="card-head"><h2>📊 構成比（現在 vs 目標）</h2></div>
+    <div class="chart-part">
+      <h3 class="sub-title">📈 構成比（現在 vs 目標）</h3>
       <div class="donut-wrap">
         <div class="donut-col">
           <p class="donut-title">現在</p>
@@ -346,40 +358,36 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
         </div>
       </div>
       <div class="donut-legend" id="donut-legend"></div>
+      <p class="chart-note hidden" id="chart-note"><span class="nb">目標比率の合計が100%をこえているため、</span><span class="nb">目標の輪は比で描いています</span></p>
       <p class="chart-empty" id="chart-empty">資産名と金額・比率を入力すると、構成比のグラフが表示されます。</p>
     </div>
-
-    <div class="card" id="history-card">
-      <div class="card-head">
-        <h2>📒 履歴</h2>
-      </div>
-      <div class="history-controls">
-        <input type="text" class="history-memo" id="history-memo" placeholder="メモ（任意）例：2026Q1リバランス" maxlength="40" aria-label="履歴メモ">
-        <button type="button" class="history-save-btn" id="history-save">この状態を履歴に保存</button>
-      </div>
-      <div class="history-list" id="history-list"></div>
-      <p class="history-empty" id="history-empty">まだ履歴がありません。節目で「この状態を履歴に保存」を押すと、日付つきで残せます。</p>
-    </div>
-
-    <div class="enu-toolbar">
-      <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
-      <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
-      <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-export" aria-label="データをエクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
-      <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-import" aria-label="データをインポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
-    </div>
-
-    <div class="app-home">
-      <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
-    </div>
-    <footer class="enu-footer">
-      <div class="divider"></div>
-      <p class="credit"><a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a></p>
-      <p class="copyr">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</p>
-    </footer>
   </div>
-</div>
 
-<div class="enu-toast" id="enu-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <!-- 📌 保存＋データ -->
+  <div class="card save-card">
+    <h2 class="section-title">📌 この配分を保存</h2>
+    <div class="save-row">
+      <input type="text" id="save-name" placeholder="保存名（省略可）" maxlength="40" aria-label="保存名（省略可）">
+      <button type="button" class="save-btn" id="save-btn">保存</button>
+    </div>
+    <div class="hist-chips" id="history-list"></div>
+    <p class="hist-current" id="hist-current" hidden></p>
+    <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
+  </div>
+
+  <div class="page-actions enu-toolbar">
+    <button type="button" class="enu-tb-btn enu-tb-fill" id="enu-btn-print" aria-label="PDFに保存または印刷">📄 PDF / 印刷</button>
+    <button type="button" class="enu-tb-btn enu-tb-line" id="enu-btn-share2" aria-label="シェア">🔗 シェア</button>
+  </div>
+
+  <div class="app-footer">
+    <div class="footer-divider"></div>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
+    <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
+  </div>
+
+</div>
 
 <div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
   <div class="enu-confirm-modal__backdrop"></div>
@@ -393,47 +401,125 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
   </div>
 </div>
 
+<div class="enu-toast" id="enu-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
 <script>
 (function(){
   'use strict';
 
   /* ===== ENU_CONFIG ===== */
   const ENU_CONFIG = {
-    appId: 'portfolio-rebalance-calc',
-    appName: 'ポートフォリオリバランス計算機',
-    dataVersion: 1,
-    storageType: 'local',
-    helpUrl: 'https://enu-tools.pages.dev/help/',
-    helpOpenNewTab: true,
-    getData(){ return { assets: assets, history: history }; },
-    applyData(d){
-      if(d && Array.isArray(d.assets)) assets = d.assets.map(a => ({ name:String(a.name||''), amount:Number(a.amount)||0, ratio:Number(a.ratio)||0 }));
-      if(d && Array.isArray(d.history)) history = d.history;
-      if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }];
-      render(); renderHistory(); computeAndPaint(); scheduleSave(); saveHistory();
-    },
-    validateData(d){ return d && typeof d === 'object' && Array.isArray(d.assets); }
+    appId:'portfolio', appName:'ポートフォリオリバランス計算機', appVersion:'1.0.0', storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION（エクスポートの data_version）
   };
   const CFG = ENU_CONFIG;
-  const LOCAL_KEY = CFG.appId + '_localData';
-  const HISTORY_KEY = CFG.appId + '_history';
+  window.enuTools = window.enuTools || {};
+  const _key = (s)=> 'enu_' + CFG.appId + '_' + s;
+
+  /* ===== 保存の形（版1・004「すでに使っている人に影響を出さない」）===== */
+  const DATA_VERSION = 1;
+  function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
+    if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    return saved.data;
+  }
+  // 読み込みに失敗したら、元を「…_broken」に取っておき、ユーザーが何か変えるまで上書きしない
+  const brokenStores=new Set();
+  function loadStore(name){
+    let raw=null;
+    try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
+    if(raw==null) return null;
+    let data=null;
+    try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
+    if(data==null){ brokenStores.add(name); try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    return data;
+  }
+  function userChanged(){ brokenStores.clear(); }
+  function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  document.addEventListener('input', ()=>userChanged(), true);
+  document.addEventListener('change', ()=>userChanged(), true);
+  document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.del-btn,#add-row,.ratio-fix-btn,#history-list button,#save-btn')) userChanged(); }, true);
 
   /* ===== Constants ===== */
-  const ASSET_PRESETS = ['現金・預金','投資信託','国内株式','外国株式','債券','仮想通貨'];
-  const CHART_COLORS = ['#C9A0A0','#A0B5C9','#A8B89A','#C4A85A','#B5A8C5','#C9A695','#7BB5B0','#BF7B7B','#C8BDD0','#B89A85'];
+  const ASSET_PRESETS = ['現金・預金','投資信託','国内株式','外国株式','債券','暗号資産'];
+  // 11色目からは、前の版で11行以上作った人のデータ用（新しく足せるのは10行まで）
+  const CHART_COLORS = ['#C9A0A0','#A0B5C9','#A8B89A','#C4A85A','#B5A8C5','#C9A695','#7BB5B0','#BF7B7B','#C8BDD0','#B89A85',
+                        '#8E9FB0','#D3B8A3','#9AAB8C','#B7A0B9','#A6C4C0','#D1A9A9','#C2B48A','#9C8FA8','#B4C7D6','#A89276'];
   const SVGNS = 'http://www.w3.org/2000/svg';
+  const HISTORY_MAX = 20;
+  const MAX_ASSETS = 10; // 新しく足せるのは10個まで（前の版で作った11個以上のデータは、そのまま読み込む）
 
   /* ===== State ===== */
   let assets = [];
-  let history = [];   /* [{id, ts, memo, total, assets:[{name,amount,ratio}]}, ...] */
 
   /* ===== Helpers ===== */
   const $ = id => document.getElementById(id);
   function fmtYen(n){ const v = Math.round(Number(n)||0); return '¥' + v.toLocaleString('en-US'); }
-  function fmtPct(n){ const v = Math.round((Number(n)||0) * 10) / 10; return v.toFixed(1) + '%'; }
-  function toNum(v){ const n = Number(String(v||'').replace(/,/g,'').trim()); return isFinite(n) ? n : 0; }
+  function round1(n){ const x = Number(n)||0; const v = Math.round(Math.abs(x) * 10 + 1e-9) / 10; return x < 0 ? -v : v; } // 0.1単位・境目は絶対値で四捨五入
+  function fmtPct(n){ const v = round1(n); return (v === 0 ? 0 : v).toFixed(1) + '%'; }
+  // 比率の合計：ぴったり100%なら 100.0%。そうでなければ丸めずに出す（前の版の細かい小数でも「100.0%」とは出さない。最低でも小数1桁）
+  function fmtRatioTotal(n){ const x = Number(n)||0; if(Math.abs(x - 100) < 1e-9) return '100.0%'; const t = x.toLocaleString('en-US', { maximumFractionDigits: 10, useGrouping: false }); return (t.indexOf('.') < 0 ? t + '.0' : t) + '%'; }
+  // 欄に出す数字（丸めない。金額はカンマ区切り）
+  function numText(v, comma){ return v.toLocaleString('en-US', { maximumFractionDigits: 20, useGrouping: !!comma }); }
+  function fmtRatioIn(n){ return (Number(n)||0).toLocaleString('en-US', { maximumFractionDigits: 10 }) + '%'; } // 入力した目標比率のまま（丸めない）
+  // 数字の読み方（全アプリ共通。money-basic-guide と同じ形）：全角の数字・小数点・カンマ、カンマ、空白は受け付ける。
+  // 最後の単位は、その欄の単位だけ外す（金額の欄は「円」、比率の欄は「%」）。
+  // 「万」は×10,000（例：30万、1.5万、12万3000）。「億」「兆」も読む（例：10億、100兆）。
+  // 「1.5万5000」のように、小数の「万」や「億」「兆」のあとに数字が続く形は読みかえずにエラー。空なら null、読めなければ NaN
+  const NUM_UNITS = { '万':4, '億':8, '兆':12 }; // 10の何乗か
+  // 小数の文字 s を 10^k 倍した数（小数点を動かすので、掛け算の誤差が出ない）
+  function shiftDec(s, k){ const p = s.split('.'), f = (p[1] || '').padEnd(k, '0'); return Number((p[0] || '0') + f.slice(0, k) + '.' + (f.slice(k) || '0')); }
+  function parseNumText(raw, unit){
+    let t = String(raw == null ? '' : raw).replace(/[０-９．，－＋]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+      .replace(/[ー−‐]/g, '-').replace(/[,，、\s　]/g, '');
+    if(unit === '円') t = t.replace(/円$/, ''); else if(unit === '%') t = t.replace(/(%|％)$/, ''); else if(unit) t = t.replace(new RegExp(unit + '$'), ''); // その欄の単位だけ外す
+    if(t === '') return null;
+    // 「1億5000万」のように位を重ねた形も読む（2つ目からは4けたまでの整数で、位が下がる。単位のない数は「万」のあとだけ）
+    const s=t.match(/^([-+]?)(.+)$/), re=/(\d+(?:\.\d+)?|\.\d+)(兆|億|万)?/y;
+    let v=0, last=99, i=0, n=0, g;
+    while(i<s[2].length){
+      re.lastIndex=i; g=re.exec(s[2]); if(!g) return NaN;
+      const num=g[1], u=g[2], k=u ? NUM_UNITS[u] : 0;
+      if(n>0 && (num.includes('.') || num.length>4 || k>=last || (!u && last!==4))) return NaN;
+      if(n===0 && (!u || num.includes('.')) && g[0].length<s[2].length) return NaN; // 「1.5万5000」「1億5000」はエラー
+      v+= u ? shiftDec(num,k) : Number(num); // 「340.09万」は 3,400,900（小数の誤差で1円ずれない）
+      last=k; i+=g[0].length; n++;
+    }
+    return s[1]==='-' ? -v : v;
+  }
+  // 入れた文字の小数の桁数（「万」などの単位が付くときは数えない）
+  function decimalsOf(raw){ const t = String(raw == null ? '' : raw).replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[,，、\s　]/g, '').replace(/(%|％)$/, ''); const m = t.match(/\.(\d+)$/); return m ? m[1].length : 0; }
+  // 欄の決まり：現在額は0円以上・100兆円まで（空は0円）、目標比率は0〜100%・小数2桁まで（空は0%）
+  // 金額の上限：10行の合計（1,000兆円）でも1円単位で計算が合う大きさ
+  const AMOUNT_MAX = 1e14;
+  const FIELD_UNIT = { amount:'円', ratio:'%' };
+  // loose：保存データ・ファイルから読んだ値（前の版の細かい小数など）。小数の桁数は確かめず、そのまま使う
+  function judgeCell(field, raw, loose){
+    const v = (typeof raw === 'number') ? raw : parseNumText(raw, FIELD_UNIT[field]);
+    if(v === null) return { v: 0, err: '' };
+    if(!isFinite(v)) return { v: NaN, err: '数字で入力してください' };
+    if(field === 'amount'){
+      if(v < 0) return { v: v, err: '0円以上で入力してください' };
+      if(v > AMOUNT_MAX) return { v: v, err: '100兆円以下で入力してください' };
+    } else {
+      if(v < 0 || v > 100) return { v: v, err: '0〜100%で入力してください' };
+      if(!loose && typeof raw !== 'number' && decimalsOf(raw) > 2) return { v: v, err: '小数第2位までで入力してください' }; // 入れた文字の桁数で確かめる（50.000000005 も通さない）
+    }
+    return { v: v, err: '' };
+  }
   function meaningful(arr){ return (arr||[]).filter(a => (a.name && a.name.trim()) || (Number(a.amount)>0) || (Number(a.ratio)>0)); }
-  function safeFileName(s){ return String(s||'data').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC-]/g,'_'); }
+  // 知らない項目は消さずに残す。数字は丸めず、そのまま残す（まちがいは欄の下に出す）
+  function cleanAssets(arr){ return (Array.isArray(arr)?arr:[]).map(a => { a = (a && typeof a === 'object') ? a : {}; const o = Object.assign({}, a, { name:(typeof a.name === 'string') ? a.name : '' });
+    ['amount','ratio'].forEach(f => { if(a[f] == null || a[f] === '') o[f] = 0; else if(typeof a[f] === 'string'){ const n = parseNumText(a[f], FIELD_UNIT[f]); o[f] = (n !== null && isFinite(n) && !judgeCell(f, a[f]).err) ? n : a[f]; } else if(typeof a[f] !== 'number') o[f] = String(a[f]); }); // 文字は入れた文字として確かめる（まちがいは文字のまま残し、欄の下に出す）
+    return o; }); }
+  // ファイルの1行が読めるか（数字として読めない値・形の違う値は通さない）。
+  // 範囲の外の値（前の版で入れられた100兆円こえなど）は読み込んで、欄の下にエラーを出す（004・保存データを開いたときと同じ）
+  function assetRowReadable(a){
+    if(!a || typeof a !== 'object' || Array.isArray(a)) return false;
+    if(a.name != null && typeof a.name !== 'string') return false;
+    return ['amount','ratio'].every(f => { const x = a[f]; if(x == null || x === '') return true; if(typeof x !== 'number' && typeof x !== 'string') return false; return Number.isFinite(judgeCell(f, x, true).v); });
+  }
+  // 読める行だけ残す。dropped：読めなかった行の数
+  function readableAssets(arr){ const ok = arr.filter(assetRowReadable); return { assets: ok, dropped: arr.length - ok.length }; }
   function formatDate(iso){
     const d = new Date(iso);
     if(isNaN(d.getTime())) return '';
@@ -443,17 +529,12 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
   }
 
   /* ===== Toast / Confirm ===== */
-  function showToast(msg, isError, helpUrl){
+  function showToast(msg){
     const t = $('enu-toast'); if(!t) return;
-    t.replaceChildren();
-    const s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
-    let dur = 2800;
-    if(helpUrl){ const a = document.createElement('a'); a.className = 'enu-toast-help'; a.href = helpUrl; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'ヘルプを見る →'; t.appendChild(a); dur = 6000; }
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), dur);
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2200);
   }
   function enuConfirm(title, desc, okLabel, cancelLabel){
-    okLabel = okLabel || 'OK'; cancelLabel = cancelLabel || 'キャンセル';
     return new Promise(resolve => {
       const modal = $('enu-confirm-modal');
       if(!modal){ resolve(window.confirm(title + '\n\n' + desc)); return; }
@@ -462,126 +543,63 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
       const ok = modal.querySelector('.enu-confirm-btn--ok');
       const cancel = modal.querySelector('.enu-confirm-btn--cancel');
       const backdrop = modal.querySelector('.enu-confirm-modal__backdrop');
-      ok.textContent = okLabel; cancel.textContent = cancelLabel;
-      modal.hidden = false;
-      setTimeout(() => cancel.focus(), 50);
-      const cleanup = r => {
-        modal.hidden = true;
-        ok.removeEventListener('click', onOk);
-        cancel.removeEventListener('click', onCancel);
-        backdrop.removeEventListener('click', onCancel);
-        document.removeEventListener('keydown', onKey);
-        resolve(r);
-      };
-      const onOk = () => cleanup(true);
-      const onCancel = () => cleanup(false);
-      const onKey = e => { if(e.key === 'Escape') onCancel(); if(e.key === 'Enter') onOk(); };
-      ok.addEventListener('click', onOk);
-      cancel.addEventListener('click', onCancel);
-      backdrop.addEventListener('click', onCancel);
-      document.addEventListener('keydown', onKey);
+      ok.textContent = okLabel || 'OK'; cancel.textContent = cancelLabel || 'キャンセル';
+      modal.hidden = false; setTimeout(() => cancel.focus(), 50);
+      const cleanup = r => { modal.hidden = true; ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); backdrop.removeEventListener('click', onCancel); document.removeEventListener('keydown', onKey); resolve(r); };
+      const onOk = () => cleanup(true), onCancel = () => cleanup(false);
+      const onKey = e => { if(e.key === 'Escape') onCancel(); else if(e.key === 'Enter'){ e.preventDefault(); if(document.activeElement === ok) onOk(); else if(document.activeElement === cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
+      ok.addEventListener('click', onOk); cancel.addEventListener('click', onCancel); backdrop.addEventListener('click', onCancel); document.addEventListener('keydown', onKey);
     });
   }
-
-  /* ===== window.enuTools namespace (102) ===== */
-  window.enuTools = window.enuTools || {};
   window.enuTools.toast = showToast;
   window.enuTools.confirm = enuConfirm;
 
-  /* ===== Notices ===== */
+  /* ===== Notices (101) ===== */
+  function applyStorageType(){
+    const type = CFG.storageType || 'local';
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w => { if(w.dataset.storage !== type) w.style.display = 'none'; });
+  }
   function initNotices(){
-    const K = CFG.appId + '_notice_minimized';
+    const K = _key('notice_minimized');
     const get = () => { try{ return JSON.parse(localStorage.getItem(K) || '[]'); }catch(e){ return []; } };
-    const set = list => { try{ localStorage.setItem(K, JSON.stringify(list)); }catch(e){ console.warn('notice state save failed'); } };
-    const help = $('enu-help-link');
-    if(help){ help.href = CFG.helpUrl || '#'; if(CFG.helpOpenNewTab !== false){ help.target = '_blank'; help.rel = 'noopener'; } }
+    const set = l => { try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list = get();
-    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w => {
-      if(list.indexOf(w.dataset.noticeId) >= 0) w.classList.add('is-mini');
-    });
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w => { if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
     document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b => b.addEventListener('click', () => {
-      const w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
-      w.classList.add('is-mini');
-      const l = get(); if(l.indexOf(id) < 0){ l.push(id); set(l); }
+      const w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId; w.classList.add('is-mini');
+      const l = get(); if(!l.includes(id)){ l.push(id); set(l); }
     }));
     document.querySelectorAll('.enu-notice-mini').forEach(m => m.addEventListener('click', () => {
-      const w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
-      w.classList.remove('is-mini');
-      set(get().filter(x => x !== id));
+      const w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId; w.classList.remove('is-mini'); set(get().filter(x => x !== id));
     }));
   }
 
-  /* ===== Storage ===== */
-  function localLoad(){
-    try{
-      const s = localStorage.getItem(LOCAL_KEY);
-      if(s){ const d = JSON.parse(s); if(d && Array.isArray(d.assets)) assets = d.assets; }
-    }catch(e){ console.warn('local data load failed'); }
-  }
-  function localSave(){
-    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({ assets: assets })); }
-    catch(e){ console.warn('local data save failed'); }
-  }
-  let saveTimer = null;
-  function scheduleSave(){
-    if(saveTimer) clearTimeout(saveTimer);
-    setSaveStatus('入力中...');
-    saveTimer = setTimeout(() => { localSave(); setSaveStatus('保存しました'); setTimeout(() => setSaveStatus(''), 1200); }, 400);
-  }
-  function setSaveStatus(text){ const el = $('save-status'); if(el) el.textContent = text; }
-  function historyLoad(){
-    try{
-      const s = localStorage.getItem(HISTORY_KEY);
-      if(s){ const d = JSON.parse(s); if(Array.isArray(d)) history = d; }
-    }catch(e){ console.warn('history load failed'); }
-  }
-  function saveHistory(){
-    try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
-    catch(e){ console.warn('history save failed'); }
+  /* ===== 免責事項・プライバシーポリシー・ヘルプのリンク（004）===== */
+  const ENU_LEGAL_URLS = {
+    disclaimer:'https://enu-tools.pages.dev/desk/disclaimer/',
+    privacy:'https://enu-tools.pages.dev/desk/privacy/'
+  };
+  function initVersion(){ const el = $('appVersion'); if(el && CFG.appVersion) el.textContent = 'ver.' + CFG.appVersion; }
+  function initLegal(){
+    const urls = { disclaimer: CFG.disclaimerUrl || ENU_LEGAL_URLS.disclaimer, privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy, help: CFG.helpUrl };
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a => { a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener'; });
   }
 
-  /* ===== History operations ===== */
-  function saveSnapshot(){
-    const memoEl = $('history-memo');
-    const memo = memoEl ? memoEl.value.trim() : '';
-    const r = compute();
-    const snap = {
-      id: 'snap_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
-      ts: new Date().toISOString(),
-      memo: memo,
-      total: r.total,
-      assets: assets.map(a => ({ name: a.name || '', amount: Number(a.amount)||0, ratio: Number(a.ratio)||0 }))
-    };
-    history.unshift(snap);
-    if(history.length > 50) history = history.slice(0, 50);
-    saveHistory();
-    renderHistory();
-    if(memoEl) memoEl.value = '';
-    showToast('📒 履歴に保存しました');
+  /* ===== Storage（入力）===== */
+  let dataExtra = {}; // 保存データの知らない項目（消さずに残す）
+  function localLoad(){
+    const d = loadStore('data');
+    if(d && typeof d === 'object') dataExtra = d;
+    if(d && Array.isArray(d.assets)) assets = cleanAssets(d.assets);
   }
-  async function loadSnapshot(id){
-    const snap = history.find(h => h.id === id); if(!snap) return;
-    const label = snap.memo || formatDate(snap.ts);
-    const ok = await enuConfirm('🔁 履歴を呼び出す', '「' + label + '」の状態を現在の入力に反映します。\n今の入力内容は上書きされます。', '呼び出し', 'キャンセル');
-    if(!ok) return;
-    assets = snap.assets.map(a => ({ name: a.name || '', amount: Number(a.amount)||0, ratio: Number(a.ratio)||0 }));
-    if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }];
-    render(); computeAndPaint(); scheduleSave();
-    showToast('🔁 履歴を呼び出しました');
-  }
-  async function deleteSnapshot(id){
-    const snap = history.find(h => h.id === id); if(!snap) return;
-    const label = snap.memo || formatDate(snap.ts);
-    const ok = await enuConfirm('🗑 履歴を削除', '「' + label + '」を削除します。元に戻せません。', '削除', 'キャンセル');
-    if(!ok) return;
-    history = history.filter(h => h.id !== id);
-    saveHistory(); renderHistory();
-    showToast('🗑 削除しました');
-  }
+  function localSave(){ saveStore('data', Object.assign({}, dataExtra, { assets: assets })); }
+  // 入力のたびにすぐ保存する（すぐ再読み込みしても消えない。まちがった文字もそのまま保存し、開いたときに欄の下に出す）
+  function scheduleSave(){ localSave(); setSaveStatus('入力を保存しました'); }
+  function setSaveStatus(text){ const el = $('save-status'); if(el) el.textContent = text; }
 
   /* ===== Compute ===== */
   function compute(){
-    const rows = assets.map(a => ({ amount: Number(a.amount)||0, ratio: Number(a.ratio)||0 }));
+    const rows = assets.map(a => ({ amount: (typeof a.amount === 'number' && isFinite(a.amount)) ? a.amount : 0, ratio: (typeof a.ratio === 'number' && isFinite(a.ratio)) ? a.ratio : 0 }));
     const total = rows.reduce((s, r) => s + r.amount, 0);
     const totalRatio = rows.reduce((s, r) => s + r.ratio, 0);
     const enriched = rows.map(r => {
@@ -589,14 +607,25 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
       const curRatio = total > 0 ? r.amount / total * 100 : 0;
       return { amount: r.amount, ratio: r.ratio, targetAmt: targetAmt, curRatio: curRatio, devPt: curRatio - r.ratio, need: targetAmt - r.amount };
     });
+    // 調整額は円に丸め、売買の合計が0円になるよう端数を配る：まず切り捨て、足りない1円ずつを小数部分の大きい行から順に足す
+    // （1つの行に端数をまとめないので、どの行も本当の額との差は1円未満。金額も比率も0の行には配らない）
+    const live = enriched.map((r, i) => i).filter(i => rows[i].amount !== 0 || rows[i].ratio !== 0);
+    enriched.forEach(r => { r.needShown = 0; });
+    live.forEach(i => { enriched[i].needShown = Math.floor(enriched[i].need); });
+    let short = -live.reduce((s, i) => s + enriched[i].needShown, 0);
+    short = Math.max(0, Math.min(live.length, Math.round(short)));
+    const frac = i => enriched[i].need - enriched[i].needShown;
+    live.slice().sort((x, y) => (Math.abs(frac(y) - frac(x)) > 1e-6 ? frac(y) - frac(x) : x - y)) // 同じ大きさ（計算の誤差だけの違い）なら上の行から
+      .slice(0, short).forEach(i => { enriched[i].needShown += 1; });
+    enriched.forEach(r => { if(r.needShown === 0) r.needShown = 0; }); // −0 を 0 に
     return { total: total, totalRatio: totalRatio, rows: enriched };
   }
 
   /* ===== SVG donut ===== */
   function svgEl(tag, attrs){ const e = document.createElementNS(SVGNS, tag); for(const k in attrs){ e.setAttribute(k, attrs[k]); } return e; }
-  function buildDonut(segments){
+  function buildDonut(segments, label){
     const C = 2 * Math.PI * 54;
-    const svg = svgEl('svg', { viewBox:'0 0 140 140', width:'100%', height:'100%', preserveAspectRatio:'xMidYMid meet', role:'img' });
+    const svg = svgEl('svg', { viewBox:'0 0 140 140', width:'100%', height:'100%', preserveAspectRatio:'xMidYMid meet', role:'img', 'aria-label':label });
     const drawn = segments.filter(s => s.frac > 0);
     if(!drawn.length){ svg.appendChild(svgEl('circle', { cx:70, cy:70, r:54, fill:'none', stroke:'var(--bg-soft)', 'stroke-width':22 })); return svg; }
     let cum = 0;
@@ -612,31 +641,37 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
     });
     return svg;
   }
-  function drawCharts(){
-    const cur = $('donut-current'), tgt = $('donut-target'), legend = $('donut-legend'), empty = $('chart-empty');
+  function drawCharts(blocked){
+    const cur = $('donut-current'), tgt = $('donut-target'), legend = $('donut-legend'), empty = $('chart-empty'), note = $('chart-note');
     if(!cur || !tgt || !legend) return;
-    cur.replaceChildren(); tgt.replaceChildren(); legend.replaceChildren();
-    const rows = assets.map((a, i) => ({
+    cur.replaceChildren(); tgt.replaceChildren(); legend.replaceChildren(); note.classList.add('hidden');
+    const rows = blocked ? [] : assets.map((a, i) => ({
       name: (a.name && a.name.trim()) ? a.name.trim() : '未設定',
       color: CHART_COLORS[i % CHART_COLORS.length],
-      amount: Number(a.amount)||0,
-      ratio: Number(a.ratio)||0
+      amount: Math.max(0, Number(a.amount)||0),
+      ratio: Math.max(0, Number(a.ratio)||0)
     })).filter(x => x.amount > 0 || x.ratio > 0);
     const hasData = rows.length > 0;
-    if(empty) empty.classList.toggle('hidden', hasData);
-    if(!hasData){ cur.appendChild(buildDonut([])); tgt.appendChild(buildDonut([])); return; }
+    if(empty) empty.classList.toggle('hidden', hasData || blocked);
+    if(!hasData){ cur.appendChild(buildDonut([], '現在の構成比')); tgt.appendChild(buildDonut([], '目標の構成比')); return; }
     const totalAmt = rows.reduce((s, x) => s + x.amount, 0);
     const totalRat = rows.reduce((s, x) => s + x.ratio, 0);
-    cur.appendChild(buildDonut(rows.map(x => ({ frac: totalAmt > 0 ? x.amount / totalAmt : 0, color: x.color }))));
-    tgt.appendChild(buildDonut(rows.map(x => ({ frac: totalRat > 0 ? x.ratio / totalRat : 0, color: x.color }))));
-    rows.forEach(x => {
+    cur.appendChild(buildDonut(rows.map(x => ({ frac: Math.round(totalAmt) > 0 ? x.amount / totalAmt : 0, color: x.color })), '現在の構成比'));
+    // 目標の輪：合計が100%未満なら残りを薄い色の「未設定」、100%をこえるときは比で描いて注を出す
+    const over = totalRat > 100 + 1e-9, rest = Math.max(0, 100 - totalRat);
+    const segs = rows.map(x => ({ frac: over ? x.ratio / totalRat : x.ratio / 100, color: x.color }));
+    if(!over && rest > 1e-9) segs.push({ frac: rest / 100, color: 'var(--line)' });
+    tgt.appendChild(buildDonut(segs, '目標の構成比'));
+    const addItem = (color, name, text) => {
       const item = document.createElement('div'); item.className = 'legend-item';
-      const sw = document.createElement('span'); sw.className = 'legend-swatch'; sw.style.background = x.color;
-      const nm = document.createElement('span'); nm.className = 'legend-name'; nm.textContent = x.name;
-      const vals = document.createElement('span'); vals.className = 'legend-vals';
-      vals.textContent = '現在 ' + fmtPct(totalAmt > 0 ? x.amount / totalAmt * 100 : 0) + ' → 目標 ' + fmtPct(x.ratio);
+      const sw = document.createElement('span'); sw.className = 'legend-swatch'; sw.style.background = color; sw.style.borderColor = color;
+      const nm = document.createElement('span'); nm.className = 'legend-name'; nm.textContent = name;
+      const vals = document.createElement('span'); vals.className = 'legend-vals'; vals.textContent = text;
       item.append(sw, nm, vals); legend.appendChild(item);
-    });
+    };
+    rows.forEach(x => addItem(x.color, x.name, '現在 ' + (Math.round(totalAmt) > 0 ? fmtPct(x.amount / totalAmt * 100) : '—') + ' → 目標 ' + fmtRatioIn(x.ratio)));
+    if(!over && rest > 1e-9) addItem('var(--line)', '目標の残り', '目標 ' + fmtRatioIn(Math.round(rest * 1e10) / 1e10)); // 名前を選んでいない行の「未設定」と分ける
+    if(over) note.classList.remove('hidden');
   }
 
   /* ===== Input builders ===== */
@@ -654,61 +689,58 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
     sel.addEventListener('change', () => {
       if(sel.value === '__other__'){ free.classList.remove('hidden'); a.name = free.value.trim(); setTimeout(() => free.focus(), 0); }
       else { free.classList.add('hidden'); a.name = sel.value; }
-      computeAndPaint(); scheduleSave();
+      edited(); computeAndPaint(); scheduleSave();
     });
-    free.addEventListener('input', () => { a.name = free.value; computeAndPaint(); scheduleSave(); });
+    free.addEventListener('input', () => { a.name = free.value; edited(); computeAndPaint(); scheduleSave(); });
     free.addEventListener('blur', () => { a.name = free.value.trim(); free.value = a.name; });
     wrap.append(sel, free);
     return wrap;
   }
-  function buildInput(field, idx, val){
+  function buildInput(field, idx, val, raw){
     const input = document.createElement('input');
     input.type = 'text';
     input.inputMode = field === 'ratio' ? 'decimal' : 'numeric';
     input.className = 'cell-input num' + (field === 'ratio' ? ' tiny' : '');
     input.dataset.idx = idx; input.dataset.field = field;
-    input.value = val ? (field === 'ratio' ? String(val) : Number(val).toLocaleString('en-US')) : '';
+    if(raw != null) input.value = raw; // 作り直す前に入っていた文字（まちがいも消さない）
+    else if(typeof val !== 'number') input.value = String(val == null ? '' : val);
+    else { input.value = val ? numText(val, field === 'amount') : ''; input.dataset.loaded = input.value; } // 保存データの数（前の版の細かい小数もそのまま使う）
     input.placeholder = '0';
     input.setAttribute('aria-label', field === 'amount' ? '現在額' : '目標比率');
     input.addEventListener('input', onInput);
     input.addEventListener('blur', onBlur);
     return input;
   }
+  // まちがいは欄のすぐ下に（004「エラーは入力欄のすぐ下に」）
+  function isLoaded(input){ return input.dataset.loaded != null && input.value === input.dataset.loaded; } // 読み込んだ数のまま（書きかえていない）
+  function checkCell(input){
+    const text = judgeCell(input.dataset.field, input.value, isLoaded(input)).err;
+    let msg = input.nextElementSibling && input.nextElementSibling.classList.contains('field-error') ? input.nextElementSibling : null;
+    if(text){ if(!msg){ msg = document.createElement('p'); msg.className = 'field-error'; input.after(msg); } msg.textContent = text; input.setAttribute('aria-invalid', 'true'); }
+    else { if(msg) msg.remove(); input.removeAttribute('aria-invalid'); }
+    return text;
+  }
   function onInput(e){
     const el = e.target;
     const i = +el.dataset.idx, f = el.dataset.field;
     const a = assets[i]; if(!a) return;
-    if(f === 'amount'){
-      const oldValue = el.value;
-      const cursorPos = el.selectionStart || 0;
-      const raw = oldValue.replace(/,/g, '');
-      a[f] = toNum(raw);
-      let formatted;
-      if(raw === '') formatted = '';
-      else if(/^\d+$/.test(raw)) formatted = Number(raw).toLocaleString('en-US');
-      else formatted = raw;
-      if(formatted !== oldValue){
-        el.value = formatted;
-        const digitsBefore = oldValue.slice(0, cursorPos).replace(/,/g, '').length;
-        let newCursor = 0, digitCount = 0;
-        while(newCursor < formatted.length && digitCount < digitsBefore){
-          if(formatted[newCursor] !== ',') digitCount++;
-          newCursor++;
-        }
-        try{ el.setSelectionRange(newCursor, newCursor); }catch(_){}
-      }
-    } else {
-      a[f] = toNum(el.value);
-    }
-    computeAndPaint(); scheduleSave();
+    const r = judgeCell(f, el.value, isLoaded(el));
+    a[f] = r.err ? el.value : r.v;         // まちがいは欄の下に出したまま計算しない。保存は入れた文字のまま（再読み込みしても知らせずに前の値に戻さない）
+    checkCell(el);
+    edited(); computeAndPaint(); scheduleSave();
   }
+  // 欄を離れたら、読める形にそろえる（値は変えない。まちがいのときは、入れた文字をそのまま残す）
   function onBlur(e){
     const el = e.target;
-    const i = +el.dataset.idx, f = el.dataset.field;
-    const a = assets[i]; if(!a) return;
-    if(f === 'amount'){ el.value = a.amount ? Number(a.amount).toLocaleString('en-US') : ''; }
-    else { el.value = a.ratio ? String(a.ratio) : ''; }
+    const f = el.dataset.field;
+    const loaded = isLoaded(el);
+    const r = judgeCell(f, el.value, loaded);
+    if(!r.err) el.value = r.v ? numText(r.v, f === 'amount') : (el.value.trim() === '' ? '' : '0'); // 丸めない（0.004 は 0.004 のまま）
+    if(loaded) el.dataset.loaded = el.value;
+    checkCell(el);
   }
+  // 数字を変えたら「呼び出し中」を消す（保存したときの中身と違うため）
+  function edited(){ if(currentHistId){ currentHistId = null; renderHistory(); } }
 
   /* ===== Render ===== */
   function makeDelBtn(i){
@@ -716,71 +748,63 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
     btn.addEventListener('click', () => removeAsset(i));
     return btn;
   }
-  function acRow(label, cls){
-    const row = document.createElement('div'); row.className = 'ac-row';
-    const lbl = document.createElement('span'); lbl.className = 'lbl'; lbl.textContent = label;
-    const val = document.createElement('span'); val.className = cls;
-    row.append(lbl, val);
-    return row;
+  function cell(cls, label, kids){
+    const td = document.createElement('td'); td.className = cls;
+    if(label){ const l = document.createElement('span'); l.className = 'cell-lbl'; l.textContent = label; td.appendChild(l); }
+    kids.forEach(k => td.appendChild(k));
+    return td;
   }
-  function render(){
-    const tbody = $('asset-tbody'), cards = $('asset-cardlist');
-    if(!tbody || !cards) return;
-    tbody.replaceChildren(); cards.replaceChildren();
+  const span = cls => { const e = document.createElement('span'); e.className = cls; return e; };
+  // いま欄に入っている文字（行の順に）
+  function captureRaw(){ return Array.from(document.querySelectorAll('#asset-tbody tr')).map(tr => ({ amount: tr.querySelector('[data-field="amount"]').value, ratio: tr.querySelector('[data-field="ratio"]').value })); }
+  function render(raws){
+    const tbody = $('asset-tbody');
+    if(!tbody) return;
+    tbody.replaceChildren();
     assets.forEach((a, i) => {
+      const raw = raws && raws[i] || {};
       const tr = document.createElement('tr'); tr.dataset.idx = i;
-      const tdName = document.createElement('td'); tdName.appendChild(buildNameField(i, a));
-      const tdAmt = document.createElement('td'); tdAmt.className = 'num'; tdAmt.appendChild(buildInput('amount', i, a.amount));
-      const tdRat = document.createElement('td'); tdRat.className = 'num'; tdRat.appendChild(buildInput('ratio', i, a.ratio));
-      const tdCur = document.createElement('td'); tdCur.className = 'num js-curratio';
-      const tdDev = document.createElement('td'); tdDev.className = 'num js-dev dev';
-      const tdNeed = document.createElement('td'); tdNeed.className = 'num js-need';
-      const tdAct = document.createElement('td'); tdAct.className = 'col-act'; tdAct.appendChild(makeDelBtn(i));
-      tr.append(tdName, tdAmt, tdRat, tdCur, tdDev, tdNeed, tdAct);
+      tr.append(
+        cell('c-name', '', [buildNameField(i, a)]),
+        cell('num c-amt', '現在額', [buildInput('amount', i, a.amount, raw.amount)]),
+        cell('num c-rat', '目標比率（%）', [buildInput('ratio', i, a.ratio, raw.ratio)]),
+        cell('num c-cur', '現在比率', [span('js-curratio')]),
+        cell('num c-dev', '過不足（現在−目標）', [span('js-dev dev')]),
+        cell('num c-need', '必要調整額', [span('js-need')]),
+        cell('col-act c-act', '', [makeDelBtn(i)])
+      );
       tbody.appendChild(tr);
-
-      const c = document.createElement('div'); c.className = 'a-card'; c.dataset.idx = i;
-      const top = document.createElement('div'); top.className = 'ac-top';
-      top.appendChild(buildNameField(i, a));
-      top.appendChild(makeDelBtn(i));
-      const inputs = document.createElement('div'); inputs.className = 'ac-inputs';
-      const f1 = document.createElement('div'); f1.className = 'ac-field'; const l1 = document.createElement('label'); l1.textContent = '現在額'; f1.append(l1, buildInput('amount', i, a.amount));
-      const f2 = document.createElement('div'); f2.className = 'ac-field'; const l2 = document.createElement('label'); l2.textContent = '目標比率(%)'; f2.append(l2, buildInput('ratio', i, a.ratio));
-      inputs.append(f1, f2);
-      const calc = document.createElement('div'); calc.className = 'ac-calc';
-      calc.appendChild(acRow('現在比率', 'js-curratio'));
-      calc.appendChild(acRow('過不足', 'js-dev'));
-      calc.appendChild(acRow('必要調整額', 'js-need'));
-      c.append(top, inputs, calc);
-      cards.appendChild(c);
     });
+    $('add-row').disabled = assets.length >= MAX_ASSETS;
+    document.querySelectorAll('#asset-tbody .cell-input.num').forEach(checkCell);
     computeAndPaint();
   }
 
   /* ===== Paint ===== */
+  function nbSpan(t){ const e = document.createElement('span'); e.className = 'nb'; e.textContent = t; return e; }
   function paintNeed(el, need, muted){
     if(muted){ el.textContent = '—'; return; }
     el.replaceChildren();
     const chip = document.createElement('span'); chip.className = 'chip';
-    if(Math.abs(need) < 1){ chip.classList.add('chip-ok'); chip.textContent = '調整不要'; }
-    else if(need > 0){ chip.classList.add('chip-inc'); chip.textContent = '+' + fmtYen(need) + ' 増やす'; }
-    else { chip.classList.add('chip-dec'); chip.textContent = '−' + fmtYen(Math.abs(need)) + ' 減らす'; }
+    if(need === 0){ chip.classList.add('chip-ok'); chip.textContent = '調整不要'; }
+    else if(need > 0){ chip.classList.add('chip-inc'); chip.append(nbSpan('+' + fmtYen(need)), ' ', nbSpan('増やす')); } // 印刷で折り返すときも言葉の途中で切らない
+    else { chip.classList.add('chip-dec'); chip.append(nbSpan('−' + fmtYen(Math.abs(need))), ' ', nbSpan('減らす')); }
     el.appendChild(chip);
   }
   function paintDev(el, devPt, muted){
-    const isTd = el.tagName === 'TD';
-    el.className = (isTd ? 'num ' : '') + 'js-dev dev';
+    el.className = 'js-dev dev';
     if(muted){ el.classList.add('muted'); el.textContent = '—'; return; }
-    const v = Math.round(devPt * 10) / 10;
-    if(Math.abs(devPt) < 0.05){ el.classList.add('flat'); el.textContent = '±0.0pt'; return; }
+    const v = round1(devPt); // 符号に関係なく同じ丸め（−0.05pt も +0.05pt も 0.1pt）
+    if(v === 0){ el.classList.add('flat'); el.textContent = '±0.0pt'; return; }
     if(v > 0){ el.classList.add('over'); el.textContent = '+' + v.toFixed(1) + 'pt'; }
     else { el.classList.add('under'); el.textContent = '−' + Math.abs(v).toFixed(1) + 'pt'; }
   }
 
   /* ===== Ratio warn + summary status ===== */
   function normalizeTargets(){
+    if(assets.some(a => (Number(a.ratio)||0) < 0)){ showToast('⚠️ マイナスの目標比率があるため、自動調整できません'); return; }
     const sum = assets.reduce((s, a) => s + (Number(a.ratio)||0), 0);
-    if(sum <= 0) return;
+    if(sum <= 0){ showToast('⚠️ 目標比率がすべて0%のため、自動調整できません'); return; }
     let acc = 0, maxIdx = -1, maxVal = -1;
     assets.forEach((a, i) => {
       if((Number(a.ratio)||0) > 0){
@@ -791,7 +815,7 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
     });
     const diff = Math.round((100 - acc) * 10) / 10;
     if(maxIdx >= 0 && diff !== 0){ assets[maxIdx].ratio = Math.round((assets[maxIdx].ratio + diff) * 10) / 10; }
-    render(); scheduleSave();
+    edited(); render(); scheduleSave();
   }
   function updateRatioWarn(hasData, is100, totalRatio){
     const warn = $('ratio-warn'); if(!warn) return;
@@ -799,7 +823,7 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
     if(hasData && !is100){
       warn.classList.remove('hidden');
       const msg = document.createElement('span');
-      msg.textContent = '⚠️ 目標比率の合計が100%ではありません（現在 ' + fmtPct(totalRatio) + '）。100%にすると調整額が表示されます。';
+      msg.textContent = '⚠️ 目標比率の合計が' + fmtRatioTotal(totalRatio) + 'です。100%にすると過不足と調整額が出ます。';
       const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'ratio-fix-btn'; btn.textContent = '100%に自動調整';
       btn.addEventListener('click', normalizeTargets);
       warn.append(msg, btn);
@@ -810,69 +834,122 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
   function updateSummaryStatus(hasData, is100, totalRatio){
     const stat = $('sum-status'), icon = $('sum-status-icon'), text = $('sum-status-text');
     if(!stat || !icon || !text) return;
-    stat.classList.remove('ok', 'warn');
-    if(!hasData || is100){ stat.classList.add('ok'); icon.textContent = '✓'; }
+    stat.classList.remove('ok', 'warn', 'none');
+    if(!hasData){ stat.classList.add('none'); icon.textContent = ''; text.textContent = '—'; return; } // 何も入れていないときは灰色の「—」
+    if(is100){ stat.classList.add('ok'); icon.textContent = '✓'; }
     else { stat.classList.add('warn'); icon.textContent = '⚠'; }
-    text.textContent = fmtPct(totalRatio);
+    text.textContent = fmtRatioTotal(totalRatio);
   }
 
   /* ===== Compute & paint ===== */
+  function hasBadCell(){ return !!document.querySelector('#asset-tbody [aria-invalid="true"]'); }
   function computeAndPaint(){
     const r = compute();
+    const bad = hasBadCell();                                        // まちがった入力があるあいだは計算しない（前の結果も出さない）
     const hasData = meaningful(assets).length > 0;
-    const is100 = hasData && Math.abs(r.totalRatio - 100) <= 0.05;
+    const is100 = hasData && Math.abs(r.totalRatio - 100) < 1e-9; // 許容幅なし（足し算の小数の誤差だけ除く）
+    const totalPos = Math.round(r.total) > 0;                        // 画面に出す合計（円に丸めた額）が0円より大きいか。1円未満だけのときも「¥0」と同じく扱う
+    const showAdj = !bad && is100 && totalPos;                       // 合計0円・入力のまちがいがあるときは調整額を出さない
     assets.forEach((a, i) => {
       const c = r.rows[i];
-      document.querySelectorAll('[data-idx="' + i + '"] .js-curratio').forEach(el => { el.textContent = fmtPct(c.curRatio); el.classList.add('curratio'); });
-      document.querySelectorAll('[data-idx="' + i + '"] .js-dev').forEach(el => paintDev(el, c.devPt, !is100));
-      document.querySelectorAll('[data-idx="' + i + '"] .js-need').forEach(el => paintNeed(el, c.need, !is100));
+      document.querySelectorAll('[data-idx="' + i + '"] .js-curratio').forEach(el => { el.textContent = (bad || !totalPos) ? '—' : fmtPct(c.curRatio); el.classList.add('curratio'); }); // 現在額が合計0円のときも「—」
+      document.querySelectorAll('[data-idx="' + i + '"] .js-dev').forEach(el => paintDev(el, c.devPt, !showAdj));
+      document.querySelectorAll('[data-idx="' + i + '"] .js-need').forEach(el => paintNeed(el, c.needShown, !showAdj));
     });
-    $('sum-total').textContent = fmtYen(r.total);
+    $('result-fix').classList.toggle('hidden', !bad);
+    $('sum-total').textContent = bad ? '—' : fmtYen(r.total);
     const hint = $('empty-hint'); if(hint) hint.classList.toggle('hidden', hasData);
-    updateRatioWarn(hasData, is100, r.totalRatio);
-    updateSummaryStatus(hasData, is100, r.totalRatio);
-    drawCharts();
+    $('adj-hint').classList.toggle('hidden', bad || !is100 || totalPos);   // 比率は100%なのに現在額が0円のとき
+    updateRatioWarn(hasData && !bad, is100, r.totalRatio);
+    if(bad){ const stat = $('sum-status'); stat.classList.remove('ok','warn'); stat.classList.add('none'); $('sum-status-icon').textContent = ''; $('sum-status-text').textContent = '—'; }
+    else updateSummaryStatus(hasData, is100, r.totalRatio);
+    drawCharts(bad);
   }
 
   /* ===== Add/Remove ===== */
-  function addAsset(){ assets.push({ name:'', amount:0, ratio:0 }); render(); scheduleSave(); }
-  function removeAsset(i){ assets.splice(i, 1); if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }]; render(); scheduleSave(); }
+  function addAsset(){ if(assets.length >= MAX_ASSETS) return; const raws = captureRaw(); assets.push({ name:'', amount:0, ratio:0 }); edited(); render(raws); scheduleSave(); }
+  function removeAsset(i){ const raws = captureRaw(); raws.splice(i, 1); assets.splice(i, 1); if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }]; edited(); render(raws); scheduleSave(); }
 
-  /* ===== History render ===== */
+  /* ===== 📌 保存した配分（H3）===== */
+  function getHistory(){ const h = loadStore('history'); return Array.isArray(h) ? h : []; }
+  function setHistory(h){ saveStore('history', h); }
+  function snapName(h){ return h.memo || formatDate(h.ts); }
+  let currentHistId = null;
+  function saveCurrent(){
+    const badEl = document.querySelector('#asset-tbody [aria-invalid="true"]');
+    if(badEl){ badEl.focus(); badEl.scrollIntoView({ block:'center', behavior:'smooth' }); showToast('入力を直してから保存してください'); return; } // まちがった入力のままでは保存しない
+    const nameInput = $('save-name');
+    const memo = (nameInput.value || '').trim();
+    const r = compute();
+    const snap = {
+      id: 'snap_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+      ts: new Date().toISOString(),
+      memo: memo,
+      total: r.total,
+      assets: cleanAssets(assets)
+    };
+    let hist = getHistory(); const lim = Math.max(HISTORY_MAX, hist.length); hist.unshift(snap); if(hist.length > lim) hist = hist.slice(0, lim); setHistory(hist); // 上限より多く読み込んだあとも今ある件数を保つ（いちばん古い1件だけ落とす）
+    nameInput.value = ''; renderHistory(); showToast('📌 この配分を保存しました');
+  }
   function renderHistory(){
-    const list = $('history-list'), empty = $('history-empty');
-    if(!list) return;
-    list.replaceChildren();
-    if(empty) empty.classList.toggle('hidden', history.length > 0);
-    history.forEach(h => {
-      const item = document.createElement('div'); item.className = 'history-item';
-      const main = document.createElement('div'); main.className = 'history-main';
-      const date = document.createElement('div'); date.className = 'history-date'; date.textContent = formatDate(h.ts);
-      const meta = document.createElement('div'); meta.className = 'history-meta';
-      const memoText = h.memo ? h.memo + ' ・ ' : '';
-      meta.textContent = memoText + '合計 ' + fmtYen(h.total || 0);
-      main.append(date, meta);
-      const actions = document.createElement('div'); actions.className = 'history-actions';
-      const loadBtn = document.createElement('button'); loadBtn.type = 'button'; loadBtn.className = 'history-btn'; loadBtn.textContent = '呼び出し';
-      loadBtn.addEventListener('click', () => loadSnapshot(h.id));
-      const delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'history-btn history-btn-del'; delBtn.textContent = '削除';
-      delBtn.addEventListener('click', () => deleteSnapshot(h.id));
-      actions.append(loadBtn, delBtn);
-      item.append(main, actions);
-      list.appendChild(item);
+    const list = $('history-list'); list.replaceChildren();
+    const hist = getHistory();
+    list.hidden = !hist.length;
+    hist.forEach(h => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'hist-chip' + (h.id === currentHistId ? ' on' : '');
+      b.textContent = snapName(h); b.title = snapName(h) + '（' + formatDate(h.ts) + '・合計 ' + fmtYen(h.total || 0) + '）'; b.dataset.load = h.id;
+      list.appendChild(b);
     });
+    const cur = $('hist-current'); cur.replaceChildren();
+    const snap = hist.find(h => h.id === currentHistId);
+    if(snap){
+      cur.append('呼び出し中：' + snapName(snap));
+      const del = document.createElement('button'); del.type = 'button'; del.textContent = 'この保存を削除'; del.dataset.del = snap.id;
+      cur.append('　', del); cur.hidden = false;
+    } else { cur.hidden = true; currentHistId = null; }
+  }
+  function onHistoryClick(e){
+    const t = e.target.closest('button'); if(!t) return;
+    if(t.dataset.load){
+      const id = t.dataset.load;
+      const snap = getHistory().find(h => h.id === id);
+      if(snap){
+        assets = cleanAssets(snap.assets);
+        if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }];
+        render(); scheduleSave(); currentHistId = id; renderHistory(); showToast('保存した配分を呼び出しました');
+      }
+    } else if(t.dataset.del){
+      const id = t.dataset.del;
+      enuConfirm('保存の削除', 'この保存を削除します。よろしいですか？', '削除', 'キャンセル').then(ok => {
+        if(ok){ setHistory(getHistory().filter(h => h.id !== id)); currentHistId = null; renderHistory(); showToast('削除しました'); }
+      });
+    }
   }
 
-  /* ===== Toolbar actions ===== */
+  /* ===== Export / Import (102) ===== */
+  function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
+  function appGetData(){ return { assets: assets, history: getHistory() }; }
+  function appValidateData(d){ return !!(d && typeof d === 'object' && (Array.isArray(d.assets) || Array.isArray(d.history))); }
+  // cur：今の資産として読む行（null なら画面の資産は前のまま）。保存した配分は上限（20件）より多くても全部読む（新しく保存するときは今ある件数を保ち、いちばん古い1件だけ落とす）
+  function appApplyData(d, cur){
+    if(cur){
+      dataExtra = Object.assign({}, d); delete dataExtra.assets; delete dataExtra.history;
+      assets = cleanAssets(cur);
+      if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }];
+    }
+    if(Array.isArray(d.history)) setHistory(d.history);
+    currentHistId = null;
+    render(); renderHistory(); localSave();
+  }
   function handleExport(){
-    const payload = { app_id: CFG.appId, app_name: CFG.appName, data_version: CFG.dataVersion, storage_type: CFG.storageType, exported_at: new Date().toISOString(), data: CFG.getData() };
+    const badEl = document.querySelector('#asset-tbody [aria-invalid="true"]');
+    if(badEl){ badEl.focus(); badEl.scrollIntoView({ block:'center', behavior:'smooth' }); showToast('入力を直してから書き出してください'); return; } // まちがった入力のままでは書き出さない
+    const payload = { app_id: CFG.appId, app_name: CFG.appName, data_version: DATA_VERSION, storage_type: CFG.storageType || 'local', exported_at: new Date().toISOString(), data: appGetData() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = safeFileName(CFG.appName) + '_' + new Date().toISOString().slice(0, 10) + '.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('📤 エクスポートしました');
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = safeFileName(CFG.appName || CFG.appId) + '_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('📤 JSONをダウンロードしました');
   }
   function handleImport(){
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json,.json';
@@ -881,53 +958,70 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
       try{
         const p = JSON.parse(await f.text());
         if(!p || typeof p !== 'object') throw new Error('JSONの形式が正しくありません');
-        if(!p.app_id) throw new Error('app_id がない古いファイル形式です');
-        if(p.app_id !== CFG.appId) throw new Error('別アプリのファイルです（' + p.app_id + '）');
-        if(p.data_version > CFG.dataVersion) throw new Error('新しいバージョンのファイルです');
-        if(!CFG.validateData(p.data)) throw new Error('データ形式が違います');
-        const ok = await enuConfirm('📥 データのインポート', '「' + (p.app_name || p.app_id) + '」のデータを読み込みます。\n現在の入力内容と履歴は上書きされます。元に戻せません。', 'インポート', 'キャンセル');
+        if(!p.app_id) throw new Error('古い形式のファイルです');
+        if(p.app_id !== CFG.appId) throw new Error('別のアプリのファイルです');
+        if(p.data_version > DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
+        const data = migrate({ v: p.data_version || 1, data: p.data });
+        if(!appValidateData(data)) throw new Error('データ形式が違います');
+        // 読めない行（数字でない値・形の違う値など）は、その行だけ読み込まずに知らせる。前の版で作れた値（11行以上・細かい小数・範囲の外の額）は読む。
+        // 今の資産が1行も読めなくても、読める保存は読み込む（画面の資産は前のまま）。読めるものが1つもないときだけ断る（004）
+        let dropped = 0, curAssets = null, hist = null;
+        if(Array.isArray(data.assets)){ const r = readableAssets(data.assets); if(data.assets.length === 0 || r.assets.length > 0){ curAssets = r.assets; dropped += r.dropped; } }
+        if(!curAssets && data.assets != null) dropped++; // 資産の項目がない（保存だけの）ファイルは、読めない行として数えない
+        if(Array.isArray(data.history)){
+          hist = [];
+          data.history.forEach(h => {
+            if(!h || typeof h !== 'object' || !Array.isArray(h.assets) || (h.memo != null && typeof h.memo !== 'string') || isNaN(new Date(h.ts).getTime())){ dropped++; return; }
+            const r = readableAssets(h.assets); dropped += r.dropped;
+            if(h.assets.length > 0 && r.assets.length === 0) return;
+            hist.push(Object.assign({}, h, { assets: r.assets }));
+          });
+        } else if(data.history != null) dropped++;
+        if(!curAssets && !(hist && hist.length)) throw new Error('ファイルの中に読めない値があります');
+        const ok = await enuConfirm('📥 データのインポート', '今のデータを、ファイルの内容で上書きします。よろしいですか？', 'インポート', 'キャンセル');
         if(!ok) return;
-        CFG.applyData(p.data);
-        showToast('📥 インポートしました');
-      }catch(err){ showToast('⚠️ ' + (err.message || 'ファイルが読み込めません'), true); }
+        userChanged(); appApplyData(Object.assign({}, data, { history: hist }), curAssets);
+        showToast(dropped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({ top:0, behavior:'smooth' });
+      }catch(err){ showToast('⚠️ ' + (err.message || 'ファイルが読み込めません')); }
     });
     input.click();
   }
+
+  /* ===== Simple share (102) ===== */
   async function handleSimpleShare(){
-    const text = CFG.appName, url = location.href;
+    const shareData = { title: CFG.appName, text: CFG.appName, url: location.href };
     try{
-      if(navigator.share){ await navigator.share({ title: CFG.appName, text: text, url: url }); }
-      else { await navigator.clipboard.writeText(text + '\n' + url); showToast('🔗 リンクをコピーしました'); }
-    }catch(e){ if(e.name !== 'AbortError') showToast('シェアできませんでした', true); }
+      if(navigator.share){ await navigator.share(shareData); }
+      else { await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
+    }catch(e){ if(e && e.name !== 'AbortError') showToast('シェアできませんでした'); }
   }
+
   function initButtons(){
-    const map = {
-      'enu-btn-print': () => window.print(),
-      'enu-btn-share2': handleSimpleShare,
-      'enu-btn-export': handleExport,
-      'enu-btn-import': handleImport
-    };
-    Object.keys(map).forEach(id => { const el = $(id); if(el) el.addEventListener('click', map[id]); });
-    const add = $('add-row'); if(add) add.addEventListener('click', addAsset);
-    const histSave = $('history-save'); if(histSave) histSave.addEventListener('click', saveSnapshot);
+    const map = { 'enu-btn-print': () => window.print(), 'enu-btn-share2': handleSimpleShare, 'enu-btn-export': handleExport, 'enu-btn-import': handleImport };
+    Object.entries(map).forEach(([id, fn]) => { const el = $(id); if(el) el.addEventListener('click', fn); });
+    $('add-row').addEventListener('click', addAsset);
+    $('save-btn').addEventListener('click', saveCurrent);
+    $('history-list').addEventListener('click', onHistoryClick);
+    $('hist-current').addEventListener('click', onHistoryClick);
   }
 
   /* ===== Start ===== */
   function start(){
-    const y = $('copyYear'); if(y) y.textContent = new Date().getFullYear();
+    applyStorageType();
+    initNotices();
+    initLegal();
+    initVersion();
+    initButtons();
+    $('copyYear').textContent = new Date().getFullYear();
     localLoad();
     if(assets.length === 0) assets = [{ name:'', amount:0, ratio:0 }];
-    historyLoad();
-    initNotices();
-    initButtons();
     render();
     renderHistory();
-    const loading = $('loading'); if(loading) loading.classList.add('hidden');
-    const app = $('app'); if(app) app.classList.remove('hidden');
   }
 
-  if(document.readyState !== 'loading') start();
-  else document.addEventListener('DOMContentLoaded', start);
+  // この script は画面の部品（表・結果のカード）のあとにあるので、待たずにすぐ表の行を作る。
+  // DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に行のない表がいったん描かれ、行が入ったときに下の部品がずれていた（320pxで 0.09）
+  start();
 })();
 </script>
 
@@ -1054,5 +1148,68 @@ body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;ba
   else document.addEventListener('DOMContentLoaded', setupPwa);
 })();
 </script>
+<!-- enu-a2hs -->
+<div class="enu-a2hs" id="enu-a2hs" role="dialog" aria-modal="true" aria-labelledby="enu-a2hs-ttl" hidden>
+  <div class="enu-a2hs-card">
+    <div class="enu-a2hs-grip" aria-hidden="true"></div>
+    <div class="enu-a2hs-row">
+      <span class="enu-a2hs-ico" aria-hidden="true">📲</span>
+      <div>
+        <div class="enu-a2hs-ttl" id="enu-a2hs-ttl">ホーム画面に置けます</div>
+        <p class="enu-a2hs-sub"><span class="nb">アイコンからすぐ開けて、</span><span class="nb">全画面で使えます。</span></p>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-ios" hidden><li>下の「共有」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-android" hidden><li>右上の「︙」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+      </div>
+    </div>
+    <div class="enu-a2hs-btns">
+      <button type="button" class="enu-a2hs-later" id="enu-a2hs-later">あとで</button>
+      <button type="button" class="enu-a2hs-go" id="enu-a2hs-go">わかりました</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ホーム画面の案内（2回目に開いたときだけ・スマホだけ） */
+(function(){
+  var P='enu_portfolio';
+  var box=document.getElementById('enu-a2hs'); if(!box) return;
+  function get(k){ try{ return localStorage.getItem(P+k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(P+k,v); }catch(e){} }
+  var standalone=(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  var iOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var touch=(navigator.maxTouchPoints||0)>0 && window.innerWidth<900;
+  var prompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); prompt=e; });
+  // 開いた回数（同じ回の読み直しでは増やさない）
+  var opens=parseInt(get('_opens')||'0',10); if(!isFinite(opens)) opens=0;
+  var counted=false; try{ counted=!!sessionStorage.getItem(P+'_counted'); }catch(e){}
+  if(!counted){ opens+=1; set('_opens',String(opens)); try{ sessionStorage.setItem(P+'_counted','1'); }catch(e){} }
+  var go=document.getElementById('enu-a2hs-go'), later=document.getElementById('enu-a2hs-later');
+  function close(){ box.hidden=true; }
+  function laterFn(){ set('_a2hs_hide',String(Date.now()+14*24*60*60*1000)); close(); }   // 2週間ほど出さない
+  function done(){ set('_a2hs_hide',String(Date.now()+3650*24*60*60*1000)); close(); }
+  function show(){
+    var ios=document.getElementById('enu-a2hs-ios'), an=document.getElementById('enu-a2hs-android');
+    if(prompt && !iOS){
+      ios.hidden=true; an.hidden=true; go.textContent='ホーム画面に置く';
+      go.onclick=function(){ try{ prompt.prompt(); prompt.userChoice.then(done,done); }catch(e){ done(); } prompt=null; };
+    }else{
+      ios.hidden=!iOS; an.hidden=iOS; go.textContent='わかりました'; go.onclick=done;
+    }
+    later.onclick=laterFn;
+    box.onclick=function(e){ if(e.target===box) laterFn(); };
+    box.hidden=false;
+  }
+  function maybe(){
+    if(standalone || !touch || opens<2) return;
+    var until=parseInt(get('_a2hs_hide')||'0',10);
+    if(isFinite(until) && Date.now()<until) return;
+    setTimeout(show,1200);
+  }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !box.hidden) laterFn(); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(maybe,600); });
+  else setTimeout(maybe,600);
+})();
+</script>
+<!-- /enu-a2hs -->
 </body>
 </html>
