@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="9つの質問に答えるだけで、NISAの2つの枠（つみたて投資枠・成長投資枠）の使い分けタイプを診断する参考コンテンツです。">
-<title>NISA枠 使い分け診断</title>
+<title>NISA枠使い分け診断</title>
 
 <!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
 <meta name="theme-color" content="#f8f6fa">
@@ -21,246 +21,269 @@
 <style>
   /* ===== カラーパレット：04 ラベンダー ===== */
   :root{
-    --primary:        #B5A8C5;
-    --primary-light:  #E3DDED;
-    --primary-dark:   #8B7BA0;
-    --primary-soft:   #EFECF5;
-    --accent:         #A296B4;
-    --bg:             #f8f6fa;
-    --bg-soft:        #fbfafd;
-    --line:           #e3dfeb;
-    --card:           #fff;
-    --text:           #2C2A24;
-    --sub:            #7A756B;
+    --primary:#B5A8C5; --primary-light:#E3DDED; --primary-dark:#8B7BA0;
+    --primary-soft:#EFECF5; --accent:#A296B4;
+    --bg:#f8f6fa; --bg-soft:#fbfafd; --line:#e3dfeb;
+    --card:#fff; --text:#2C2A24; --sub:#7A756B;
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
-
-  html,body{ height:100%; }
+  /* ===== 診断アプリ共通（リスク許容度・NISA枠・クレカでそろえる） ===== */
+  *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-    color:var(--text);
-    background:var(--bg);
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-    padding:
-      max(16px, env(safe-area-inset-top))
-      max(16px, env(safe-area-inset-right))
-      max(24px, env(safe-area-inset-bottom))
-      max(16px, env(safe-area-inset-left));
+    background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;
+    padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+            max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
   }
+  .page-wrapper{max-width:960px;margin:0 auto;width:100%}
+  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
+  .hidden{display:none !important}
 
-  .wrap{
-    width:100%;
-    max-width:720px;
-    margin:0 auto;
-    display:flex;
-    flex-direction:column;
-    min-height:100%;
-  }
+  /* ヘッダー（質問・結果の画面） */
+  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+  .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
+  .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
 
-  /* ===== ヘッダー（診断・結果画面で表示） ===== */
-  .app-header{ text-align:center; padding:18px 0 6px; }
-  .app-header .badge{
-    display:inline-block; font-size:0.72rem; font-weight:600; letter-spacing:.08em;
-    color:var(--primary-dark); background:var(--primary-soft);
-    border-radius:999px; padding:4px 14px; margin-bottom:10px;
-  }
-  .app-header h1{ color:var(--primary-dark); font-size:1.5rem; font-weight:700; letter-spacing:.02em; }
-  .app-header h1 .sub{ display:block; font-size:0.86rem; font-weight:600; color:var(--sub); margin-top:6px; letter-spacing:.04em; }
+  /* 最初のページ（表紙型・004） */
+  .cover{max-width:480px;margin:0 auto}
+  .cover-hero{text-align:center;padding:8px 0 0}
+  .cover-icon{width:84px;height:84px;font-size:40px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+  .cover-title{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.4;margin-bottom:6px}
+  .cover-sub{font-size:.875rem;color:var(--text);margin-bottom:14px;text-wrap:balance}
+  /* 375px 以上は1行のまま。Webフォントが届く前の字（少し幅が広い）だと 375px でぎりぎり2行に折れ、届いたとき1行に戻って下の部品がずれていた */
+  @media (min-width:375px){.cover-sub{white-space:nowrap}}
+  .cover-facts{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 14px;font-size:.75rem;color:var(--sub);margin-bottom:16px}
+  .cover .card{margin:0}  /* ❓⏱ → カード 16px（.cover-facts の下の余白）・カード → 💾 8px */
+  .plain-list{list-style:none}
+  .plain-list li{display:flex;gap:10px;font-size:.875rem}  /* 区切り線なし・項目の間 8px */
+  .plain-list li + li{margin-top:8px}
+  .cover-note{font-size:.75rem;color:var(--sub);margin-top:12px;text-align:center}
+  .cover-start{margin-top:16px}  /* カード → 診断をはじめる 16px・前回の結果 mt8・💾の1行 mt12 */
 
-  /* ===== ウェルカム共通シェル ===== */
-  .welcome-screen{ text-align:center; padding-top:8px; }
-  .welcome-icon{
-    width:88px; height:88px; border-radius:50%;
-    background:linear-gradient(135deg, var(--primary-light), var(--primary));
-    display:flex; align-items:center; justify-content:center;
-    font-size:42px; line-height:1; margin:8px auto 16px;
-    box-shadow:0 6px 18px rgba(139,123,160,.28);
-  }
-  .welcome-title{ font-size:1.75rem; font-weight:700; color:var(--primary-dark); letter-spacing:.02em; }
-  .welcome-tagline{ font-size:0.95rem; color:var(--sub); margin-top:8px; }
-  .welcome-card{
-    max-width:440px; margin:20px auto 0;
-    background:var(--card); border:1px solid var(--line);
-    border-radius:14px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); text-align:left;
-  }
-  .welcome-card h3{ font-size:0.95rem; color:var(--primary-dark); margin-bottom:12px; text-align:center; }
-  .welcome-features{ list-style:none; display:flex; flex-direction:column; gap:10px; }
-  .welcome-features li{
-    display:flex; gap:10px; align-items:flex-start; font-size:0.88rem;
-    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
-  }
-  .welcome-features li .fi{ flex:0 0 auto; }
-  .welcome-actions{ max-width:440px; margin:0 auto; }
+  /* カード */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px}
+  .note-text{font-size:.875rem}
+  .note-text + .note-text{margin-top:8px}
 
-  /* === Notice（101 正規仕様） === */
-  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+  /* ボタン */
+  .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:6px;font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
+  .btn-fill{background:var(--primary);color:#fff}
+  .btn-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .btn-line{background:transparent;color:var(--primary-dark)}
+  .btn-line:hover{background:var(--primary-soft)}
+  .btn-plain{background:transparent;color:var(--sub);border-color:var(--sub)}  /* サブボタン（004 5-1-2） */
+  .btn-plain:hover{color:var(--primary-dark);border-color:var(--primary-dark)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-block{display:flex;width:100%}
+  .btn-lg{font-size:1rem;padding:12px}
+  .mt8{margin-top:8px}
+  button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+  /* 質問 */
+  .progress-head{display:flex;justify-content:space-between;align-items:baseline;font-size:.75rem;color:var(--sub);margin-bottom:8px;font-weight:600}
+  .progress-track{height:8px;background:var(--primary-light);border-radius:999px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--primary);border-radius:999px;width:0}
+  .q-text{font-size:1rem;font-weight:700;margin:16px 0 12px;line-height:1.6}
+  .opt-list{display:flex;flex-direction:column;gap:8px}
+  .opt{text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
+  .opt:hover{border-color:var(--primary)}
+  .opt .dot{flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--primary)}
+  .opt.selected{border-color:var(--primary);background:var(--primary-soft)}
+  .opt.selected .dot{background:var(--primary);box-shadow:inset 0 0 0 3px var(--primary-soft)}
+  .q-nav{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:16px}
+  .q-foot{text-align:center;margin-top:16px}
+
+  /* 結果 */
+  .result-head{text-align:center}
+  .result-emoji{font-size:40px;line-height:1}
+  .result-label{font-size:.75rem;font-weight:600;color:var(--sub);margin-top:8px}
+  .result-type{font-size:1.375rem;font-weight:700;color:var(--primary-dark);margin:4px 0 0;line-height:1.4}
+  .result-meter{margin:16px 0 0}
+  .meter-row{display:flex;justify-content:space-between;gap:8px;font-size:.75rem;color:var(--sub);margin-bottom:6px;font-weight:600}
+  .meter-track{height:10px;border-radius:999px;background:var(--primary-light);position:relative;overflow:hidden}
+  .meter-fill{position:absolute;top:0;left:0;height:100%;background:var(--primary);border-radius:999px}
+  .result-comment{font-size:.875rem;margin-top:16px}
+  .result-sub{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:.875rem}
+  .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
+  .saved-at{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .result-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+
+  /* PDF / 印刷・シェア（102 B4） */
+  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-fill{background:var(--primary);color:#fff}
+  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .enu-tb-line{background:transparent;color:var(--primary-dark)}
+  .enu-tb-line:hover{background:var(--primary-soft)}
+  .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
+  .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* 📎 参照リンク（004） */
+  .enu-refs{margin:24px 0 0}
+  .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+  .enu-refs summary::-webkit-details-marker{display:none}
+  .enu-refs summary::after{content:" ▸";color:var(--sub);font-weight:400}
+  .enu-refs[open] summary::after{content:" ▾"}
+  .enu-refs-n{font-weight:400;color:var(--sub);font-size:.875rem}
+  .enu-refs ul{margin:8px 0 0;padding-left:1.2em;font-size:.875rem}
+  .enu-refs li{margin-bottom:6px}
+  .enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+  .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
+
+  /* フッター（004） */
+  .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
+  .brand-link:hover{color:var(--primary-dark)}
+  .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
+  .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a:hover{color:var(--primary-dark)}
+  .footer-legal span{margin:0 4px;opacity:.6}
+  .footer-ver{margin-left:8px;white-space:nowrap}
+
+  /* === enu 注意書きカード（101）=== */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
   .enu-notice-wrap{width:100%}
   .enu-notice-wrap.is-mini{width:auto}
   .enu-notice-wrap > .enu-notice{display:flex}
   .enu-notice-wrap > .enu-notice-mini{display:none}
   .enu-notice-wrap.is-mini > .enu-notice{display:none}
   .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
-  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
   .enu-notice .enu-body{flex:1;min-width:0}
-  .enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
   .enu-notice .enu-close-btn:hover{opacity:1}
-  .enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-  .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#faecec;border-color:#e8c8c8;color:#804a52}
-  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-  .enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;margin-left:2px}
-  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:box-shadow .15s}
+  .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
-  /* ===== コンテンツカード ===== */
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); margin:14px 0;
+  @media (max-width:650px){
+    .app-title{font-size:1.25rem}
+    .app-sub{font-size:.6875rem}
   }
-  .screen{ animation:fade .35s ease; }
-  @keyframes fade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
-
-  /* ===== ボタン ===== */
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:0.95rem;
-    border-radius:999px; padding:12px 26px;
-    transition:background .18s, color .18s, border-color .18s, filter .18s, transform .08s;
+  @media print{
+    body{background:#fff;padding:0}
+    .enu-notice-area,.footer-legal,.page-actions,.result-actions,.q-foot,.enu-refs,.enu-toast{display:none !important}
+    .card{break-inside:avoid}
+    /* メーター・進み具合の棒は、背景の印刷がオフでも出す（色を保つ＋線で描く） */
+    .meter-track,.meter-fill,.progress-track,.progress-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .meter-track{border:1px solid var(--primary)}
+    .meter-fill{height:0;border-top:8px solid var(--primary)}
   }
-  .btn:active{ transform:scale(.98); }
-  .btn-primary{ background:var(--primary); color:#fff; }
-  .btn-primary:hover{ background:var(--primary-dark); }
-  .btn-soft{ background:var(--primary-soft); color:var(--primary-dark); }
-  .btn-soft:hover{ background:var(--primary-light); }
-  .btn-ghost{
-    background:transparent; color:var(--sub); border:1px solid var(--sub); font-weight:600;
-    padding:7px 16px; font-size:0.75rem;
-  }
-  .btn-ghost:hover{ color:var(--primary-dark); border-color:var(--primary-dark); }
-  .btn:disabled{ opacity:.45; cursor:not-allowed; }
-  .btn-block{ display:flex; width:100%; }
 
-  .mt16{ margin-top:16px; }
-  .mt12{ margin-top:12px; }
 
-  /* ===== 進捗 ===== */
-  .progress-head{
-    display:flex; justify-content:space-between; align-items:baseline;
-    font-size:0.78rem; color:var(--sub); margin-bottom:8px; font-weight:600;
-  }
-  .progress-track{ height:8px; background:var(--primary-light); border-radius:999px; overflow:hidden; }
-  .progress-fill{ height:100%; background:var(--primary); border-radius:999px; width:0; transition:width .35s ease; }
-
-  /* ===== 設問 ===== */
-  .q-text{ font-size:1.12rem; font-weight:700; margin:18px 0 16px; line-height:1.55; }
-  .opt-list{ display:flex; flex-direction:column; gap:10px; }
-  .opt{
-    text-align:left; width:100%; background:var(--bg-soft);
-    border:1.5px solid var(--line); border-radius:12px; padding:14px 16px;
-    font-family:inherit; font-size:0.92rem; color:var(--text); cursor:pointer;
-    transition:border-color .15s, background .15s; display:flex; align-items:center; gap:12px;
-  }
-  .opt:hover{ border-color:var(--primary); }
-  .opt .dot{ flex:0 0 auto; width:18px; height:18px; border-radius:50%; border:2px solid var(--primary); position:relative; transition:.15s; }
-  .opt.selected{ border-color:var(--primary); background:var(--primary-soft); }
-  .opt.selected .dot{ background:var(--primary); box-shadow:inset 0 0 0 3px var(--primary-soft); }
-
-  .q-nav{ display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:20px; }
-
-  /* ===== 結果 ===== */
-  .result-card{ text-align:center; background:linear-gradient(160deg, var(--primary-soft), var(--card)); border:1px solid var(--primary-light); }
-  .result-emoji{ font-size:2.6rem; line-height:1; }
-  .result-label{ font-size:0.76rem; font-weight:600; color:var(--sub); letter-spacing:.1em; margin-top:10px; }
-  .result-type{ font-size:1.5rem; font-weight:700; margin:6px 0 14px; color:var(--primary-dark); }
-  .result-comment{ font-size:0.94rem; text-align:left; margin-bottom:16px; }
-  .result-howto{ text-align:left; background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:0.88rem; }
-  .ht-title{ font-weight:700; font-size:0.82rem; color:var(--primary-dark); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
-  .result-meter{ margin:18px 0 4px; }
-  .meter-row{ display:flex; justify-content:space-between; font-size:0.74rem; color:var(--sub); margin-bottom:6px; font-weight:600; }
-  .meter-track{ height:10px; border-radius:999px; background:var(--primary-light); position:relative; overflow:hidden; }
-  .meter-fill{ position:absolute; top:0; left:0; height:100%; background:var(--primary); border-radius:999px; transition:width .5s ease; }
-  .ref-note{ font-size:0.74rem; color:var(--sub); margin-top:14px; line-height:1.6; background:var(--bg-soft); border:1px dashed var(--line); border-radius:10px; padding:10px 12px; text-align:left; }
-  .result-actions{ margin-top:18px; }
-
-  /* ===== フッター ===== */
-  .app-footer{ margin-top:24px; text-align:center; }
-  .footer-home{ margin-bottom:12px; }
-  .footer-line{ border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent); margin-bottom:12px; }
-  .footer-credit a{ color:var(--sub); text-decoration:none; font-size:0.82rem; font-weight:600; }
-  .footer-credit a:hover{ color:var(--primary-dark); }
-  .footer-copy{ margin-top:8px; font-size:0.72rem; color:var(--sub); }
-
-  .hidden{ display:none !important; }
-
-  @media (max-width:480px){
-    .app-header h1{ font-size:1.25rem; }
-    .welcome-title{ font-size:1.5rem; }
-    .result-type{ font-size:1.32rem; }
-    .btn{ font-size:0.92rem; }
-  }
+/* enu-a2hs ホーム画面の案内（2回目に開いたとき・スマホだけ・下から出る） */
+.enu-a2hs{position:fixed;inset:0;z-index:1800;display:flex;align-items:flex-end;background:rgba(44,42,36,.35)}
+.enu-a2hs[hidden]{display:none}
+.enu-a2hs-card{width:100%;max-width:560px;margin:0 auto;background:var(--card);border-radius:14px 14px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));animation:enuA2hsUp .3s ease-out}
+@keyframes enuA2hsUp{from{transform:translateY(100%)}to{transform:none}}
+.enu-a2hs-grip{width:36px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.enu-a2hs-row{display:flex;gap:14px;align-items:flex-start}
+.enu-a2hs-ico{font-size:24px;line-height:1.2;flex:none}
+.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--primary-dark);line-height:1.5}
+.enu-a2hs-sub{font-size:.75rem;color:var(--sub);margin:4px 0 0;line-height:1.7}
+.enu-a2hs-steps{list-style:none;counter-reset:a;margin:12px 0 0;padding:0}
+.enu-a2hs-steps[hidden]{display:none}
+.enu-a2hs-steps li{counter-increment:a;position:relative;padding-left:24px;font-size:.75rem;line-height:1.8;color:var(--text)}
+.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.enu-a2hs-btns{display:flex;gap:10px;margin-top:16px}
+.enu-a2hs-btns button{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;padding:0 8px;font-family:inherit;font-size:.875rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.enu-a2hs-later{background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.enu-a2hs-later:hover{color:var(--primary-dark);border-color:var(--primary)}
+.enu-a2hs-go{flex-grow:1.5 !important;background:var(--primary);border:1px solid var(--primary);color:#fff}
+.enu-a2hs-go:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.enu-a2hs .nb{display:inline-block}
+@media print{.enu-a2hs{display:none !important}}
+/* /enu-a2hs */
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page-wrapper">
 
-  <!-- ヘッダー（ウェルカムでは非表示・診断/結果で表示） -->
-  <header class="app-header hidden" id="appHeader">
-    <span class="badge">NISA枠 使い分け診断</span>
-    <h1>あなたはどっち寄り？
-      <span class="sub">つみたて投資枠 × 成長投資枠 タイプ診断</span>
-    </h1>
-  </header>
-
-  <!-- 注意書きカード（101正規・ウェルカムでは非表示） -->
-  <section class="enu-notice-area hidden" id="noticeArea">
-    <!-- 🚨 免責（全アプリ共通） -->
-    <div class="enu-notice-wrap" data-notice-id="disclaim">
-      <div class="enu-notice enu-notice-disclaim">
-        <span class="enu-icon">🚨</span>
-        <span class="enu-body">この診断は、NISAの2つの枠（つみたて投資枠・成長投資枠）の使い分けの傾向を知るための参考コンテンツです。投資の助言・推奨ではありません。実際の投資判断はご自身の責任で行い、制度の最新内容（上限額・対象商品など）や個別のご判断は、金融庁・各証券会社などの公式情報や専門家にご確認ください。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
+  <!-- 最初のページ（表紙型） -->
+  <section class="cover" id="cover">
+    <div class="cover-hero">
+      <div class="cover-icon" aria-hidden="true">🧭</div>
+      <h1 class="cover-title"><span class="nb">NISA枠</span><span class="nb">使い分け診断</span></h1>
+      <p class="cover-sub"><span class="nb">つみたて投資枠 × 成長投資枠 —</span> <span class="nb">あなたはどっち寄り？</span></p>
+      <p class="cover-facts"><span>❓ 9問・選択式</span><span>⏱ 1〜2分</span></p>
     </div>
-    <!-- 💾 ローカル保存案内（ローカル時のみ） -->
-    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
-      <div class="enu-notice enu-notice-info">
-        <span class="enu-icon">💾</span>
-        <span class="enu-body">診断結果はこの端末（ブラウザ）内にのみ保存されます。Googleログインなどは不要で、すぐにお使いいただけます。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
+    <div class="card">
+      <h2 class="section-title">💡 この診断で分かること</h2>
+      <ul class="plain-list">
+        <li><span aria-hidden="true">🧭</span><span><span class="nb">あなたのタイプ</span><span class="nb">（つみたて枠寄り</span><span class="nb">／成長枠寄り）</span></span></li>
+        <li><span aria-hidden="true">📈</span><span>2つの枠のバランス</span></li>
+        <li><span aria-hidden="true">✨</span><span>枠の使い方のイメージ</span></li>
+        <li><span aria-hidden="true">📚</span><span>NISAの2つの枠とは（解説）</span></li>
+      </ul>
     </div>
-    <!-- 📚 ヘルプ導線（全アプリ共通） -->
-    <div class="enu-notice-wrap" data-notice-id="help">
-      <div class="enu-notice enu-notice-help">
-        <span class="enu-icon">📚</span>
-        <span class="enu-body">使い方や困ったときは、<a href="" class="enu-help-link" id="enu-help-link">ヘルプページ</a>をご覧ください。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
-    </div>
+    <button type="button" class="btn btn-fill btn-block btn-lg cover-start" id="start-btn">診断をはじめる</button>
+    <div id="prev-slot"></div>
+    <p class="cover-note"><span class="nb">💾 結果はこの端末に保存され、</span><span class="nb">前回の結果も見られます</span></p>
   </section>
 
-  <!-- メイン -->
-  <main id="main"></main>
+  <!-- 質問・結果の画面 -->
+  <div class="hidden" id="app-body">
+    <header class="app-header">
+      <div class="app-icon" aria-hidden="true">🧭</div>
+      <div>
+        <h1 class="app-title"><span class="nb">NISA枠</span><span class="nb">使い分け診断</span></h1>
+        <p class="app-sub"><span class="nb">あなたはどっち寄り？</span></p>
+      </div>
+    </header>
 
-  <!-- フッター -->
-  <footer class="app-footer">
-    <div class="footer-home" id="footerHome">
-      <a href="https://enu-tools.pages.dev/" class="btn btn-ghost">🏠 ホームへ戻る</a>
+    <div class="enu-notice-area">
+      <div class="enu-notice-wrap" data-notice-id="storage-local" data-storage="local">
+        <div class="enu-notice enu-notice-warn">
+          <span class="enu-icon">💾</span>
+          <span class="enu-body"><span class="nb">データは</span><span class="nb">この</span><span class="nb">ブラウザだけに</span><span class="nb">保存されます。</span><span class="nb">ブラウザの</span><span class="nb">データ削除や、</span><span class="nb">しばらく</span><span class="nb">使わなかった</span><span class="nb">とき</span><span class="nb">（Safariは約7日）に</span><span class="nb">消える</span><span class="nb">ことが</span><span class="nb">あります。</span></span>
+          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="保存の注意を表示" title="保存の注意を表示">💾</button>
+      </div>
+      <div class="enu-notice-wrap" data-notice-id="disclaimer">
+        <div class="enu-notice enu-notice-disclaim">
+          <span class="enu-icon">📝</span>
+          <span class="enu-body">結果は目安で、投資の助言ではありません（<strong>2026年10月時点</strong>）。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。</span>
+          <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
+        </div>
+        <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
+      </div>
     </div>
-    <div class="footer-line"></div>
-    <div class="footer-credit">
-      <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
+
+    <main id="main"></main>
+
+    <!-- 結果の画面だけ：PDF / 印刷・シェア -->
+    <div class="page-actions hidden" id="page-actions">
+      <button type="button" class="enu-tb-btn enu-tb-fill" id="enu-btn-print" aria-label="PDFに保存または印刷">📄 PDF / 印刷</button>
+      <button type="button" class="enu-tb-btn enu-tb-line" id="enu-btn-share2" aria-label="シェア">🔗 シェア</button>
     </div>
-    <div class="footer-copy" id="footerCopy"></div>
-  </footer>
+
+    <!-- 結果の画面だけ：参照リンク（004） -->
+    <details class="enu-refs hidden" id="refs">
+      <summary>📎 参照リンク<span class="enu-refs-n">（2件）</span></summary>
+      <ul>
+        <li><a href="https://www.fsa.go.jp/policy/nisa2/know/" target="_blank" rel="noopener">NISAを知る</a><span class="enu-refs-src">金融庁</span></li>
+        <li><a href="https://www.mof.go.jp/tax_policy/summary/income/nisa_2.pdf" target="_blank" rel="noopener">NISAのつみたて投資枠の拡充<span class="nb">（令和8年度改正）</span></a><span class="enu-refs-src">財務省</span></li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="app-footer">
+    <div class="footer-divider"></div>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
+    <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
+  </div>
 
 </div>
+
+<div class="enu-toast" id="enu-toast" role="status"></div>
 
 <script>
 (function(){
@@ -268,17 +291,40 @@
 
   /* ===== ENU_CONFIG ===== */
   var ENU_CONFIG = {
-    appId:          'nisa-waku-judge',
-    appName:        'NISA枠 使い分け診断',
-    dataVersion:    1,
-    storageType:    'local',
-    helpUrl:        'https://enu-tools.pages.dev/help/',
-    helpOpenNewTab: true
+    appId:'nisa-waku-judge', appName:'NISA枠使い分け診断', appVersion:'1.0.0', storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION
   };
   var CFG = ENU_CONFIG;
   var ICON_EMOJI = '🧭';
+  window.enuTools = window.enuTools || {};
+  function _key(suffix){ return 'enu_' + CFG.appId + '_' + suffix; }
+  // 文を意味の切れ目（助詞・句読点・かっこ・＋・「・」）で <span class="nb"> に区切り、言葉の途中で改行しないようにする（004「改行」）
+  var NB_AFTER = '、。／）」！？・', NB_PARTICLE = 'がをにでとはもへや', NB_BEFORE = '（「＋', NB_NOSTART = '、。）」！？・ー';
+  function nbFill(node, text){
+    var chars = Array.from(text), cur = '';
+    function push(){ if(cur){ node.appendChild(el('span', { class:'nb', text:cur })); cur = ''; } }
+    chars.forEach(function(c, i){
+      if(c === '|'){ push(); return; } // 「|」は、ここで区切る印（画面には出さない）
+      if(NB_BEFORE.indexOf(c) !== -1 && cur.trim()) push();
+      cur += c;
+      var next = chars[i+1];
+      if(!next || next === '|') return;
+      if(NB_AFTER.indexOf(c) !== -1 && NB_NOSTART.indexOf(next) === -1){ push(); return; }
+      // 助詞のあと／長いまとまり（終わりのひらがなが2字以上）の、ひらがな→漢字・カタカナの境目。「お金」「買い物」「積み立て」のような所では切らない
+      var hiraRun = (cur.match(/[\u3041-\u309F]+$/) || [''])[0].length;
+      var hiraEnd = /[\u3041-\u309F]/.test(c) && 'おご'.indexOf(c) === -1 && (NB_PARTICLE.indexOf(c) !== -1 || (Array.from(cur).length >= 5 && hiraRun >= 2));
+      if(hiraEnd && !/[\u3041-\u309F]/.test(next) && NB_NOSTART.indexOf(next) === -1 && NB_BEFORE.indexOf(next) === -1) push();
+    });
+    push();
+    return node;
+  }
+  function typeTitle(cls, text){ return nbFill(el('h2', { class:cls }), text); }
 
   /* ===== DOMヘルパー（innerHTML不使用） ===== */
+  // 「600万円」のような金額・「0〜17歳」「18歳」・「非課税」を、言葉の途中で折り返さない（.nb でひとまとまりに）
+  function nbYen(s){
+    return String(s).split(/(\d[\d,]*万円|\d+(?:〜\d+)?歳|非課税)/).map(function(x, i){ return i % 2 ? el('span', { class:'nb', text:x }) : document.createTextNode(x); });
+  }
   function el(tag, opts, children){
     var node = document.createElement(tag);
     opts = opts || {};
@@ -289,20 +335,24 @@
     if(children){ children.forEach(function(c){ if(c) node.appendChild(c); }); }
     return node;
   }
-  function _key(suffix){ return 'enu_' + CFG.appId + '_' + suffix; }
 
-  var appHeader = document.getElementById('appHeader');
-  var noticeArea = document.getElementById('noticeArea');
+  var cover = document.getElementById('cover');
+  var appBody = document.getElementById('app-body');
+  var pageActions = document.getElementById('page-actions');
+  var refs = document.getElementById('refs');
   var main = document.getElementById('main');
 
-  var footerHome = document.getElementById('footerHome');
-  function showChrome(show){
-    if(appHeader)  appHeader.classList.toggle('hidden', !show);
-    if(noticeArea) noticeArea.classList.toggle('hidden', !show);
-    if(footerHome) footerHome.classList.toggle('hidden', !show);
+  // 画面の切りかえ：cover（最初のページ）／quiz（質問）／result（結果）
+  function setScreen(name){
+    cover.classList.toggle('hidden', name !== 'cover');
+    appBody.classList.toggle('hidden', name === 'cover');
+    pageActions.classList.toggle('hidden', name !== 'result');
+    refs.classList.toggle('hidden', name !== 'result');
+    while(main.firstChild) main.removeChild(main.firstChild);
+    window.scrollTo(0, 0);
   }
 
-  /* ===== 設問データ（やさしい言葉に統一・タイトルに絵文字） ===== */
+  /* ===== 設問データ ===== */
   var QUESTIONS = [
     {
       q:'📖 投資の経験はどのくらいですか？',
@@ -332,7 +382,7 @@
       ]
     },
     {
-      q:'💴 毎月、投資に回せそうな金額のイメージは？',
+      q:'📊 毎月、投資に回せそうな金額のイメージは？',
       opts:[
         { t:'月1万円以下', s:0 },
         { t:'月1万円超〜3万円', s:1 },
@@ -353,7 +403,7 @@
       q:'🛟 投資とは別に、生活費の貯金（生活防衛資金）はある？',
       opts:[
         { t:'まだ準備中／これから貯めたい', s:0 },
-        { t:'数ヶ月分はある', s:1 },
+        { t:'数か月分はある', s:1 },
         { t:'半年〜1年分は確保している', s:2 },
         { t:'1年分以上しっかり確保してある', s:3 }
       ]
@@ -387,7 +437,7 @@
     }
   ];
 
-  /* ===== 結果タイプ ===== */
+  /* ===== 結果タイプ（score 0〜27 の4段階） ===== */
   var RESULT_TYPES = [
     {
       min:0, max:7, emoji:'🌱', type:'つみたて枠コツコツ型', growth:15,
@@ -411,6 +461,7 @@
     }
   ];
 
+  var MAX_SCORE = QUESTIONS.reduce(function(sum, q){ return sum + Math.max.apply(null, q.opts.map(function(o){ return o.s; })); }, 0); // 27
   function typeFromScore(score){
     for(var i=0;i<RESULT_TYPES.length;i++){
       if(score >= RESULT_TYPES[i].min && score <= RESULT_TYPES[i].max) return RESULT_TYPES[i];
@@ -420,60 +471,41 @@
 
   /* ===== 状態 ===== */
   var state = { qIndex:0, answers:new Array(QUESTIONS.length).fill(null) };
-  var lastResult = null;
 
-  /* ===== localStorage（前回結果） ===== */
-  var STORE_KEY = _key('lastResult');
-  function saveResult(score, typeObj){
-    try{
-      localStorage.setItem(STORE_KEY, JSON.stringify({ score:score, type:typeObj.type, at:new Date().toISOString(), v:CFG.dataVersion }));
-    }catch(e){ /* プライベートモード等。動作は継続 */ }
+  /* ===== 保存の形（版1・004「すでに使っている人に影響を出さない」） ===== */
+  // キー：enu_nisa-waku-judge_result ／ 中身：{ v:1, data:{ score, type, at } }（最後の診断結果だけ）
+  var DATA_VERSION = 1;
+  function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
+    if(!saved || typeof saved !== 'object' || saved.v == null) return null;
+    return saved.data;
   }
+  // 読み込みに失敗したら、元を「…_broken」に取っておく（保存はユーザーが診断・記録・削除などをしたときだけなので、それまで上書きしない）
+  function loadStore(name){
+    var raw = null;
+    try{ raw = localStorage.getItem(_key(name)); }catch(e){ return null; }
+    if(raw == null) return null;
+    var data = null;
+    try{ data = migrate(JSON.parse(raw)); }catch(e){ data = null; }
+    if(data == null){ try{ localStorage.setItem(_key(name) + '_broken', raw); }catch(e){} }
+    return data;
+  }
+  function saveStore(name, data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){ /* プライベートモード等。動作は継続 */ } }
+  function saveResult(score, typeObj){ saveStore('result', { score:score, type:typeObj.type, at:new Date().toISOString() }); }
   function loadResult(){
-    try{
-      var raw = localStorage.getItem(STORE_KEY);
-      if(!raw) return null;
-      var d = JSON.parse(raw);
-      if(!d || typeof d.score !== 'number') return null;
-      return d;
-    }catch(e){ return null; }
+    var d = loadStore('result');
+    if(!d || !Number.isInteger(d.score) || d.score < 0 || d.score > MAX_SCORE) return null; // 範囲外（0〜27以外）は読まない
+    return d;
   }
 
-  function clearMain(){ while(main.firstChild) main.removeChild(main.firstChild); }
-
-  /* ===== ウェルカム（注意書き・ヘッダー非表示） ===== */
-  function renderWelcome(){
-    showChrome(false);
-    clearMain();
-
-    var screen = el('div', { class:'welcome-screen screen' });
-    screen.appendChild(el('div', { class:'welcome-icon', text:ICON_EMOJI }));
-    screen.appendChild(el('div', { class:'welcome-title', text:'NISA枠 使い分け診断' }));
-    screen.appendChild(el('div', { class:'welcome-tagline', text:'つみたて投資枠 × 成長投資枠 — あなたはどっち寄り？9問で診断します。' }));
-
-    var card = el('div', { class:'welcome-card' });
-    card.appendChild(el('h3', { text:'この診断でできること' }));
-    var feats = [
-      ['📝', '9問の選択式。1〜2分で完了します'],
-      ['🧭', 'つみたて枠／成長枠のバランスの考え方が分かる'],
-      ['🪪', '結果はタイプ名つきのカードで表示されます'],
-      ['💾', '診断結果はこの端末に保存。前回の結果もすぐ見られます']
-    ];
-    var ul = el('ul', { class:'welcome-features' });
-    feats.forEach(function(f){
-      ul.appendChild(el('li', {}, [ el('span', { class:'fi', text:f[0] }), el('span', { text:f[1] }) ]));
-    });
-    card.appendChild(ul);
-    screen.appendChild(card);
-
-    var actions = el('div', { class:'welcome-actions' });
-    actions.appendChild(el('button', { class:'btn btn-primary btn-block mt16', text:'診断をはじめる', attrs:{ type:'button' }, on:{ click:startQuiz } }));
+  /* ===== 最初のページ ===== */
+  function renderCover(){
+    setScreen('cover');
+    var slot = document.getElementById('prev-slot');
+    while(slot.firstChild) slot.removeChild(slot.firstChild);
     var prev = loadResult();
     if(prev){
-      actions.appendChild(el('button', { class:'btn btn-soft btn-block mt12', text:'前回の結果を見る（' + prev.type + '）', attrs:{ type:'button' }, on:{ click:function(){ showSavedResult(prev); } } }));
+      slot.appendChild(el('button', { class:'btn btn-line btn-block mt8', attrs:{ type:'button' }, on:{ click:function(){ showSavedResult(prev); } } }, [ nbFill(el('span'), '前回の結果を見る（' + typeFromScore(prev.score).type + '）') ]));
     }
-    screen.appendChild(actions);
-    main.appendChild(screen);
   }
 
   /* ===== 診断 ===== */
@@ -484,22 +516,26 @@
   }
 
   function renderQuestion(){
-    showChrome(true);
-    clearMain();
+    setScreen('quiz');
     var idx = state.qIndex;
     var q = QUESTIONS[idx];
-    var card = el('div', { class:'card screen' });
+    var card = el('div', { class:'card' });
 
-    var pct = Math.round((idx/QUESTIONS.length)*100);
+    // 進み具合は、答えた質問の数で決める（戻っても減らない。最後の質問で選ぶと100%）
+    var pctText = el('span');
+    var fill = el('div', { class:'progress-fill' });
+    function updateProgress(){
+      var pct = Math.round((state.answers.filter(function(a){ return a !== null; }).length/QUESTIONS.length)*100);
+      pctText.textContent = pct + '%'; fill.style.width = pct + '%';
+    }
     card.appendChild(el('div', { class:'progress-head' }, [
       el('span', { text:'質問 ' + (idx+1) + ' / ' + QUESTIONS.length }),
-      el('span', { text:pct + '%' })
+      pctText
     ]));
-    var fill = el('div', { class:'progress-fill' });
-    fill.style.width = pct + '%';            // ← 生成時に確定。選択時は触らない（ちらつき防止）
     card.appendChild(el('div', { class:'progress-track' }, [ fill ]));
+    updateProgress();
 
-    card.appendChild(el('div', { class:'q-text', text:q.q }));
+    card.appendChild(nbFill(el('h2', { class:'q-text' }), q.q));
 
     var optButtons = [];
     var nextBtn;
@@ -510,7 +546,8 @@
         b.classList.toggle('selected', sel);
         b.setAttribute('aria-pressed', sel ? 'true' : 'false');
       });
-      if(nextBtn) nextBtn.disabled = false;     // ← 再描画せず、その場で更新
+      if(nextBtn) nextBtn.disabled = false;
+      updateProgress();
     }
 
     var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':q.q } });
@@ -520,18 +557,22 @@
         class:'opt' + (sel ? ' selected' : ''),
         attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
         on:{ click:function(){ selectAt(oi); } }
-      }, [ el('span', { class:'dot' }), el('span', { text:opt.t }) ]);
+      }, [ el('span', { class:'dot' }), nbFill(el('span'), opt.t) ]);
       optButtons.push(btn);
       list.appendChild(btn);
     });
     card.appendChild(list);
 
-    var backBtn = el('button', { class:'btn btn-ghost', text:'← 戻る', attrs:{ type:'button' }, on:{ click:goBack } });
+    var backBtn = el('button', { class:'btn btn-plain', text:'← 戻る', attrs:{ type:'button' }, on:{ click:goBack } });
     if(idx === 0) backBtn.disabled = true;
     var isLast = idx === QUESTIONS.length - 1;
-    nextBtn = el('button', { class:'btn btn-primary', text:isLast ? '結果を見る' : '次へ →', attrs:{ type:'button' }, on:{ click:goNext } });
+    nextBtn = el('button', { class:'btn btn-fill', text:isLast ? '結果を見る' : '次へ →', attrs:{ type:'button' }, on:{ click:goNext } });
     nextBtn.disabled = state.answers[idx] === null;
     card.appendChild(el('div', { class:'q-nav' }, [ backBtn, nextBtn ]));
+
+    card.appendChild(el('div', { class:'q-foot' }, [
+      el('button', { class:'btn btn-plain', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderCover } })
+    ]));
 
     main.appendChild(card);
   }
@@ -557,93 +598,109 @@
   function showSavedResult(prev){ renderResult(typeFromScore(prev.score), true, prev.at); }
 
   function renderResult(typeObj, fromSaved, savedAt){
-    showChrome(true);
-    clearMain();
-    lastResult = typeObj;
+    setScreen('result');
 
-    var card = el('div', { class:'card result-card screen' });
-    card.appendChild(el('div', { class:'result-emoji', text:typeObj.emoji }));
-    card.appendChild(el('div', { class:'result-label', text:'あなたのタイプは' }));
-    card.appendChild(el('div', { class:'result-type', text:typeObj.type }));
+    var card = el('div', { class:'card' });
+    card.appendChild(el('div', { class:'result-head' }, [
+      el('div', { class:'result-emoji', text:typeObj.emoji, attrs:{ 'aria-hidden':'true' } }),
+      el('div', { class:'result-label', text:'あなたのタイプは' }),
+      typeTitle('result-type', typeObj.type)
+    ]));
 
-    var meter = el('div', { class:'result-meter' }, [
+    var fill = el('div', { class:'meter-fill' });
+    fill.style.width = typeObj.growth + '%';
+    card.appendChild(el('div', { class:'result-meter' }, [
       el('div', { class:'meter-row' }, [ el('span', { text:'つみたて枠寄り' }), el('span', { text:'成長枠寄り' }) ]),
-      el('div', { class:'meter-track' }, [ el('div', { class:'meter-fill' }) ])
-    ]);
-    card.appendChild(meter);
+      el('div', { class:'meter-track' }, [ fill ])
+    ]));
 
     card.appendChild(el('p', { class:'result-comment', text:typeObj.comment }));
-    card.appendChild(el('div', { class:'result-howto' }, [
-      el('div', { class:'ht-title' }, [ el('span', { text:'🧭' }), el('span', { text:'枠の使い方イメージ（参考）' }) ]),
-      el('div', { text:typeObj.howto })
+    card.appendChild(el('div', { class:'result-sub' }, [
+      nbFill(el('h3', { class:'sub-title' }), '✨ 枠の使い方のイメージ（参考）'),
+      el('p', { text:typeObj.howto })
     ]));
-    if(fromSaved && savedAt){
-      card.appendChild(el('div', { class:'result-label', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
+    if(fromSaved && formatDate(savedAt)){
+      card.appendChild(el('p', { class:'saved-at', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
     }
+    card.appendChild(el('div', { class:'result-actions' }, [
+      el('button', { class:'btn btn-fill', text:'もう一度診断する', attrs:{ type:'button' }, on:{ click:startQuiz } }),
+      el('button', { class:'btn btn-line', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderCover } })
+    ]));
     main.appendChild(card);
 
-    main.appendChild(el('div', { class:'card screen' }, [
-      el('div', { class:'ht-title', text:'📌 NISAの2つの枠（参考）' }),
-      el('div', { class:'ref-note', text:
-        'つみたて投資枠：年間120万円／成長投資枠：年間240万円（合計 年間最大360万円）。生涯の非課税保有限度額は総枠1,800万円（うち成長投資枠は1,200万円まで）。'
-        + 'これらは参考値です。上限額・対象商品・対象年齢などの制度内容は改正されることがあるため、最新情報は金融庁や各証券会社の公式サイトで必ずご確認ください。投資はご自身の判断・責任で。'
-      })
+    main.appendChild(el('div', { class:'card' }, [
+      nbFill(el('h2', { class:'section-title' }), '📚 NISAの2つの枠とは（解説）'),
+      el('p', { class:'note-text', text:'つみたて投資枠：長期の積立・分散に向く、条件を満たした投資信託を買える枠です（年間120万円）。' }),
+      el('p', { class:'note-text', text:'成長投資枠：上場株式や投資信託など、選べる商品が広い枠です（年間240万円）。' }),
+      el('p', { class:'note-text', text:'合計 年間最大360万円。生涯の非課税保有限度額は総枠1,800万円（うち成長投資枠は1,200万円まで）。' }),
+      el('p', { class:'note-text' }, nbYen('こどもNISA（通称）：2027年から、0〜17歳もつみたて投資枠を使えます。年60万円・非課税で持てるのは600万円まで、18歳で通常のNISAに移ります。'))
     ]));
 
-    main.appendChild(el('div', { class:'result-actions' }, [
-      el('button', { class:'btn btn-primary btn-block', text:'もう一度診断する', attrs:{ type:'button' }, on:{ click:startQuiz } }),
-      el('button', { class:'btn btn-ghost btn-block mt12', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderWelcome } })
-    ]));
-
-    requestAnimationFrame(function(){
-      var f = meter.querySelector('.meter-fill');
-      if(f) f.style.width = typeObj.growth + '%';
-    });
   }
 
   function formatDate(iso){
-    try{ var d = new Date(iso); return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate(); }
-    catch(e){ return ''; }
+    var d = new Date(iso);
+    return (typeof iso === 'string' && !isNaN(d)) ? d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() : '';
   }
 
-  /* ===== 注意書きカード（101正規JS） ===== */
+  /* ===== Toast・シェア（102 簡易シェア） ===== */
+  function showToast(msg){
+    var t = document.getElementById('enu-toast'); if(!t) return;
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(showToast._t); showToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+  window.enuTools.toast = showToast;
+  async function handleSimpleShare(){
+    var shareData = { title:CFG.appName, text:CFG.appName, url:location.href };
+    try{
+      if(navigator.share){ await navigator.share(shareData); }
+      else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
+    }catch(e){ if(e && e.name !== 'AbortError') showToast('シェアできませんでした'); }
+  }
+  function initButtons(){
+    document.getElementById('enu-btn-print').addEventListener('click', function(){ window.print(); });
+    document.getElementById('enu-btn-share2').addEventListener('click', handleSimpleShare);
+    document.getElementById('start-btn').addEventListener('click', startQuiz);
+  }
+
+  /* ===== 注意書きカード（101） ===== */
   function applyStorageType(){
     var type = CFG.storageType || 'local';
-    var wraps = document.querySelectorAll('.enu-notice-wrap[data-storage]');
-    for(var i=0;i<wraps.length;i++){
-      if(wraps[i].getAttribute('data-storage') !== type) wraps[i].style.display = 'none';
-    }
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(function(w){ if(w.dataset.storage !== type) w.style.display = 'none'; });
   }
   function initNotices(){
     var K = _key('notice_minimized');
     var get = function(){ try{ return JSON.parse(localStorage.getItem(K) || '[]'); }catch(e){ return []; } };
     var set = function(l){ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
-    var help = document.getElementById('enu-help-link');
-    if(help){ help.href = CFG.helpUrl || '#'; if(CFG.helpOpenNewTab !== false){ help.target = '_blank'; help.rel = 'noopener'; } }
     var list = get();
-    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){
-      if(list.indexOf(w.dataset.noticeId) !== -1) w.classList.add('is-mini');
-    });
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){ if(list.indexOf(w.dataset.noticeId) !== -1) w.classList.add('is-mini'); });
     document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(function(b){
       b.addEventListener('click', function(){
-        var w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
-        w.classList.add('is-mini');
+        var w = b.closest('.enu-notice-wrap'), id = w.dataset.noticeId; w.classList.add('is-mini');
         var l = get(); if(l.indexOf(id) === -1){ l.push(id); set(l); }
       });
     });
     document.querySelectorAll('.enu-notice-mini').forEach(function(m){
       m.addEventListener('click', function(){
-        var w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId;
-        w.classList.remove('is-mini');
+        var w = m.closest('.enu-notice-wrap'), id = w.dataset.noticeId; w.classList.remove('is-mini');
         set(get().filter(function(x){ return x !== id; }));
       });
     });
   }
 
-  /* ===== フッターのコピーライト ===== */
-  function setupFooter(){
-    var copy = document.getElementById('footerCopy');
-    if(copy) copy.textContent = '© ' + new Date().getFullYear() + ' enu(エヌ) All rights reserved.';
+  /* ===== フッター：免責事項・プライバシーポリシー・ヘルプ・バージョン（004） ===== */
+  var ENU_LEGAL_URLS = {
+    disclaimer:'https://enu-tools.pages.dev/desk/disclaimer/',
+    privacy:'https://enu-tools.pages.dev/desk/privacy/'
+  };
+  function initVersion(){ var v = document.getElementById('appVersion'); if(v && CFG.appVersion) v.textContent = 'ver.' + CFG.appVersion; }
+  function initLegal(){
+    var urls = {
+      disclaimer: CFG.disclaimerUrl || ENU_LEGAL_URLS.disclaimer,
+      privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy,
+      help: CFG.helpUrl
+    };
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener'; });
   }
 
   /* ===== PWA / アイコン（003準拠：--bg を getComputedStyle で取得） ===== */
@@ -725,15 +782,84 @@
   }
 
   /* ===== 初期化 ===== */
-  applyStorageType();
-  initNotices();
-  setupFooter();
-  renderWelcome();
-  setupPWA();
+  function init(){
+    applyStorageType();
+    initNotices();
+    initLegal();
+    initVersion();
+    initButtons();
+    document.getElementById('copyYear').textContent = new Date().getFullYear();
+    renderCover();
+    setupPWA();
+  }
+  // この script は画面の部品のあとにあるので、待たずにすぐ作る（portfolio・fukuri と同じ。DOMContentLoaded を待つと、新しく開いたときに
+  // 表紙のない画面がいったん描かれることがある）。375px の 0.19 のずれの原因は別で、.cover-sub の折り返し（CSS 側で直した）
+  init();
 
 })();
 </script>
+<!-- enu-a2hs -->
+<div class="enu-a2hs" id="enu-a2hs" role="dialog" aria-modal="true" aria-labelledby="enu-a2hs-ttl" hidden>
+  <div class="enu-a2hs-card">
+    <div class="enu-a2hs-grip" aria-hidden="true"></div>
+    <div class="enu-a2hs-row">
+      <span class="enu-a2hs-ico" aria-hidden="true">📲</span>
+      <div>
+        <div class="enu-a2hs-ttl" id="enu-a2hs-ttl">ホーム画面に置けます</div>
+        <p class="enu-a2hs-sub"><span class="nb">アイコンからすぐ開けて、</span><span class="nb">全画面で使えます。</span></p>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-ios" hidden><li>下の「共有」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-android" hidden><li>右上の「︙」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+      </div>
+    </div>
+    <div class="enu-a2hs-btns">
+      <button type="button" class="enu-a2hs-later" id="enu-a2hs-later">あとで</button>
+      <button type="button" class="enu-a2hs-go" id="enu-a2hs-go">わかりました</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ホーム画面の案内（2回目に開いたときだけ・スマホだけ） */
+(function(){
+  var P='enu_nisa-waku-judge';
+  var box=document.getElementById('enu-a2hs'); if(!box) return;
+  function get(k){ try{ return localStorage.getItem(P+k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(P+k,v); }catch(e){} }
+  var standalone=(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  var iOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var touch=(navigator.maxTouchPoints||0)>0 && window.innerWidth<900;
+  var prompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); prompt=e; });
+  // 開いた回数（同じ回の読み直しでは増やさない）
+  var opens=parseInt(get('_opens')||'0',10); if(!isFinite(opens)) opens=0;
+  var counted=false; try{ counted=!!sessionStorage.getItem(P+'_counted'); }catch(e){}
+  if(!counted){ opens+=1; set('_opens',String(opens)); try{ sessionStorage.setItem(P+'_counted','1'); }catch(e){} }
+  var go=document.getElementById('enu-a2hs-go'), later=document.getElementById('enu-a2hs-later');
+  function close(){ box.hidden=true; }
+  function laterFn(){ set('_a2hs_hide',String(Date.now()+14*24*60*60*1000)); close(); }   // 2週間ほど出さない
+  function done(){ set('_a2hs_hide',String(Date.now()+3650*24*60*60*1000)); close(); }
+  function show(){
+    var ios=document.getElementById('enu-a2hs-ios'), an=document.getElementById('enu-a2hs-android');
+    if(prompt && !iOS){
+      ios.hidden=true; an.hidden=true; go.textContent='ホーム画面に置く';
+      go.onclick=function(){ try{ prompt.prompt(); prompt.userChoice.then(done,done); }catch(e){ done(); } prompt=null; };
+    }else{
+      ios.hidden=!iOS; an.hidden=iOS; go.textContent='わかりました'; go.onclick=done;
+    }
+    later.onclick=laterFn;
+    box.onclick=function(e){ if(e.target===box) laterFn(); };
+    box.hidden=false;
+  }
+  function maybe(){
+    if(standalone || !touch || opens<2) return;
+    var until=parseInt(get('_a2hs_hide')||'0',10);
+    if(isFinite(until) && Date.now()<until) return;
+    setTimeout(show,1200);
+  }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !box.hidden) laterFn(); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(maybe,600); });
+  else setTimeout(maybe,600);
+})();
+</script>
+<!-- /enu-a2hs -->
 </body>
 </html>
-
-
