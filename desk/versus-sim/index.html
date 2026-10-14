@@ -25,44 +25,51 @@
   }
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
 
-  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
   .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
   .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
   .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
+  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:14px}
-  .section-note{font-size:.72rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px}
+  .section-note{font-size:.75rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6}
 
   .preset-card{display:flex;flex-direction:column;gap:10px}
-  .preset-label{font-size:.78rem;font-weight:600;color:var(--sub)}
+  .preset-label{font-size:.875rem;font-weight:600;color:var(--sub)}
   .preset-row{display:flex;flex-wrap:wrap;gap:8px}
-  .preset-chip{font-family:inherit;font-size:.8rem;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s,transform .1s}
-  .preset-chip:hover{background:var(--primary-light);transform:translateY(-1px)}
+  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
+  .preset-chip:hover{background:var(--primary-light)}
 
-  .plans{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
-  .plan-card{flex:1 1 300px;min-width:0;margin-bottom:0;display:flex;flex-direction:column}
+  /* プランの並び：3＋1 のような半端な段にしない（スマホ1列／中くらい2列／PCは数ぶん横並び） */
+  .plans{display:grid;gap:16px;grid-template-columns:1fr;align-items:stretch}
+  @media (min-width:600px){.plans{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (min-width:600px) and (max-width:899.98px){.plans[data-n="3"] > :last-child{grid-column:1/-1}}
+  @media (min-width:900px){.plans[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}.plans[data-n="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .plan-card{min-width:0;margin-bottom:0;display:flex;flex-direction:column}
   .plan-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-  .plan-badge{font-size:.78rem;font-weight:700;color:#fff;padding:3px 12px;border-radius:999px}
-  .plan-remove{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:.72rem;cursor:pointer;padding:2px 6px;font-family:inherit}
+  .plan-badge{font-size:.875rem;font-weight:700}
+  .plan-remove{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:.75rem;cursor:pointer;padding:2px 6px;font-family:inherit}
   .plan-remove:hover{color:var(--series-b)}
-  .add-plan-btn{display:block;width:100%;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.85rem;cursor:pointer;font-family:inherit;margin:12px 0;transition:background .15s}
+  .add-plan-btn{display:block;width:100%;margin:16px 0;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;transition:background .15s}
   .add-plan-btn:hover{background:var(--primary-light)}
   .add-plan-btn:disabled{opacity:.45;cursor:not-allowed}
 
   .field{margin-bottom:13px}
   .field:last-child{margin-bottom:0}
-  .field-label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:5px}
-  .field-help{display:block;font-size:.68rem;color:var(--sub);margin-top:4px;opacity:.9}
-  input[type="text"],input[type="number"],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
-  input:focus,select:focus{outline:none;border-color:var(--primary)}
+  .field-label{display:block;font-size:.875rem;font-weight:600;color:var(--sub);margin-bottom:5px}
+  .field-help{display:block;font-size:.75rem;color:var(--sub);margin-top:4px;opacity:.9}
+  .plans-note{margin:8px 0 0}
+  input[type="text"],input[type="number"],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  button:focus-visible,a:focus-visible,summary:focus-visible,label:focus-within{outline:2px solid var(--primary);outline-offset:2px}
   .input-suffix{position:relative}
   .input-suffix input{padding-right:36px}
-  .input-suffix .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--sub);pointer-events:none}
+  .input-suffix .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.875rem;color:var(--sub);pointer-events:none}
   .fund-custom{margin-top:8px}
-  .method-toggle{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .method-toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .method-toggle input{position:absolute;opacity:0;pointer-events:none}
-  .method-toggle label{flex:1;text-align:center;padding:9px 4px;font-size:.8rem;font-weight:600;color:var(--sub);cursor:pointer;background:var(--bg-soft);transition:background .15s,color .15s}
+  .method-toggle label{flex:1;text-align:center;padding:9px 4px;font-size:.875rem;font-weight:600;color:var(--sub);cursor:pointer;background:var(--bg-soft);transition:background .15s,color .15s}
   .method-toggle label:first-of-type{border-right:1px solid var(--line)}
   .method-toggle input:checked + label{background:var(--primary);color:#fff}
 
@@ -70,87 +77,105 @@
   .settings-row .field{flex:1 1 180px;margin-bottom:0}
 
   .chart-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-  .toggle-wrap{display:flex;align-items:center;gap:7px;font-size:.76rem;color:var(--sub);cursor:pointer;user-select:none}
+  .toggle-wrap{display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--sub);cursor:pointer;user-select:none}
   .toggle-wrap input{width:auto;accent-color:var(--primary)}
   .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
-  .legend-item{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--text)}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:.875rem;color:var(--text)}
   .legend-swatch{width:16px;height:4px;border-radius:2px;flex-shrink:0}
   .chart-wrap{width:100%}
   #chart{width:100%;height:auto;display:block}
-  .axis-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:11px;fill:var(--sub)}
+  .axis-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.6875rem;fill:var(--sub)}
 
   .ranking{margin-bottom:16px;background:var(--bg-soft);border-radius:10px;padding:12px 14px}
-  .ranking h3{font-size:.82rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
-  .rank-item{display:flex;align-items:center;gap:8px;font-size:.8rem;padding:3px 0}
+  .ranking h3{font-size:.875rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
+  .rank-item{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.875rem;padding:3px 0}
   .rank-medal{flex-shrink:0;width:20px;text-align:center}
-  .rank-name{flex:1;min-width:0;word-break:break-word}
+  .rank-name{flex:1 1 150px;min-width:0;overflow-wrap:anywhere}
+  .rank-val{margin-left:auto}
   .rank-val{font-weight:700;color:var(--primary-dark);white-space:nowrap}
 
-  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .summary-item{border:1px solid var(--line);border-radius:10px;padding:14px;border-top:3px solid}
-  .summary-fund{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:2px;word-break:break-word}
-  .summary-method{font-size:.68rem;color:var(--sub);margin-bottom:10px}
-  .summary-main-label{font-size:.66rem;color:var(--sub);font-weight:600}
-  .summary-main{font-size:1.4rem;font-weight:700;color:var(--primary-dark);line-height:1.25}
-  .real-val{font-size:.72rem;color:var(--sub);margin-top:2px}
+  /* 結果の箱もプランと同じ並び（3＋1 のような半端な段にしない） */
+  .summary-grid{display:grid;grid-template-columns:1fr;gap:20px 24px}
+  @media (min-width:600px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (min-width:600px) and (max-width:899.98px){.summary-grid[data-n="3"] > :last-child{grid-column:1/-1}}
+  @media (min-width:900px){.summary-grid[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}.summary-grid[data-n="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .result-fix{font-size:.875rem;color:#a33;margin:0}
+  .result-fix[hidden]{display:none}
+  .tax-note{margin-top:16px}
+  .tax-note[hidden],.ranking:empty{display:none}
+  .summary-item{border-left:3px solid;padding:2px 0 2px 14px}
+  .summary-fund{font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:2px;word-break:break-word}
+  .summary-method{font-size:.6875rem;color:var(--sub);margin-bottom:10px}
+  .summary-main-label{font-size:.6875rem;color:var(--sub);font-weight:600}
+  .summary-main{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.25}
+  .real-val{font-size:.75rem;color:var(--sub);margin-top:2px}
   .minibar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:12px 0 6px;background:var(--bg-soft)}
   .minibar .seg-p{background:#c9d2da}
-  .minibar-legend{display:flex;justify-content:space-between;font-size:.72rem;color:var(--text)}
+  .minibar-legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text)}
   .minibar-legend .lbl{color:var(--sub)}
   .gain-neg{color:var(--series-b);font-weight:600}
-  .fee-impact{font-size:.74rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);color:var(--text)}
+  .fee-impact{font-size:.75rem;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--text)}
   .fee-impact .fee-val{font-weight:700;color:var(--series-b)}
-  .fee-impact .fee-sub{display:block;color:var(--sub);font-size:.68rem;margin-top:2px}
+  .fee-impact .fee-sub{display:block;color:var(--sub);font-size:.6875rem;margin-top:2px}
 
   .table-wrap{width:100%;overflow-x:auto}
   table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.82rem;white-space:nowrap}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.875rem;white-space:nowrap}
   th{font-weight:600;color:var(--primary-dark)}
   td.num,th.num{text-align:right}
   .year-cards{display:none}
-  .year-card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px}
-  .year-card .yc-year{font-size:.8rem;font-weight:700;color:var(--primary-dark);margin-bottom:6px}
-  .year-card .yc-row{display:flex;justify-content:space-between;gap:10px;font-size:.76rem;margin-top:3px}
+  .year-card{border-bottom:1px solid var(--line);padding:10px 0}
+  .year-card .yc-year{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:6px}
+  .year-card .yc-row{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;margin-top:3px}
   .year-card .yc-row .lbl{color:var(--sub);word-break:break-word}
 
-  .save-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-  .save-row input{flex:1 1 180px}
-  .save-btn{padding:10px 18px;border-radius:999px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
+  .save-row input{flex:1 1 auto;min-width:0}
+  .save-row .save-btn{flex-shrink:0}
+  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
   .save-btn:hover{background:var(--primary-dark)}
-  .history-empty{font-size:.78rem;color:var(--sub);text-align:center;padding:14px}
-  .history-item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
-  .history-info{flex:1;min-width:0}
-  .history-name{font-size:.8rem;font-weight:600;color:var(--text);word-break:break-word}
-  .history-meta{font-size:.68rem;color:var(--sub);margin-top:2px;word-break:break-word}
-  .history-actions{display:flex;gap:6px;flex-shrink:0}
-  .hist-btn{padding:6px 14px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid}
-  .hist-load{background:var(--primary-soft);border-color:var(--primary-light);color:var(--primary-dark)}
-  .hist-del{background:transparent;border-color:var(--line);color:var(--sub)}
-  .hist-del:hover{color:var(--series-b);border-color:var(--series-b)}
+  .breakdown{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
+  .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark)}
+  .ra-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin:0 0 8px}
+  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
+.ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hist-chips[hidden]{display:none}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
+  .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button:hover{color:var(--series-b)}
 
   .goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .goal-result{background:var(--primary-soft);border-radius:10px;padding:14px;margin-top:14px}
-  .goal-result .gr-label{font-size:.72rem;color:var(--sub)}
-  .goal-result .gr-val{font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin-top:3px}
+  .goal-result{border-top:1px solid var(--line);padding:12px 0 0;margin-top:12px}
+  .goal-result .gr-label{font-size:.75rem;color:var(--sub)}
+  .goal-result .gr-val{font-size:1.375rem;font-weight:700;color:var(--primary-dark);margin-top:3px}
 
-  .collapse-head{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
-  .collapse-arrow{color:var(--primary-dark);font-size:.8rem;transition:transform .2s;flex-shrink:0;margin-left:10px}
-  .collapse-head[aria-expanded="true"] .collapse-arrow{transform:rotate(90deg)}
+  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
+  .collapse-arrow::before{content:"▸"}
+  .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
   .collapse-body[hidden]{display:none}
+  .field-error{font-size:.75rem;color:#a33;margin:4px 0 0}
+  input[aria-invalid="true"]{border-color:#c0666a}
 
-  .ref-list{list-style:none;display:flex;flex-direction:column;gap:10px}
-  .ref-list li{position:relative;padding-left:20px}
-  .ref-list li::before{content:"↗";position:absolute;left:0;color:var(--sub);font-size:.8rem}
-  .ref-list a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;font-size:.84rem;font-weight:600;word-break:break-word}
-  .ref-list a:hover{color:var(--text)}
+  .enu-refs{margin:24px 0 0}
+  .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+  .enu-refs summary::-webkit-details-marker{display:none}
+  .enu-refs summary::after{content:" ▸";color:var(--sub);font-weight:400}
+  .enu-refs[open] summary::after{content:" ▾"}
+  .enu-refs-n{font-weight:400;color:var(--sub);font-size:.875rem}
+  .enu-refs ul{margin:8px 0 0;padding-left:1.2em;font-size:.875rem}
+  .enu-refs li{margin-bottom:6px}
+  .enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+  .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
-  .app-footer{text-align:center;opacity:.85;padding-bottom:24px}
-  .home-btn{display:inline-block;margin-top:24px;padding:7px 16px;font-size:.75rem;font-weight:600;border-radius:999px;background:transparent;border:1px solid var(--sub);color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s,border-color .15s}
-  .home-btn:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
-  .footer-divider{margin:12px auto;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
-  .brand-link{display:inline-block;font-size:.7rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
+  .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
-  .copyright{font-size:.65rem;color:var(--sub);margin-top:8px}
+  .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
 
   /* === enu 注意書きカード（101）=== */
   .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
@@ -160,30 +185,32 @@
   .enu-notice-wrap > .enu-notice-mini{display:none}
   .enu-notice-wrap.is-mini > .enu-notice{display:none}
   .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
-  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
-  .enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
   .enu-notice .enu-body{flex:1;min-width:0}
   .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
   .enu-notice .enu-close-btn:hover{opacity:1}
-  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-  .enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
   .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-  .enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-  .enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-  .enu-notice-help .enu-help-link{font-family:inherit;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-  .enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
+  .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a:hover{color:var(--primary-dark);}
+  .footer-legal span{margin:0 4px;opacity:.6}
+  .footer-ver{margin-left:8px;white-space:nowrap}
 
   /* === enu アクションボタン（102）=== */
-  .enu-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
-  .enu-btn-card{font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
-  .enu-btn-card:hover{transform:translateY(-1px)}
-  .enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
-  .enu-btn-card .enu-label{font-family:inherit;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-  .enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-  .enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
-  .enu-fc-json{background:#f5f1e8;border-color:#d8cdaa;color:#6b5a3d}
-  .enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
+    .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-fill{background:var(--primary);color:#fff}
+  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .enu-tb-line{background:transparent;color:var(--primary-dark)}
+  .enu-tb-line:hover{background:var(--primary-soft)}
+  .enu-tb-data{font-size:.75rem;color:var(--sub)}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text:hover{color:var(--primary-dark)}
+  .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   .enu-confirm-modal[hidden]{display:none}
@@ -191,27 +218,58 @@
   .enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
   .enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:inherit}
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
-  .enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin-bottom:20px;line-height:1.6}
+  .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
-  .enu-confirm-btn--ok{background:var(--series-b);border-color:var(--series-b);color:#fff}
+  .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
   @media (max-width:650px){
     .app-title{font-size:1.25rem}
-    .app-sub{font-size:.7rem}
+    .app-sub{font-size:.6875rem}
     .table-wrap{display:none}
     .year-cards{display:block}
     .goal-grid{grid-template-columns:1fr}
   }
   @media (max-width:600px){
-    .enu-toolbar{grid-template-columns:repeat(2,1fr)}
   }
   @media print{
     body{background:#fff;padding:0}
-    .enu-notice-area,.enu-toolbar,.enu-toast,.preset-card,.home-btn,.add-plan-btn,.plan-remove,.save-card,.goal-card,.ref-card,.toggle-wrap,.enu-confirm-modal{display:none !important}
+    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.preset-card,.add-plan-btn,.plan-remove,.save-card,.goal-card,.enu-refs,.toggle-wrap,.enu-confirm-modal{display:none !important}
     .card{box-shadow:none;break-inside:avoid}
+    /* 背景を印刷しない設定でも、帯・色の印が消えないよう線で描く */
+    .minibar,.legend-swatch,.summary-item{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .minibar{border:1px solid var(--line)}
+    .minibar .seg-p,.minibar .seg-g{height:0;border-top:10px solid}
+    .minibar .seg-p{border-top-color:#c9d2da}
+    .legend-swatch{height:0;border-top:4px solid}
+    .method-toggle input:checked + label{background:transparent;color:var(--text);font-weight:700;box-shadow:inset 0 -3px 0 var(--primary);border-bottom:3px solid var(--primary)}
   }
+
+
+/* enu-a2hs ホーム画面の案内（2回目に開いたとき・スマホだけ・下から出る） */
+.enu-a2hs{position:fixed;inset:0;z-index:1800;display:flex;align-items:flex-end;background:rgba(44,42,36,.35)}
+.enu-a2hs[hidden]{display:none}
+.enu-a2hs-card{width:100%;max-width:560px;margin:0 auto;background:var(--card);border-radius:14px 14px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));animation:enuA2hsUp .3s ease-out}
+@keyframes enuA2hsUp{from{transform:translateY(100%)}to{transform:none}}
+.enu-a2hs-grip{width:36px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.enu-a2hs-row{display:flex;gap:14px;align-items:flex-start}
+.enu-a2hs-ico{font-size:24px;line-height:1.2;flex:none}
+.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--primary-dark);line-height:1.5}
+.enu-a2hs-sub{font-size:.75rem;color:var(--sub);margin:4px 0 0;line-height:1.7}
+.enu-a2hs-steps{list-style:none;counter-reset:a;margin:12px 0 0;padding:0}
+.enu-a2hs-steps[hidden]{display:none}
+.enu-a2hs-steps li{counter-increment:a;position:relative;padding-left:24px;font-size:.75rem;line-height:1.8;color:var(--text)}
+.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.enu-a2hs-btns{display:flex;gap:10px;margin-top:16px}
+.enu-a2hs-btns button{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;padding:0 8px;font-family:inherit;font-size:.875rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.enu-a2hs-later{background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.enu-a2hs-later:hover{color:var(--primary-dark);border-color:var(--primary)}
+.enu-a2hs-go{flex-grow:1.5 !important;background:var(--primary);border:1px solid var(--primary);color:#fff}
+.enu-a2hs-go:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.enu-a2hs .nb{display:inline-block}
+@media print{.enu-a2hs{display:none !important}}
+/* /enu-a2hs */
 </style>
 </head>
 <body>
@@ -220,56 +278,33 @@
   <header class="app-header">
     <div class="app-icon">📊</div>
     <div>
-      <h1 class="app-title">投資比較シミュレーター</h1>
-      <p class="app-sub">オルカン vs S&amp;P500、一括 vs 積立を並べて比較</p>
+      <h1 class="app-title"><span class="nb">投資比較</span><span class="nb">シミュレーター</span></h1>
+      <p class="app-sub"><span class="nb">オルカン vs S&amp;P500、</span><span class="nb">一括 vs 積立を</span><span class="nb">並べて比較</span></p>
     </div>
   </header>
 
   <div class="enu-notice-area">
-    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
-      <div class="enu-notice enu-notice-info">
-        <span class="enu-icon">💾</span>
-        <span class="enu-body">入力した条件・保存した履歴は、お使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
-    </div>
-    <div class="enu-notice-wrap" data-notice-id="warn" data-storage="local">
+    <div class="enu-notice-wrap" data-notice-id="storage-local" data-storage="local">
       <div class="enu-notice enu-notice-warn">
-        <span class="enu-icon">⚠️</span>
-        <span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードでは履歴が引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong>大切な比較は「📤 エクスポート」でバックアップをおすすめします。</span>
+        <span class="enu-icon">💾</span>
+        <span class="enu-body"><span class="nb">データは</span><span class="nb">この</span><span class="nb">ブラウザだけに</span><span class="nb">保存されます。</span><span class="nb">ブラウザの</span><span class="nb">データ削除や、</span><span class="nb">しばらく</span><span class="nb">使わなかった</span><span class="nb">とき</span><span class="nb">（Safariは約7日）に</span><span class="nb">消える</span><span class="nb">ことが</span><span class="nb">あります。</span><span class="nb">📤エクスポートで</span><span class="nb">バックアップできます。</span></span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="保存の注意を表示" title="保存の注意を表示">💾</button>
     </div>
-    <div class="enu-notice-wrap" data-notice-id="offline-local" data-storage="local">
-      <div class="enu-notice enu-notice-info">
-        <span class="enu-icon">🌐</span>
-        <span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも、シミュレーションが可能です。</span>
+    <div class="enu-notice-wrap" data-notice-id="disclaimer">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">📝</span>
+        <span class="enu-body">結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。</span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="オフライン動作を表示" title="オフライン動作を表示">🌐</button>
-    </div>
-    <div class="enu-notice-wrap" data-notice-id="trade">
-      <div class="enu-notice enu-notice-trade">
-        <span class="enu-icon">🚨</span>
-        <span class="enu-body">本シミュレーションは入力した想定利回りに基づく試算で、将来の運用成果や元本を保証するものではありません。利回り・信託報酬・税率等は実際の数値と異なる場合があります。実際の投資判断はご自身の責任で、必要に応じて専門家にご相談ください。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責事項を表示" title="免責事項を表示">🚨</button>
-    </div>
-    <div class="enu-notice-wrap" data-notice-id="help">
-      <div class="enu-notice enu-notice-help">
-        <span class="enu-icon">📚</span>
-        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
     </div>
   </div>
 
   <div class="card preset-card">
-    <span class="preset-label">かんたん比較プリセット（2プランにリセットして設定します）</span>
+    <h2 class="section-title" style="margin-bottom:2px">⚡ かんたん比較プリセット</h2>
+    <p class="field-help" style="margin:0 0 4px">押すと2プランにリセットして設定します</p>
     <div class="preset-row">
       <button type="button" class="preset-chip" data-preset="orcan-sp">オルカン vs S&amp;P500</button>
       <button type="button" class="preset-chip" data-preset="lump-dca">一括 vs 積立</button>
@@ -278,6 +313,7 @@
   </div>
 
   <div class="plans" id="plans"></div>
+  <p class="field-help plans-note"><span class="nb">利回りから</span><span class="nb">信託報酬を</span><span class="nb">引いて計算します。</span><span class="nb">正確な値は</span><span class="nb">各社の</span><span class="nb">交付目論見書で</span><span class="nb">ご確認ください</span></p>
   <button type="button" class="add-plan-btn" id="add-plan">＋ プランを追加（最大4）</button>
 
   <div class="card">
@@ -286,10 +322,10 @@
       <div class="field">
         <label class="field-label" for="inflation-rate">想定インフレ率（年率）</label>
         <div class="input-suffix">
-          <input type="number" id="inflation-rate" value="0" min="0" step="0.1" inputmode="decimal">
+          <input type="text" id="inflation-rate" value="0" data-rule="inflation" inputmode="decimal">
           <span class="suffix">%</span>
         </div>
-        <span class="field-help">0%で無効。入れると最終評価額を「今のお金の価値（実質）」に換算して併記します</span>
+        <span class="field-help"><span class="nb">0%なら使いません。</span><span class="nb">入れると</span><span class="nb">「今のお金の価値」</span><span class="nb">でも表示します</span></span>
       </div>
     </div>
   </div>
@@ -299,6 +335,7 @@
       <h2 class="section-title" style="margin-bottom:0">📈 資産推移の比較</h2>
       <label class="toggle-wrap"><input type="checkbox" id="toggle-principal"> 元本ラインを表示</label>
     </div>
+    <p class="result-fix" id="chart-fix" hidden><span class="nb">赤い文字の欄を直すと、</span><span class="nb">結果が出ます</span></p>
     <div class="legend" id="legend"></div>
     <div class="chart-wrap" id="chart-wrap">
       <svg id="chart" viewBox="0 0 720 380" preserveAspectRatio="xMidYMid meet" role="img" aria-label="資産推移の比較グラフ"></svg>
@@ -307,88 +344,89 @@
 
   <div class="card">
     <h2 class="section-title">💴 シミュレーション結果</h2>
+    <p class="result-fix" id="result-fix" hidden><span class="nb">赤い文字の欄を直すと、</span><span class="nb">結果が出ます</span></p>
     <div class="ranking" id="ranking"></div>
     <div class="summary-grid" id="summary"></div>
-  </div>
-
-  <div class="card">
+    <p class="field-help tax-note" id="tax-note"><span class="nb">税金は引いていません</span><span class="nb">（NISAなら非課税、</span><span class="nb">課税口座なら</span><span class="nb">利益に約20%）</span></p>
+    <div class="breakdown">
     <button type="button" class="collapse-head" id="breakdown-toggle" aria-expanded="false">
-      <span class="section-title" style="margin:0">📋 年ごとの内訳</span>
-      <span class="collapse-arrow">▶</span>
-    </button>
-    <div class="collapse-body" id="breakdown-body" hidden>
-      <label class="toggle-wrap" style="margin:12px 0"><input type="checkbox" id="toggle-allyears"> すべての年を表示</label>
-      <div class="table-wrap">
-        <table>
-          <thead><tr id="year-thead"></tr></thead>
-          <tbody id="year-tbody"></tbody>
-        </table>
+        <span class="sub-title">📋 年ごとの内訳</span><span class="collapse-arrow" aria-hidden="true"></span>
+      </button>
+      <div class="collapse-body" id="breakdown-body" hidden>
+        <label class="toggle-wrap" style="margin:12px 0"><input type="checkbox" id="toggle-allyears"> すべての年を表示</label>
+        <div class="table-wrap">
+          <table>
+            <thead><tr id="year-thead"></tr></thead>
+            <tbody id="year-tbody"></tbody>
+          </table>
+        </div>
+        <div class="year-cards" id="year-cards"></div>
       </div>
-      <div class="year-cards" id="year-cards"></div>
     </div>
-  </div>
-
-  <div class="card save-card">
-    <h2 class="section-title">📌 一時保存・履歴</h2>
-    <div class="save-row">
-      <input type="text" id="save-name" placeholder="保存名（省略可）">
-      <button type="button" class="save-btn" id="save-btn">この比較を保存</button>
-    </div>
-    <div id="history-list"></div>
   </div>
 
   <div class="card goal-card" id="goal-card">
     <h2 class="section-title">🎯 目標から逆算</h2>
-    <p class="section-note">利回りは手数料控除後の想定値で入力してください。</p>
+    <p class="section-note"><span class="nb">利回りは</span><span class="nb">手数料控除後の</span><span class="nb">想定値で</span><span class="nb">入力してください。</span></p>
     <div class="goal-grid">
       <div class="field">
         <label class="field-label" for="goal-amount">目標額</label>
-        <div class="input-suffix"><input type="text" id="goal-amount" value="10,000,000" inputmode="numeric"><span class="suffix">円</span></div>
+        <div class="input-suffix"><input type="text" id="goal-amount" value="10,000,000" data-rule="goalAmount" inputmode="numeric"><span class="suffix">円</span></div>
       </div>
       <div class="field">
         <label class="field-label" for="goal-rate">想定利回り（年率）</label>
-        <div class="input-suffix"><input type="number" id="goal-rate" value="5" step="0.1" inputmode="decimal"><span class="suffix">%</span></div>
+        <div class="input-suffix"><input type="text" id="goal-rate" value="5" data-rule="goalRate" inputmode="decimal"><span class="suffix">%</span></div>
       </div>
       <div class="field">
         <label class="field-label" for="goal-years">期間</label>
-        <div class="input-suffix"><input type="number" id="goal-years" value="20" min="1" max="60" step="1" inputmode="numeric"><span class="suffix">年</span></div>
+        <div class="input-suffix"><input type="text" id="goal-years" value="20" data-rule="goalYears" inputmode="numeric"><span class="suffix">年</span></div>
       </div>
       <div class="field">
         <label class="field-label" for="goal-monthly">毎月の積立額</label>
-        <div class="input-suffix"><input type="text" id="goal-monthly" value="30,000" inputmode="numeric"><span class="suffix">円</span></div>
+        <div class="input-suffix"><input type="text" id="goal-monthly" value="30,000" data-rule="goalMonthly" inputmode="numeric"><span class="suffix">円</span></div>
       </div>
     </div>
     <div class="goal-result">
-      <div class="gr-label">期間内に目標達成するのに必要な毎月の積立額</div>
+      <div class="gr-label"><span class="nb">期間内に</span><span class="nb">目標達成するのに</span><span class="nb">必要な</span><span class="nb">毎月の積立額</span></div>
       <div class="gr-val" id="goal-r1">—</div>
     </div>
     <div class="goal-result">
-      <div class="gr-label">入力した毎月の積立額で目標達成までにかかる期間</div>
+      <div class="gr-label"><span class="nb">入力した</span><span class="nb">毎月の積立額で</span><span class="nb">目標達成までに</span><span class="nb">かかる期間</span></div>
       <div class="gr-val" id="goal-r2">—</div>
     </div>
   </div>
 
-  <div class="card ref-card">
-    <h2 class="section-title">📎 参考リンク</h2>
-    <p class="section-note">最新の制度・正確な数値は、必ず公式情報でご確認ください。</p>
-    <ul class="ref-list">
-      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener">金融庁「つみたてシミュレーター」</a></li>
-      <li><a href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener">金融庁「NISA特設ウェブサイト」</a></li>
-    </ul>
+  <div class="card save-card">
+    <h2 class="section-title">📌 この比較を保存</h2>
+    <div class="save-row">
+      <input type="text" id="save-name" placeholder="保存名（省略可）" maxlength="40" aria-label="保存名（省略可）">
+      <button type="button" class="save-btn" id="save-btn">保存</button>
   </div>
 
-  <div class="enu-toolbar">
-    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
-    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
-    <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-export" aria-label="データをエクスポート"><span class="enu-icon">📤</span><span class="enu-label">エクスポート</span></button>
-    <button type="button" class="enu-btn-card enu-fc-json" id="enu-btn-import" aria-label="データをインポート"><span class="enu-icon">📥</span><span class="enu-label">インポート</span></button>
+    <div class="hist-chips" id="history-list"></div>
+    <p class="hist-current" id="hist-current" hidden></p>
+    <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
   </div>
+
+  <div class="page-actions enu-toolbar">
+    <button type="button" class="enu-tb-btn enu-tb-fill" id="enu-btn-print" aria-label="PDFに保存または印刷">📄 PDF / 印刷</button>
+    <button type="button" class="enu-tb-btn enu-tb-line" id="enu-btn-share2" aria-label="シェア">🔗 シェア</button>
+  </div>
+
+  <details class="enu-refs">
+    <summary>📎 参照リンク<span class="enu-refs-n">（2件）</span></summary>
+    <ul>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener">つみたてシミュレーター</a><span class="enu-refs-src">金融庁</span></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener">NISA特設ウェブサイト</a><span class="enu-refs-src">金融庁</span></li>
+    </ul>
+  </details>
+
 
   <div class="app-footer">
-    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
-    <div class="copyright">© <span id="copyYear">2026</span> enu(エヌ) All rights reserved.</div>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
+    <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
 
 </div>
@@ -405,19 +443,114 @@
   </div>
 </div>
 
-<div class="enu-toast" id="enu-toast"></div>
+<div class="enu-toast" id="enu-toast" role="status"></div>
 
 <script>
 (function(){
   'use strict';
 
   const ENU_CONFIG = {
-    appId:'versus-sim', appName:'投資比較シミュレーター', storageType:'local',
-    helpUrl:'https://enu-tools.pages.dev/help/', helpOpenNewTab:true, dataVersion:1
+    appId:'versus-sim', appName:'投資比較シミュレーター', appVersion:'1.0.0', storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION（エクスポートの data_version）
   };
   const CFG = ENU_CONFIG;
   window.enuTools = window.enuTools || {};
   const _key = (s)=> 'enu_' + CFG.appId + '_' + s;
+
+  // 言葉の途中で改行しないよう、意味の切れ目ごとに <span class="nb"> で区切って入れる（004「改行」）
+  function nbFill(el, parts){ el.textContent=''; parts.forEach(t=>{ if(!t) return; const sp=document.createElement('span'); sp.className='nb'; sp.textContent=t; el.appendChild(sp); }); return el; }
+  function fundParts(p){ return fundName(p).split(/(?=（)/); }
+
+  // 数字の読み方（全アプリ共通。money-basic-guide と同じ形）：全角の数字・小数点・カンマ、カンマ、空白は受け付ける。
+  // 最後の単位は、その欄の単位だけ外す（金額の欄は「円」、利回りなどの欄は「%」）。
+  // 「万」は×10,000（例：30万、1.5万、12万3000）。「億」「兆」も読む（例：10億、1兆）。
+  // 「1.5万5000」「30万50000」、「億」「兆」のあとに数字が続く形は読みかえずにエラー。空なら null、読めなければ NaN
+  const NUM_UNITS={'万':4,'億':8,'兆':12}; // 10の何乗か
+  // 小数の文字 s を 10^k 倍した数（小数点を動かすので、掛け算の誤差が出ない）
+  function shiftDec(s,k){ const p=s.split('.'), f=(p[1]||'').padEnd(k,'0'); return Number((p[0]||'0')+f.slice(0,k)+'.'+(f.slice(k)||'0')); }
+  function parseNumText(raw,unit){
+    let t=String(raw==null?'':raw).replace(/[０-９．，－＋]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+      .replace(/[ー−‐]/g,'-').replace(/[,，、\s　]/g,'');
+    if(unit==='円') t=t.replace(/円$/,''); else if(unit==='%') t=t.replace(/(%|％)$/,''); else if(unit) t=t.replace(new RegExp(unit+'$'),''); // その欄の単位だけ外す（年数は「年」、年齢は「歳」）
+    if(t==='') return null;
+    // 「1億5000万」のように位を重ねた形も読む（2つ目からは4けたまでの整数で、位が下がる。単位のない数は「万」のあとだけ）
+    const s=t.match(/^([-+]?)(.+)$/), re=/(\d+(?:\.\d+)?|\.\d+)(兆|億|万)?/y;
+    let v=0, last=99, i=0, n=0, g;
+    while(i<s[2].length){
+      re.lastIndex=i; g=re.exec(s[2]); if(!g) return NaN;
+      const num=g[1], u=g[2], k=u ? NUM_UNITS[u] : 0;
+      if(n>0 && (num.includes('.') || num.length>4 || k>=last || (!u && last!==4))) return NaN;
+      if(n===0 && (!u || num.includes('.')) && g[0].length<s[2].length) return NaN; // 「1.5万5000」「1億5000」はエラー
+      v+= u ? shiftDec(num,k) : Number(num); // 「340.09万」は 3,400,900（小数の誤差で1円ずれない）
+      last=k; i+=g[0].length; n++;
+    }
+    return s[1]==='-' ? -v : v;
+  }
+  // 欄ごとの決まり（範囲・単位）。上限ちょうど（一括10億円・年30%・60年）では、数の精度の限界で下の桁が数百円ずれるため、
+  // 100兆円以上の額は「約○兆円」と出す（yen() を参照）
+  const LUMP_MAX=1e9, DCA_MAX=1e7;
+  const RULES={
+    amount:{min:0, max:(ctx)=> (ctx && ctx.method==='dca') ? DCA_MAX : LUMP_MAX, unit:'円', yen:true},
+    rate:{min:-20, max:30, unit:'%'},
+    fee:{min:0, max:3, unit:'%'},
+    years:{min:1, max:60, unit:'年', int:true},
+    inflation:{min:0, max:20, unit:'%'},
+    goalAmount:{min:1, max:1e12, unit:'円', yen:true},
+    goalRate:{min:-20, max:30, unit:'%'},
+    goalYears:{min:1, max:60, unit:'年', int:true},
+    goalMonthly:{min:0, max:1e12, unit:'円', yen:true}
+  };
+  function boundText(n, rule){
+    if(!rule.yen) return String(n);
+    if(n>=1e12 && n%1e12===0) return (n/1e12).toLocaleString()+'兆';
+    if(n>=1e8 && n%1e8===0) return (n/1e8).toLocaleString()+'億';
+    if(n>=1e4 && n%1e4===0) return (n/1e4).toLocaleString()+'万';
+    return n.toLocaleString();
+  }
+  // 値を決まりに照らす：{v:数, err:''}。空・読めない・範囲外・整数でない、はすべてエラー
+  function judgeValue(raw, ruleName, ctx){
+    const rule=RULES[ruleName];
+    const v=(typeof raw==='number') ? raw : parseNumText(raw, rule.unit);
+    if(v===null) return {v:null, err:'数字を入力してください'};
+    if(!isFinite(v)) return {v:NaN, err:'数字で入力してください'};
+    const max=typeof rule.max==='function' ? rule.max(ctx) : rule.max;
+    if(v<rule.min || (max!=null && v>max)){
+      const u=rule.unit;
+      return {v:v, err: max!=null ? boundText(rule.min,rule)+'〜'+boundText(max,rule)+u+'で入力してください' : boundText(rule.min,rule)+u+'以上で入力してください'};
+    }
+    if(rule.int && !Number.isInteger(v)) return {v:v, err:'整数で入力してください'};
+    return {v:v, err:''};
+  }
+  function ruleOf(inp){
+    if(!inp || !inp.dataset) return null;
+    if(inp.dataset.rule) return inp.dataset.rule;
+    if(inp.closest && inp.closest('.plan-card') && RULES[inp.dataset.field]) return inp.dataset.field;
+    return null;
+  }
+  function ctxOf(inp){
+    const card=inp.closest && inp.closest('.plan-card');
+    if(!card) return null;
+    const i=parseInt(card.dataset.index,10);
+    return plans[i]||null;
+  }
+  // 欄のすぐ下に知らせる（004「エラーは入力欄のすぐ下に」）。結果 {v, err} を返す
+  function checkField(inp){
+    const name=ruleOf(inp); if(!name) return {v:null, err:''};
+    const res=judgeValue(inp.value, name, ctxOf(inp));
+    const box=inp.closest('.input-suffix')||inp;
+    let msg=box.nextElementSibling && box.nextElementSibling.classList.contains('field-error') ? box.nextElementSibling : null;
+    if(res.err){ if(!msg){ msg=document.createElement('p'); msg.className='field-error'; box.after(msg); } msg.textContent=res.err; inp.setAttribute('aria-invalid','true'); }
+    else{ if(msg) msg.remove(); inp.removeAttribute('aria-invalid'); }
+    return res;
+  }
+  // まちがった入力が1つでもあれば計算しない（前の結果も出さない）
+  const PLAN_INPUTS='#plans input[data-field="amount"], #plans input[data-field="rate"], #plans input[data-field="fee"], #plans input[data-field="years"], #inflation-rate';
+  const GOAL_INPUTS='#goal-amount, #goal-rate, #goal-years, #goal-monthly';
+  function firstError(sel){ let bad=null; document.querySelectorAll(sel).forEach(inp=>{ if(checkField(inp).err && !bad) bad=inp; }); return bad; }
+  // 金額の欄：入力を終えたら、読める形（カンマ区切り）にそろえる（値は変えない）
+  function tidyYen(inp){ const r=checkField(inp); if(!r.err) inp.value=r.v.toLocaleString(undefined,{maximumFractionDigits:20}); } // 丸めない
+  document.addEventListener('input', ()=>userChanged(), true);
+  document.addEventListener('change', ()=>userChanged(), true);
 
   // === DOM helper（createElementベース・innerHTML不使用）===
   function el(tag, attrs, kids){
@@ -455,7 +588,7 @@
       modal.hidden=false; setTimeout(()=>cancel.focus(),50);
       const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
       const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
-      const onKey=(e)=>{ if(e.key==='Escape')onCancel(); if(e.key==='Enter')onOk(); };
+      const onKey=(e)=>{ if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
       ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
@@ -470,8 +603,6 @@
     const K=_key('notice_minimized');
     const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
     const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
-    const help=document.getElementById('enu-help-link');
-    if(help){ help.href=CFG.helpUrl||'#'; if(CFG.helpOpenNewTab!==false){ help.target='_blank'; help.rel='noopener'; } }
     const list=get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
     document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{
@@ -481,6 +612,17 @@
     document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{
       const w=m.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.remove('is-mini'); set(get().filter(x=>x!==id));
     }));
+  }
+
+  // === 免責事項・プライバシー・使い方のリンク（101）===
+  const ENU_LEGAL_URLS = {
+    disclaimer:'https://enu-tools.pages.dev/desk/disclaimer/',
+    privacy:'https://enu-tools.pages.dev/desk/privacy/'
+  };
+  function initVersion(){ const el=document.getElementById('appVersion'); if(el && CFG.appVersion) el.textContent='ver.'+CFG.appVersion; }
+  function initLegal(){
+    const urls = { ...ENU_LEGAL_URLS, help: CFG.helpUrl };
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
   }
 
   // === Simple share (102) ===
@@ -495,27 +637,63 @@
   // ============================================================
   //  App state
   // ============================================================
-  const PLAN_COLORS=['#5f7d92','#c4878f','#8a9a7b','#c2a35a'];
+  // 5つ目からは、上限より多いプランのファイル（手で作ったものなど）を読んだときだけ使う。
+  // 8つ目からは、それまでのどの色ともいちばん離れる色を順に選んだもの（色の差 ΔE2000 で 10 以上。34色まで）
+  const PLAN_COLORS=['#5f7d92','#c4878f','#8a9a7b','#c2a35a','#8f7fa3','#6f9a98','#b08a6e',
+    '#686028','#885048','#087058','#885078','#88a0d0','#606078','#40a8d0','#006878','#607058','#886038','#908048','#489070','#008888',
+    '#a86070','#b87060','#086898','#c090b8','#6870a8','#48b0a0','#787058','#907068','#708048','#2088a0','#a8a080','#a87098','#406838','#785860'];
+  // 35色目からも、同じ考えで、それまでの色といちばん離れる色をその場で選ぶ（同じ色をくり返さない）
+  const planColorsMore=PLAN_COLORS.slice();
+  function hexLab(h){
+    const c=[1,3,5].map(k=>{ const v=parseInt(h.slice(k,k+2),16)/255; return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4); });
+    const X=(0.4124*c[0]+0.3576*c[1]+0.1805*c[2])/0.95047, Y=0.2126*c[0]+0.7152*c[1]+0.0722*c[2], Z=(0.0193*c[0]+0.1192*c[1]+0.9505*c[2])/1.08883;
+    const g=t=>t>0.008856?Math.cbrt(t):7.787*t+16/116;
+    return [116*g(Y)-16, 500*(g(X)-g(Y)), 200*(g(Y)-g(Z))];
+  }
+  let planColorCands=null;
+  function planColor(i){
+    if(i<planColorsMore.length) return planColorsMore[i];
+    if(!planColorCands){
+      planColorCands=[];
+      for(let r=0;r<256;r+=8) for(let g=0;g<256;g+=8) for(let b=0;b<256;b+=8){
+        const h='#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join(''), L=hexLab(h), C=Math.hypot(L[1],L[2]);
+        if(L[0]>=40 && L[0]<=66 && C>=14 && C<=34) planColorCands.push({h:h,L:L,d:Infinity});
+      }
+      planColorsMore.forEach(h=>{ const L=hexLab(h); planColorCands.forEach(c=>{ c.d=Math.min(c.d,Math.hypot(c.L[0]-L[0],c.L[1]-L[1],c.L[2]-L[2])); }); });
+    }
+    while(planColorsMore.length<=i && planColorCands.length){
+      let bi=0; planColorCands.forEach((c,k)=>{ if(c.d>planColorCands[bi].d) bi=k; });
+      const pick=planColorCands.splice(bi,1)[0]; planColorsMore.push(pick.h);
+      planColorCands.forEach(c=>{ c.d=Math.min(c.d,Math.hypot(c.L[0]-pick.L[0],c.L[1]-pick.L[1],c.L[2]-pick.L[2])); });
+    }
+    return planColorsMore[Math.min(i,planColorsMore.length-1)];
+  }
   const FUND_OPTIONS=['オルカン（全世界株式）','S&P500','全米株式','先進国株式','NASDAQ100','日経225','TOPIX','8資産均等バランス'];
+  // 銘柄を選ぶ欄だけの短い名前（4プランのパソコンでも欄に入りきるように）。保存する値・結果・説明では長い名前のまま
+  const FUND_SHORT={'オルカン（全世界株式）':'オルカン','8資産均等バランス':'8資産均等'};
   const MIN_PLANS=2, MAX_PLANS=4;
   let plans=[];
   let pendingInflation=null;
   const plansEl=document.getElementById('plans');
 
-  function planLetter(i){ return String.fromCharCode(65+i); }
+  function planLetter(i){ let s=''; i=Math.floor(i); do{ s=String.fromCharCode(65+i%26)+s; i=Math.floor(i/26)-1; }while(i>=0); return s; } // A〜Z のあとは AA, AB…（27以上で「プラン[」にならない）
   function defaultPlanA(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'lump',amount:1000000,rate:5,fee:0,years:20}; }
   function defaultPlanB(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20}; }
+  const NUM_FIELDS=['amount','rate','fee','years'];
+  // 読み込んだプランの足りない項目を補う（知らない項目は消さない）。数字は範囲に丸めず、そのまま残す（まちがいは欄の下に出す）
   function normalizePlan(p){
-    p=p||{};
-    return {
+    p=(p && typeof p==='object')?p:{};
+    const d=p.method==='dca'?defaultPlanB():defaultPlanA();
+    const o=Object.assign({}, p, {
       fundSel: typeof p.fundSel==='string'?p.fundSel:'オルカン（全世界株式）',
       fundCustom: typeof p.fundCustom==='string'?p.fundCustom:'',
-      method: p.method==='dca'?'dca':'lump',
-      amount: Math.max(0, parseFloat(p.amount)||0),
-      rate: parseFloat(p.rate)||0,
-      fee: Math.max(0, parseFloat(p.fee)||0),
-      years: Math.max(1, Math.min(60, Math.round(parseFloat(p.years)||1)))
-    };
+      method: p.method==='dca'?'dca':'lump'
+    });
+    NUM_FIELDS.forEach(f=>{
+      if(o[f]==null || o[f]==='') o[f]=d[f];                          // 項目がない古いデータは初期値
+      else if(typeof o[f]==='string'){ const n=parseNumText(o[f], RULES[f].unit); if(n!==null && isFinite(n) && !judgeValue(o[f], f, o).err) o[f]=n; } // 正しい数字の文字は数に（まちがった文字はそのまま。欄の下にエラーを出す）
+    });
+    return o;
   }
   function fundName(p){
     if(p.fundSel==='__other__'){ return (p.fundCustom||'').trim() || 'カスタム銘柄'; }
@@ -523,18 +701,23 @@
   }
 
   // === number helpers ===
-  const yen=(v)=> '¥' + Math.round(v).toLocaleString();
-  function formatMan(v){
-    if(v>=1e8) return (v/1e8).toFixed(v/1e8>=10?0:1)+'億';
-    if(v>=1e4) return Math.round(v/1e4).toLocaleString()+'万';
-    return Math.round(v).toLocaleString();
+  // 100兆円以上は、数の精度の限界で1円単位まで正しく出せないため「約○兆円」と出す
+  const BIG_YEN=1e14;
+  const yen=(v)=> Math.abs(v)>=BIG_YEN ? '約'+(v/1e12).toLocaleString(undefined,{maximumFractionDigits:1})+'兆円' : '¥' + Math.round(v).toLocaleString();
+  function formatMan(v){ // 目盛りの値をそのまま書く（1.5万・0.2 など端数も）
+    const f=(x)=>x.toLocaleString('ja-JP',{maximumFractionDigits:2});
+    if(v>=1e12) return f(v/1e12)+'兆'; // 数百兆円でも目盛りがグラフの左からはみ出さない
+    if(v>=1e8) return f(v/1e8)+'億';
+    if(v>=1e4) return f(v/1e4)+'万';
+    return f(v);
   }
-  function parseNum(v){ const n=parseFloat(String(v).replace(/,/g,'')); return isFinite(n)?n:0; }
-  function commaStr(v){ return (v===''||v==null) ? '' : Number(v).toLocaleString(); }
+  function commaStr(v){ return (v===''||v==null) ? '' : Number(v).toLocaleString(undefined,{maximumFractionDigits:20}); }
 
   // === simulation（月末積立・期末払い）===
+  // 月利は金融庁「つみたてシミュレーター」と同じ (1+年利)^(1/12)−1（年利5%の一括投資は1年でちょうど5%増える）
+  function monthlyRate(annualPct){ return Math.pow(1+annualPct/100, 1/12) - 1; }
   function simulate(plan){
-    const netAnnual=(plan.rate-plan.fee)/100, rm=netAnnual/12, months=plan.years*12;
+    const rm=monthlyRate(plan.rate-plan.fee), months=plan.years*12; // 信託報酬は利回りから引く
     let value=plan.method==='lump'?plan.amount:0;
     let principal=plan.method==='lump'?plan.amount:0;
     const yearly=[{year:0,value:value,principal:principal}];
@@ -547,17 +730,17 @@
   }
 
   // === Plan card（createElementで構築）===
-  function buildPlanCard(plan, index){
-    const color=PLAN_COLORS[index];
+  function buildPlanCard(plan, index, raw){
+    const color=planColor(index);
     const removable=plans.length>MIN_PLANS;
 
-    const headKids=[ el('span',{class:'plan-badge',style:'background:'+color,text:'プラン'+planLetter(index)}) ];
+    const headKids=[ el('span',{class:'plan-badge',style:'color:'+color,text:'プラン'+planLetter(index)}) ];
     if(removable) headKids.push(el('button',{type:'button',class:'plan-remove','data-remove':index,'aria-label':'このプランを削除',text:'× 削除'}));
     const head=el('div',{class:'plan-head'},headKids);
 
     const sel=el('select',{class:'pf','data-field':'fund'});
-    FUND_OPTIONS.forEach(f=> sel.appendChild(el('option',{value:f,text:f})));
-    sel.appendChild(el('option',{value:'__other__',text:'その他（自分で入力）'}));
+    FUND_OPTIONS.forEach(f=> sel.appendChild(el('option',{value:f,text:FUND_SHORT[f]||f})));
+    sel.appendChild(el('option',{value:'__other__',text:'その他'}));
     sel.value = (FUND_OPTIONS.includes(plan.fundSel)||plan.fundSel==='__other__') ? plan.fundSel : '__other__';
     const custom=el('input',{type:'text',class:'fund-custom pf','data-field':'fundCustom',placeholder:'銘柄名を入力'});
     custom.value=plan.fundCustom||''; custom.hidden = sel.value!=='__other__';
@@ -568,82 +751,117 @@
     const toggle=el('div',{class:'method-toggle'},[ ml, el('label',{for:'m-l-'+index,text:'一括投資'}), md, el('label',{for:'m-d-'+index,text:'積立投資'}) ]);
     const methodField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'投資方法'}), toggle ]);
 
-    const amt=el('input',{type:'text',class:'pf','data-field':'amount',inputmode:'numeric'}); amt.value=commaStr(plan.amount);
+    const amt=el('input',{type:'text',class:'pf','data-field':'amount',inputmode:'numeric'}); amt.value=(typeof plan.amount==='number')?commaStr(plan.amount):String(plan.amount);
     const amtField=el('div',{class:'field'},[
       el('label',{class:'field-label amount-label',text: plan.method==='lump'?'一括投資額':'毎月の積立額'}),
       el('div',{class:'input-suffix'},[ amt, el('span',{class:'suffix',text:'円'}) ])
     ]);
 
-    const rate=el('input',{type:'number',class:'pf','data-field':'rate',step:'0.1',inputmode:'decimal'}); rate.value=plan.rate;
+    const rate=el('input',{type:'text',class:'pf','data-field':'rate',inputmode:'decimal'}); rate.value=plan.rate;
     const rateField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'想定利回り（年率）'}), el('div',{class:'input-suffix'},[ rate, el('span',{class:'suffix',text:'%'}) ]) ]);
 
-    const fee=el('input',{type:'number',class:'pf','data-field':'fee',min:'0',step:'0.01',inputmode:'decimal'}); fee.value=plan.fee;
-    const feeField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'信託報酬（年率）'}), el('div',{class:'input-suffix'},[ fee, el('span',{class:'suffix',text:'%'}) ]), el('span',{class:'field-help',text:'正確な値は各運用会社の交付目論見書でご確認ください'}) ]);
+    const fee=el('input',{type:'text',class:'pf','data-field':'fee',inputmode:'decimal'}); fee.value=plan.fee;
+    const feeField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'信託報酬（年率）'}), el('div',{class:'input-suffix'},[ fee, el('span',{class:'suffix',text:'%'}) ]) ]);
 
-    const yr=el('input',{type:'number',class:'pf','data-field':'years',min:'1',max:'60',step:'1',inputmode:'numeric'}); yr.value=plan.years;
+    const yr=el('input',{type:'text',class:'pf','data-field':'years',inputmode:'numeric'}); yr.value=plan.years;
+    if(raw){ if(raw.amount!=null) amt.value=raw.amount; if(raw.rate!=null) rate.value=raw.rate; if(raw.fee!=null) fee.value=raw.fee; if(raw.years!=null) yr.value=raw.years; } // 作り直す前に入っていた文字（まちがいも消さない）
     const yrField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'運用期間'}), el('div',{class:'input-suffix'},[ yr, el('span',{class:'suffix',text:'年'}) ]) ]);
 
     return el('div',{class:'card plan-card','data-index':index},[ head, fundField, methodField, amtField, rateField, feeField, yrField ]);
   }
-  function renderPlans(){
+  // いま欄に入っている文字（作り直しても、まちがった入力とエラーが消えないように）
+  function captureRaw(){ return [...plansEl.querySelectorAll('.plan-card')].map(card=>{ const r={}; NUM_FIELDS.forEach(f=>{ const x=card.querySelector('[data-field="'+f+'"]'); if(x) r[f]=x.value; }); return r; }); }
+  function renderPlans(raws){
     plansEl.textContent='';
-    plans.forEach((p,i)=>plansEl.appendChild(buildPlanCard(p,i)));
+    plans.forEach((p,i)=>plansEl.appendChild(buildPlanCard(p,i,raws&&raws[i])));
+    plansEl.dataset.n=String(plans.length);
     document.getElementById('add-plan').disabled = plans.length>=MAX_PLANS;
+    plansEl.querySelectorAll('input[data-field]').forEach(inp=>{ if(NUM_FIELDS.includes(inp.dataset.field)) checkField(inp); });
   }
   function onPlanInput(e){
     const t=e.target; if(!t.classList||!t.classList.contains('pf')) return;
     const card=t.closest('.plan-card'); if(!card) return;
     const i=parseInt(card.dataset.index,10); const field=t.dataset.field;
-    if(field==='method'){ if(!t.checked) return; plans[i].method=t.value; card.querySelector('.amount-label').textContent=t.value==='lump'?'一括投資額':'毎月の積立額'; }
+    if(field==='method'){
+      if(!t.checked) return; plans[i].method=t.value; card.querySelector('.amount-label').textContent=t.value==='lump'?'一括投資額':'毎月の積立額';
+      const a=card.querySelector('[data-field="amount"]'); const r=checkField(a); plans[i].amount=r.err ? a.value : r.v; // 上限が一括と積立で違うので、もう一度確かめる
+    }
     else if(field==='fund'){ plans[i].fundSel=t.value; card.querySelector('[data-field="fundCustom"]').hidden = t.value!=='__other__'; }
     else if(field==='fundCustom'){ plans[i].fundCustom=t.value; }
-    else if(field==='amount'){ const n=parseNum(t.value); plans[i].amount=Math.max(0,n); t.value = (t.value==='' ? '' : n.toLocaleString()); }
-    else if(field==='rate'){ plans[i].rate=parseFloat(t.value)||0; }
-    else if(field==='fee'){ plans[i].fee=Math.max(0,parseFloat(t.value)||0); }
-    else if(field==='years'){ plans[i].years=Math.max(1,Math.min(60,Math.round(parseFloat(t.value)||1))); }
-    recalc();
+    else if(NUM_FIELDS.includes(field)){
+      const r=checkField(t);
+      plans[i][field]=r.err ? t.value : r.v;                   // まちがいは欄の下に出したまま計算しない。保存は入れた文字のまま（再読み込みしても知らせずに前の値に戻さない）
+      if(field==='amount' && e.type==='change') tidyYen(t);
+    }
+    edited(); recalc();
   }
+  // 数字・方式・銘柄を変えたら「呼び出し中」を消す（保存したときの中身と違うため）
+  function edited(){ if(currentHistId!=null){ currentHistId=null; renderHistory(); } }
   function onPlanClick(e){
     const t=e.target;
     if(t.classList && t.classList.contains('plan-remove')){
       const i=parseInt(t.dataset.remove,10);
-      if(plans.length>MIN_PLANS){ plans.splice(i,1); renderPlans(); recalc(); }
+      if(plans.length<=MIN_PLANS) return;
+      enuConfirm('プランの削除','「プラン'+planLetter(i)+'」を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
+        if(!ok || plans.length<=MIN_PLANS) return;
+        userChanged();
+        const raws=captureRaw(); raws.splice(i,1);
+        plans.splice(i,1); renderPlans(raws); edited(); recalc();
+        showToast('プランを削除しました');
+      });
     }
   }
   function addPlan(){
     if(plans.length>=MAX_PLANS) return;
+    userChanged();
+    const raws=captureRaw(); raws.push(Object.assign({}, raws[raws.length-1]));
     plans.push(Object.assign({}, plans[plans.length-1]));
-    renderPlans(); recalc();
+    renderPlans(raws); edited(); recalc();
   }
 
   // === Chart ===
   const SVGNS='http://www.w3.org/2000/svg';
   function svgE(tag,attrs){ const e=document.createElementNS(SVGNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
-  function niceCeil(v){ if(v<=0) return 1; const exp=Math.floor(Math.log10(v)), base=Math.pow(10,exp), n=v/base; let m; if(n<=1)m=1; else if(n<=2)m=2; else if(n<=2.5)m=2.5; else if(n<=5)m=5; else m=10; return m*base; }
+  // 縦の目盛り：1段を切りのよい数（1・2・2.5・5 × 10のn乗）にし、段の数を4〜6から選んで、上のあきがいちばん少なくなる上限にする
+  // （例：最大1,217万 → 250万ずつ5段で1,250万。前は400万ずつ5段で2,000万だった）。同じ上限なら5段に近いほう
+  function axisScale(v){
+    if(!(v>0)) return { step:0.2, n:5, top:1 }; // 0円のときは前と同じ（0〜1）
+    const exp=Math.floor(Math.log10(v)); let best=null;
+    const shown=(t)=>{ const u=t>=1e12?1e12:t>=1e8?1e8:t>=1e4?1e4:1, q=t/u*100; return Math.abs(q-Math.round(q))<1e-6; }; // 目盛りの文字（小数2けたまで）で、ちょうどの値が書けるか
+    for(let e=exp-1;e<=exp;e++) for(const m of [1,2,2.5,5]){
+      const step=m*Math.pow(10,e), n=Math.ceil(v/step-1e-9);
+      if(n<4||n>6) continue;
+      let ok=true; for(let i=1;i<=n;i++) if(!shown(step*i)) ok=false;
+      if(!ok) continue;
+      const top=step*n;
+      if(!best || top<best.top*(1-1e-9) || (Math.abs(top-best.top)<=best.top*1e-9 && Math.abs(n-5)<Math.abs(best.n-5))) best={step:step,n:n,top:top};
+    }
+    return best || { step:Math.pow(10,exp+1)/5, n:5, top:Math.pow(10,exp+1) };
+  }
 
   function renderChart(sims){
     const svg=document.getElementById('chart');
     const wrap=document.getElementById('chart-wrap');
     while(svg.firstChild) svg.removeChild(svg.firstChild);
     const showPrincipal=document.getElementById('toggle-principal').checked;
-    const W=Math.max(300,Math.min(760, wrap.clientWidth||720));
-    const H=Math.max(260,Math.min(400, Math.round(W*0.52)));
+    const W=Math.max(200, wrap.clientWidth||720); // 表示の幅で描く（縮めたり広げたりすると、目盛りの文字が11pxからずれる）
+    const H=Math.max(220,Math.min(400, Math.round(W*0.52)));
     svg.setAttribute('viewBox','0 0 '+W+' '+H);
     const padL=58,padR=16,padT=16,padB=38, plotW=W-padL-padR, plotH=H-padT-padB;
     const maxYears=Math.max.apply(null, plans.map(p=>p.years).concat([1]));
     let maxVal=0;
     sims.forEach(s=>s.yearly.forEach(p=>{ if(p.value>maxVal)maxVal=p.value; if(showPrincipal&&p.principal>maxVal)maxVal=p.principal; }));
-    const niceMax=niceCeil(maxVal);
+    const ax=axisScale(maxVal), niceMax=ax.top;
     const X=(yr)=> padL+(yr/maxYears)*plotW;
     const Y=(v)=> padT+plotH-(v/niceMax)*plotH;
-    const steps=5;
+    const steps=ax.n;
     for(let i=0;i<=steps;i++){
-      const val=niceMax*i/steps, yy=Y(val);
+      const val=(i===steps?niceMax:ax.step*i), yy=Y(val);
       svg.appendChild(svgE('line',{x1:padL,y1:yy,x2:W-padR,y2:yy,stroke:'#e7ecf2','stroke-width':1}));
       const t=svgE('text',{x:padL-8,y:yy+4,'text-anchor':'end','class':'axis-label'}); t.textContent=formatMan(val); svg.appendChild(t);
     }
-    const xstep=Math.max(1,Math.ceil(maxYears/8));
-    for(let yr=0;yr<=maxYears;yr+=xstep){ const t=svgE('text',{x:X(yr),y:H-padB+20,'text-anchor':'middle','class':'axis-label'}); t.textContent=yr; svg.appendChild(t); }
+    const xstep=[1,2,5,10,20].find(st=>maxYears/st<=8)||20; // 1・2・5・10・20年おき（目盛りの間をそろえる）
+    for(let yr=0;yr<=maxYears;yr+=xstep){ if(X(maxYears)-X(yr)<28) continue; const t=svgE('text',{x:X(yr),y:H-padB+20,'text-anchor':'middle','class':'axis-label'}); t.textContent=yr; svg.appendChild(t); } // 最後の「○年」と重なる目盛りは出さない
     const tl=svgE('text',{x:X(maxYears),y:H-padB+20,'text-anchor':'middle','class':'axis-label'}); tl.textContent=maxYears+'年'; svg.appendChild(tl);
 
     function series(sim,color,key,dashed){
@@ -651,10 +869,10 @@
       const path=svgE('path',{d:d.trim(),fill:'none',stroke:color,'stroke-width':dashed?1.8:2.5,'stroke-linejoin':'round','stroke-linecap':'round'});
       if(dashed){ path.setAttribute('stroke-dasharray','4 4'); path.setAttribute('opacity','0.5'); }
       svg.appendChild(path);
-      if(!dashed){ sim.yearly.forEach(p=>{ const c=svgE('circle',{cx:X(p.year),cy:Y(p.value),r:3,fill:color}); const tt=svgE('title',{}); tt.textContent=p.year+'年: '+yen(p.value); c.appendChild(tt); svg.appendChild(c); }); }
+      if(!dashed){ sim.yearly.forEach(p=>{ const c=svgE('circle',{cx:X(p.year),cy:Y(p.value),r:3,fill:color}); const tt=svgE('title',{}); tt.textContent=p.year+'年：'+yen(p.value); c.appendChild(tt); svg.appendChild(c); }); }
     }
-    sims.forEach((s,i)=>{ if(showPrincipal) series(s,PLAN_COLORS[i],'principal',true); });
-    sims.forEach((s,i)=>{ series(s,PLAN_COLORS[i],'value',false); });
+    sims.forEach((s,i)=>{ if(showPrincipal) series(s,planColor(i),'principal',true); });
+    sims.forEach((s,i)=>{ series(s,planColor(i),'value',false); });
   }
 
   function methodLabel(m){ return m==='lump'?'一括':'積立'; }
@@ -662,8 +880,8 @@
     const elx=document.getElementById('legend'); elx.textContent='';
     plans.forEach((p,i)=>{
       const item=document.createElement('span'); item.className='legend-item';
-      const sw=document.createElement('span'); sw.className='legend-swatch'; sw.style.background=PLAN_COLORS[i];
-      const lab=document.createElement('span'); lab.textContent=fundName(p)+'（'+methodLabel(p.method)+'）';
+      const sw=document.createElement('span'); sw.className='legend-swatch'; sw.style.background=planColor(i); sw.style.borderColor=planColor(i);
+      const lab=nbFill(document.createElement('span'), [...fundParts(p), '（'+methodLabel(p.method)+'）']);
       item.append(sw,lab); elx.appendChild(item);
     });
     if(document.getElementById('toggle-principal').checked){
@@ -672,31 +890,32 @@
   }
 
   function renderSummary(sims, simsNoFee){
-    const inflation=parseFloat(document.getElementById('inflation-rate').value)||0;
+    const inflation=judgeValue(document.getElementById('inflation-rate').value,'inflation').v||0;
     const rk=document.getElementById('ranking'); rk.textContent='';
-    const h=document.createElement('h3'); h.textContent='結果ランキング（最終評価額の高い順）'; rk.appendChild(h);
+    const h=document.createElement('h3'); const h1=document.createElement('span'); h1.className='nb'; h1.textContent='結果ランキング'; const h2=document.createElement('span'); h2.className='nb'; h2.textContent='（最終評価額の高い順）'; h.append(h1,h2); rk.appendChild(h);
     const medals=['🥇','🥈','🥉'];
-    const order=sims.map((s,i)=>({i:i,fv:s.finalValue})).sort((a,b)=>b.fv-a.fv);
-    order.forEach((o,rank)=>{
+    const order=sims.map((s,i)=>({i:i,fv:s.finalValue,shown:yen(s.finalValue)})).sort((a,b)=>b.fv-a.fv);
+    order.forEach((o)=>{
+      const rank=order.filter(x=>x.fv>o.fv && x.shown!==o.shown).length; // 順位は金額そのもので比べる。画面に出る金額が同じ（「約○兆円」も）なら同じ順位
       const row=document.createElement('div'); row.className='rank-item';
       const med=document.createElement('span'); med.className='rank-medal'; med.textContent=medals[rank]||(rank+1)+'.';
-      const nm=document.createElement('span'); nm.className='rank-name'; nm.textContent='プラン'+planLetter(o.i)+'　'+fundName(plans[o.i])+'（'+methodLabel(plans[o.i].method)+'）';
+      const nm=document.createElement('span'); nm.className='rank-name'; [ 'プラン'+planLetter(o.i)+'　', ...fundName(plans[o.i]).split(/(?=（)/), '（'+methodLabel(plans[o.i].method)+'）' ].forEach(t=>{ const sp=document.createElement('span'); sp.className='nb'; sp.textContent=t; nm.appendChild(sp); });
       const val=document.createElement('span'); val.className='rank-val'; val.textContent=yen(o.fv);
       row.append(med,nm,val); rk.appendChild(row);
     });
 
-    const grid=document.getElementById('summary'); grid.textContent='';
+    const grid=document.getElementById('summary'); grid.textContent=''; grid.dataset.n=String(sims.length);
     sims.forEach((sim,i)=>{
       const plan=plans[i];
-      const card=document.createElement('div'); card.className='summary-item'; card.style.borderTopColor=PLAN_COLORS[i];
-      const fund=document.createElement('div'); fund.className='summary-fund'; fund.textContent='プラン'+planLetter(i)+'　'+fundName(plan);
+      const card=document.createElement('div'); card.className='summary-item'; card.style.borderLeftColor=planColor(i);
+      const fund=nbFill(document.createElement('div'), ['プラン'+planLetter(i)+'　', ...fundParts(plan)]); fund.className='summary-fund';
       const meth=document.createElement('div'); meth.className='summary-method'; meth.textContent=methodLabel(plan.method)+'・'+plan.years+'年・実質利回り '+sim.net.toFixed(2)+'%';
       const mLbl=document.createElement('div'); mLbl.className='summary-main-label'; mLbl.textContent='最終評価額';
       const main=document.createElement('div'); main.className='summary-main'; main.textContent=yen(sim.finalValue);
       card.append(fund,meth,mLbl,main);
       if(inflation>0){
         const real=sim.finalValue/Math.pow(1+inflation/100, plan.years);
-        const rv=document.createElement('div'); rv.className='real-val'; rv.textContent='（実質：'+yen(real)+'／インフレ'+inflation+'%換算）';
+        const rv=document.createElement('div'); rv.className='real-val'; rv.textContent='（今の価値：'+yen(real)+'／インフレ'+inflation+'%）';
         card.appendChild(rv);
       }
       let base,pPct,gPct;
@@ -704,7 +923,7 @@
       else{ base=Math.max(sim.principal,1); pPct=Math.max(0,sim.finalValue)/base*100; gPct=0; }
       const bar=document.createElement('div'); bar.className='minibar';
       const segP=document.createElement('div'); segP.className='seg-p'; segP.style.width=pPct+'%';
-      const segG=document.createElement('div'); segG.className='seg-g'; segG.style.width=gPct+'%'; segG.style.background=PLAN_COLORS[i];
+      const segG=document.createElement('div'); segG.className='seg-g'; segG.style.width=gPct+'%'; segG.style.background=planColor(i); segG.style.borderColor=planColor(i);
       bar.append(segP,segG); card.appendChild(bar);
       const blg=document.createElement('div'); blg.className='minibar-legend';
       const lp=document.createElement('span'); lp.textContent='元本 '+yen(sim.principal);
@@ -713,7 +932,7 @@
       blg.append(lp,lg); card.appendChild(blg);
       const fi=document.createElement('div'); fi.className='fee-impact';
       if(plan.fee>0){
-        const impact=simsNoFee[i].finalValue - sim.finalValue;
+        const impact=Math.round(simsNoFee[i].finalValue) - Math.round(sim.finalValue); // 表示した2つの金額の差
         const v=document.createElement('span'); v.textContent='手数料の影響：';
         const vv=document.createElement('span'); vv.className='fee-val'; vv.textContent='−'+yen(impact);
         const sub=document.createElement('span'); sub.className='fee-sub'; sub.textContent='（信託報酬0%なら '+yen(simsNoFee[i].finalValue)+'）';
@@ -736,7 +955,7 @@
     const showAll=document.getElementById('toggle-allyears').checked;
     const years=[];
     if(showAll || maxYears<=10){ for(let y=0;y<=maxYears;y++) years.push(y); }
-    else{ for(let y=0;y<=maxYears;y+=5) years.push(y); if(years[years.length-1]!==maxYears) years.push(maxYears); }
+    else{ for(let y=0;y<=maxYears;y+=5) years.push(y); plans.forEach(p=>{ if(!years.includes(p.years)) years.push(p.years); }); years.sort((a,b)=>a-b); } // 5年ごと＋各プランの最後の年
     years.forEach(yr=>{
       const tr=document.createElement('tr');
       const c0=document.createElement('td'); c0.textContent=yr+'年後'; tr.appendChild(c0);
@@ -755,68 +974,93 @@
   }
 
   // === Persistence (input) ===
+  let dataExtra={}; // 保存データの知らない項目（消さずに残す）
   function saveInput(){
-    try{ localStorage.setItem(CFG.appId+'-input', JSON.stringify({ plans:plans, inflation:document.getElementById('inflation-rate').value })); }catch(e){}
+    saveStore('data', Object.assign({}, dataExtra, { plans:plans, inflation:document.getElementById('inflation-rate').value }));
   }
   function restoreInput(){
-    let s; try{ s=JSON.parse(localStorage.getItem(CFG.appId+'-input')||'null'); }catch(e){ s=null; }
+    const s=loadStore('data');
+    if(s && typeof s==='object') dataExtra=s;
     if(s && Array.isArray(s.plans) && s.plans.length>=MIN_PLANS){
-      plans=s.plans.slice(0,MAX_PLANS).map(normalizePlan);
+      plans=s.plans.map(normalizePlan); // 上限より多いプランも全部（追加だけできない）
       if(s.inflation!=null) pendingInflation=s.inflation;
     }else{ plans=[defaultPlanA(), defaultPlanB()]; }
   }
 
   // === History ===
-  function getHistory(){ try{ return JSON.parse(localStorage.getItem(CFG.appId+'-history')||'[]'); }catch(e){ return []; } }
-  function setHistory(h){ try{ localStorage.setItem(CFG.appId+'-history', JSON.stringify(h)); }catch(e){} }
+  // === 保存の形（版1・004「すでに使っている人に影響を出さない」）===
+  const DATA_VERSION = 1;
+  function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
+    if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    return saved.data;
+  }
+  // 読み込みに失敗したら、元を「…_broken」に取っておき、ユーザーが何か変えるまで上書きしない
+  const brokenStores=new Set();
+  function loadStore(name){
+    let raw=null;
+    try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
+    if(raw==null) return null;
+    let data=null;
+    try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
+    if(data==null){ brokenStores.add(name); try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    return data;
+  }
+  function userChanged(){ brokenStores.clear(); }
+  function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
+  function setHistory(h){ saveStore('history', h); }
   function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
   function autoName(){
     const names=plans.map(fundName).join(' / ');
     const d=new Date(), p=(n)=>String(n).padStart(2,'0');
     const stamp=(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes());
     const label=names.length>28?names.slice(0,28)+'…':names;
-    return label+' ('+stamp+')';
+    return label+'（'+stamp+'）';
   }
   function saveCurrent(){
+    const bad=firstError(PLAN_INPUTS);
+    if(bad){ bad.focus(); bad.scrollIntoView({block:'center',behavior:'smooth'}); showToast('入力を直してから保存してください'); return; } // まちがった入力のままでは保存しない
+    userChanged();
     const nameInput=document.getElementById('save-name');
     const name=(nameInput.value||'').trim()||autoName();
     const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, plans:JSON.parse(JSON.stringify(plans)), inflation:document.getElementById('inflation-rate').value };
-    let hist=getHistory(); hist.unshift(snap); if(hist.length>20) hist=hist.slice(0,20); setHistory(hist);
+    let hist=getHistory(); const lim=Math.max(20, hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist); // 上限より多く読み込んだあとも今ある件数を保つ（いちばん古い1件だけ落とす）
     nameInput.value=''; renderHistory(); showToast('📌 この比較を保存しました');
   }
+  let currentHistId=null;
   function renderHistory(){
     const list=document.getElementById('history-list'); list.textContent='';
     const hist=getHistory();
-    if(!hist.length){ const e=document.createElement('div'); e.className='history-empty'; e.textContent='保存した比較はまだありません'; list.appendChild(e); return; }
+    list.hidden=!hist.length;
     hist.forEach(snap=>{
-      const item=document.createElement('div'); item.className='history-item';
-      const info=document.createElement('div'); info.className='history-info';
-      const nm=document.createElement('div'); nm.className='history-name'; nm.textContent=snap.name;
-      const meta=document.createElement('div'); meta.className='history-meta';
-      let top='';
-      try{ const sims=(snap.plans||[]).map(normalizePlan).map(simulate); const order=sims.map((s,i)=>({i:i,fv:s.finalValue})).sort((a,b)=>b.fv-a.fv); if(order.length){ const t=order[0]; top='トップ '+fundName(normalizePlan(snap.plans[t.i]))+' '+yen(t.fv); } }catch(e){}
-      meta.textContent=fmtDate(snap.savedAt)+(top?' ・ '+top:'');
-      info.append(nm,meta);
-      const actions=document.createElement('div'); actions.className='history-actions';
-      const load=document.createElement('button'); load.className='hist-btn hist-load'; load.textContent='読込'; load.dataset.load=snap.id;
-      const del=document.createElement('button'); del.className='hist-btn hist-del'; del.textContent='削除'; del.dataset.del=snap.id;
-      actions.append(load,del); item.append(info,actions); list.appendChild(item);
+      const b=document.createElement('button'); b.type='button'; b.className='hist-chip'+(snap.id===currentHistId?' on':'');
+      b.textContent=snap.name; b.title=snap.name+'（'+fmtDate(snap.savedAt)+'）'; b.dataset.load=snap.id;
+      list.appendChild(b);
     });
+    const cur=document.getElementById('hist-current'); cur.textContent='';
+    const snap=hist.find(s=>s.id===currentHistId);
+    if(snap){
+      cur.append('呼び出し中：'+snap.name);
+      const del=document.createElement('button'); del.type='button'; del.textContent='この保存を削除'; del.dataset.del=snap.id;
+      cur.append('　', del); cur.hidden=false;
+    }else{ cur.hidden=true; currentHistId=null; }
   }
   function onHistoryClick(e){
-    const t=e.target;
-    if(t.dataset && t.dataset.load){
+    const t=e.target.closest('button'); if(!t) return;
+    if(t.dataset.load){
       const id=parseInt(t.dataset.load,10);
       const snap=getHistory().find(s=>s.id===id);
       if(snap){
+        userChanged();
         plans=(snap.plans||[]).map(normalizePlan); if(plans.length<MIN_PLANS) plans=[defaultPlanA(),defaultPlanB()];
         document.getElementById('inflation-rate').value = snap.inflation!=null?snap.inflation:0;
-        renderPlans(); recalc(); showToast('履歴を読み込みました'); window.scrollTo({top:0,behavior:'smooth'});
+        checkField(document.getElementById('inflation-rate'));
+        currentHistId=id; renderPlans(); recalc(); renderHistory(); showToast('保存した比較を呼び出しました'); // まちがった値があれば欄の下に出る
       }
-    }else if(t.dataset && t.dataset.del){
+    }else if(t.dataset.del){
       const id=parseInt(t.dataset.del,10);
-      enuConfirm('履歴の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
-        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); renderHistory(); showToast('削除しました'); }
+      enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
+        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
       });
     }
   }
@@ -824,15 +1068,60 @@
   // === Export / Import (102) ===
   function safeFileName(s){ return String(s||'data').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u30FC-]/g,''); }
   function appGetData(){ return { plans:plans, inflation:document.getElementById('inflation-rate').value, history:getHistory() }; }
-  function appValidateData(data){ return !!(data && Array.isArray(data.plans) && data.plans.length>=MIN_PLANS); }
-  function appApplyData(data){
-    if(Array.isArray(data.plans) && data.plans.length>=MIN_PLANS) plans=data.plans.slice(0,MAX_PLANS).map(normalizePlan);
-    if(data.inflation!=null) document.getElementById('inflation-rate').value=data.inflation;
-    if(Array.isArray(data.history)) setHistory(data.history.slice(0,20));
+  function appValidateData(data){ return !!(data && typeof data==='object' && (Array.isArray(data.plans) || Array.isArray(data.history))); }
+  // 中身の値を確かめる：読めないプラン・保存した比較は、それだけ読み込まずに知らせる（知らせずに読みかえない）。
+  // 項目がない（前の版のデータ）は初期値で補うが、null や形の違う値・数字として読めない値は読まない
+  function planReadable(p){
+    if(!p || typeof p!=='object' || Array.isArray(p)) return false;
+    if(p.method!=='lump' && p.method!=='dca') return false;
+    if(p.fundSel!==undefined && typeof p.fundSel!=='string') return false;
+    if(p.fundCustom!==undefined && typeof p.fundCustom!=='string') return false;
+    for(const f of NUM_FIELDS){
+      if(p[f]===undefined) continue;
+      if(typeof p[f]!=='number' && typeof p[f]!=='string') return false;
+      if(!Number.isFinite(judgeValue(p[f], f, p).v)) return false;   // 数字として読めない値は読まない
+    }
+    return true;                                                     // 範囲の外の値は読み込んで、欄の下にエラーを出す（004）
+  }
+  // インフレ率：範囲の外の値（前の版の20%こえなど）は読み込んで欄の下にエラーを出す（数字として読めない値は読まない）
+  function inflationReadable(v){ if(v==null) return true; if(typeof v!=='number' && typeof v!=='string') return false; return Number.isFinite(judgeValue(String(v),'inflation').v); }
+  function readablePlans(list){ const ok=list.filter(planReadable); return {plans:ok, dropped:list.length-ok.length}; } // 上限より多いプランも全部読む
+  // 004「インポート」：今の入力が読めなくても、読める保存は読み込む（画面の入力は前のまま）。読めるものが1つもないときだけ断る。
+  // 保存した比較は、上限（20件）より多くても全部読む（新しく保存するときは今ある件数を保ち、いちばん古い1件だけ落とす）
+  function cleanImport(data){
+    let dropped=0, cur=null, hist=null;
+    if(Array.isArray(data.plans) && inflationReadable(data.inflation)){
+      const r=readablePlans(data.plans);
+      if(r.plans.length>=MIN_PLANS){ cur={plans:r.plans, inflation:data.inflation}; dropped+=r.dropped; }
+    }
+    if(!cur && data.plans!=null) dropped++; // プランの項目がない（保存だけの）ファイルは、読めない行として数えない
+    if(Array.isArray(data.history)){
+      hist=[];
+      data.history.forEach(h=>{
+        if(!h || typeof h!=='object' || !Array.isArray(h.plans) || typeof h.name!=='string' || typeof h.id!=='number' || isNaN(new Date(h.savedAt).getTime()) || !inflationReadable(h.inflation)){ dropped++; return; }
+        const r=readablePlans(h.plans); dropped+=r.dropped;
+        if(r.plans.length<MIN_PLANS){ if(!r.dropped) dropped++; return; }
+        hist.push(Object.assign({},h,{plans:r.plans}));
+      });
+    }else if(data.history!=null) dropped++;
+    if(!cur && !(hist && hist.length)) return null;
+    return { data:data, cur:cur, hist:hist, dropped:dropped };
+  }
+  function appApplyData(c){
+    if(c.cur){
+      dataExtra=Object.assign({}, c.data); delete dataExtra.plans; delete dataExtra.inflation; delete dataExtra.history;
+      plans=c.cur.plans.map(normalizePlan);
+      document.getElementById('inflation-rate').value=(c.cur.inflation!=null)?c.cur.inflation:0;
+      checkField(document.getElementById('inflation-rate'));
+    }
+    if(c.hist) setHistory(c.hist);
+    currentHistId=null;
     renderPlans(); renderHistory(); recalc();
   }
   function handleExport(){
-    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:CFG.dataVersion||1, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
+    const bad=firstError(PLAN_INPUTS);
+    if(bad){ bad.focus(); bad.scrollIntoView({block:'center',behavior:'smooth'}); showToast('入力を直してから書き出してください'); return; } // まちがった入力のままでは書き出さない（書き出すのは画面の値）
+    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob), a=document.createElement('a');
     a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
@@ -846,13 +1135,16 @@
       try{
         const p=JSON.parse(await f.text());
         if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
-        if(!p.app_id) throw new Error('app_id がない古い形式のファイルです');
-        if(p.app_id!==CFG.appId) throw new Error('別アプリのファイルです（'+p.app_id+'）');
-        if(p.data_version>(CFG.dataVersion||1)) throw new Error('新しいバージョンのファイルです');
-        if(!appValidateData(p.data)) throw new Error('データ形式が違います');
-        const ok=await enuConfirm('📥 データのインポート','現在のプラン・履歴を、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+        if(!p.app_id) throw new Error('古い形式のファイルです');
+        if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
+        if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
+        const data=migrate({ v:p.data_version||1, data:p.data }); // インポートも migrate() を通す
+        if(!appValidateData(data)) throw new Error('データ形式が違います');
+        const c=cleanImport(data);
+        if(!c) throw new Error('ファイルの中に読めない値があります');
+        const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
         if(!ok) return;
-        appApplyData(p.data); showToast('📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+        userChanged(); appApplyData(c); showToast(c.dropped?'📥 インポートしました。読み込めなかった行があります':'📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
       }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
     });
     input.click();
@@ -864,49 +1156,65 @@
   }
 
   // === Goal reverse calc ===
-  function gv(id){ return parseFloat(String(document.getElementById(id).value).replace(/,/g,'')); }
+  // シミュレーション本体と同じ「月末に積み立て・月利 (1+年利)^(1/12)−1」で逆算する（金融庁つみたてシミュレーターと同じ）
   function calcGoal(){
-    const target=Math.max(0, gv('goal-amount')||0);
-    const rate=gv('goal-rate')||0;
-    const years=Math.max(1, Math.round(gv('goal-years')||1));
-    const monthly=Math.max(0, gv('goal-monthly')||0);
-    const rm=(rate/100)/12, n=years*12;
-    let reqMonthly;
-    if(Math.abs(rm)<1e-9){ reqMonthly=target/n; }
-    else{ const f=((Math.pow(1+rm,n)-1)/rm)*(1+rm); reqMonthly = f>0 ? target/f : NaN; }
-    document.getElementById('goal-r1').textContent = (isFinite(reqMonthly)&&reqMonthly>=0) ? (yen(reqMonthly)+' / 月') : '—';
-    let txt='条件では届きません';
+    const r1=document.getElementById('goal-r1'), r2=document.getElementById('goal-r2');
+    if(firstError(GOAL_INPUTS)){ r1.textContent='—'; r2.textContent='—'; return; } // まちがいを直すまで計算しない
+    const gv=(id)=>judgeValue(document.getElementById(id).value, document.getElementById(id).dataset.rule).v;
+    const target=gv('goal-amount'), rate=gv('goal-rate'), years=gv('goal-years'), monthly=gv('goal-monthly');
+    const rm=monthlyRate(rate), n=years*12;
+    // 必要な毎月額：目標×月利÷((1+月利)^月数−1)。円未満は切り上げ（この額を積み立てれば目標に届く）
+    const f = Math.abs(rm)<1e-12 ? n : (Math.pow(1+rm,n)-1)/rm; // 毎月1円を月末に積み立てたときの n か月後の額
+    const reqMonthly = target/f;
+    r1.textContent = (isFinite(reqMonthly)&&reqMonthly>=0) ? (yen(Math.max(0,Math.ceil(reqMonthly-1e-6)))+' / 月') : '—';
+    // かかる期間：月末に毎月額を積み立てて、目標に届く最初の月（マイナス利回りでも届くなら出す）
+    let txt='この条件では届きません';
     if(monthly>0){
-      if(Math.abs(rm)<1e-9){ const nm=target/monthly; if(nm>0) txt='約'+(nm/12).toFixed(1)+'年'; }
-      else if((1+rm)>0){ const ratio=1+(target*rm)/(monthly*(1+rm)); if(ratio>1){ const nm=Math.log(ratio)/Math.log(1+rm); if(isFinite(nm)&&nm>0) txt='約'+(nm/12).toFixed(1)+'年'; } }
+      let nm=NaN;
+      if(Math.abs(rm)<1e-12) nm=target/monthly;
+      else{ const x=1+target*rm/monthly; if(x>0) nm=Math.log(x)/Math.log(1+rm); }
+      if(isFinite(nm) && nm>0){ const months=Math.ceil(nm-1e-9); txt='約'+(months/12).toFixed(1)+'年'; }
     }
-    document.getElementById('goal-r2').textContent = txt;
+    r2.textContent = txt;
   }
 
   // === Presets ===
   function applyPreset(name){
+    userChanged();
     if(name==='orcan-sp'){
       plans=[ {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20},
               {fundSel:'S&P500',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20} ];
       showToast('利回りはご自身の想定値を入力してください');
     }else if(name==='lump-dca'){
       const f='オルカン（全世界株式）';
-      plans=[ {fundSel:f,fundCustom:'',method:'lump',amount:1000000,rate:5,fee:0,years:20},
+      plans=[ {fundSel:f,fundCustom:'',method:'lump',amount:7200000,rate:5,fee:0,years:20},
               {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20} ];
+      showToast('どちらも元本720万円で比べます');
     }else if(name==='same-fee'){
       const f='オルカン（全世界株式）';
       plans=[ {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20},
               {fundSel:f,fundCustom:'',method:'dca',amount:30000,rate:5,fee:1,years:20} ];
       showToast('信託報酬の有無で比較します（数値は目安）');
     }
-    renderPlans(); recalc();
+    renderPlans(); edited(); recalc();
   }
 
   // === Recalc ===
+  function setBlocked(on){
+    document.getElementById('result-fix').hidden=!on; document.getElementById('chart-fix').hidden=!on;
+    document.getElementById('tax-note').hidden=on;
+    if(on){
+      ['legend','ranking','summary','year-thead','year-tbody','year-cards'].forEach(id=>{ document.getElementById(id).textContent=''; });
+      const svg=document.getElementById('chart'); while(svg.firstChild) svg.removeChild(svg.firstChild); svg.style.display='none';
+    }else document.getElementById('chart').style.display='';
+  }
   function recalc(){
+    saveInput(); // 入力のたびに保存（まちがった欄は、最後の正しい値のまま）
+    if(firstError(PLAN_INPUTS)){ setBlocked(true); return; } // まちがった入力があれば計算しない（前の結果も出さない）
+    setBlocked(false);
     const sims=plans.map(simulate);
     const simsNoFee=plans.map(p=>simulate(Object.assign({},p,{fee:0})));
-    renderLegend(); renderChart(sims); renderSummary(sims, simsNoFee); renderBreakdown(sims); saveInput();
+    renderLegend(); renderChart(sims); renderSummary(sims, simsNoFee); renderBreakdown(sims);
   }
 
   // === PWA / icons (003) ===
@@ -934,7 +1242,11 @@
     const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif">'+emoji+'</text></svg>';
     return 'data:image/svg+xml,'+encodeURIComponent(svg);
   }
-  function setupPWA(){
+  function setupPWA(){ // 文字（フォント）を読み終えてからアイコンを描く
+    const ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    ready.then(drawPWA, drawPWA);
+  }
+  function drawPWA(){
     const ICON='📊', NAME='投資比較シミュレーター', SHORT='投資比較';
     let bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#faf7f0';
     document.title=NAME;
@@ -961,18 +1273,21 @@
   function init(){
     applyStorageType();
     initNotices();
+    initLegal();
+    initVersion();
     initButtons();
     document.getElementById('copyYear').textContent=new Date().getFullYear();
 
     restoreInput();
     renderPlans();
     if(pendingInflation!=null) document.getElementById('inflation-rate').value=pendingInflation;
+    checkField(document.getElementById('inflation-rate'));
 
     plansEl.addEventListener('input', onPlanInput);
     plansEl.addEventListener('change', onPlanInput);
     plansEl.addEventListener('click', onPlanClick);
     document.getElementById('add-plan').addEventListener('click', addPlan);
-    document.getElementById('inflation-rate').addEventListener('input', recalc);
+    document.getElementById('inflation-rate').addEventListener('input', (e)=>{ checkField(e.target); edited(); recalc(); });
     document.getElementById('toggle-principal').addEventListener('change', recalc);
     document.getElementById('toggle-allyears').addEventListener('change', recalc);
     const bToggle=document.getElementById('breakdown-toggle'), bBody=document.getElementById('breakdown-body');
@@ -980,21 +1295,83 @@
     document.querySelectorAll('.preset-chip').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
     document.getElementById('save-btn').addEventListener('click', saveCurrent);
     document.getElementById('history-list').addEventListener('click', onHistoryClick);
-    document.getElementById('goal-card').addEventListener('input',(e)=>{
-      const t=e.target;
-      if(t.id==='goal-amount'||t.id==='goal-monthly'){ const n=parseNum(t.value); t.value=(t.value===''?'':n.toLocaleString()); }
-      calcGoal();
-    });
+    document.getElementById('hist-current').addEventListener('click', onHistoryClick);
+    document.getElementById('goal-card').addEventListener('input',(e)=>{ checkField(e.target); calcGoal(); });
+    document.getElementById('goal-card').addEventListener('change',(e)=>{ const t=e.target; if(t.id==='goal-amount'||t.id==='goal-monthly') tidyYen(t); });
 
     let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(recalc,150); });
 
     renderHistory(); recalc(); calcGoal(); setupPWA();
   }
 
-  if(document.readyState!=='loading') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  // この script は画面の部品のあとにあるので、待たずにすぐ作る。DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に
+  // プランのない画面がいったん描かれ、プランが入ったときに下の部品がずれていた（portfolio と同じ原因）
+  init();
 
 })();
 </script>
+<!-- enu-a2hs -->
+<div class="enu-a2hs" id="enu-a2hs" role="dialog" aria-modal="true" aria-labelledby="enu-a2hs-ttl" hidden>
+  <div class="enu-a2hs-card">
+    <div class="enu-a2hs-grip" aria-hidden="true"></div>
+    <div class="enu-a2hs-row">
+      <span class="enu-a2hs-ico" aria-hidden="true">📲</span>
+      <div>
+        <div class="enu-a2hs-ttl" id="enu-a2hs-ttl">ホーム画面に置けます</div>
+        <p class="enu-a2hs-sub"><span class="nb">アイコンからすぐ開けて、</span><span class="nb">全画面で使えます。</span></p>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-ios" hidden><li>下の「共有」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-android" hidden><li>右上の「︙」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+      </div>
+    </div>
+    <div class="enu-a2hs-btns">
+      <button type="button" class="enu-a2hs-later" id="enu-a2hs-later">あとで</button>
+      <button type="button" class="enu-a2hs-go" id="enu-a2hs-go">わかりました</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ホーム画面の案内（2回目に開いたときだけ・スマホだけ） */
+(function(){
+  var P='enu_versus-sim';
+  var box=document.getElementById('enu-a2hs'); if(!box) return;
+  function get(k){ try{ return localStorage.getItem(P+k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(P+k,v); }catch(e){} }
+  var standalone=(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  var iOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var touch=(navigator.maxTouchPoints||0)>0 && window.innerWidth<900;
+  var prompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); prompt=e; });
+  // 開いた回数（同じ回の読み直しでは増やさない）
+  var opens=parseInt(get('_opens')||'0',10); if(!isFinite(opens)) opens=0;
+  var counted=false; try{ counted=!!sessionStorage.getItem(P+'_counted'); }catch(e){}
+  if(!counted){ opens+=1; set('_opens',String(opens)); try{ sessionStorage.setItem(P+'_counted','1'); }catch(e){} }
+  var go=document.getElementById('enu-a2hs-go'), later=document.getElementById('enu-a2hs-later');
+  function close(){ box.hidden=true; }
+  function laterFn(){ set('_a2hs_hide',String(Date.now()+14*24*60*60*1000)); close(); }   // 2週間ほど出さない
+  function done(){ set('_a2hs_hide',String(Date.now()+3650*24*60*60*1000)); close(); }
+  function show(){
+    var ios=document.getElementById('enu-a2hs-ios'), an=document.getElementById('enu-a2hs-android');
+    if(prompt && !iOS){
+      ios.hidden=true; an.hidden=true; go.textContent='ホーム画面に置く';
+      go.onclick=function(){ try{ prompt.prompt(); prompt.userChoice.then(done,done); }catch(e){ done(); } prompt=null; };
+    }else{
+      ios.hidden=!iOS; an.hidden=iOS; go.textContent='わかりました'; go.onclick=done;
+    }
+    later.onclick=laterFn;
+    box.onclick=function(e){ if(e.target===box) laterFn(); };
+    box.hidden=false;
+  }
+  function maybe(){
+    if(standalone || !touch || opens<2) return;
+    var until=parseInt(get('_a2hs_hide')||'0',10);
+    if(isFinite(until) && Date.now()<until) return;
+    setTimeout(show,1200);
+  }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !box.hidden) laterFn(); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(maybe,600); });
+  else setTimeout(maybe,600);
+})();
+</script>
+<!-- /enu-a2hs -->
 </body>
 </html>
