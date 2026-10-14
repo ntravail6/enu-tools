@@ -3,105 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#f3faf8">
-<title>フリーランスレート計算機</title>
-<meta name="description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
-
-<!-- OGP / SNS sharing -->
-<meta property="og:title" content="フリーランスレート計算機">
-<meta property="og:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ja_JP">
-<meta property="og:site_name" content="enu-tools">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="フリーランスレート計算機">
-<meta name="twitter:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
-
+<meta name="theme-color" content="#faf6f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="複利シミュ">
+<title>複利シミュレーター</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
+  /* ===== カラー：08 モカ ===== */
   :root{
-    /* 901 Palette: 11. ターコイズ */
-    --primary:#7BB5B0; --primary-light:#B8DDDA; --primary-dark:#4F8A85;
-    --primary-soft:#DCEDEB; --accent:#5FA5A0;
-    --accent-dark:#3D7C78; --accent-soft:#C5DDDA;
-    --bg:#f3faf8; --bg-soft:#f9fdfc; --line:#cfe2df;
+    /* 共通固定（全アプリ共通・触らない）*/
     --card:#fff; --text:#2C2A24; --sub:#7A756B;
+    /* アプリ別（08 モカ）*/
+    --primary:#B89A85; --primary-light:#E5D5C5; --primary-dark:#8E7560;
+    --primary-soft:#F0E8DE; --accent:#A88770;
+    --bg:#faf6f1; --bg-soft:#fdfaf6; --line:#ebe2d5;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-    background:var(--bg);color:var(--text);line-height:1.7;font-size:.875rem;-webkit-text-size-adjust:100%;
+    background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;
     padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
             max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
   }
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
-  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
   .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
   .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
   .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
+  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
   .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px}
-  .section-note{font-size:.75rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6}
-  .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark)}
 
-  .input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 16px}
-  .field{min-width:0}
-  .field-label{display:block;font-size:.875rem;font-weight:600;color:var(--sub);margin-bottom:5px}
-  .field-help{display:block;font-size:.75rem;color:var(--sub);margin-top:4px;opacity:.9}
+  /* ===== 入力欄 ===== */
   input[type="text"],input[type="number"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
   input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
-  button:focus-visible,a:focus-visible,summary:focus-visible,label:focus-within{outline:2px solid var(--primary);outline-offset:2px}
-  .input-suffix{position:relative}
-  .input-suffix input{padding-right:52px;-moz-appearance:textfield}
-  .input-suffix input::-webkit-outer-spin-button,.input-suffix input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-  .input-suffix .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.875rem;color:var(--sub);pointer-events:none}
+  button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+  .field{display:flex;flex-direction:column;min-width:0}
+  .field-label{display:block;font-size:.875rem;font-weight:600;color:var(--sub);margin-bottom:5px}
+  .input-wrap{position:relative}
+  .input-wrap input{padding-right:40px}
+  .input-wrap .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.875rem;color:var(--sub);pointer-events:none}
   .field-error{font-size:.75rem;color:#a33;margin:4px 0 0}
   input[aria-invalid="true"]{border-color:#c0666a}
 
-  .check-block{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
-  .check-row{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;color:var(--text);cursor:pointer}
-  .check-row input{width:18px;height:18px;accent-color:var(--primary);flex-shrink:0}
-  .check-block .field-help{margin-left:26px}
-  .blue-diff{display:block;font-size:.75rem;color:var(--primary-dark);font-weight:700;margin:4px 0 0 26px}
-  .blue-diff[hidden]{display:none}
-  .reset-row{margin-top:16px}
-  .btn-line{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--sub);color:var(--sub);transition:color .15s,border-color .15s}
-  .btn-line:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
+  /* ===== プラン ===== */
+  /* プランの並び：3＋1 のような半端な段にしない（スマホ1列／中くらい2列／PCで3つのときは3列） */
+  .plans{display:grid;gap:16px;grid-template-columns:1fr;align-items:start}
+  @media (min-width:600px){.plans:not([data-n="1"]){grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (min-width:600px) and (max-width:899.98px){.plans[data-n="3"] > :last-child{grid-column:1/-1}}
+  @media (min-width:900px){.plans[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}.plans[data-n="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .plan{min-width:0;margin-bottom:0}
+  .plans-cap{display:none}
+  @media (min-width:900px){
+    .plans[data-n="4"] .mode-seg button{font-size:.75rem}             /* 4つ並びでも「毎月積立」などが途中で折れない */
+    .plans[data-n="4"] .chart-cap{display:none}                        /* 細い列で短い行が続かないよう、説明は下に1回だけ */
+    .plans[data-n="4"] + .plans-cap{display:block;margin-top:8px}
+  }
+  .plan-top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .plan-name{flex:1 1 auto;min-width:0}
+  .plan-act{flex-shrink:0;background:transparent;border:none;color:var(--sub);font-size:.75rem;cursor:pointer;padding:2px 6px;font-family:inherit;white-space:nowrap;transition:color .15s}
+  .plan-dup:hover{color:var(--primary-dark)}
+  .plan-del:hover{color:#b06a72}
 
-  /* 結果 */
-  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px 24px;margin-bottom:16px}
-  .summary-item{border-left:3px solid var(--primary);padding:2px 0 2px 14px;min-width:0}
-  .summary-label{font-size:.75rem;color:var(--sub);font-weight:600}
-  .summary-main{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.3;white-space:nowrap}
-  .summary-main .unit{font-size:.875rem;font-weight:600;margin-left:3px}
-  .summary-main .unit[hidden]{display:none}
-  .daily-note{margin:-6px 0 12px}
-  .result-list{list-style:none}
-  .result-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.875rem}
-  .result-row:last-child{border-bottom:none}
-  .result-row .lbl{min-width:0}
-  .result-row .val{font-weight:600;text-align:right;white-space:nowrap}
-  .result-row.hl-accent{background:var(--accent-soft);border-radius:10px;border-bottom-color:transparent}
-  .result-row.hl-accent .lbl,.result-row.hl-accent .val{color:var(--accent-dark);font-weight:700}
-  .result-row.hl-primary{background:var(--primary-soft);border-radius:10px;border-bottom-color:transparent}
-  .result-row.hl-primary .lbl,.result-row.hl-primary .val{color:var(--primary-dark);font-weight:700}
+  /* 切りかえ（毎月積立／一括投入／併用・年数／年齢・円／万円）*/
+  .mode-seg,.period-toggle,.unit-toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .mode-seg{margin-bottom:12px}
+  .period-toggle,.unit-toggle{display:inline-flex}
+  .mode-seg button,.period-toggle button,.unit-toggle button{font-family:inherit;font-weight:600;color:var(--sub);background:var(--bg-soft);border:none;cursor:pointer;transition:background .15s,color .15s}
+  .mode-seg button{flex:1;font-size:.875rem;padding:9px 4px}
+  .period-toggle button,.unit-toggle button{font-size:.875rem;padding:4px 12px}
+  .mode-seg button + button,.period-toggle button + button,.unit-toggle button + button{border-left:1px solid var(--line)}
+  .mode-seg button.active,.period-toggle button.active,.unit-toggle button.active{background:var(--primary);color:#fff}
 
-  /* 折りたたみ（▸／▾）*/
-  .breakdown{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
-  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
-  .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
-  .collapse-arrow::before{content:"▸"}
-  .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
-  .collapse-body[hidden]{display:none}
-  .formula-list{list-style:none;margin-top:10px}
-  .formula-list li{font-size:.75rem;color:var(--sub);line-height:1.7}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,max(180px,calc(50% - 6px))),1fr));gap:12px} /* 広いときは2列・スマホは1列 */
 
-  /* 📎 参照リンク（004） */
+  /* 期間（年数 / 年齢） */
+  .period{margin-top:12px}
+  .period-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .period-label{font-size:.875rem;font-weight:600;color:var(--sub)}
+  .period-years{max-width:calc(50% - 6px)}
+  .period-age{display:flex;align-items:flex-end;gap:8px}
+  .period-age .field{flex:1;min-width:0}
+  .period-arrow{flex-shrink:0;color:var(--sub);font-size:.875rem;font-weight:700;padding-bottom:10px}
+  .period-calc{font-size:.75rem;color:var(--primary-dark);font-weight:700;margin-top:8px}
+
+  /* プランの結果 */
+  .plan-result{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+  .pr-figs{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:4px}
+  .pr-fig{font-size:.75rem;color:var(--sub);font-weight:600}
+  .pr-fig b{display:block;font-size:1rem;color:var(--text);font-weight:700;overflow-wrap:break-word}
+  .pr-fig.diff b{color:var(--primary-dark)}
+
+  .plan-chart{margin-top:12px}
+  .plan-chart > div{max-width:480px}  /* 線と目盛り（0年／○年）を同じ幅にそろえる */
+  .chart-svg{width:100%;height:auto;display:block}
+  .chart-axis{display:flex;justify-content:space-between;font-size:.6875rem;color:var(--sub);margin-top:2px}
+  .chart-empty{font-size:.75rem;color:var(--sub);padding:16px 0}
+  .chart-cap{font-size:.75rem;color:var(--sub);margin-top:8px;line-height:1.6}
+
+  .add-plan{display:block;width:100%;margin:16px 0;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;transition:background .15s}
+  .add-plan:hover{background:var(--primary-light)}
+  .add-plan:disabled{opacity:.45;cursor:not-allowed}
+
+  /* ===== メーター（単利・複利の棒）===== */
+  /* 単利・複利の2本を同じ幅の棒で比べるため、行の中身を表の列のようにそろえる（金額の列は長い額に合わせて広がり、数字の途中で折れない） */
+  .meter{margin-top:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:8px;row-gap:8px;align-items:center}
+  .meter-row{display:contents}
+  /* 金額が長くて棒がとても短くなるときだけ、金額を棒の下の行に出す（fitMeters） */
+  .meter--stack{grid-template-columns:auto minmax(0,1fr)}
+  .meter--stack .meter-val{grid-column:2;margin-top:-4px}
+  .meter-tag{flex-shrink:0;width:32px;font-size:.75rem;font-weight:600;color:var(--sub);text-align:right}
+  .meter-track{flex:1;min-width:0;background:var(--bg-soft);border-radius:999px;height:18px;overflow:hidden;border:1px solid var(--line)}
+  .bar{display:flex;height:100%;border-radius:999px;overflow:hidden;min-width:2px}
+  .seg{height:100%}
+  .seg-prin{background:var(--primary-light)}
+  .seg-int{background:var(--primary)}
+  .seg-magic{background:var(--primary-dark)}
+  .meter-val{font-size:.75rem;font-weight:700;color:var(--text);min-width:100px;text-align:right;white-space:nowrap}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:.75rem;color:var(--sub)}
+  .legend > span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;flex-shrink:0}
+  .legend .l-prin{background:var(--primary-light)}
+  .legend .l-int{background:var(--primary)}
+  .legend .l-magic{background:var(--primary-dark)}
+
+  /* ===== 結果（合計）===== */
+  .summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .summary-head .section-title{margin-bottom:0}
+  .summary-figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,max(180px,calc(50% - 8px))),1fr));gap:12px 16px} /* 広いときは2列・スマホは1列 */
+  .fig-cap{font-size:.75rem;color:var(--sub);font-weight:600}
+  .fig-num{font-size:1rem;font-weight:700;color:var(--text);margin-top:2px;overflow-wrap:break-word}
+  .fig-diff{grid-column:1/-1;background:var(--bg-soft);border-radius:10px;padding:12px 14px}
+  .fig-diff .fig-num{font-size:1.375rem;color:var(--primary-dark);line-height:1.3}
+  .fig-note{font-size:.75rem;color:var(--accent);font-weight:700;margin-top:2px}
+
+  /* ===== 単利と複利って？（折りたたみ）===== */
+  .note-card summary{display:block;font-size:1rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+  .note-card summary::-webkit-details-marker{display:none}
+  .note-card summary::after{content:"▸";color:var(--sub);font-weight:400;font-size:.875rem;margin-left:.25em}
+  .note-card[open] summary::after{content:"▾"}
+  .note-body{margin-top:12px;font-size:.875rem;line-height:1.85}
+  .note-body p{margin:0 0 8px}
+  .note-body p:last-child{margin-bottom:0}
+  .note-body b.tan{color:var(--primary)}
+  .note-body b.fuku{color:var(--primary-dark)}
+
+  /* ===== 📌 保存（H3）===== */
+  .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
+  .save-row input{flex:1 1 auto;min-width:0}
+  .save-row .save-btn{flex-shrink:0}
+  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn:hover{background:var(--primary-dark)}
+  .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hist-chips[hidden]{display:none}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .15s}
+  .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
+  .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
+  .hist-current[hidden]{display:none}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button:hover{color:#b06a72}
+  .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
+
+  /* ===== enu アクションボタン（102 B4）===== */
+  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-fill{background:var(--primary);color:#fff}
+  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .enu-tb-line{background:transparent;color:var(--primary-dark)}
+  .enu-tb-line:hover{background:var(--primary-soft)}
+  .enu-tb-data{font-size:.75rem;color:var(--sub)}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text:hover{color:var(--primary-dark)}
+
+  /* ===== 📎 参照リンク（004）===== */
   .enu-refs{margin:24px 0 0}
   .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
   .enu-refs summary::-webkit-details-marker{display:none}
@@ -113,31 +192,7 @@
   .enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
   .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
-  /* 案件単価 */
-  .project-calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px 24px;align-items:center}
-  .preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}  /* 3つを同じ幅で1段に（2＋1 にしない） */
-  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 4px;white-space:nowrap;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
-  .preset-chip:hover{background:var(--primary-light)}
-  .project-output{border-left:3px solid var(--accent);padding:2px 0 2px 14px}
-  .project-output .summary-main{color:var(--accent-dark)}
-
-  /* 保存（H3）*/
-  .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
-  .save-row input{flex:1 1 auto;min-width:0}
-  .save-row .save-btn{flex-shrink:0}
-  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
-  .save-btn:hover{background:var(--primary-dark)}
-  .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
-  .hist-chips[hidden]{display:none}
-  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
-  .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
-  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
-  .hist-current button:hover{color:var(--primary-dark)}
-  .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
-  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-
-  /* フッター（004）*/
+  /* ===== フッター（004）===== */
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
   .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
@@ -162,20 +217,11 @@
   .enu-notice .enu-body{flex:1;min-width:0}
   .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
   .enu-notice .enu-close-btn:hover{opacity:1}
-  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:box-shadow .15s}
   .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
   .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
-  /* === enu アクションボタン（102）=== */
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
-  .enu-tb-fill{background:var(--primary);color:#fff}
-  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
-  .enu-tb-line{background:transparent;color:var(--primary-dark)}
-  .enu-tb-line:hover{background:var(--primary-soft)}
-  .enu-tb-data{font-size:.75rem;color:var(--sub)}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
-  .enu-tb-text:hover{color:var(--primary-dark)}
   .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -193,12 +239,25 @@
   @media (max-width:650px){
     .app-title{font-size:1.25rem}
     .app-sub{font-size:.6875rem}
+    .period-years{max-width:none}
+    .meter-val{min-width:92px}
   }
   @media print{
     body{background:#fff;padding:0}
-    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.reset-row,.preset-row,.save-card,.enu-refs{display:none !important}
+    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.add-plan,.plan-act,.save-card,.mode-seg,.unit-toggle,.period-toggle{display:none !important}
     .card{break-inside:avoid}
-    .collapse-body[hidden]{display:block}
+    input[type="text"],input[type="number"]{border-color:#ccc;background:#fff}
+    .enu-refs{display:none !important}
+    /* 背景を印刷しない設定でも、棒と色の印が消えないよう線で描く */
+    .meter-track,.bar,.seg,.legend i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .seg{height:0;border-top:16px solid}
+    .seg-prin{border-top-color:var(--primary-light)}
+    .seg-int{border-top-color:var(--primary)}
+    .seg-magic{border-top-color:var(--primary-dark)}
+    .legend i{height:0;border-top:11px solid}
+    .legend .l-prin{border-top-color:var(--primary-light)}
+    .legend .l-int{border-top-color:var(--primary)}
+    .legend .l-magic{border-top-color:var(--primary-dark)}
   }
 
 
@@ -231,10 +290,10 @@
 <div class="page-wrapper">
 
   <header class="app-header">
-    <div class="app-icon">🧳</div>
+    <div class="app-icon">📈</div>
     <div>
-      <h1 class="app-title"><span class="nb">フリーランス</span><span class="nb">レート計算機</span></h1>
-      <p class="app-sub"><span class="nb">希望年収から、</span><span class="nb">必要な売上・時給・案件単価を</span><span class="nb">逆算</span></p>
+      <h1 class="app-title"><span class="nb">複利</span><span class="nb">シミュレーター</span></h1>
+      <p class="app-sub"><span class="nb">単利と複利、</span><span class="nb">差はこんなに開く</span></p>
     </div>
   </header>
 
@@ -250,116 +309,71 @@
     <div class="enu-notice-wrap" data-notice-id="disclaimer">
       <div class="enu-notice enu-notice-disclaim">
         <span class="enu-icon">📝</span>
-        <span class="enu-body">結果は目安で、税務の助言ではありません（<strong>2026年10月時点</strong>）。実際の金額や手続きは、税理士などの専門家にご確認ください。</span>
+        <span class="enu-body">結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。</span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
       <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
     </div>
   </div>
 
-  <!-- 入力 -->
-  <div class="card" id="input-card">
-    <h2 class="section-title">✏️ 入力項目</h2>
-    <div class="input-grid">
-      <div class="field">
-        <label class="field-label" for="targetIncome">希望年収（手取り）</label>
-        <div class="input-suffix"><input type="text" id="targetIncome" inputmode="decimal"><span class="suffix">万円</span></div>
-        <span class="field-help">税・社保を引いた後の手取り目標額</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="workDays">年間稼働日数</label>
-        <div class="input-suffix"><input type="text" id="workDays" inputmode="decimal"><span class="suffix">日</span></div>
-        <span class="field-help">休日・有給を除いた実働日数</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="workHours">1日の稼働時間</label>
-        <div class="input-suffix"><input type="text" id="workHours" inputmode="decimal"><span class="suffix">時間</span></div>
-        <span class="field-help">標準的な1日の労働時間</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="annualExpense">年間経費</label>
-        <div class="input-suffix"><input type="text" id="annualExpense" inputmode="decimal"><span class="suffix">万円</span></div>
-        <span class="field-help">PC・ソフト・通信費・家賃按分など</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="taxRate">税・社会保険料率</label>
-        <div class="input-suffix"><input type="text" id="taxRate" inputmode="decimal"><span class="suffix">%</span></div>
-        <span class="field-help">所得税・住民税・国保・年金の合計（売上−経費−控除に掛けます）</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="nonBillableRate">非稼働時間率</label>
-        <div class="input-suffix"><input type="text" id="nonBillableRate" inputmode="decimal"><span class="suffix">%</span></div>
-        <span class="field-help">営業・事務・見積もり等の時間割合</span>
+  <!-- 入力（プランごとの結果つき）-->
+  <h2 class="section-title">📑 プラン</h2>
+  <div class="plans" id="plans"></div>
+  <p class="chart-cap plans-cap"><span class="nb">📈 年数が経つほど、</span><span class="nb">複利（濃い線）が</span><span class="nb">単利（薄い線）から</span><span class="nb">離れていきます</span></p>
+  <button type="button" class="add-plan" id="add-plan">＋ プランを追加（最大4）</button>
+
+  <!-- 結果（合計）-->
+  <section class="card" id="summary">
+    <div class="summary-head">
+      <h2 class="section-title" id="summary-label">💴 結果</h2>
+      <div class="unit-toggle" id="unit-toggle" role="group" aria-label="表示の単位">
+        <button type="button" data-unit="yen" class="active">円</button>
+        <button type="button" data-unit="man">万円</button>
       </div>
     </div>
-
-    <div class="check-block">
-      <label class="check-row" for="blueReturn"><input type="checkbox" id="blueReturn"><span><span class="nb">青色申告特別控除</span><span class="nb">（65万円）を適用</span></span></label>
-      <span class="field-help">青色申告承認を受けて65万円控除を受ける場合にチェック（電子申告等の要件あり）</span>
-      <span class="blue-diff" id="blueReturnDiff" hidden></span>
+    <div class="summary-figs">
+      <div class="fig"><div class="fig-cap">複利でできる金額</div><div class="fig-num" id="sum-comp">¥0</div></div>
+      <div class="fig"><div class="fig-cap">単利の場合</div><div class="fig-num" id="sum-simple">¥0</div></div>
+      <div class="fig fig-diff"><div class="fig-cap"><span class="nb">複利マジックの差</span><span class="nb">（複利 − 単利）</span></div><div class="fig-num" id="sum-diff">¥0</div><div class="fig-note" id="sum-diff-note"></div></div>
     </div>
-
-    <div class="reset-row"><button type="button" class="btn-line" id="btnReset">↺ 初期値に戻す</button></div>
-  </div>
-
-  <!-- 結果 -->
-  <div class="card" id="result-card">
-    <h2 class="section-title">💴 計算結果</h2>
-    <div class="summary-grid">
-      <div class="summary-item"><div class="summary-label">必要時給</div><div class="summary-main"><span id="hourlyRate">-</span><span class="unit">円</span></div></div>
-      <div class="summary-item"><div class="summary-label">必要日給</div><div class="summary-main"><span id="dailyRate">-</span><span class="unit">円</span></div></div>
-      <div class="summary-item"><div class="summary-label">月額売上</div><div class="summary-main"><span id="monthlyRevenue">-</span><span class="unit">円</span></div></div>
-    </div>
-    <p class="field-help daily-note"><span class="nb">必要日給は、非稼働の時間も含めた1日分</span><span class="nb">（必要総売上÷年間稼働日数）です。</span></p>
-    <ul class="result-list" id="resultList"></ul>
-
-    <div class="breakdown">
-      <button type="button" class="collapse-head" id="formulaToggle" aria-expanded="false" aria-controls="formulaBody">
-        <span class="sub-title">📐 計算式</span><span class="collapse-arrow" aria-hidden="true"></span>
-      </button>
-      <div class="collapse-body" id="formulaBody" hidden>
-        <ul class="formula-list">
-          <li><span class="nb">税・社会保険料 =</span> <span class="nb">( 必要総売上 − 年間経費 − 控除 ) × 税率</span><span class="nb">（0未満は0）</span></li>
-          <li><span class="nb">必要総売上 =</span> <span class="nb">年間経費 +</span> <span class="nb">( 希望年収 − 控除 × 税率 )</span> <span class="nb">÷ ( 1 − 税率 )</span><span class="nb">（希望年収が控除以下なら</span><span class="nb">年間経費 + 希望年収）</span></li>
-          <li><span class="nb">年間実働時間 =</span> <span class="nb">年間稼働日数 × 1日の稼働時間</span> <span class="nb">× ( 1 − 非稼働時間率 )</span></li>
-          <li><span class="nb">必要時給 =</span> <span class="nb">必要総売上 ÷ 年間実働時間</span></li>
-          <li><span class="nb">必要日給 =</span> <span class="nb">必要総売上 ÷ 年間稼働日数</span><span class="nb">（非稼働の時間も含めた1日分）</span></li>
-          <li><span class="nb">月額売上 =</span> <span class="nb">必要総売上 ÷ 12</span></li>
-        </ul>
+    <div class="meter" id="sum-meter">
+      <div class="meter-row">
+        <span class="meter-tag">単利</span>
+        <div class="meter-track"><div class="bar" id="bar-simple"><span class="seg seg-prin"></span><span class="seg seg-int"></span></div></div>
+        <span class="meter-val" id="val-simple">¥0</span>
+      </div>
+      <div class="meter-row">
+        <span class="meter-tag">複利</span>
+        <div class="meter-track"><div class="bar" id="bar-comp"><span class="seg seg-prin"></span><span class="seg seg-int"></span><span class="seg seg-magic"></span></div></div>
+        <span class="meter-val" id="val-comp">¥0</span>
       </div>
     </div>
-  </div>
-
-  <!-- 補助：案件単価 -->
-  <div class="card">
-    <h2 class="section-title">💼 案件単価の試算</h2>
-    <p class="section-note">必要時給を元に、案件にかかる時間から適正な単価を逆算します。</p>
-    <div class="project-calc">
-      <div class="field">
-        <label class="field-label" for="projectHours">案件の所要時間</label>
-        <div class="input-suffix"><input type="text" id="projectHours" inputmode="decimal"><span class="suffix">時間</span></div>
-        <span class="field-help">作業見積もり時間（修正対応含む）</span>
-        <div class="preset-row" role="group" aria-label="所要時間プリセット">
-          <button type="button" class="preset-chip" data-hours="8">8時間</button>
-          <button type="button" class="preset-chip" data-hours="40">40時間</button>
-          <button type="button" class="preset-chip" data-hours="160">160時間</button>
-        </div>
-      </div>
-      <div class="project-output" aria-live="polite">
-        <div class="summary-label" id="projectPriceLabel">適正単価</div>
-        <div class="summary-main"><span id="projectPrice">-</span><span class="unit">円</span></div>
-      </div>
+    <div class="legend">
+      <span><i class="l-prin"></i><span class="nb">元本</span><span class="nb">（積み立てたお金）</span></span>
+      <span><i class="l-int"></i><span class="nb">単利分の利息</span></span>
+      <span><i class="l-magic"></i><span class="nb">複利の上乗せ</span></span>
     </div>
-  </div>
+  </section>
 
-  <!-- 保存（H3）-->
+  <!-- 補助：単利と複利の説明 -->
+  <details class="card note-card">
+    <summary>📖 単利と複利って？</summary>
+    <div class="note-body">
+      <p>💰 <b class="tan">単利</b>：利息は最初の元本にだけつきます。利息が利息を生むことはありません。</p>
+      <p>⛄ <b class="fuku">複利</b>：利息が元本に組み込まれ、利息にも利息がつく雪だるま式です。</p>
+      <p>✨ <b>期間が長いほど差はぐんぐん開きます</b>。棒の<b class="fuku">濃い色</b>が複利の“上乗せ分”です。</p>
+      <p>📐 複利は金融庁「つみたてシミュレーター」と同じ計算、単利は「元本×年利×年数」です。期間が短いとき（毎月積立はおよそ1年半まで、一括は1年未満）は、単利の方が少し多くなります。<span class="nb">年利が高いほど</span><span class="nb">差は大きくなります。</span></p>
+    </div>
+  </details>
+
+  <!-- 📌 保存＋データ -->
   <div class="card save-card">
     <h2 class="section-title">📌 この計算を保存</h2>
     <div class="save-row">
-      <input type="text" id="save-name" placeholder="保存名（省略可）">
+      <input type="text" id="save-name" placeholder="保存名（省略可）" maxlength="40" aria-label="保存名（省略可）">
       <button type="button" class="save-btn" id="save-btn">保存</button>
     </div>
-    <div class="hist-chips" id="history-list" hidden></div>
+    <div class="hist-chips" id="history-list"></div>
     <p class="hist-current" id="hist-current" hidden></p>
     <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
   </div>
@@ -372,7 +386,7 @@
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（1件）</span></summary>
     <ul>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener">つみたてシミュレーター</a><span class="enu-refs-src">金融庁</span></li>
     </ul>
   </details>
 
@@ -397,214 +411,22 @@
   </div>
 </div>
 
-<div class="enu-toast" id="enu-toast" role="status" aria-live="polite"></div>
+<div class="enu-toast" id="enu-toast" role="status"></div>
 
 <script>
 (function(){
   'use strict';
 
-  const ENU_CONFIG={
-    appId:'freelance-rate-calc', appName:'フリーランスレート計算機', appVersion:'1.0.0', storageType:'local',
+  const ENU_CONFIG = {
+    appId:'fukuri-magic', appName:'複利シミュレーター', appVersion:'1.0.0', storageType:'local',
     helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION（エクスポートの data_version）
   };
-  const CFG=ENU_CONFIG;
-  window.enuTools=window.enuTools||{};
-  const _key=(s)=>'enu_'+CFG.appId+'_'+s;
-  const $=(id)=>document.getElementById(id);
+  const CFG = ENU_CONFIG;
+  window.enuTools = window.enuTools || {};
+  const _key = (s)=> 'enu_' + CFG.appId + '_' + s;
 
-  // === DOM helper（createElementベース・innerHTML不使用）===
-  function el(tag, attrs, kids){
-    const e=document.createElement(tag);
-    if(attrs) for(const k in attrs){
-      const v=attrs[k];
-      if(k==='class') e.className=v;
-      else if(k==='text') e.textContent=v;
-      else if(v===true) e.setAttribute(k,'');
-      else if(v!==false && v!=null) e.setAttribute(k,v);
-    }
-    if(kids) kids.forEach(c=>{ if(c==null) return; e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
-    return e;
-  }
-
-  /* ===== 計算 ===== */
-  const DEDUCTION_BLUE_RETURN=650000; // 青色申告特別控除（令和8年分も65万円）
-  const DEFAULTS={ targetIncome:500, workDays:220, workHours:8, annualExpense:60, taxRate:25, nonBillableRate:20, projectHours:40, blueReturn:false };
-  const FIELDS=['targetIncome','workDays','workHours','annualExpense','taxRate','nonBillableRate','projectHours'];
-
-  // ===== 数字の入力の読み方（004「数字の入力・保存・読み込み」）=====
-  // 全角→半角・カンマ／空白を除く・先頭の「+」・最後の単位（unit）を読み飛ばす。空欄は null、読めないものは NaN
-  // 「万」「億」「兆」を読む（例：30万、1.5万、30万5000、10億、1.5億、1億5000万）。
-  // 「1.5万5000」（小数のあとに数字）・「30万50000」（万のあとが5けた以上）・「1億5000」（億のあとが万なし）はエラー
-  // 小数は整数にしてから掛けて割る（「340.09万」→ 3,400,900。小数の誤差で1円ずれないように）
-  function parseNumBase(raw, unit){
-    var t=String(raw==null?'':raw).replace(/[０-９．＋－]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);})
-      .replace(/[ー−‐]/g,'-').replace(/[,，、\s　]/g,'');
-    if(unit==='円') t=t.replace(/円$/,''); else if(unit==='%') t=t.replace(/[%％]$/,''); else if(unit) t=t.replace(new RegExp(unit+'$'),'');
-    if(t==='') return null;
-    var sign=t.match(/^[+-]?/)[0]; t=t.slice(sign.length);
-    var parts=t.split(/(兆|億|万)/), MUL={'兆':1e12,'億':1e8,'万':1e4};
-    var lead=parts[0].match(/^(\d*)(?:\.(\d+))?$/);
-    if(!lead || (lead[1]==='' && lead[2]==null)) return NaN;
-    var frac=lead[2]||'', v;
-    if(parts.length===1) v=Number(parts[0]);
-    else{
-      var last=Infinity, rest=0;
-      for(var i=1;i<parts.length;i+=2){
-        var mul=MUL[parts[i]], num=parts[i+1];
-        if(mul>=last) return NaN;                       // 「万億」のように、大きい単位があとに来る
-        last=mul;
-        if(i===1) v=Number((lead[1]||'0')+frac)*mul/Math.pow(10,frac.length);
-        if(num===''){ if(i+2<parts.length) return NaN; continue; }
-        if(frac || !/^\d{1,4}$/.test(num)) return NaN;   // 小数のあとに数字・5けた以上
-        if(i+2<parts.length) rest+=Number(num)*MUL[parts[i+2]];  // 次の単位の数（例：1億「5000」万）
-        else if(parts[i]==='万') rest+=Number(num);              // 万のあとの数（例：30万「5000」）
-        else return NaN;                                          // 億・兆のあとに単位のない数
-      }
-      v+=rest;
-    }
-    return sign==='-' ? -v : v;
-  }
-  // 「万円」の欄：「500」「500万」「500万円」は500万円。「1億」「1億5000万円」は円として読んで万円にする。「30万5000」「5000000円」はエラー
-  function parseNum(raw, unit){
-    if(unit!=='万円') return parseNumBase(raw, unit);
-    var s=String(raw==null?'':raw).replace(/[\s　]/g,'');
-    if(/[億兆]/.test(s)){ var y=parseNumBase(s,'円'); return (y===null||isNaN(y)) ? y : y/1e4; }
-    s=s.replace(/万円?$/,'');
-    if(/[万円]/.test(s)) return NaN;
-    return parseNumBase(s,'');
-  }
-  // 欄ごとの決まり（0 が意味をなさない稼働日数・稼働時間は 0 をエラーにする）
-  const SPEC={
-    targetIncome:{unit:'万円',min:0,max:100000}, annualExpense:{unit:'万円',min:0,max:100000},
-    workDays:{unit:'日',min:1,max:365,int:true}, workHours:{unit:'時間',min:0.5,max:24},
-    taxRate:{unit:'%',min:0,max:60}, nonBillableRate:{unit:'%',min:0,max:90},
-    projectHours:{unit:'時間',min:0,max:10000}
-  };
-  function readField(f, raw){
-    const sp=SPEC[f]; const v=parseNum(raw, sp.unit);
-    if(v===null) return {v:null, err:'数字を入力してください'};
-    if(isNaN(v)){
-      // 「万円」の欄に「5000000円」のように円で入れたとき
-      if(sp.unit==='万円' && /円$/.test(String(raw).trim()) && !/万円$/.test(String(raw).trim())) return {v:null, err:'万円で入力してください（例：500）'};
-      return {v:null, err:'数字で入力してください'};
-    }
-    if(v<sp.min || v>sp.max) return {v:null, err:sp.min.toLocaleString()+'〜'+sp.max.toLocaleString()+sp.unit+'で入力してください'};
-    if(sp.int && v!==Math.floor(v)) return {v:null, err:'整数で入力してください'};
-    return {v, err:''};
-  }
-  // エラーは欄のすぐ下に（004）
-  function setFieldError(inp, text){
-    const box=inp.closest('.input-suffix')||inp;
-    let msg=box.nextElementSibling && box.nextElementSibling.classList.contains('field-error') ? box.nextElementSibling : null;
-    if(text){ if(!msg){ msg=document.createElement('p'); msg.className='field-error'; box.after(msg); } msg.textContent=text; inp.setAttribute('aria-invalid','true'); }
-    else{ if(msg) msg.remove(); inp.removeAttribute('aria-invalid'); }
-  }
-  // 入力欄の値。まちがった欄は null（知らせずに別の値に読みかえない）
-  function getValues(){
-    const v={}; let ok=true;
-    FIELDS.forEach(f=>{ const r=readField(f,$(f).value); v[f]=r.v; setFieldError($(f), r.err); if(r.err) ok=false; });
-    v.blueReturn=$('blueReturn').checked;
-    v._ok=ok;
-    return v;
-  }
-  function setValues(data){
-    if(!data || typeof data!=='object') return;
-    FIELDS.forEach(f=>{ if(typeof data[f]==='number' && isFinite(data[f])) $(f).value=data[f]; });
-    if(typeof data.blueReturn==='boolean') $('blueReturn').checked=data.blueReturn;
-    getValues();
-  }
-  // 保存・ファイルの値が、画面で入れられる値か
-  // loose：今の入力（004：数字なら範囲の外・小数の日数でも読み込んで欄の下にエラーを出す）。履歴の行は範囲の外も読み込まない
-  function validValues(data, loose){
-    if(!data || typeof data!=='object') return false;
-    if(!['targetIncome','workDays','workHours','annualExpense','taxRate','nonBillableRate'].every(f=>typeof data[f]==='number' && isFinite(data[f]))) return false;
-    if(!FIELDS.every(f=> data[f]==null || (typeof data[f]==='number' && (loose ? isFinite(data[f]) : !readField(f,String(data[f])).err)))) return false;
-    if(data.blueReturn!=null && typeof data.blueReturn!=='boolean') return false;
-    return true;
-  }
-  function cleanValues(v){ const o={}; FIELDS.forEach(f=>{ o[f]=v[f]; }); o.blueReturn=v.blueReturn; return o; }
-
-  // 100兆円以上は、数の精度の限界で1円単位まで正しく出せないため「約○兆」と出す（004。案件単価は時間が多いと届くことがある）
-  function fmt(n){ if(!isFinite(n)||isNaN(n)) return '—'; if(Math.abs(n)>=1e14) return '約'+(n/1e12).toLocaleString('en-US',{maximumFractionDigits:1})+'兆'; return Math.round(n).toLocaleString('en-US'); }
-
-  // 時給（円・整数）×時間を、小数の誤差なしで計算する（ちょうど○.5円になる額が切り捨てられないように。
-  // 例：13,605円×128.7時間＝1,750,963.5円 → 表示で四捨五入して 1,750,964円）。時間は100万分の1時間まで使う
-  function mulHours(H, h){
-    if(!isFinite(H) || !isFinite(h)) return NaN;
-    const s=Math.round(h*1e6), q=Math.floor(s/1e6), rem=s-q*1e6;
-    const Hh=Math.floor(H/1e6), Hl=H-Hh*1e6;
-    return H*q + Hh*rem + (Hl*rem)/1e6;
-  }
-  // 年間実働時間：小数第1位まで（例「1,105.5」「1,760」）
-  function fmtHours(n){ return isFinite(n) ? n.toLocaleString('en-US',{maximumFractionDigits:1}) : '—'; }
-
-  function calculate(){
-    const v=getValues();
-    if(!v._ok) return { v, ok:false };
-    // 万円→円（小数の誤差で1円ずれないように、0.01円の単位で丸める。例：340.09万円 → 3,400,900円）
-    const toYen=(man)=>Math.round(man*1e6)/100;
-    const targetIncomeYen=toYen(v.targetIncome);
-    const annualExpenseYen=toYen(v.annualExpense);
-    const taxFactor=1-v.taxRate/100;
-    const deduction=v.blueReturn?DEDUCTION_BLUE_RETURN:0;
-    // 税・社保は「売上−経費−控除」（0未満は0）に率を掛ける：売上−経費−率×max(0,売上−経費−控除)＝希望年収 を解く
-    const needRevenue=(ded)=>{
-      if(taxFactor<=0) return 0;
-      const T=Math.max(0,targetIncomeYen);
-      return annualExpenseYen + (T<=ded ? T : (T-ded*(v.taxRate/100))/taxFactor);
-    };
-    const totalRevenue=needRevenue(deduction);
-    const taxAmount=taxFactor>0?Math.max(0,totalRevenue-annualExpenseYen-deduction)*(v.taxRate/100):0;
-    const billableFactor=1-v.nonBillableRate/100;
-    // 年間実働時間は小数第1位までに丸め、表示と時給の計算に同じ値を使う（小数の誤差を消してから丸める。例：1,105.5時間・0.05時間→0.1時間）
-    const annualHours=Math.round(Math.round(v.workDays*v.workHours*billableFactor*1e6)/1e5)/10;
-    // 時給は円に丸めてから案件単価に掛ける（表示の時給×時間＝表示の単価）。日給は「必要総売上÷稼働日数」（日給×日数＝年商）
-    const hourlyRate=annualHours>0?Math.round(totalRevenue/annualHours):NaN;
-    const dailyRate=v.workDays>0?totalRevenue/v.workDays:NaN;
-    const monthlyRevenue=totalRevenue/12;
-    const projectPrice=mulHours(hourlyRate, v.projectHours);
-    const blueDiff=(v.blueReturn && taxFactor>0)?needRevenue(0)-totalRevenue:0;
-    return { v, ok:true, targetIncomeYen, annualExpenseYen, taxAmount, totalRevenue, annualHours, hourlyRate, dailyRate, monthlyRevenue, projectPrice, blueDiff };
-  }
-
-  // 値が「—」のときは「円」を出さない
-  function syncUnits(){
-    ['hourlyRate','dailyRate','monthlyRevenue','projectPrice'].forEach(id=>{ const u=$(id).nextElementSibling; if(u && u.classList.contains('unit')) u.hidden=($(id).textContent==='—'); });
-  }
-  function renderResults(){
-    const r=calculate();
-    if(!r.ok){
-      // まちがった入力があるときは計算しない：結果はすべて「—」
-      ['hourlyRate','dailyRate','monthlyRevenue','projectPrice'].forEach(id=>{ $(id).textContent='—'; });
-      $('resultList').replaceChildren(el('li',{class:'result-row'},[ el('span',{class:'lbl',text:'入力を直してください'}) ]));
-      syncUnits(); $('projectPriceLabel').textContent='適正単価';
-      $('blueReturnDiff').hidden=true; $('blueReturnDiff').textContent='';
-      return r;
-    }
-    const rows=[
-      { label:'希望年収（手取り）', value:fmt(r.targetIncomeYen)+' 円' },
-      { label:'年間経費', value:fmt(r.annualExpenseYen)+' 円' },
-      { label:'税金・社会保険料', value:fmt(r.taxAmount)+' 円' },
-      { label:'必要総売上（年商）', value:fmt(r.totalRevenue)+' 円', hl:'hl-accent' },
-      { label:'年間実働時間', value:fmtHours(r.annualHours)+' 時間' },
-      { label:'必要時給', value:fmt(r.hourlyRate)+' 円', hl:'hl-primary' }
-    ];
-    $('resultList').replaceChildren(...rows.map(row=>el('li',{class:'result-row'+(row.hl?' '+row.hl:'')},[ el('span',{class:'lbl',text:row.label}), el('span',{class:'val',text:row.value}) ])));
-    $('hourlyRate').textContent=fmt(r.hourlyRate);
-    $('dailyRate').textContent=fmt(r.dailyRate);
-    $('monthlyRevenue').textContent=fmt(r.monthlyRevenue);
-    $('projectPrice').textContent=fmt(r.projectPrice);
-    syncUnits();
-    $('projectPriceLabel').textContent='適正単価（'+r.v.projectHours.toLocaleString('ja-JP',{maximumFractionDigits:2})+'時間分）';
-
-    const diffEl=$('blueReturnDiff');
-    if(r.v.blueReturn){ diffEl.textContent='青色申告適用で必要総売上が約 '+fmt(r.blueDiff)+' 円 軽減されています'; diffEl.hidden=false; }
-    else{ diffEl.hidden=true; diffEl.textContent=''; }
-    return r;
-  }
-
-  /* === 保存の形（版1・004「すでに使っている人に影響を出さない」）=== */
-  const DATA_VERSION=1;
+  // === 保存の形（版1・004「すでに使っている人に影響を出さない」）===
+  const DATA_VERSION = 1;
   function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
     if(!saved || typeof saved!=='object' || saved.v==null) return null;
     return saved.data;
@@ -623,78 +445,135 @@
   function userChanged(){ brokenStores.clear(); }
   function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
   document.addEventListener('input', ()=>userChanged(), true);
-  document.addEventListener('change', ()=>userChanged(), true);
-  document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.preset-chip,#btnReset,#history-list button,#save-btn')) userChanged(); }, true);
-  let dataExtra={}; // 保存データの知らない項目（消さずに残す）
-  // 入力のたびに保存する。まちがった欄は前の値のまま残す（読めない値は保存しない）
-  function saveInput(){
-    const v=getValues(), o=Object.assign({}, dataExtra);
-    FIELDS.forEach(f=>{ if(v[f]!==null) o[f]=v[f]; }); o.blueReturn=v.blueReturn;
-    dataExtra=o; saveStore('data', o);
-  }
-  function update(){ renderResults(); saveInput(); }
+  document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.plans button,#add-plan,#unit-toggle button,#history-list button,#save-btn')) userChanged(); }, true);
 
-  /* === 履歴（H3）=== */
-  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
-  function setHistory(h){ saveStore('history', h); }
-  function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
-  function autoName(r){
-    const d=new Date(), p=(n)=>String(n).padStart(2,'0');
-    return '希望年収'+r.v.targetIncome+'万円・時給'+fmt(r.hourlyRate)+'円（'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes())+'）';
-  }
-  let currentHistId=null;
-  // まちがった入力のままでは保存・エクスポートしない：エラーの欄へ移る
-  function guardInputs(kind){
-    const v=getValues();
-    if(v._ok) return true;
-    const f=FIELDS.find(k=>v[k]===null); const inp=$(f);
-    inp.scrollIntoView({block:'center',behavior:'smooth'}); inp.focus({preventScroll:true});
-    showToast(kind==='export' ? '入力を直してから書き出してください' : '入力を直してから保存してください');
-    return false;
-  }
-  const HIST_MAX=20; // 履歴の上限。ファイルから読んだ分がこれより多いときは、その数を上限にする（読み込んだ行を消さない）
-  function saveCurrent(){
-    if(!guardInputs('save')) return;
-    const r=calculate();
-    const nameInput=$('save-name');
-    const name=(nameInput.value||'').trim()||autoName(r);
-    const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, values:cleanValues(r.v) };
-    let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist);
-    nameInput.value=''; renderHistory(); /* 保存しただけでは「呼び出し中」にしない */ showToast('📌 この計算を保存しました');
-  }
-  function renderHistory(){
-    const list=$('history-list');
-    const hist=getHistory();
-    list.hidden=!hist.length;
-    list.replaceChildren(...hist.map(snap=>el('button',{type:'button',class:'hist-chip'+(snap.id===currentHistId?' on':''),title:snap.name+'（'+fmtDate(snap.savedAt)+'）','data-load':snap.id,text:snap.name})));
-    const cur=$('hist-current');
-    const snap=hist.find(s=>s.id===currentHistId);
-    if(snap){
-      cur.replaceChildren('呼び出し中：'+snap.name, '　', el('button',{type:'button','data-del':snap.id,text:'この保存を削除'}));
-      cur.hidden=false;
-    }else{ cur.replaceChildren(); cur.hidden=true; currentHistId=null; }
-  }
-  function onHistoryClick(e){
-    const t=e.target.closest('button'); if(!t) return;
-    if(t.dataset.load){
-      const id=parseInt(t.dataset.load,10);
-      const snap=getHistory().find(s=>s.id===id);
-      if(snap){ setValues(snap.values); currentHistId=id; update(); renderHistory(); showToast('保存した計算を呼び出しました'); }
-    }else if(t.dataset.del){
-      const id=parseInt(t.dataset.del,10);
-      enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
-        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
-      });
+  // 数字の読み方（全アプリ共通。money-basic-guide と同じ形）：全角の数字・小数点・カンマ、カンマ、空白は受け付ける。
+  // 最後の単位は、その欄の単位だけ外す（金額の欄は「円」、年利の欄は「%」）。
+  // 「万」は×10,000（例：30万、1.5万、12万3000）。「億」「兆」も読む（例：1000億）。
+  // 「1.5万5000」のように、小数の「万」や「億」「兆」のあとに数字が続く形は読みかえずにエラー。空なら null、読めなければ NaN
+  const NUM_UNITS={'万':4,'億':8,'兆':12}; // 10の何乗か
+  // 小数の文字 s を 10^k 倍した数（小数点を動かすので、掛け算の誤差が出ない）
+  function shiftDec(s,k){ const p=s.split('.'), f=(p[1]||'').padEnd(k,'0'); return Number((p[0]||'0')+f.slice(0,k)+'.'+(f.slice(k)||'0')); }
+  function parseNumText(raw,unit){
+    let t=String(raw==null?'':raw).replace(/[０-９．，－＋]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+      .replace(/[ー−‐]/g,'-').replace(/[,，、\s　]/g,'');
+    if(unit==='円') t=t.replace(/円$/,''); else if(unit==='%') t=t.replace(/(%|％)$/,''); else if(unit) t=t.replace(new RegExp(unit+'$'),''); // その欄の単位だけ外す（年数は「年」、年齢は「歳」）
+    if(t==='') return null;
+    // 「1億5000万」のように位を重ねた形も読む（2つ目からは4けたまでの整数で、位が下がる。単位のない数は「万」のあとだけ）
+    const s=t.match(/^([-+]?)(.+)$/), re=/(\d+(?:\.\d+)?|\.\d+)(兆|億|万)?/y;
+    let v=0, last=99, i=0, n=0, g;
+    while(i<s[2].length){
+      re.lastIndex=i; g=re.exec(s[2]); if(!g) return NaN;
+      const num=g[1], u=g[2], k=u ? NUM_UNITS[u] : 0;
+      if(n>0 && (num.includes('.') || num.length>4 || k>=last || (!u && last!==4))) return NaN;
+      if(n===0 && (!u || num.includes('.')) && g[0].length<s[2].length) return NaN; // 「1.5万5000」「1億5000」はエラー
+      v+= u ? shiftDec(num,k) : Number(num); // 「340.09万」は 3,400,900（小数の誤差で1円ずれない）
+      last=k; i+=g[0].length; n++;
     }
+    return s[1]==='-' ? -v : v;
+  }
+  // 欄ごとの決まり（範囲・単位）
+  const MONEY_MAX=1e11;
+  const RULES={
+    lump:{min:0,max:MONEY_MAX,unit:'円',yen:true},
+    monthly:{min:0,max:MONEY_MAX,unit:'円',yen:true},
+    rate:{min:-20,max:100,unit:'%'},                  // マイナス（値下がり）は投資比較シミュレーターと同じく −20% まで
+    years:{min:0.1,max:100,unit:'年'},
+    ageNow:{min:0,max:120,unit:'歳',int:true},
+    ageTo:{min:0,max:120,unit:'歳',int:true}
+  };
+  const NUM_FIELDS=Object.keys(RULES);
+  function boundText(n,rule){ if(!rule.yen) return String(n); if(n>=1e8&&n%1e8===0) return (n/1e8).toLocaleString('ja-JP')+'億'; if(n>=1e4&&n%1e4===0) return (n/1e4).toLocaleString('ja-JP')+'万'; return n.toLocaleString('ja-JP'); }
+  function judgeValue(raw,name){
+    const rule=RULES[name];
+    const v=(typeof raw==='number')?raw:parseNumText(raw,rule.unit);
+    if(v===null) return {v:null,err:'数字を入力してください'};
+    if(!isFinite(v)) return {v:NaN,err:'数字で入力してください'};
+    if(v<rule.min||v>rule.max) return {v:v,err:boundText(rule.min,rule)+'〜'+boundText(rule.max,rule)+rule.unit+'で入力してください'};
+    if(rule.int&&!Number.isInteger(v)) return {v:v,err:'整数で入力してください'};
+    return {v:v,err:''};
+  }
+  // 年齢どうしの決まり（「何歳まで」は今の年齢より大きく、期間は100年まで）
+  function ageErr(now,to){ if(to<=now) return '今の年齢より大きくしてください'; if(to-now>100) return '期間が100年以内になるようにしてください'; return ''; }
+  // 欄のすぐ下に知らせる（004「エラーは入力欄のすぐ下に」）
+  function showFieldError(inp,text){
+    const box=inp.closest('.input-wrap')||inp;
+    let msg=box.nextElementSibling && box.nextElementSibling.classList.contains('field-error') ? box.nextElementSibling : null;
+    if(text){ if(!msg){ msg=document.createElement('p'); msg.className='field-error'; box.after(msg); } msg.textContent=text; inp.setAttribute('aria-invalid','true'); }
+    else{ if(msg) msg.remove(); inp.removeAttribute('aria-invalid'); }
+  }
+  // プランで画面に出ている欄
+  function planUsed(p){ const f=['rate']; if(p.mode!=='monthly') f.push('lump'); if(p.mode!=='lump') f.push('monthly'); if(p.periodMode==='age') f.push('ageNow','ageTo'); else f.push('years'); return f; }
+
+  // 言葉の途中で改行しないよう、意味の切れ目ごとに <span class="nb"> で区切って入れる（004「改行」）
+  function nbFill(el, parts){ el.textContent=''; parts.forEach(t=>{ if(!t) return; const sp=document.createElement('span'); sp.className='nb'; sp.textContent=t; el.appendChild(sp); }); return el; }
+
+  // ===== 表示単位（円 / 万円）=====
+  let unitMode='yen';
+
+  // ===== formatters =====
+  function yen(n){return '¥'+Math.round(n).toLocaleString('ja-JP')}
+  function man(n){
+    const v=Math.round(n/1000)/10;                                              // 0.1万円（=1000円）単位
+    return v.toLocaleString('ja-JP',{minimumFractionDigits:0,maximumFractionDigits:1})+'万円';
+  }
+  function fmt(n){return unitMode==='man'?man(n):yen(n)}                          // 画面表示用（切替対応）
+  // 画面に出す丸めた値（円：1円単位／万円：0.1万円=1000円単位）を整数で持つ。差・合計はこの値どうしで出す（表示の数字と1円もずれない）
+  function unitSize(){return unitMode==='man'?1000:1}
+  function shownUnits(r,k){return r.shown[unitMode==='man'?'man':'yen'][k]} // 計算の結果 r の、画面に出す丸めた値（k：'c' 複利・'s' 単利）
+  function fmtDiff(u){return (u<0?'−':u>0?'+':'±')+fmtUnits(Math.abs(u))}                 // 差（1年未満は単利の方が少し多く、マイナスになることがある）
+  function fmtUnits(u){return unitMode==='man'?((u/10).toLocaleString('ja-JP',{minimumFractionDigits:0,maximumFractionDigits:1})+'万円'):('¥'+u.toLocaleString('ja-JP'))}
+  function pct(n){return (Math.round(n*10)/10).toLocaleString('ja-JP')}
+  function uid(){return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36)}
+  // 金額の欄：入力を終えたら、読める形（カンマ区切り）にそろえる（値は変えない）
+  function moneyText(v){ return (typeof v==='number') ? v.toLocaleString('ja-JP',{maximumFractionDigits:20}) : String(v==null?'':v); } // 丸めない（1000.555 は 1,000.555 のまま）
+  // プランの初期値（年数モード・年齢モード両対応）。一括に切りかえたときに0円で始まらないよう、初期投資額は100万円
+  const MAX_PLANS=4;
+  function newPlan(){return {id:uid(),name:'',mode:'monthly',monthly:30000,lump:1000000,years:20,rate:5,periodMode:'years',ageNow:30,ageTo:60}}
+  // 読み込んだプランの足りない項目を初期値で補う（知らない項目は消さない）。数字は範囲に丸めず、そのまま残す（まちがいは欄の下に出す）
+  function normalizePlan(p){
+    p=(p && typeof p==='object')?p:{};
+    const o=Object.assign({},p), d=newPlan();
+    if(typeof o.id!=='string'||!o.id) o.id=uid();
+    o.name=typeof o.name==='string'?o.name.slice(0,24):'';
+    if(['monthly','lump','both'].indexOf(o.mode)<0) o.mode='monthly';
+    if(o.periodMode!=='age') o.periodMode='years';
+    NUM_FIELDS.forEach(f=>{
+      if(o[f]==null||o[f]==='') o[f]=(f==='lump'?0:d[f]);              // 項目がない古いデータは初期値（初期投資額は前と同じ0円）
+      else if(typeof o[f]==='string'){ const n=parseNumText(o[f],RULES[f].unit); if(n!==null&&isFinite(n)&&!judgeValue(o[f],f).err) o[f]=n; } // まちがった文字は文字のまま（欄の下にエラーを出す）
+    });
+    if(o.periodMode==='age' && typeof o.ageNow==='number' && typeof o.ageTo==='number') o.years=o.ageTo-o.ageNow; // 年齢から年数を計算し直す
+    return o;
   }
 
-  /* === Toast / Confirm（102）=== */
-  function showToast(msg){ const t=$('enu-toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+  // ファイルの1プランが読めるか（知らせずに読みかえない）：方式・期間の入れ方・6つの数字の欄・名前・id を確かめる。
+  // 項目がない（前の版のデータ）は初期値で補うが、null や形の違う値・数字として読めない値は読まない
+  function planReadable(p){
+    if(!p || typeof p!=='object' || Array.isArray(p)) return false;
+    if(p.mode!==undefined && ['monthly','lump','both'].indexOf(p.mode)<0) return false;
+    if(p.periodMode!==undefined && p.periodMode!=='years' && p.periodMode!=='age') return false;
+    if(p.name!==undefined && typeof p.name!=='string') return false;
+    if(p.id!==undefined && typeof p.id!=='string') return false;
+    for(const f of NUM_FIELDS){
+      if(p[f]===undefined) continue;
+      if(typeof p[f]!=='number' && typeof p[f]!=='string') return false;
+      if(!Number.isFinite(judgeValue(p[f],f).v)) return false;                // 数字として読めない値は読まない
+    }
+    return true;                                                       // 範囲の外の値（前の版で入れられた額など）は読み込んで、欄の下にエラーを出す（004）
+  }
+  // ===== toast =====
+  function showToast(msg){
+    const t=document.getElementById('enu-toast'); if(!t) return;
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),2200);
+  }
   window.enuTools.toast=showToast;
-  function enuConfirm(title, desc, okLabel, cancelLabel){
+
+  // ===== confirm modal =====
+  function enuConfirm(title,desc,okLabel,cancelLabel){
     return new Promise(resolve=>{
-      const modal=$('enu-confirm-modal');
-      if(!modal){ resolve(window.confirm(title + '\n\n' + desc)); return; }
+      const modal=document.getElementById('enu-confirm-modal');
+      if(!modal){resolve(window.confirm(title+'\n\n'+desc));return}
       modal.querySelector('.enu-confirm-modal__title').textContent=title;
       modal.querySelector('.enu-confirm-modal__desc').textContent=desc;
       const ok=modal.querySelector('.enu-confirm-btn--ok');
@@ -710,7 +589,568 @@
   }
   window.enuTools.confirm=enuConfirm;
 
-  /* === 注意書き（101）=== */
+  // ===== data =====
+  let plans=[];
+  let cardRefs=[];
+
+  let dataExtra={}; // 保存データの知らない項目（消さずに残す）
+  function load(){
+    const d=loadStore('data');
+    if(d && typeof d==='object') dataExtra=d;
+    if(d && Array.isArray(d.plans) && d.plans.length) plans=d.plans.map(normalizePlan);
+    if(d && (d.unit==='man'||d.unit==='yen')) unitMode=d.unit;
+    if(!plans.length) plans=[newPlan()];
+  }
+  function save(){ saveStore('data', Object.assign({}, dataExtra, { plans:plans, unit:unitMode })); }
+
+  // ===== 計算エンジン（月次シミュレーション）=====
+  // mode: 'monthly'=毎月積立 / 'lump'=一括投入 / 'both'=併用
+  // 複利の月利は金融庁「つみたてシミュレーター」と同じ (1+年利)^(1/12)−1（年利5%の一括投資は1年でちょうど5%増える）
+  // 単利は「元本×年利×年数」（毎月 年利÷12 の利息がつき、組み入れない。年利5%なら1年でちょうど5%）
+  function monthlyRate(ratePct){return Math.pow(1+ratePct/100,1/12)-1}
+  // 画面に出す数字は、桁を多く持てる整数（BigInt）で計算する。ふつうの数では10兆円をこえると下の桁が数円ずれるため（1,000兆円まで1円単位で正しく出す）
+  const SC=40, S=10n**40n;                                            // 小数第40位まで持つ
+  function toBig(x,sc){                                               // 数 x（入れた数字）を 10^sc 倍した整数に（小数の誤差を入れない）
+    let [m,e]=String(x).split('e'); e=Number(e||0);
+    const neg=m[0]==='-'; if(neg) m=m.slice(1);
+    const [i,f='']=m.split('.'), digits=(i+f).replace(/^0+(?=\d)/,'');
+    const shift=i.length+e+sc-(i+f).length;
+    let v=BigInt(digits||'0'); v= shift>=0 ? v*10n**BigInt(shift) : v/10n**BigInt(-shift);
+    return neg?-v:v;
+  }
+  const rootCache=new Map();
+  function monthlyGrowthBig(ratePct){                                 // (1+年利)^(1/12) を 10^40 倍した整数（ニュートン法）
+    const key=String(ratePct); if(rootCache.has(key)) return rootCache.get(key);
+    const A=S+toBig(ratePct,SC-2), N=A*S**11n;
+    let x=BigInt(Math.ceil(Math.pow(1+ratePct/100,1/12)*1e15)+1)*10n**BigInt(SC-15); // 少し大きめから始める
+    for(;;){ const y=(11n*x+N/x**11n)/12n; if(y>=x) break; x=y; }
+    rootCache.set(key,x); return x;
+  }
+  function roundBig(v,unit){                                          // 10^40 倍の整数を、unit 円単位に四捨五入した数（いったん小数第20位で丸めてから）
+    const q=10n**BigInt(SC-20), v20=(v+q/2n)/q, U=BigInt(unit)*10n**20n;
+    return Number((v20+U/2n)/U);
+  }
+  function calc(p){
+    const m=Math.max(0,Math.round(p.years*12));
+    const L=(p.mode==='lump'||p.mode==='both')?(p.lump||0):0;
+    const P=(p.mode==='monthly'||p.mode==='both')?(p.monthly||0):0;
+    const g=monthlyGrowthBig(p.rate), Lb=toBig(L,SC), Pb=toBig(P,SC), M=BigInt(m);
+    let bal=Lb;
+    for(let k=1;k<=m;k++) bal=bal*g/S+Pb;                            // 複利：利息を元本に組み入れて積立
+    const prinB=Lb+Pb*M;
+    // 単利：毎月の元本の合計 × 年利÷12（利息は再投資しない）。年利がマイナスのときは、入れたお金ごとに0円で止まる（0円より下にならない）
+    const rB=toBig(p.rate,SC);
+    let simpleB;
+    if(rB>=0n){ const sumPrin=Lb*M+Pb*(M*(M-1n)/2n); simpleB=prinB+sumPrin*rB/(1200n*S); }
+    else{
+      const absR=-rB, K0=(1200n*S+absR-1n)/absR, K=K0<M?K0:M;             // まだ0円になっていない月の積立の数（経った月数 t が 1200÷|年利| 未満のもの）
+      let lumpB=Lb+Lb*M*rB/(1200n*S); if(lumpB<0n) lumpB=0n;
+      simpleB=lumpB+Pb*K+Pb*(K*(K-1n)/2n)*rB/(1200n*S);
+    }
+    const num=(v)=>Number(v/10n**BigInt(SC-6))/1e6;
+    const principal=num(prinB), compound=num(bal), simple=num(simpleB);
+    return {principal:principal,compound:compound,simple:simple,diff:compound-simple,
+      cB:bal,sB:simpleB,                                              // 合計の確かめ用（10^40 倍の整数）
+      shown:{yen:{c:roundBig(bal,1),s:roundBig(simpleB,1)},man:{c:roundBig(bal,1000),s:roundBig(simpleB,1000)}}};
+  }
+
+  // 結果が大きすぎると1円単位で正しく出せない。1,000兆円をこえたら結果を出さない
+  const RESULT_MAX=1e15, RESULT_MAX_B=10n**15n*S;
+  function tooBig(r){ return !(r.cB<=RESULT_MAX_B && r.sB<=RESULT_MAX_B); }
+  // 年次の推移（グラフ用）
+  function calcSeries(p){
+    const i=monthlyRate(p.rate), is=(p.rate/100)/12;
+    const m=Math.max(0,Math.round(p.years*12));
+    const L=(p.mode==='lump'||p.mode==='both')?(p.lump||0):0;
+    const P=(p.mode==='monthly'||p.mode==='both')?(p.monthly||0):0;
+    // 単利（k か月後）：calc() と同じ考え方。年利がマイナスのときは、入れたお金ごとに0円で止まる
+    const simpleAt=k=>{ const K=is<0?Math.min(k,Math.ceil(1200/-p.rate)):k; return L*Math.max(0,1+is*k)+P*K+P*is*K*(K-1)/2; };
+    let bal=L;
+    const years=[0],simple=[L],compound=[L];
+    for(let k=1;k<=m;k++){
+      bal=bal*(1+i)+P;
+      if(k%12===0){years.push(k/12);compound.push(bal);simple.push(simpleAt(k))}
+    }
+    if(m%12!==0){years.push(m/12);compound.push(bal);simple.push(simpleAt(m))}
+    return {years:years,simple:simple,compound:compound};
+  }
+
+  // ===== meter =====
+  // 金額の列が広くなって棒が短く（72px 未満に）なるときだけ、金額を棒の下に回す。幅が変わったときも見直す
+  const METER_MIN_TRACK=72;
+  function fitMeter(m){
+    m.classList.remove('meter--stack');
+    const tr=m.querySelector('.meter-track'), vals=[...m.querySelectorAll('.meter-val')];
+    if(!tr || !vals.length || !m.getClientRects().length) return;
+    const minW=parseFloat(getComputedStyle(vals[0]).minWidth)||0;
+    const textW=Math.max(...vals.map(v=>{ const rg=document.createRange(); rg.selectNodeContents(v); return rg.getBoundingClientRect().width; }));
+    if(textW>minW+0.5 && tr.getBoundingClientRect().width<METER_MIN_TRACK) m.classList.add('meter--stack');
+  }
+  let fitQueued=false;
+  function fitMeters(){ if(fitQueued) return; fitQueued=true; requestAnimationFrame(()=>{ fitQueued=false; document.querySelectorAll('.meter').forEach(fitMeter); }); }
+  window.addEventListener('resize',fitMeters);
+  function renderMeter(barSimple,barComp,r){
+    fitMeters();
+    const max=Math.max(r.compound,r.simple,1);
+    barSimple.style.width=(r.simple/max*100)+'%';
+    // 元本の色は「元本」と「その額」の小さい方まで（年利がマイナスで元本より減ったときも、棒の長さ＝その額）
+    const s=barSimple.children;
+    s[0].style.flexGrow=String(Math.min(r.principal,r.simple));
+    s[1].style.flexGrow=String(Math.max(0,r.simple-r.principal));
+    barComp.style.width=(r.compound/max*100)+'%';
+    const c=barComp.children, base=Math.min(r.simple,r.compound);
+    c[0].style.flexGrow=String(Math.min(r.principal,base));
+    c[1].style.flexGrow=String(Math.max(0,base-r.principal));
+    c[2].style.flexGrow=String(Math.max(0,r.diff));
+  }
+  function buildMeterRow(tag,barClass,valClass,segCount){
+    const row=document.createElement('div');row.className='meter-row';
+    const t=document.createElement('span');t.className='meter-tag';t.textContent=tag;
+    const track=document.createElement('div');track.className='meter-track';
+    const bar=document.createElement('div');bar.className='bar '+barClass;
+    const segCls=['seg-prin','seg-int','seg-magic'];
+    for(let i=0;i<segCount;i++){const s=document.createElement('span');s.className='seg '+segCls[i];bar.appendChild(s)}
+    track.appendChild(bar);
+    const val=document.createElement('span');val.className='meter-val '+valClass;
+    row.appendChild(t);row.appendChild(track);row.appendChild(val);
+    return row;
+  }
+  function setFig(el,label,value){
+    el.textContent=label;
+    const b=document.createElement('b');b.textContent=value;
+    el.appendChild(b);
+  }
+
+  // ===== chart（SVG・数値のみで構築。DOMParser→importNode で生成）=====
+  function buildChartEl(s){
+    const n=s.years.length-1;
+    if(n<1) return null;
+    const W=320,H=150,pl=4,pr=6,pt=10,pb=18;
+    const iw=W-pl-pr, ih=H-pt-pb;
+    const maxY=Math.max(...s.compound,...s.simple,1);                    // 年利がマイナスのときは最初がいちばん大きい
+    const last=s.years[n];
+    const X=i=>(pl+iw*(s.years[i]/last));
+    const Y=v=>(pt+ih*(1-v/maxY));
+    let comp='',simp='';
+    for(let i=0;i<=n;i++){comp+=(i?' ':'')+X(i).toFixed(1)+','+Y(s.compound[i]).toFixed(1);simp+=(i?' ':'')+X(i).toFixed(1)+','+Y(s.simple[i]).toFixed(1)}
+    let area='M';
+    for(let i=0;i<=n;i++){area+=(i?' L':'')+X(i).toFixed(1)+' '+Y(s.compound[i]).toFixed(1)}
+    for(let i=n;i>=0;i--){area+=' L'+X(i).toFixed(1)+' '+Y(s.simple[i]).toFixed(1)}
+    area+=' Z';
+    const base=Y(0).toFixed(1);
+    const yrLabel=Number.isInteger(last)?last:last.toFixed(1);
+    const svgStr='<svg viewBox="0 0 '+W+' '+H+'" class="chart-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単利と複利の推移グラフ">'
+      +'<line x1="'+pl+'" y1="'+base+'" x2="'+(W-pr)+'" y2="'+base+'" stroke="var(--line)" stroke-width="1"/>'
+      +'<path d="'+area+'" fill="var(--accent)" fill-opacity="0.18"/>'
+      +'<polyline points="'+simp+'" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+      +'<polyline points="'+comp+'" fill="none" stroke="var(--primary-dark)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'
+      +'</svg>';
+    const doc=new DOMParser().parseFromString(svgStr,'image/svg+xml');
+    // 目盛りの文字は SVG の外に置く（グラフが縮んでも 11px のまま）
+    const wrap=document.createElement('div');
+    wrap.appendChild(document.importNode(doc.documentElement,true));
+    const axis=document.createElement('div');axis.className='chart-axis';
+    axis.style.padding='0 '+(pr/W*100).toFixed(2)+'% 0 '+(pl/W*100).toFixed(2)+'%';
+    const a0=document.createElement('span');a0.textContent='0年';
+    const a1=document.createElement('span');a1.textContent=yrLabel+'年';
+    axis.append(a0,a1);wrap.appendChild(axis);
+    return wrap;
+  }
+
+  // ===== plan card =====
+  const plansEl=document.getElementById('plans');
+
+  function modeBtn(label,value,active){
+    const b=document.createElement('button');
+    b.type='button';b.textContent=label;b.dataset.mode=value;
+    if(active)b.classList.add('active');
+    return b;
+  }
+  function field(labelText,unit,val,rule,raw,ariaLabel){
+    const wrap=document.createElement('div');wrap.className='field';
+    if(labelText){const lab=document.createElement('label');lab.className='field-label';lab.textContent=labelText;wrap.appendChild(lab)}
+    const iw=document.createElement('div');iw.className='input-wrap';
+    const inp=document.createElement('input');
+    inp.type='text';inp.dataset.rule=rule;
+    inp.inputMode=RULES[rule].yen||RULES[rule].int?'numeric':'decimal';
+    inp.value=(raw!=null)?raw:(RULES[rule].yen?moneyText(val):String(val==null?'':val)); // 作り直す前に入っていた文字（まちがいも消さない）
+    inp.setAttribute('aria-label',ariaLabel||labelText);
+    const u=document.createElement('span');u.className='unit';u.textContent=unit;
+    iw.appendChild(inp);iw.appendChild(u);
+    wrap.appendChild(iw);
+    return {wrap:wrap,input:inp};
+  }
+
+  function createPlanCard(p,idx,raw){
+    raw=raw||{};
+    const card=document.createElement('div');
+    card.className='card plan';
+    card.dataset.id=p.id;
+
+    // top: name + duplicate + delete
+    const top=document.createElement('div');top.className='plan-top';
+    const name=document.createElement('input');
+    name.className='plan-name';name.type='text';name.maxLength=24;
+    name.placeholder='プラン'+(idx+1);name.value=p.name||'';name.setAttribute('aria-label','プランの名前');
+    const dup=document.createElement('button');
+    dup.type='button';dup.className='plan-act plan-dup';dup.textContent='複製';dup.setAttribute('aria-label','このプランを複製');
+    const del=document.createElement('button');
+    del.type='button';del.className='plan-act plan-del';del.textContent='× 削除';del.setAttribute('aria-label','このプランを削除');
+    top.appendChild(name);top.appendChild(dup);top.appendChild(del);
+
+    // mode segmented
+    const seg=document.createElement('div');seg.className='mode-seg';seg.setAttribute('role','group');seg.setAttribute('aria-label','投資のしかた');
+    seg.appendChild(modeBtn('毎月積立','monthly',p.mode==='monthly'));
+    seg.appendChild(modeBtn('一括投入','lump',p.mode==='lump'));
+    seg.appendChild(modeBtn('併用','both',p.mode==='both'));
+
+    // fields（金額はカンマ表示）
+    const fields=document.createElement('div');fields.className='fields';
+    const fLump=field('初期投資額','円',p.lump,'lump',raw.lump);
+    const fMonthly=field('毎月の積立額','円',p.monthly,'monthly',raw.monthly);
+    const fRate=field('年利（利回り）','%',p.rate,'rate',raw.rate);
+    fields.appendChild(fLump.wrap);
+    fields.appendChild(fMonthly.wrap);
+    fields.appendChild(fRate.wrap);
+
+    // period block（年数 / 年齢の2方式）
+    const period=document.createElement('div');period.className='period';
+    const pHead=document.createElement('div');pHead.className='period-head';
+    const pLabel=document.createElement('span');pLabel.className='period-label';pLabel.textContent='期間';
+    const pToggle=document.createElement('div');pToggle.className='period-toggle';pToggle.setAttribute('role','group');pToggle.setAttribute('aria-label','期間の入れ方');
+    const tgYears=document.createElement('button');tgYears.type='button';tgYears.textContent='年数';
+    const tgAge=document.createElement('button');tgAge.type='button';tgAge.textContent='年齢';
+    pToggle.appendChild(tgYears);pToggle.appendChild(tgAge);
+    pHead.appendChild(pLabel);pHead.appendChild(pToggle);
+    const pBody=document.createElement('div');pBody.className='period-body';
+    const fYears=field('','年',p.years,'years',raw.years,'期間（年数）');fYears.wrap.classList.add('period-years');
+    const ageNow=field('今の年齢','歳',p.ageNow,'ageNow',raw.ageNow);
+    const ageTo=field('何歳まで','歳',p.ageTo,'ageTo',raw.ageTo);
+    const ageRow=document.createElement('div');ageRow.className='period-age';
+    const arrow=document.createElement('span');arrow.className='period-arrow';arrow.textContent='→';
+    ageRow.appendChild(ageNow.wrap);ageRow.appendChild(arrow);ageRow.appendChild(ageTo.wrap);
+    const pCalc=document.createElement('div');pCalc.className='period-calc';
+    pBody.appendChild(fYears.wrap);pBody.appendChild(ageRow);pBody.appendChild(pCalc);
+    period.appendChild(pHead);period.appendChild(pBody);
+
+    // result
+    const result=document.createElement('div');result.className='plan-result';
+    const figs=document.createElement('div');figs.className='pr-figs';
+    const fComp=document.createElement('div');fComp.className='pr-fig';
+    const fSimple=document.createElement('div');fSimple.className='pr-fig';
+    const fDiff=document.createElement('div');fDiff.className='pr-fig diff';
+    figs.appendChild(fComp);figs.appendChild(fSimple);figs.appendChild(fDiff);
+    const meter=document.createElement('div');meter.className='meter';
+    meter.appendChild(buildMeterRow('単利','bar-s','val-s',2));
+    meter.appendChild(buildMeterRow('複利','bar-c','val-c',3));
+    const chart=document.createElement('div');chart.className='plan-chart';
+    const cap=nbFill(document.createElement('div'),['📈 年数が経つほど、','複利（濃い線）が','単利（薄い線）から','離れていきます']);cap.className='chart-cap';
+    result.appendChild(figs);result.appendChild(meter);result.appendChild(chart);result.appendChild(cap);
+
+    card.appendChild(top);card.appendChild(seg);card.appendChild(fields);card.appendChild(period);card.appendChild(result);
+
+    function applyMode(){
+      fLump.wrap.style.display=(p.mode==='lump'||p.mode==='both')?'':'none';
+      fMonthly.wrap.style.display=(p.mode==='monthly'||p.mode==='both')?'':'none';
+    }
+    applyMode();
+
+    function applyPeriodMode(){
+      const isAge=p.periodMode==='age';
+      tgYears.classList.toggle('active',!isAge);
+      tgAge.classList.toggle('active',isAge);
+      fYears.wrap.style.display=isAge?'none':'';
+      ageRow.style.display=isAge?'':'none';
+      pCalc.style.display=isAge?'':'none';
+      pCalc.textContent='';
+    }
+    const inputs={lump:fLump.input,monthly:fMonthly.input,rate:fRate.input,years:fYears.input,ageNow:ageNow.input,ageTo:ageTo.input};
+    let bad=false, over=false;
+    // 欄ごとの最後の正しい値（隠れた欄にまちがった文字が残っても、保存・書き出しには正しい値を使う）
+    const good={}; const dflt=newPlan(); NUM_FIELDS.forEach(f=>{ good[f]=(typeof p[f]==='number' && !judgeValue(p[f],f).err) ? p[f] : dflt[f]; });
+    // 欄を確かめ、正しい値だけ p に入れる。画面に出ている欄にまちがいがあれば、このプランは計算しない
+    function readInputs(){
+      p.name=name.value.slice(0,24);
+      const used=planUsed(p);
+      bad=false;
+      NUM_FIELDS.forEach(f=>{
+        const r=judgeValue(inputs[f].value,f);
+        const show=used.includes(f);
+        showFieldError(inputs[f], show?r.err:'');
+        if(!r.err){ p[f]=r.v; good[f]=r.v; }
+        else p[f]=show ? inputs[f].value : good[f]; // 出ている欄のまちがいは入れた文字のまま保存（再読み込みしても知らせずに前の値に戻さない）
+        if(show && r.err) bad=true;
+      });
+      if(p.periodMode==='age'){
+        const e1=judgeValue(inputs.ageNow.value,'ageNow').err, e2=judgeValue(inputs.ageTo.value,'ageTo').err;
+        if(!e1 && !e2){ const e=ageErr(p.ageNow,p.ageTo); showFieldError(inputs.ageTo,e); if(e) bad=true; else p.years=p.ageTo-p.ageNow; }
+      }
+      over=!bad && tooBig(calc(p));
+      card._bad=bad||over;
+      updatePeriodCalc();
+    }
+    function updatePeriodCalc(){
+      if(p.periodMode==='age') pCalc.textContent = bad ? '' : '＝ '+p.years+'年間で計算します';
+      else{ // 年数の小数は月単位で計算する。12で割り切れないときは、何か月で計算するかを出す
+        const m=Math.round(p.years*12);
+        pCalc.textContent = (!bad && Math.abs(p.years*12-m)>1e-9) ? '＝ '+m+'か月で計算します' : '';
+        pCalc.style.display = pCalc.textContent ? '' : 'none';
+      }
+    }
+
+    function refresh(){
+      if(bad||over){ // まちがった入力があるあいだ・計算できる大きさをこえたときは、結果を出さない（前の結果も残さない）
+        setFig(fComp,'複利','—'); setFig(fSimple,'単利','—'); setFig(fDiff,'差','—');
+        renderMeter(meter.querySelector('.bar-s'),meter.querySelector('.bar-c'),{principal:0,compound:0,simple:0,diff:0});
+        meter.querySelector('.val-s').textContent='—'; meter.querySelector('.val-c').textContent='—';
+        const e=document.createElement('div');e.className='chart-empty';e.textContent=bad?'入力を直すと表示されます':'計算できる範囲をこえました（年利か期間を小さくしてください）';chart.replaceChildren(e);
+        return;
+      }
+      const r=calc(p);
+      const uc=shownUnits(r,'c'), us=shownUnits(r,'s');
+      setFig(fComp,'複利',fmtUnits(uc));
+      setFig(fSimple,'単利',fmtUnits(us));
+      setFig(fDiff,'差',fmtDiff(uc-us));                                    // 表示した複利−表示した単利
+      renderMeter(meter.querySelector('.bar-s'),meter.querySelector('.bar-c'),r);
+      meter.querySelector('.val-s').textContent=fmtUnits(us);
+      meter.querySelector('.val-c').textContent=fmtUnits(uc);
+      const chartEl=buildChartEl(calcSeries(p));
+      if(chartEl){chart.replaceChildren(chartEl)}
+      else{const e=document.createElement('div');e.className='chart-empty';e.textContent='期間を入力すると推移グラフが表示されます';chart.replaceChildren(e)}
+    }
+    applyPeriodMode();readInputs();
+    card._refresh=refresh;
+
+    [fMonthly.input,fLump.input,fRate.input,fYears.input,ageNow.input,ageTo.input].forEach(inp=>{
+      inp.addEventListener('input',()=>{readInputs();refresh();updateSummary();save();edited()});
+      if(RULES[inp.dataset.rule].yen) inp.addEventListener('change',()=>{ const r=judgeValue(inp.value,inp.dataset.rule); if(!r.err) inp.value=moneyText(r.v); });
+    });
+    name.addEventListener('input',()=>{readInputs();save();edited()});
+    tgYears.addEventListener('click',()=>{if(p.periodMode==='years')return;p.periodMode='years';applyPeriodMode();readInputs();refresh();updateSummary();save();edited()});
+    tgAge.addEventListener('click',()=>{if(p.periodMode==='age')return;p.periodMode='age';applyPeriodMode();readInputs();refresh();updateSummary();save();edited()});
+    seg.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        p.mode=b.dataset.mode;
+        seg.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+        applyMode();readInputs();refresh();updateSummary();save();edited();
+      });
+    });
+    dup.addEventListener('click',()=>{
+      if(plans.length>=MAX_PLANS){showToast('プランは4つまでです');return}
+      const at=plans.indexOf(p);
+      const baseName=p.name||('プラン'+(at+1));
+      const copy=Object.assign({},p,{id:uid(),name:baseName.slice(0,24-4)+'のコピー'}); // 名前は24文字まで
+      const raws=captureRaw(); raws[copy.id]=Object.assign({},raws[p.id]);
+      plans.splice(at+1,0,copy);
+      renderPlans(raws);updateSummary();save();edited();
+      showToast('プランを複製しました');
+    });
+    del.addEventListener('click',async()=>{
+      if(plans.length<=1){showToast('プランは1つ以上必要です');return}
+      const label=p.name||('プラン'+(plans.indexOf(p)+1));
+      const ok=await enuConfirm('プランの削除','「'+label+'」を削除します。よろしいですか？','削除','キャンセル');
+      if(!ok)return;
+      const raws=captureRaw();
+      plans=plans.filter(x=>x!==p);
+      renderPlans(raws);updateSummary();save();edited();
+      showToast('プランを削除しました');
+    });
+
+    return card;
+  }
+
+  // いま欄に入っている文字（プランの id ごと）。作り直しても、まちがった入力とエラーが消えないように
+  function captureRaw(){ const r={}; plansEl.querySelectorAll('.plan').forEach(c=>{ const o={}; c.querySelectorAll('input[data-rule]').forEach(i=>{ o[i.dataset.rule]=i.value; }); r[c.dataset.id]=o; }); return r; }
+  function renderPlans(raws){
+    plansEl.textContent='';
+    cardRefs=[];
+    plansEl.dataset.n=String(plans.length);
+    document.getElementById('add-plan').disabled=plans.length>=MAX_PLANS;
+    plans.forEach((p,idx)=>{
+      const card=createPlanCard(p,idx,raws&&raws[p.id]);
+      plansEl.appendChild(card);
+      card._refresh();
+      cardRefs.push(card._refresh);
+    });
+  }
+
+  function refreshAll(){cardRefs.forEach(fn=>fn());updateSummary()}
+
+  // ===== summary（合計）=====
+  function updateSummary(){
+    if([...plansEl.querySelectorAll('.plan')].some(c=>c._bad)){ // まちがった入力があるあいだは、合計も出さない
+      nbFill(document.getElementById('summary-label'), plans.length>=2 ? ['💴 合計','（各プラン満期時点）'] : ['💴 結果']);
+      ['sum-comp','sum-simple','sum-diff','val-simple','val-comp'].forEach(id=>{ document.getElementById(id).textContent='—'; });
+      document.getElementById('sum-diff-note').textContent='';
+      renderMeter(document.getElementById('bar-simple'),document.getElementById('bar-comp'),{principal:0,compound:0,simple:0,diff:0});
+      return;
+    }
+    let principal=0,compound=0,simple=0,uc=0,us=0,yc=0,ys=0,cB=0n,sB=0n;
+    plans.forEach(p=>{const r=calc(p);principal+=r.principal;compound+=r.compound;simple+=r.simple;cB+=r.cB;sB+=r.sB;uc+=shownUnits(r,'c');us+=shownUnits(r,'s');yc+=r.shown.yen.c;ys+=r.shown.yen.s}); // 合計は各プランの表示の足し算
+    if(cB>RESULT_MAX_B||sB>RESULT_MAX_B){ // 合計が計算できる大きさをこえたときも出さない
+      nbFill(document.getElementById('summary-label'), plans.length>=2 ? ['💴 合計','（各プラン満期時点）'] : ['💴 結果']);
+      ['sum-comp','sum-simple','sum-diff','val-simple','val-comp'].forEach(id=>{ document.getElementById(id).textContent='—'; });
+      document.getElementById('sum-diff-note').textContent='計算できる範囲をこえました';
+      renderMeter(document.getElementById('bar-simple'),document.getElementById('bar-comp'),{principal:0,compound:0,simple:0,diff:0});
+      return;
+    }
+    const diff=compound-simple;
+    nbFill(document.getElementById('summary-label'), plans.length>=2 ? ['💴 合計','（各プラン満期時点）'] : ['💴 結果']);
+    document.getElementById('sum-comp').textContent=fmtUnits(uc);
+    document.getElementById('sum-simple').textContent=fmtUnits(us);
+    document.getElementById('sum-diff').textContent=fmtDiff(uc-us);
+    const note=document.getElementById('sum-diff-note');
+    const pctMore=ys>0?((yc-ys)/ys*100):0;                                       // 円に丸めた値どうしで（計算の誤差で「+0% 多い」と出さない）
+    note.textContent= (yc>ys && pct(pctMore)!=='0') ? ('複利は単利より +'+pct(pctMore)+'% 多い') : '';
+    renderMeter(document.getElementById('bar-simple'),document.getElementById('bar-comp'),
+      {principal:principal,compound:compound,simple:simple,diff:diff});
+    document.getElementById('val-simple').textContent=fmtUnits(us);
+    document.getElementById('val-comp').textContent=fmtUnits(uc);
+  }
+
+  function applyUnitToggle(){
+    document.querySelectorAll('#unit-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.unit===unitMode));
+  }
+
+  // ===== 📌 保存した計算（H3）=====
+  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
+  function setHistory(h){ saveStore('history', h); }
+  function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function autoName(){
+    const names=plans.map((p,i)=>p.name||('プラン'+(i+1))).join(' / ');
+    const d=new Date(), p=(n)=>String(n).padStart(2,'0');
+    const stamp=(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes());
+    const label=names.length>28?names.slice(0,28)+'…':names;
+    return label+'（'+stamp+'）';
+  }
+  let currentHistId=null;
+  // 数字・方式・期間の入れ方・名前を変えたり、プランを足す・複製・削除したら「呼び出し中」を消す（保存したときの中身と違うため）
+  function edited(){ if(currentHistId!=null){ currentHistId=null; renderHistory(); } }
+  function saveCurrent(){
+    const bad=plansEl.querySelector('[aria-invalid="true"]');
+    if(bad){ bad.focus(); bad.scrollIntoView({block:'center',behavior:'smooth'}); showToast('入力を直してから保存してください'); return; } // まちがった入力のままでは保存しない
+    const nameInput=document.getElementById('save-name');
+    const name=(nameInput.value||'').trim()||autoName();
+    const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, plans:JSON.parse(JSON.stringify(plans)) };
+    let hist=getHistory(); const lim=Math.max(20, hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist); // 上限より多く読み込んだあとも今ある件数を保つ（いちばん古い1件だけ落とす）
+    nameInput.value=''; renderHistory(); showToast('📌 この計算を保存しました');
+  }
+  function renderHistory(){
+    const list=document.getElementById('history-list'); list.textContent='';
+    const hist=getHistory();
+    list.hidden=!hist.length;
+    hist.forEach(snap=>{
+      const b=document.createElement('button'); b.type='button'; b.className='hist-chip'+(snap.id===currentHistId?' on':'');
+      b.textContent=snap.name; b.title=snap.name+'（'+fmtDate(snap.savedAt)+'）'; b.dataset.load=snap.id;
+      list.appendChild(b);
+    });
+    const cur=document.getElementById('hist-current'); cur.textContent='';
+    const snap=hist.find(s=>s.id===currentHistId);
+    if(snap){
+      cur.append('呼び出し中：'+snap.name);
+      const del=document.createElement('button'); del.type='button'; del.textContent='この保存を削除'; del.dataset.del=snap.id;
+      cur.append('　', del); cur.hidden=false;
+    }else{ cur.hidden=true; currentHistId=null; }
+  }
+  function onHistoryClick(e){
+    const t=e.target.closest('button'); if(!t) return;
+    if(t.dataset.load){
+      const id=parseInt(t.dataset.load,10);
+      const snap=getHistory().find(s=>s.id===id);
+      if(snap){
+        plans=(Array.isArray(snap.plans)?snap.plans:[]).map(normalizePlan); if(!plans.length) plans=[newPlan()];
+        currentHistId=id; renderPlans(); updateSummary(); save(); renderHistory(); showToast('保存した計算を呼び出しました');
+      }
+    }else if(t.dataset.del){
+      const id=parseInt(t.dataset.del,10);
+      enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
+        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
+      });
+    }
+  }
+
+  // ===== Export / Import (102) =====
+  function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
+  function appGetData(){ return { plans:plans, unit:unitMode, history:getHistory() }; }
+  function appValidateData(data){ return !!(data && typeof data==='object' && (Array.isArray(data.plans) || Array.isArray(data.history))); }
+  // 中身の値を確かめる：読めないプラン・保存した計算は、それだけ読み込まずに知らせる（知らせずに読みかえない）。
+  // 前の版で作れた5つ以上のプランは、そのまま読み込む（新しく足せるのは4つまで）
+  function readablePlans(list){ const ok=list.filter(planReadable); return {plans:ok, dropped:list.length-ok.length}; }
+  // 004「インポート」：今のプランが1つも読めなくても、読める保存は読み込む（画面のプランは前のまま）。読めるものが1つもないときだけ断る。
+  // 保存した計算は、上限（20件）より多くても全部読む（新しく保存するときは今ある件数を保ち、いちばん古い1件だけ落とす）
+  function cleanImport(data){
+    let dropped=0, cur=null, hist=null;
+    if(Array.isArray(data.plans)){ const r=readablePlans(data.plans); if(r.plans.length){ cur=r.plans; dropped+=r.dropped; } }
+    if(!cur && data.plans!=null) dropped++; // プランの項目がない（保存だけの）ファイルは、読めない行として数えない
+    if(Array.isArray(data.history)){
+      hist=[];
+      data.history.forEach(h=>{
+        if(!h || typeof h!=='object' || !Array.isArray(h.plans) || typeof h.name!=='string' || typeof h.id!=='number' || isNaN(new Date(h.savedAt).getTime())){ dropped++; return; }
+        const r=readablePlans(h.plans); dropped+=r.dropped;
+        if(!r.plans.length){ if(!r.dropped) dropped++; return; }
+        hist.push(Object.assign({},h,{plans:r.plans}));
+      });
+    }else if(data.history!=null) dropped++;
+    if(!cur && !(hist && hist.length)) return null;
+    return { data:data, cur:cur, hist:hist, dropped:dropped };
+  }
+  function appApplyData(c){
+    if(c.cur){
+      dataExtra=Object.assign({}, c.data); delete dataExtra.plans; delete dataExtra.unit; delete dataExtra.history;
+      plans=c.cur.map(normalizePlan);
+      if(c.data.unit==='man'||c.data.unit==='yen') unitMode=c.data.unit;
+    }
+    if(c.hist) setHistory(c.hist);
+    currentHistId=null;
+    applyUnitToggle(); renderPlans(); updateSummary(); renderHistory(); save();
+  }
+  function handleExport(){
+    const bad=plansEl.querySelector('[aria-invalid="true"]');
+    if(bad){ bad.focus(); bad.scrollIntoView({block:'center',behavior:'smooth'}); showToast('入力を直してから書き出してください'); return; } // まちがった入力のままでは書き出さない（年齢の組み合わせも）
+    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('📤 JSONをダウンロードしました');
+  }
+  function handleImport(){
+    const input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
+    input.addEventListener('change', async (e)=>{
+      const f=e.target.files[0]; if(!f) return;
+      try{
+        const p=JSON.parse(await f.text());
+        if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
+        if(!p.app_id) throw new Error('古い形式のファイルです');
+        if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
+        if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
+        const data=migrate({ v:p.data_version||1, data:p.data });
+        if(!appValidateData(data)) throw new Error('データ形式が違います');
+        const c=cleanImport(data);
+        if(!c) throw new Error('ファイルの中に読めない値があります');
+        const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+        if(!ok) return;
+        userChanged(); appApplyData(c); showToast(c.dropped?'📥 インポートしました。読み込めなかった行があります':'📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+      }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
+    });
+    input.click();
+  }
+
+  // === Simple share (102) ===
+  async function handleSimpleShare(){
+    const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
+    try{
+      if(navigator.share){ await navigator.share(shareData); }
+      else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
+    }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+  }
+
+  function initButtons(){
+    const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare, 'enu-btn-export':handleExport, 'enu-btn-import':handleImport };
+    Object.entries(map).forEach(([id,fn])=>{ const e=document.getElementById(id); if(e) e.addEventListener('click',fn); });
+  }
+
+  // ===== Notices (101) =====
   function applyStorageType(){
     const type=CFG.storageType||'local';
     document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w=>{ if(w.dataset.storage!==type) w.style.display='none'; });
@@ -730,146 +1170,140 @@
     }));
   }
 
-  /* === 免責事項・プライバシーポリシー・ヘルプのリンク／バージョン（004）=== */
-  const ENU_LEGAL_URLS={
+  // === 免責事項・プライバシーポリシー・ヘルプのリンク（004）===
+  const ENU_LEGAL_URLS = {
     disclaimer:'https://enu-tools.pages.dev/desk/disclaimer/',
     privacy:'https://enu-tools.pages.dev/desk/privacy/'
   };
-  function initVersion(){ const v=$('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
+  function initVersion(){ const el=document.getElementById('appVersion'); if(el && CFG.appVersion) el.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
-    const urls={ disclaimer:CFG.disclaimerUrl||ENU_LEGAL_URLS.disclaimer, privacy:CFG.privacyUrl||ENU_LEGAL_URLS.privacy, help:CFG.helpUrl };
+    const urls = { disclaimer: CFG.disclaimerUrl || ENU_LEGAL_URLS.disclaimer, privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy, help: CFG.helpUrl };
     document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
   }
 
-  /* === アクションボタン（102）=== */
-  async function handleSimpleShare(){
-    const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
-    try{
-      if(navigator.share){ await navigator.share(shareData); }
-      else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
-    }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
-  }
-  function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
-  function appGetData(){ return { values:cleanValues(getValues()), history:getHistory() }; }
-  function appValidateData(data){ return !!(data && data.values && typeof data.values==='object'); }
-  // ファイルの中の値が読めるか（読めない値があれば読み込まない）
-  // 読める行だけ選ぶ（004：前の版のファイルも断らない。今は入れられない値・おかしい値の行は読み込まず、知らせる）
-  function pickReadable(data){
-    const valuesOk=validValues(data.values, true);
-    const hist=Array.isArray(data.history)?data.history:[];
-    const histOk=hist.filter(h=>h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && validValues(h.values));
-    return { values: valuesOk?data.values:null, history: data.history==null?null:histOk, skipped:(valuesOk?0:1)+(hist.length-histOk.length) };
-  }
-  function appApplyData(r){
-    if(r.values){ dataExtra=Object.assign({}, r.values); setValues(r.values); }
-    if(r.history) setHistory(r.history);
-    currentHistId=null; renderHistory(); update();
-  }
-  function handleExport(){
-    if(!guardInputs('export')) return;
-    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-    showToast('📤 JSONをダウンロードしました');
-  }
-  function handleImport(){
-    const input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
-    input.addEventListener('change', async (e)=>{
-      const f=e.target.files[0]; if(!f) return;
-      try{
-        const p=JSON.parse(await f.text());
-        if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
-        if(!p.app_id) throw new Error('古い形式のファイルです');
-        if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
-        if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
-        const data=migrate({ v:p.data_version||1, data:p.data }); // インポートも migrate() を通す
-        if(!appValidateData(data) || (data.history!=null && !Array.isArray(data.history))) throw new Error('データ形式が違います');
-        const r=pickReadable(data);
-        if(!r.values && !(r.history && r.history.length)) throw new Error('ファイルの中に読めない値があります');
-        const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
-        if(!ok) return;
-        userChanged(); appApplyData(r); showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
-      }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
-    });
-    input.click();
-  }
-  function initButtons(){
-    const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare, 'enu-btn-export':handleExport, 'enu-btn-import':handleImport };
-    Object.entries(map).forEach(([id,fn])=>{ const b=$(id); if(b) b.addEventListener('click',fn); });
-  }
-
-  /* === アイコン・PWA（003）=== */
-  const ICON_EMOJI='🧳';
-  function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
-  function makeIcon(size, emojiScale, rounded, bg){
-    const c=document.createElement('canvas'); c.width=size; c.height=size;
-    const ctx=c.getContext('2d'); ctx.fillStyle=bg;
-    if(rounded){ roundRectPath(ctx,0,0,size,size,size*0.22); ctx.fill(); } else { ctx.fillRect(0,0,size,size); }
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font=Math.round(size*emojiScale)+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
-    ctx.fillText(ICON_EMOJI, size/2, size/2 + size*0.025);
-    return c.toDataURL('image/png');
-  }
-  function setMetaName(name, content){ let m=document.querySelector('meta[name="'+name+'"]'); if(!m){ m=document.createElement('meta'); m.setAttribute('name',name); document.head.appendChild(m); } m.setAttribute('content',content); }
-  function setLink(rel, href, type){ let l=document.querySelector('link[rel="'+rel+'"]'); if(!l){ l=document.createElement('link'); l.setAttribute('rel',rel); document.head.appendChild(l); } l.setAttribute('href',href); if(type) l.setAttribute('type',type); }
-  function setupPWA(){ // 文字（フォント）を読み終えてからアイコンを描く
-    const ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-    ready.then(drawPWA, drawPWA);
-  }
-  function drawPWA(){
-    const SHORT='レート計算機';
-    const bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f3faf8';
-    document.title=CFG.appName;
-    setMetaName('theme-color', bg);
-    setMetaName('apple-mobile-web-app-capable','yes');
-    setMetaName('apple-mobile-web-app-status-bar-style','default');
-    setMetaName('apple-mobile-web-app-title', SHORT);
-    try{
-      const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif">'+ICON_EMOJI+'</text></svg>';
-      setLink('icon', 'data:image/svg+xml,'+encodeURIComponent(svg), 'image/svg+xml');
-      setLink('apple-touch-icon', makeIcon(180,0.55,true,bg));
-      const path=location.pathname;
-      const manifest={ id:path, name:CFG.appName, short_name:SHORT, start_url:path, scope:path, display:'standalone', orientation:'portrait', background_color:bg, theme_color:bg,
-        icons:[ {src:makeIcon(192,0.55,true,bg),sizes:'192x192',type:'image/png',purpose:'any'},
-                {src:makeIcon(192,0.50,false,bg),sizes:'192x192',type:'image/png',purpose:'maskable'},
-                {src:makeIcon(512,0.55,true,bg),sizes:'512x512',type:'image/png',purpose:'any'},
-                {src:makeIcon(512,0.50,false,bg),sizes:'512x512',type:'image/png',purpose:'maskable'} ] };
-      setLink('manifest', 'data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
-    }catch(e){}
-  }
-
-  /* === 初期化 === */
+  // ===== init =====
   function init(){
-    applyStorageType(); initNotices(); initLegal(); initVersion(); initButtons();
-    $('copyYear').textContent=new Date().getFullYear();
+    applyStorageType();
+    initNotices();
+    initLegal();
+    initVersion();
+    initButtons();
+    document.getElementById('copyYear').textContent=new Date().getFullYear();
 
-    setValues(DEFAULTS);
-    const saved=loadStore('data');
-    if(saved && typeof saved==='object') dataExtra=saved;
-    if(saved) setValues(saved);
-
-    FIELDS.forEach(f=>$(f).addEventListener('input',update));
-    // 呼び出したあとで入力を変えたら「呼び出し中」を消す
-    const clearCur=()=>{ if(currentHistId!=null){ currentHistId=null; renderHistory(); } };
-    $('input-card').addEventListener('input',clearCur);
-    $('input-card').addEventListener('change',clearCur);
-    $('projectHours').addEventListener('input',clearCur);
-    $('blueReturn').addEventListener('change',update);
-    document.querySelectorAll('.preset-chip[data-hours]').forEach(btn=>btn.addEventListener('click',()=>{ $('projectHours').value=parseFloat(btn.dataset.hours); update(); }));
-    $('btnReset').addEventListener('click',()=>{ setValues(DEFAULTS); update(); if(currentHistId!=null){ currentHistId=null; renderHistory(); } showToast('初期値に戻しました'); });
-    const ft=$('formulaToggle'), fb=$('formulaBody');
-    ft.addEventListener('click',()=>{ const open=fb.hidden; fb.hidden=!open; ft.setAttribute('aria-expanded', open?'true':'false'); });
-    $('save-btn').addEventListener('click',saveCurrent);
-    $('history-list').addEventListener('click',onHistoryClick);
-    $('hist-current').addEventListener('click',onHistoryClick);
-
-    renderHistory(); renderResults(); setupPWA();
+    load();
+    applyUnitToggle();
+    document.querySelectorAll('#unit-toggle button').forEach(b=>{
+      b.addEventListener('click',()=>{ unitMode=b.dataset.unit; applyUnitToggle(); save(); refreshAll(); });
+    });
+    renderPlans();
+    updateSummary();
+    renderHistory();
+    document.getElementById('add-plan').addEventListener('click',()=>{
+      if(plans.length>=MAX_PLANS) return;
+      const raws=captureRaw();
+      plans.push(newPlan());
+      renderPlans(raws);updateSummary();save();edited();
+    });
+    document.getElementById('save-btn').addEventListener('click', saveCurrent);
+    document.getElementById('history-list').addEventListener('click', onHistoryClick);
+    document.getElementById('hist-current').addEventListener('click', onHistoryClick);
   }
 
-  if(document.readyState!=='loading') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  // この script は画面の部品のあとにあるので、待たずにすぐ作る。DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に
+  // プランのない画面がいったん描かれ、プランが入ったときに下の部品がずれていた（portfolio と同じ原因）
+  init();
+})();
+</script>
+
+<!-- ===== favicon / PWA（アイコン・ホーム画面追加）===== -->
+<script>
+(function(){
+  'use strict';
+  var ICON='📈';
+  var APP_NAME='複利シミュレーター';
+  var SHORT_NAME='複利シミュ';
+  var EMOJI_FONT="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
+
+  function getBg(){
+    var v='';
+    try{v=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()}catch(e){}
+    return v||'#faf7f0';
+  }
+  function setMeta(name,content){
+    var m=document.querySelector('meta[name="'+name+'"]');
+    if(!m){m=document.createElement('meta');m.setAttribute('name',name);document.head.appendChild(m)}
+    m.setAttribute('content',content);
+  }
+  function setLink(rel,attrs){
+    var l=document.querySelector('link[rel="'+rel+'"]');
+    if(!l){l=document.createElement('link');l.setAttribute('rel',rel);document.head.appendChild(l)}
+    Object.keys(attrs).forEach(function(k){l.setAttribute(k,attrs[k])});
+    return l;
+  }
+  function faviconURI(bg){
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+      +'<rect width="100" height="100" rx="22" ry="22" fill="'+bg+'"/>'
+      +'<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EMOJI_FONT+'">'+ICON+'</text>'
+      +'</svg>';
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+  function drawIcon(size,bg,ratio,rounded){
+    return new Promise(function(resolve){
+      var c=document.createElement('canvas');c.width=size;c.height=size;
+      var ctx=c.getContext('2d');
+      if(rounded){
+        var r=size*0.22;
+        ctx.beginPath();
+        ctx.moveTo(r,0);
+        ctx.lineTo(size-r,0);ctx.arcTo(size,0,size,r,r);
+        ctx.lineTo(size,size-r);ctx.arcTo(size,size,size-r,size,r);
+        ctx.lineTo(r,size);ctx.arcTo(0,size,0,size-r,r);
+        ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
+        ctx.closePath();ctx.fillStyle=bg;ctx.fill();
+      }else{
+        ctx.fillStyle=bg;ctx.fillRect(0,0,size,size);
+      }
+      ctx.font=(size*ratio)+'px '+EMOJI_FONT;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(ICON,size/2,size/2+size*0.025);  // emoji 視覚中心補正
+      resolve(c.toDataURL('image/png'));  // data URI（blob URLはiOSで取得失敗するため不可）
+    });
+  }
+  function run(){
+    var bg=getBg();
+    setMeta('theme-color',bg);
+    setLink('icon',{type:'image/svg+xml',href:faviconURI(bg)});
+    document.fonts.ready.then(function(){
+      drawIcon(180,bg,0.55,true).then(function(url){setLink('apple-touch-icon',{href:url})});
+      Promise.all([
+        drawIcon(192,bg,0.55,true),   // any
+        drawIcon(192,bg,0.50,false),  // maskable（角丸なし）
+        drawIcon(512,bg,0.55,true),   // any
+        drawIcon(512,bg,0.50,false)   // maskable（角丸なし）
+      ]).then(function(u){
+        var manifest={
+          id:location.pathname,
+          name:APP_NAME,
+          short_name:SHORT_NAME,
+          start_url:location.pathname,
+          scope:location.pathname,
+          display:'standalone',
+          orientation:'portrait',
+          background_color:bg,
+          theme_color:bg,
+          icons:[
+            {src:u[0],sizes:'192x192',type:'image/png',purpose:'any'},
+            {src:u[1],sizes:'192x192',type:'image/png',purpose:'maskable'},
+            {src:u[2],sizes:'512x512',type:'image/png',purpose:'any'},
+            {src:u[3],sizes:'512x512',type:'image/png',purpose:'maskable'}
+          ]
+        };
+        setLink('manifest',{href:'data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest))});
+      });
+    });
+  }
+  if(document.readyState!=='loading')run();
+  else document.addEventListener('DOMContentLoaded',run);
 })();
 </script>
 <!-- enu-a2hs -->
@@ -894,7 +1328,7 @@
 <script>
 /* ホーム画面の案内（2回目に開いたときだけ・スマホだけ） */
 (function(){
-  var P='enu_freelance-rate-calc';
+  var P='enu_fukuri-magic';
   var box=document.getElementById('enu-a2hs'); if(!box) return;
   function get(k){ try{ return localStorage.getItem(P+k); }catch(e){ return null; } }
   function set(k,v){ try{ localStorage.setItem(P+k,v); }catch(e){} }
