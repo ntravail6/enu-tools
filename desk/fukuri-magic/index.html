@@ -3,407 +3,388 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#faf6f1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="複利シミュ">
-<title>複利シミュレーター｜単利と複利、差はこんなに開く</title>
+<meta name="theme-color" content="#f3faf8">
+<title>フリーランスレート計算機</title>
+<meta name="description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
+
+<!-- OGP / SNS sharing -->
+<meta property="og:title" content="フリーランスレート計算機">
+<meta property="og:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="enu-tools">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="フリーランスレート計算機">
+<meta name="twitter:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
-/* ===== カラー：08 モカ ===== */
-:root{
-  /* 共通固定（全アプリ共通・触らない）*/
-  --card:#fff;
-  --text:#2C2A24;
-  --sub:#7A756B;
-  /* アプリ別（08 モカ）*/
-  --primary:#B89A85;
-  --primary-light:#E5D5C5;
-  --primary-dark:#8E7560;
-  --primary-soft:#F0E8DE;
-  --accent:#A88770;
-  --bg:#faf6f1;
-  --bg-soft:#fdfaf6;
-  --line:#ebe2d5;
-}
+  :root{
+    /* 901 Palette: 11. ターコイズ */
+    --primary:#7BB5B0; --primary-light:#B8DDDA; --primary-dark:#4F8A85;
+    --primary-soft:#DCEDEB; --accent:#5FA5A0;
+    --accent-dark:#3D7C78; --accent-soft:#C5DDDA;
+    --bg:#f3faf8; --bg-soft:#f9fdfc; --line:#cfe2df;
+    --card:#fff; --text:#2C2A24; --sub:#7A756B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;font-size:.875rem;-webkit-text-size-adjust:100%;
+    padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+            max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+  }
+  .page-wrapper{max-width:960px;margin:0 auto;width:100%}
+  .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.7;
-  -webkit-font-smoothing:antialiased;
-  padding:max(24px,env(safe-area-inset-top))
-          max(16px,env(safe-area-inset-right))
-          max(24px,env(safe-area-inset-bottom))
-          max(16px,env(safe-area-inset-left));
-}
-.page-wrapper{width:100%;max-width:960px;margin:0 auto}
+  .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
+  .app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
+  .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
 
-/* ===== Header ===== */
-.app-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.app-header .app-icon{
-  width:54px;height:54px;flex-shrink:0;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
-  background:linear-gradient(135deg,var(--primary-light),var(--primary-soft));
-  box-shadow:0 2px 8px rgba(142,117,96,.18);
-}
-.app-header h1{font-size:1.5rem;font-weight:700;color:var(--primary-dark);margin:0;line-height:1.25}
-.app-header p{font-size:.75rem;color:var(--sub);margin:3px 0 0}
-@media(max-width:650px){
-  .app-header h1{font-size:1.25rem}
-  .app-header p{font-size:.7rem}
-}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  .section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px}
+  .section-note{font-size:.75rem;color:var(--sub);margin-top:-8px;margin-bottom:12px;line-height:1.6}
+  .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark)}
 
-/* ===== Summary bar ===== */
-.summary{
-  background:var(--card);border:1px solid var(--line);border-radius:14px;
-  padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);
-}
-.summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.summary-label{font-size:.74rem;color:var(--sub);font-weight:700;letter-spacing:.02em;margin:0;display:inline-flex;align-items:center;gap:6px}
-.unit-toggle{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
-.unit-toggle button{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.68rem;font-weight:700;color:var(--sub);background:transparent;border:none;border-radius:999px;padding:4px 13px;cursor:pointer;transition:.15s}
-.unit-toggle button.active{background:var(--card);color:var(--primary-dark);box-shadow:0 1px 3px rgba(142,117,96,.18)}
-.summary-figs{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
-.fig{background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
-.fig.fig-diff{grid-column:1/-1;background:linear-gradient(135deg,var(--primary-soft),var(--bg-soft));border-color:var(--primary-light)}
-.fig .fig-cap{font-size:.66rem;color:var(--sub);font-weight:700}
-.fig .fig-num{font-size:1.15rem;font-weight:700;color:var(--text);margin-top:2px;word-break:normal;overflow-wrap:break-word}
-.fig.fig-diff .fig-num{font-size:1.55rem;color:var(--primary-dark)}
-.fig .fig-note{font-size:.66rem;color:var(--accent);font-weight:700;margin-top:1px}
-@media(max-width:650px){
-  .fig.fig-diff .fig-num{font-size:1.35rem}
-}
+  .input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 16px}
+  .field{min-width:0}
+  .field-label{display:block;font-size:.875rem;font-weight:600;color:var(--sub);margin-bottom:5px}
+  .field-help{display:block;font-size:.75rem;color:var(--sub);margin-top:4px;opacity:.9}
+  input[type="text"],input[type="number"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+  input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  button:focus-visible,a:focus-visible,summary:focus-visible,label:focus-within{outline:2px solid var(--primary);outline-offset:2px}
+  .input-suffix{position:relative}
+  .input-suffix input{padding-right:52px;-moz-appearance:textfield}
+  .input-suffix input::-webkit-outer-spin-button,.input-suffix input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .input-suffix .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.875rem;color:var(--sub);pointer-events:none}
+  .field-error{font-size:.75rem;color:#a33;margin:4px 0 0}
+  input[aria-invalid="true"]{border-color:#c0666a}
 
-/* ===== Meter ===== */
-.meter{margin-top:14px}
-.meter-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-.meter-row:last-child{margin-bottom:0}
-.meter-tag{flex-shrink:0;width:32px;font-size:.68rem;font-weight:700;color:var(--sub);text-align:right}
-.meter-track{flex:1;min-width:0;background:var(--bg-soft);border-radius:999px;height:18px;overflow:hidden;border:1px solid var(--line)}
-.bar{display:flex;height:100%;border-radius:999px;overflow:hidden;transition:width .55s cubic-bezier(.22,1,.36,1);min-width:2px}
-.seg{height:100%;transition:flex-grow .4s}
-.seg-prin{background:var(--primary-light)}
-.seg-int{background:var(--primary)}
-.seg-magic{background:var(--primary-dark)}
-.meter-val{flex-shrink:0;font-size:.7rem;font-weight:700;color:var(--text);width:96px;text-align:right;word-break:normal;overflow-wrap:break-word}
-@media(max-width:650px){
-  .meter-val{width:80px;font-size:.65rem}
-}
-.legend{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:12px;font-size:.64rem;color:var(--sub)}
-.legend span{display:inline-flex;align-items:center;gap:5px}
-.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
-.legend .l-prin{background:var(--primary-light)}
-.legend .l-int{background:var(--primary)}
-.legend .l-magic{background:var(--primary-dark)}
+  .check-block{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
+  .check-row{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;color:var(--text);cursor:pointer}
+  .check-row input{width:18px;height:18px;accent-color:var(--primary);flex-shrink:0}
+  .check-block .field-help{margin-left:26px}
+  .blue-diff{display:block;font-size:.75rem;color:var(--primary-dark);font-weight:700;margin:4px 0 0 26px}
+  .blue-diff[hidden]{display:none}
+  .reset-row{margin-top:16px}
+  .btn-line{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--sub);color:var(--sub);transition:color .15s,border-color .15s}
+  .btn-line:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
 
-/* ===== 説明メモ（アコーディオン）===== */
-.fukuri-note{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:18px;overflow:hidden}
-.fukuri-note>summary{cursor:pointer;list-style:none;padding:13px 16px;font-size:.82rem;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;gap:7px}
-.fukuri-note>summary::-webkit-details-marker{display:none}
-.fukuri-note>summary::after{content:'▾';margin-left:auto;transition:transform .2s;color:var(--sub)}
-.fukuri-note[open]>summary::after{transform:rotate(180deg)}
-.fukuri-note .note-body{padding:0 16px 15px;font-size:.78rem;line-height:1.85;color:var(--text);word-break:auto-phrase}
-.fukuri-note .note-body p{margin:0 0 8px}
-.fukuri-note .note-body b.tan{color:var(--primary)}
-.fukuri-note .note-body b.fuku{color:var(--primary-dark)}
-.fukuri-note .note-body .more{display:inline-block;margin-top:4px;font-weight:700;color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;font-size:.76rem}
-.fukuri-note .note-body .more:hover{color:var(--text)}
+  /* 結果 */
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px 24px;margin-bottom:16px}
+  .summary-item{border-left:3px solid var(--primary);padding:2px 0 2px 14px;min-width:0}
+  .summary-label{font-size:.75rem;color:var(--sub);font-weight:600}
+  .summary-main{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.3;white-space:nowrap}
+  .summary-main .unit{font-size:.875rem;font-weight:600;margin-left:3px}
+  .summary-main .unit[hidden]{display:none}
+  .daily-note{margin:-6px 0 12px}
+  .result-list{list-style:none}
+  .result-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.875rem}
+  .result-row:last-child{border-bottom:none}
+  .result-row .lbl{min-width:0}
+  .result-row .val{font-weight:600;text-align:right;white-space:nowrap}
+  .result-row.hl-accent{background:var(--accent-soft);border-radius:10px;border-bottom-color:transparent}
+  .result-row.hl-accent .lbl,.result-row.hl-accent .val{color:var(--accent-dark);font-weight:700}
+  .result-row.hl-primary{background:var(--primary-soft);border-radius:10px;border-bottom-color:transparent}
+  .result-row.hl-primary .lbl,.result-row.hl-primary .val{color:var(--primary-dark);font-weight:700}
 
-/* ===== Plans ===== */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px}
-.section-head h2{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin:0;display:inline-flex;align-items:center;gap:6px}
-.plans{display:flex;flex-direction:column;gap:14px}
-.plan{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.plan-top{display:flex;align-items:center;gap:8px;margin-bottom:13px}
-.plan-name{
-  flex:1;min-width:0;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  font-size:.92rem;font-weight:700;color:var(--text);
-  border:none;border-bottom:1.5px dashed var(--line);background:transparent;
-  padding:4px 2px;outline:none;transition:border-color .15s;
-}
-.plan-name:focus{border-bottom-color:var(--primary)}
-.plan-icon-btn{
-  flex-shrink:0;background:transparent;border:none;color:var(--sub);
-  width:30px;height:30px;border-radius:999px;cursor:pointer;font-size:.9rem;
-  display:flex;align-items:center;justify-content:center;transition:.15s;
-}
-.plan-dup:hover{color:var(--primary-dark)}
-.plan-del:hover{color:#b06a72}
+  /* 折りたたみ（▸／▾）*/
+  .breakdown{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
+  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
+  .collapse-arrow::before{content:"▸"}
+  .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
+  .collapse-body[hidden]{display:none}
+  .formula-list{list-style:none;margin-top:10px}
+  .formula-list li{font-size:.75rem;color:var(--sub);line-height:1.7}
 
-/* mode segmented */
-.mode-seg{display:flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;margin-bottom:13px}
-.mode-seg button{
-  flex:1;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  font-size:.72rem;font-weight:600;color:var(--sub);background:transparent;border:none;
-  border-radius:7px;padding:7px 4px;cursor:pointer;transition:.15s;
-}
-.mode-seg button.active{background:var(--card);color:var(--primary-dark);box-shadow:0 1px 4px rgba(142,117,96,.15)}
+  /* 📎 参照リンク（004） */
+  .enu-refs{margin:24px 0 0}
+  .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+  .enu-refs summary::-webkit-details-marker{display:none}
+  .enu-refs summary::after{content:" ▸";color:var(--sub);font-weight:400}
+  .enu-refs[open] summary::after{content:" ▾"}
+  .enu-refs-n{font-weight:400;color:var(--sub);font-size:.875rem}
+  .enu-refs ul{margin:8px 0 0;padding-left:1.2em;font-size:.875rem}
+  .enu-refs li{margin-bottom:6px}
+  .enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+  .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:.68rem;color:var(--sub);font-weight:700}
-.input-wrap{position:relative;display:flex;align-items:center}
-.input-wrap input{
-  width:100%;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  font-size:.85rem;font-weight:700;color:var(--text);
-  background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;
-  padding:10px 38px 10px 12px;outline:none;transition:.15s;
-}
-.input-wrap input:focus{border-color:var(--primary);background:var(--card);box-shadow:0 0 0 3px var(--primary-soft)}
-.input-wrap .unit{position:absolute;right:12px;font-size:.72rem;color:var(--sub);font-weight:700;pointer-events:none}
+  /* 案件単価 */
+  .project-calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px 24px;align-items:center}
+  .preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}  /* 3つを同じ幅で1段に（2＋1 にしない） */
+  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 4px;white-space:nowrap;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
+  .preset-chip:hover{background:var(--primary-light)}
+  .project-output{border-left:3px solid var(--accent);padding:2px 0 2px 14px}
+  .project-output .summary-main{color:var(--accent-dark)}
 
-/* period block（年数 / 年齢） */
-.period{margin-top:11px}
-.period-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
-.period-label{font-size:.68rem;color:var(--sub);font-weight:700}
-.period-toggle{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
-.period-toggle button{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.64rem;font-weight:700;color:var(--sub);background:transparent;border:none;border-radius:999px;padding:3px 11px;cursor:pointer;transition:.15s}
-.period-toggle button.active{background:var(--card);color:var(--primary-dark);box-shadow:0 1px 3px rgba(142,117,96,.18)}
-.period-years{max-width:50%}
-.period-age{display:flex;align-items:flex-end;gap:8px}
-.period-age .field{flex:1;min-width:0}
-.period-arrow{flex-shrink:0;color:var(--sub);font-size:.85rem;font-weight:700;padding-bottom:11px}
-.period-calc{font-size:.7rem;color:var(--primary-dark);font-weight:700;margin-top:7px}
-@media(max-width:650px){.period-years{max-width:none}}
+  /* 保存（H3）*/
+  .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
+  .save-row input{flex:1 1 auto;min-width:0}
+  .save-row .save-btn{flex-shrink:0}
+  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn:hover{background:var(--primary-dark)}
+  .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hist-chips[hidden]{display:none}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
+  .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button:hover{color:var(--primary-dark)}
+  .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
 
-/* plan result */
-.plan-result{margin-top:15px;padding-top:15px;border-top:1px dashed var(--line)}
-.pr-figs{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:4px}
-.pr-fig{font-size:.74rem;color:var(--sub);font-weight:700}
-.pr-fig b{display:block;font-size:1rem;color:var(--text);font-weight:700;word-break:normal;overflow-wrap:break-word}
-.pr-fig.diff b{color:var(--primary-dark)}
+  /* フッター（004）*/
+  .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
+  .brand-link:hover{color:var(--primary-dark)}
+  .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
+  .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a:hover{color:var(--primary-dark)}
+  .footer-legal span{margin:0 4px;opacity:.6}
+  .footer-ver{margin-left:8px;white-space:nowrap}
 
-/* plan chart */
-.plan-chart{margin-top:14px}
-.chart-svg{width:100%;height:auto;display:block}
-.chart-empty{font-size:.72rem;color:var(--sub);text-align:center;padding:18px 0}
-.chart-cap{font-size:.66rem;color:var(--sub);margin-top:7px;text-align:center;line-height:1.6;word-break:auto-phrase}
+  /* === enu 注意書きカード（101）=== */
+  .enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .enu-notice-wrap{width:100%}
+  .enu-notice-wrap.is-mini{width:auto}
+  .enu-notice-wrap > .enu-notice{display:flex}
+  .enu-notice-wrap > .enu-notice-mini{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice{display:none}
+  .enu-notice-wrap.is-mini > .enu-notice-mini{display:inline-flex}
+  .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
+  .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
+  .enu-notice .enu-body{flex:1;min-width:0}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn:hover{opacity:1}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
+  .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
-/* add plan */
-.add-plan{
-  width:100%;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  font-size:.82rem;font-weight:600;color:var(--primary-dark);
-  background:var(--card);border:1.5px dashed var(--primary-light);border-radius:14px;
-  padding:14px;cursor:pointer;margin-top:14px;transition:.15s;
-}
-.add-plan:hover{background:var(--primary-soft);border-color:var(--primary)}
+  /* === enu アクションボタン（102）=== */
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-fill{background:var(--primary);color:#fff}
+  .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+  .enu-tb-line{background:transparent;color:var(--primary-dark)}
+  .enu-tb-line:hover{background:var(--primary-soft)}
+  .enu-tb-data{font-size:.75rem;color:var(--sub)}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text:hover{color:var(--primary-dark)}
+  .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
+  .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ===== Notice cards (.enu-*) ===== */
-.enu-notice-area{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.enu-notice-wrap{width:100%}
-.enu-notice-wrap.is-mini{width:auto}
-.enu-notice-wrap>.enu-notice{display:flex}
-.enu-notice-wrap>.enu-notice-mini{display:none}
-.enu-notice-wrap.is-mini>.enu-notice{display:none}
-.enu-notice-wrap.is-mini>.enu-notice-mini{display:inline-flex}
-.enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.78rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid;word-break:auto-phrase}
-.enu-notice .enu-icon{font-size:.95rem;line-height:1.4;flex-shrink:0}
-.enu-notice .enu-body{flex:1;min-width:0}
-.enu-notice .enu-close-btn{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
-.enu-notice .enu-close-btn:hover{opacity:1}
-.enu-notice-mini{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:.85rem;line-height:1;padding:0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
-.enu-notice-mini:hover{transform:scale(1.08);box-shadow:0 1px 4px rgba(0,0,0,.10)}
-.enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
-.enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
-.enu-notice-trade,.enu-notice-mini-trade{background:#faecec;border-color:#e8c8c8;color:#804a52}
-.enu-notice-help,.enu-notice-mini-help{background:#eef2ec;border-color:#c8d3c1;color:#4a5d44}
-.enu-notice-help .enu-help-link{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:#344230;text-decoration:underline;text-underline-offset:2px;font-weight:700;font-size:.78rem;white-space:nowrap;margin-left:4px}
-.enu-notice-help .enu-help-link:hover{color:#1f2c1c}
+  .enu-confirm-modal[hidden]{display:none}
+  .enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
+  .enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+  .enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px;max-width:360px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:inherit}
+  .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
+  .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
+  .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
+  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
+  .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
-/* ===== Toolbar (auto-fit grid) ===== */
-.enu-toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:16px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-top:22px;margin-bottom:6px}
-.enu-btn-card{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:13px 6px 11px;border-radius:10px;border:1px solid;cursor:pointer;gap:2px;transition:transform .15s}
-.enu-btn-card:hover{transform:translateY(-1px)}
-.enu-btn-card .enu-icon{font-size:1.3rem;line-height:1}
-.enu-btn-card .enu-label{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.62rem;font-weight:700;text-align:center;color:inherit;line-height:1.2}
-.enu-fc-pdf{background:#fef0f0;border-color:#f0c8c8;color:#804a52}
-.enu-fc-share2{background:#e6f0fa;border-color:#abc8e3;color:#1f4d80}
+  @media (max-width:650px){
+    .app-title{font-size:1.25rem}
+    .app-sub{font-size:.6875rem}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.reset-row,.preset-row,.save-card,.enu-refs{display:none !important}
+    .card{break-inside:avoid}
+    .collapse-body[hidden]{display:block}
+  }
 
-/* ===== Toast ===== */
-.enu-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.78rem;font-weight:700;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:calc(100vw - 32px);text-align:center}
-.enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ===== Confirm modal ===== */
-.enu-confirm-modal[hidden]{display:none}
-.enu-confirm-modal{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px}
-.enu-confirm-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:enuFade .15s ease}
-.enu-confirm-modal__box{position:relative;background:var(--card);border-radius:14px;padding:22px 22px 18px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;animation:enuConfirmUp .2s ease}
-.enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:0 0 10px;line-height:1.4}
-.enu-confirm-modal__desc{font-size:.82rem;color:var(--text);margin:0 0 20px;line-height:1.65;white-space:pre-line}
-.enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-.enu-confirm-btn{padding:9px 18px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;transition:opacity .15s,transform .1s}
-.enu-confirm-btn:hover{transform:translateY(-1px)}
-.enu-confirm-btn--cancel{background:transparent;border:1px solid var(--line);color:var(--sub)}
-.enu-confirm-btn--ok{background:var(--primary);border:1px solid var(--primary);color:#fff}
-@keyframes enuFade{from{opacity:0}to{opacity:1}}
-@keyframes enuConfirmUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-/* ===== Footer ===== */
-.app-home{display:flex;justify-content:center;margin-top:24px}
-.home-btn{
-  font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
-  display:inline-flex;align-items:center;gap:5px;text-decoration:none;
-  padding:7px 16px;font-size:.75rem;font-weight:600;border-radius:999px;
-  background:transparent;color:var(--sub);border:1px solid var(--sub);
-  transition:.15s;
-}
-.home-btn:hover{color:var(--primary-dark);border-color:var(--primary-dark);transform:translateY(-1px)}
-.app-footer{text-align:center;opacity:.85;margin-top:12px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--sub) 30%,transparent)}
-.app-footer .brand{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.7rem;color:var(--sub);text-decoration:none;display:inline-block}
-.app-footer .brand:hover{color:var(--primary-dark)}
-.app-footer .copy{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;font-size:.65rem;color:var(--sub);margin-top:8px}
-
-/* fade-in */
-.fade-in{animation:fadeUp .4s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ===== Print ===== */
-@media print{
-  body{background:#fff;padding:0}
-  .enu-notice-area,.enu-toolbar,.enu-toast,.enu-confirm-modal,.app-home,
-  .plan-del,.plan-dup,.add-plan,.mode-seg,.unit-toggle,.period-toggle{display:none !important}
-  .summary,.plan{box-shadow:none;break-inside:avoid}
-  .input-wrap input{border-color:#ccc;background:#fff}
-}
+/* enu-a2hs ホーム画面の案内（2回目に開いたとき・スマホだけ・下から出る） */
+.enu-a2hs{position:fixed;inset:0;z-index:1800;display:flex;align-items:flex-end;background:rgba(44,42,36,.35)}
+.enu-a2hs[hidden]{display:none}
+.enu-a2hs-card{width:100%;max-width:560px;margin:0 auto;background:var(--card);border-radius:14px 14px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));animation:enuA2hsUp .3s ease-out}
+@keyframes enuA2hsUp{from{transform:translateY(100%)}to{transform:none}}
+.enu-a2hs-grip{width:36px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.enu-a2hs-row{display:flex;gap:14px;align-items:flex-start}
+.enu-a2hs-ico{font-size:24px;line-height:1.2;flex:none}
+.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--primary-dark);line-height:1.5}
+.enu-a2hs-sub{font-size:.75rem;color:var(--sub);margin:4px 0 0;line-height:1.7}
+.enu-a2hs-steps{list-style:none;counter-reset:a;margin:12px 0 0;padding:0}
+.enu-a2hs-steps[hidden]{display:none}
+.enu-a2hs-steps li{counter-increment:a;position:relative;padding-left:24px;font-size:.75rem;line-height:1.8;color:var(--text)}
+.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.enu-a2hs-btns{display:flex;gap:10px;margin-top:16px}
+.enu-a2hs-btns button{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;padding:0 8px;font-family:inherit;font-size:.875rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.enu-a2hs-later{background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.enu-a2hs-later:hover{color:var(--primary-dark);border-color:var(--primary)}
+.enu-a2hs-go{flex-grow:1.5 !important;background:var(--primary);border:1px solid var(--primary);color:#fff}
+.enu-a2hs-go:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.enu-a2hs .nb{display:inline-block}
+@media print{.enu-a2hs{display:none !important}}
+/* /enu-a2hs */
 </style>
 </head>
 <body>
 <div class="page-wrapper">
 
-  <!-- Header -->
   <header class="app-header">
-    <div class="app-icon">📈</div>
+    <div class="app-icon">🧳</div>
     <div>
-      <h1>複利シミュレーター</h1>
-      <p>単利と複利、差はこんなに開く</p>
+      <h1 class="app-title"><span class="nb">フリーランス</span><span class="nb">レート計算機</span></h1>
+      <p class="app-sub"><span class="nb">希望年収から、</span><span class="nb">必要な売上・時給・案件単価を</span><span class="nb">逆算</span></p>
     </div>
   </header>
 
-  <!-- Notice cards -->
   <div class="enu-notice-area">
-    <!-- ④ 投資免責 -->
-    <div class="enu-notice-wrap" data-notice-id="trade">
-      <div class="enu-notice enu-notice-trade">
-        <span class="enu-icon">🚨</span>
-        <span class="enu-body">本アプリの計算結果は、入力した仮定の利回りに基づくシミュレーションであり、将来の運用成果を保証するものではありません。実際の投資判断はご自身の責任で行ってください。本アプリは特定の金融商品の投資助言・勧誘を目的としたものではありません。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-trade" aria-label="免責を表示" title="免責を表示">🚨</button>
-    </div>
-    <!-- ① ローカル保存案内 -->
-    <div class="enu-notice-wrap" data-notice-id="info" data-storage="local">
-      <div class="enu-notice enu-notice-info">
-        <span class="enu-icon">💾</span>
-        <span class="enu-body">入力したプランはお使いの端末・ブラウザの中にのみ保存されます。サーバーには送信されないので、安心してご利用いただけます。</span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="案内を表示" title="案内を表示">💾</button>
-    </div>
-    <!-- ② データ消失リスク -->
-    <div class="enu-notice-wrap" data-notice-id="warn" data-storage="local">
+    <div class="enu-notice-wrap" data-notice-id="storage-local" data-storage="local">
       <div class="enu-notice enu-notice-warn">
-        <span class="enu-icon">⚠️</span>
-        <span class="enu-body">ブラウザのデータ削除、別の端末・別のブラウザでのご利用、シークレットモードではデータが引き継げません。<strong>iPhone/iPadのSafariでは約7日間使わないと自動的に消えることがあります。</strong></span>
+        <span class="enu-icon">💾</span>
+        <span class="enu-body"><span class="nb">データは</span><span class="nb">この</span><span class="nb">ブラウザだけに</span><span class="nb">保存されます。</span><span class="nb">ブラウザの</span><span class="nb">データ削除や、</span><span class="nb">しばらく</span><span class="nb">使わなかった</span><span class="nb">とき</span><span class="nb">（Safariは約7日）に</span><span class="nb">消える</span><span class="nb">ことが</span><span class="nb">あります。</span><span class="nb">📤エクスポートで</span><span class="nb">バックアップできます。</span></span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="注意を表示" title="注意を表示">⚠️</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-warn" aria-label="保存の注意を表示" title="保存の注意を表示">💾</button>
     </div>
-    <!-- ⑧ オフラインOK -->
-    <div class="enu-notice-wrap" data-notice-id="offline-local" data-storage="local">
-      <div class="enu-notice enu-notice-info">
-        <span class="enu-icon">🌐</span>
-        <span class="enu-body">本アプリは一度読み込めばオフラインでも使えます。電波がない場所や機内モードでも計算・編集が可能です。</span>
+    <div class="enu-notice-wrap" data-notice-id="disclaimer">
+      <div class="enu-notice enu-notice-disclaim">
+        <span class="enu-icon">📝</span>
+        <span class="enu-body">結果は目安で、税務の助言ではありません（<strong>2026年10月時点</strong>）。実際の金額や手続きは、税理士などの専門家にご確認ください。</span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-info" aria-label="オフライン動作を表示" title="オフライン動作を表示">🌐</button>
-    </div>
-    <!-- ⑥ ヘルプ導線 -->
-    <div class="enu-notice-wrap" data-notice-id="help">
-      <div class="enu-notice enu-notice-help">
-        <span class="enu-icon">📚</span>
-        <span class="enu-body">使い方・FAQ・便利機能は<a href="" class="enu-help-link" id="enu-help-link">こちらから</a></span>
-        <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
-      </div>
-      <button type="button" class="enu-notice-mini enu-notice-mini-help" aria-label="ヘルプを表示" title="ヘルプを表示">📚</button>
+      <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
     </div>
   </div>
 
-  <!-- Summary bar -->
-  <section class="summary" id="summary">
-    <div class="summary-head">
-      <div class="summary-label" id="summary-label">💴 結果</div>
-      <div class="unit-toggle" id="unit-toggle">
-        <button type="button" data-unit="yen" class="active">円</button>
-        <button type="button" data-unit="man">万円</button>
+  <!-- 入力 -->
+  <div class="card" id="input-card">
+    <h2 class="section-title">✏️ 入力項目</h2>
+    <div class="input-grid">
+      <div class="field">
+        <label class="field-label" for="targetIncome">希望年収（手取り）</label>
+        <div class="input-suffix"><input type="text" id="targetIncome" inputmode="decimal"><span class="suffix">万円</span></div>
+        <span class="field-help">税・社保を引いた後の手取り目標額</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="workDays">年間稼働日数</label>
+        <div class="input-suffix"><input type="text" id="workDays" inputmode="decimal"><span class="suffix">日</span></div>
+        <span class="field-help">休日・有給を除いた実働日数</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="workHours">1日の稼働時間</label>
+        <div class="input-suffix"><input type="text" id="workHours" inputmode="decimal"><span class="suffix">時間</span></div>
+        <span class="field-help">標準的な1日の労働時間</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="annualExpense">年間経費</label>
+        <div class="input-suffix"><input type="text" id="annualExpense" inputmode="decimal"><span class="suffix">万円</span></div>
+        <span class="field-help">PC・ソフト・通信費・家賃按分など</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="taxRate">税・社会保険料率</label>
+        <div class="input-suffix"><input type="text" id="taxRate" inputmode="decimal"><span class="suffix">%</span></div>
+        <span class="field-help">所得税・住民税・国保・年金の合計（売上−経費−控除に掛けます）</span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="nonBillableRate">非稼働時間率</label>
+        <div class="input-suffix"><input type="text" id="nonBillableRate" inputmode="decimal"><span class="suffix">%</span></div>
+        <span class="field-help">営業・事務・見積もり等の時間割合</span>
       </div>
     </div>
-    <div class="summary-figs">
-      <div class="fig"><div class="fig-cap">複利でできる金額</div><div class="fig-num" id="sum-comp">¥0</div></div>
-      <div class="fig"><div class="fig-cap">単利の場合</div><div class="fig-num" id="sum-simple">¥0</div></div>
-      <div class="fig fig-diff"><div class="fig-cap">複利マジックの差（複利 − 単利）</div><div class="fig-num" id="sum-diff">¥0</div><div class="fig-note" id="sum-diff-note"></div></div>
-    </div>
-    <div class="meter" id="sum-meter">
-      <div class="meter-row">
-        <span class="meter-tag">単利</span>
-        <div class="meter-track"><div class="bar" id="bar-simple"><span class="seg seg-prin"></span><span class="seg seg-int"></span></div></div>
-        <span class="meter-val" id="val-simple">¥0</span>
-      </div>
-      <div class="meter-row">
-        <span class="meter-tag">複利</span>
-        <div class="meter-track"><div class="bar" id="bar-comp"><span class="seg seg-prin"></span><span class="seg seg-int"></span><span class="seg seg-magic"></span></div></div>
-        <span class="meter-val" id="val-comp">¥0</span>
-      </div>
-    </div>
-    <div class="legend">
-      <span><i class="l-prin"></i>元本（積み立てたお金）</span>
-      <span><i class="l-int"></i>単利分の利息</span>
-      <span><i class="l-magic"></i>複利の上乗せ</span>
-    </div>
-  </section>
 
-  <!-- 説明メモ（ハイブリッド：その場で読める＋もっと詳しく）-->
-  <details class="fukuri-note">
-    <summary>💡 単利と複利って？</summary>
-    <div class="note-body">
-      <p>💰 <b class="tan">単利</b>：利息は最初の元本にだけつきます。ふえた利息はそのままで、利息が新たな利息を生むことはありません。</p>
-      <p>⛄ <b class="fuku">複利</b>：利息が元本に組み込まれ、「利息にもまた利息」がついていきます。いわば雪だるま式です。</p>
-      <p>📈 だから<b>期間が長いほど、複利の差はぐんぐん開きます</b>。上のメーターや各プランのグラフの<b class="fuku">濃い色</b>が、複利でふえた“上乗せ分”です。</p>
-      <a class="more" id="fukuri-more" href="" target="_blank" rel="noopener">単利・複利をもっと詳しく →</a>
+    <div class="check-block">
+      <label class="check-row" for="blueReturn"><input type="checkbox" id="blueReturn"><span><span class="nb">青色申告特別控除</span><span class="nb">（65万円）を適用</span></span></label>
+      <span class="field-help">青色申告承認を受けて65万円控除を受ける場合にチェック（電子申告等の要件あり）</span>
+      <span class="blue-diff" id="blueReturnDiff" hidden></span>
     </div>
+
+    <div class="reset-row"><button type="button" class="btn-line" id="btnReset">↺ 初期値に戻す</button></div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="card" id="result-card">
+    <h2 class="section-title">💴 計算結果</h2>
+    <div class="summary-grid">
+      <div class="summary-item"><div class="summary-label">必要時給</div><div class="summary-main"><span id="hourlyRate">-</span><span class="unit">円</span></div></div>
+      <div class="summary-item"><div class="summary-label">必要日給</div><div class="summary-main"><span id="dailyRate">-</span><span class="unit">円</span></div></div>
+      <div class="summary-item"><div class="summary-label">月額売上</div><div class="summary-main"><span id="monthlyRevenue">-</span><span class="unit">円</span></div></div>
+    </div>
+    <p class="field-help daily-note"><span class="nb">必要日給は、非稼働の時間も含めた1日分</span><span class="nb">（必要総売上÷年間稼働日数）です。</span></p>
+    <ul class="result-list" id="resultList"></ul>
+
+    <div class="breakdown">
+      <button type="button" class="collapse-head" id="formulaToggle" aria-expanded="false" aria-controls="formulaBody">
+        <span class="sub-title">📐 計算式</span><span class="collapse-arrow" aria-hidden="true"></span>
+      </button>
+      <div class="collapse-body" id="formulaBody" hidden>
+        <ul class="formula-list">
+          <li><span class="nb">税・社会保険料 =</span> <span class="nb">( 必要総売上 − 年間経費 − 控除 ) × 税率</span><span class="nb">（0未満は0）</span></li>
+          <li><span class="nb">必要総売上 =</span> <span class="nb">年間経費 +</span> <span class="nb">( 希望年収 − 控除 × 税率 )</span> <span class="nb">÷ ( 1 − 税率 )</span><span class="nb">（希望年収が控除以下なら</span><span class="nb">年間経費 + 希望年収）</span></li>
+          <li><span class="nb">年間実働時間 =</span> <span class="nb">年間稼働日数 × 1日の稼働時間</span> <span class="nb">× ( 1 − 非稼働時間率 )</span></li>
+          <li><span class="nb">必要時給 =</span> <span class="nb">必要総売上 ÷ 年間実働時間</span></li>
+          <li><span class="nb">必要日給 =</span> <span class="nb">必要総売上 ÷ 年間稼働日数</span><span class="nb">（非稼働の時間も含めた1日分）</span></li>
+          <li><span class="nb">月額売上 =</span> <span class="nb">必要総売上 ÷ 12</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 補助：案件単価 -->
+  <div class="card">
+    <h2 class="section-title">💼 案件単価の試算</h2>
+    <p class="section-note">必要時給を元に、案件にかかる時間から適正な単価を逆算します。</p>
+    <div class="project-calc">
+      <div class="field">
+        <label class="field-label" for="projectHours">案件の所要時間</label>
+        <div class="input-suffix"><input type="text" id="projectHours" inputmode="decimal"><span class="suffix">時間</span></div>
+        <span class="field-help">作業見積もり時間（修正対応含む）</span>
+        <div class="preset-row" role="group" aria-label="所要時間プリセット">
+          <button type="button" class="preset-chip" data-hours="8">8時間</button>
+          <button type="button" class="preset-chip" data-hours="40">40時間</button>
+          <button type="button" class="preset-chip" data-hours="160">160時間</button>
+        </div>
+      </div>
+      <div class="project-output" aria-live="polite">
+        <div class="summary-label" id="projectPriceLabel">適正単価</div>
+        <div class="summary-main"><span id="projectPrice">-</span><span class="unit">円</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 保存（H3）-->
+  <div class="card save-card">
+    <h2 class="section-title">📌 この計算を保存</h2>
+    <div class="save-row">
+      <input type="text" id="save-name" placeholder="保存名（省略可）">
+      <button type="button" class="save-btn" id="save-btn">保存</button>
+    </div>
+    <div class="hist-chips" id="history-list" hidden></div>
+    <p class="hist-current" id="hist-current" hidden></p>
+    <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
+  </div>
+
+  <div class="page-actions enu-toolbar">
+    <button type="button" class="enu-tb-btn enu-tb-fill" id="enu-btn-print" aria-label="PDFに保存または印刷">📄 PDF / 印刷</button>
+    <button type="button" class="enu-tb-btn enu-tb-line" id="enu-btn-share2" aria-label="シェア">🔗 シェア</button>
+  </div>
+
+  <details class="enu-refs">
+    <summary>📎 参照リンク<span class="enu-refs-n">（1件）</span></summary>
+    <ul>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
+    </ul>
   </details>
 
-  <!-- Plans -->
-  <div class="section-head"><h2>📑 プラン</h2></div>
-  <div class="plans" id="plans"></div>
-  <button type="button" class="add-plan" id="add-plan">＋ プランを追加</button>
-
-  <!-- Toolbar -->
-  <div class="enu-toolbar">
-    <button type="button" class="enu-btn-card enu-fc-pdf" id="enu-btn-print" aria-label="PDFに保存または印刷"><span class="enu-icon">📄</span><span class="enu-label">PDF / 印刷</span></button>
-    <button type="button" class="enu-btn-card enu-fc-share2" id="enu-btn-share2" aria-label="シェア"><span class="enu-icon">🔗</span><span class="enu-label">シェア</span></button>
+  <div class="app-footer">
+    <div class="footer-divider"></div>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
+    <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
-
-  <!-- Footer -->
-  <div class="app-home">
-    <a class="home-btn" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🏠 ホームへ戻る</a>
-  </div>
-  <footer class="app-footer">
-    <a class="brand" href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu(エヌ)</a>
-    <div class="copy" id="enu-copy"></div>
-  </footer>
 
 </div>
 
-<!-- Toast -->
-<div class="enu-toast" id="enu-toast"></div>
-
-<!-- Confirm modal -->
 <div class="enu-confirm-modal" id="enu-confirm-modal" hidden>
   <div class="enu-confirm-modal__backdrop"></div>
   <div class="enu-confirm-modal__box" role="dialog" aria-modal="true" aria-labelledby="enu-confirm-title">
@@ -416,613 +397,543 @@ body{
   </div>
 </div>
 
+<div class="enu-toast" id="enu-toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
   'use strict';
 
-  // ===== ENU_CONFIG =====
-  const ENU_CONFIG = {
-    appId:'fukuri-magic',
-    appName:'複利シミュレーター',
-    storageType:'local',
-    helpUrl:'https://enu-tools.pages.dev/help/',
-    helpOpenNewTab:true
+  const ENU_CONFIG={
+    appId:'freelance-rate-calc', appName:'フリーランスレート計算機', appVersion:'1.0.0', storageType:'local',
+    helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION（エクスポートの data_version）
   };
-  const CFG = ENU_CONFIG;
+  const CFG=ENU_CONFIG;
+  window.enuTools=window.enuTools||{};
+  const _key=(s)=>'enu_'+CFG.appId+'_'+s;
+  const $=(id)=>document.getElementById(id);
 
-  window.enuTools = window.enuTools || {};
-  function _key(s){return 'enu_'+CFG.appId+'_'+s}
-
-  // ===== 表示単位（円 / 万円）=====
-  let unitMode='yen';
-  const UNIT_KEY=_key('unit');
-
-  // ===== formatters =====
-  function yen(n){return '¥'+Math.round(n).toLocaleString('ja-JP')}              // フル円（シェア用・固定）
-  function man(n){
-    const v=Math.round(n/1000)/10;                                              // 0.1万円（=1000円）単位
-    return v.toLocaleString('ja-JP',{minimumFractionDigits:0,maximumFractionDigits:1})+'万円';
+  // === DOM helper（createElementベース・innerHTML不使用）===
+  function el(tag, attrs, kids){
+    const e=document.createElement(tag);
+    if(attrs) for(const k in attrs){
+      const v=attrs[k];
+      if(k==='class') e.className=v;
+      else if(k==='text') e.textContent=v;
+      else if(v===true) e.setAttribute(k,'');
+      else if(v!==false && v!=null) e.setAttribute(k,v);
+    }
+    if(kids) kids.forEach(c=>{ if(c==null) return; e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+    return e;
   }
-  function fmt(n){return unitMode==='man'?man(n):yen(n)}                          // 画面表示用（切替対応）
-  function pct(n){return (Math.round(n*10)/10).toLocaleString('ja-JP')}
-  function uid(){return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36)}
-  function num(v,def){const x=parseFloat(v);return (isFinite(x)&&x>=0)?x:def}
-  // 金額入力欄：入力中も3桁カンマ表示（整数・円）
-  function formatThousands(s){const d=String(s).replace(/[^0-9]/g,'');return d===''?'':parseInt(d,10).toLocaleString('ja-JP')}
-  function attachMoneyFormat(inp){
-    inp.addEventListener('input',function(){
-      const before=inp.value.slice(0,inp.selectionStart).replace(/[^0-9]/g,'').length;
-      const f=formatThousands(inp.value);inp.value=f;
-      let pos=0,c=0;while(pos<f.length&&c<before){const ch=f.charCodeAt(pos);if(ch>=48&&ch<=57)c++;pos++}
-      try{inp.setSelectionRange(pos,pos)}catch(e){}
-    });
-  }
-  function moneyVal(inp){return num(inp.value.replace(/,/g,''),0)}
-  // プランの初期値（年数モード・年齢モード両対応）
-  function newPlan(){return {id:uid(),name:'',mode:'monthly',monthly:30000,lump:0,years:20,rate:5,periodMode:'years',ageNow:30,ageTo:60}}
 
-  // ===== toast =====
-  function showToast(msg){
-    const t=document.getElementById('enu-toast');
-    if(!t)return;
-    t.textContent=msg;
-    t.classList.add('show');
-    clearTimeout(t._tm);
-    t._tm=setTimeout(()=>t.classList.remove('show'),2200);
+  /* ===== 計算 ===== */
+  const DEDUCTION_BLUE_RETURN=650000; // 青色申告特別控除（令和8年分も65万円）
+  const DEFAULTS={ targetIncome:500, workDays:220, workHours:8, annualExpense:60, taxRate:25, nonBillableRate:20, projectHours:40, blueReturn:false };
+  const FIELDS=['targetIncome','workDays','workHours','annualExpense','taxRate','nonBillableRate','projectHours'];
+
+  // ===== 数字の入力の読み方（004「数字の入力・保存・読み込み」）=====
+  // 全角→半角・カンマ／空白を除く・先頭の「+」・最後の単位（unit）を読み飛ばす。空欄は null、読めないものは NaN
+  // 「万」「億」「兆」を読む（例：30万、1.5万、30万5000、10億、1.5億、1億5000万）。
+  // 「1.5万5000」（小数のあとに数字）・「30万50000」（万のあとが5けた以上）・「1億5000」（億のあとが万なし）はエラー
+  // 小数は整数にしてから掛けて割る（「340.09万」→ 3,400,900。小数の誤差で1円ずれないように）
+  function parseNumBase(raw, unit){
+    var t=String(raw==null?'':raw).replace(/[０-９．＋－]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);})
+      .replace(/[ー−‐]/g,'-').replace(/[,，、\s　]/g,'');
+    if(unit==='円') t=t.replace(/円$/,''); else if(unit==='%') t=t.replace(/[%％]$/,''); else if(unit) t=t.replace(new RegExp(unit+'$'),'');
+    if(t==='') return null;
+    var sign=t.match(/^[+-]?/)[0]; t=t.slice(sign.length);
+    var parts=t.split(/(兆|億|万)/), MUL={'兆':1e12,'億':1e8,'万':1e4};
+    var lead=parts[0].match(/^(\d*)(?:\.(\d+))?$/);
+    if(!lead || (lead[1]==='' && lead[2]==null)) return NaN;
+    var frac=lead[2]||'', v;
+    if(parts.length===1) v=Number(parts[0]);
+    else{
+      var last=Infinity, rest=0;
+      for(var i=1;i<parts.length;i+=2){
+        var mul=MUL[parts[i]], num=parts[i+1];
+        if(mul>=last) return NaN;                       // 「万億」のように、大きい単位があとに来る
+        last=mul;
+        if(i===1) v=Number((lead[1]||'0')+frac)*mul/Math.pow(10,frac.length);
+        if(num===''){ if(i+2<parts.length) return NaN; continue; }
+        if(frac || !/^\d{1,4}$/.test(num)) return NaN;   // 小数のあとに数字・5けた以上
+        if(i+2<parts.length) rest+=Number(num)*MUL[parts[i+2]];  // 次の単位の数（例：1億「5000」万）
+        else if(parts[i]==='万') rest+=Number(num);              // 万のあとの数（例：30万「5000」）
+        else return NaN;                                          // 億・兆のあとに単位のない数
+      }
+      v+=rest;
+    }
+    return sign==='-' ? -v : v;
   }
+  // 「万円」の欄：「500」「500万」「500万円」は500万円。「1億」「1億5000万円」は円として読んで万円にする。「30万5000」「5000000円」はエラー
+  function parseNum(raw, unit){
+    if(unit!=='万円') return parseNumBase(raw, unit);
+    var s=String(raw==null?'':raw).replace(/[\s　]/g,'');
+    if(/[億兆]/.test(s)){ var y=parseNumBase(s,'円'); return (y===null||isNaN(y)) ? y : y/1e4; }
+    s=s.replace(/万円?$/,'');
+    if(/[万円]/.test(s)) return NaN;
+    return parseNumBase(s,'');
+  }
+  // 欄ごとの決まり（0 が意味をなさない稼働日数・稼働時間は 0 をエラーにする）
+  const SPEC={
+    targetIncome:{unit:'万円',min:0,max:100000}, annualExpense:{unit:'万円',min:0,max:100000},
+    workDays:{unit:'日',min:1,max:365,int:true}, workHours:{unit:'時間',min:0.5,max:24},
+    taxRate:{unit:'%',min:0,max:60}, nonBillableRate:{unit:'%',min:0,max:90},
+    projectHours:{unit:'時間',min:0,max:10000}
+  };
+  function readField(f, raw){
+    const sp=SPEC[f]; const v=parseNum(raw, sp.unit);
+    if(v===null) return {v:null, err:'数字を入力してください'};
+    if(isNaN(v)){
+      // 「万円」の欄に「5000000円」のように円で入れたとき
+      if(sp.unit==='万円' && /円$/.test(String(raw).trim()) && !/万円$/.test(String(raw).trim())) return {v:null, err:'万円で入力してください（例：500）'};
+      return {v:null, err:'数字で入力してください'};
+    }
+    if(v<sp.min || v>sp.max) return {v:null, err:sp.min.toLocaleString()+'〜'+sp.max.toLocaleString()+sp.unit+'で入力してください'};
+    if(sp.int && v!==Math.floor(v)) return {v:null, err:'整数で入力してください'};
+    return {v, err:''};
+  }
+  // エラーは欄のすぐ下に（004）
+  function setFieldError(inp, text){
+    const box=inp.closest('.input-suffix')||inp;
+    let msg=box.nextElementSibling && box.nextElementSibling.classList.contains('field-error') ? box.nextElementSibling : null;
+    if(text){ if(!msg){ msg=document.createElement('p'); msg.className='field-error'; box.after(msg); } msg.textContent=text; inp.setAttribute('aria-invalid','true'); }
+    else{ if(msg) msg.remove(); inp.removeAttribute('aria-invalid'); }
+  }
+  // 入力欄の値。まちがった欄は null（知らせずに別の値に読みかえない）
+  function getValues(){
+    const v={}; let ok=true;
+    FIELDS.forEach(f=>{ const r=readField(f,$(f).value); v[f]=r.v; setFieldError($(f), r.err); if(r.err) ok=false; });
+    v.blueReturn=$('blueReturn').checked;
+    v._ok=ok;
+    return v;
+  }
+  function setValues(data){
+    if(!data || typeof data!=='object') return;
+    FIELDS.forEach(f=>{ if(typeof data[f]==='number' && isFinite(data[f])) $(f).value=data[f]; });
+    if(typeof data.blueReturn==='boolean') $('blueReturn').checked=data.blueReturn;
+    getValues();
+  }
+  // 保存・ファイルの値が、画面で入れられる値か
+  // loose：今の入力（004：数字なら範囲の外・小数の日数でも読み込んで欄の下にエラーを出す）。履歴の行は範囲の外も読み込まない
+  function validValues(data, loose){
+    if(!data || typeof data!=='object') return false;
+    if(!['targetIncome','workDays','workHours','annualExpense','taxRate','nonBillableRate'].every(f=>typeof data[f]==='number' && isFinite(data[f]))) return false;
+    if(!FIELDS.every(f=> data[f]==null || (typeof data[f]==='number' && (loose ? isFinite(data[f]) : !readField(f,String(data[f])).err)))) return false;
+    if(data.blueReturn!=null && typeof data.blueReturn!=='boolean') return false;
+    return true;
+  }
+  function cleanValues(v){ const o={}; FIELDS.forEach(f=>{ o[f]=v[f]; }); o.blueReturn=v.blueReturn; return o; }
+
+  // 100兆円以上は、数の精度の限界で1円単位まで正しく出せないため「約○兆」と出す（004。案件単価は時間が多いと届くことがある）
+  function fmt(n){ if(!isFinite(n)||isNaN(n)) return '—'; if(Math.abs(n)>=1e14) return '約'+(n/1e12).toLocaleString('en-US',{maximumFractionDigits:1})+'兆'; return Math.round(n).toLocaleString('en-US'); }
+
+  // 時給（円・整数）×時間を、小数の誤差なしで計算する（ちょうど○.5円になる額が切り捨てられないように。
+  // 例：13,605円×128.7時間＝1,750,963.5円 → 表示で四捨五入して 1,750,964円）。時間は100万分の1時間まで使う
+  function mulHours(H, h){
+    if(!isFinite(H) || !isFinite(h)) return NaN;
+    const s=Math.round(h*1e6), q=Math.floor(s/1e6), rem=s-q*1e6;
+    const Hh=Math.floor(H/1e6), Hl=H-Hh*1e6;
+    return H*q + Hh*rem + (Hl*rem)/1e6;
+  }
+  // 年間実働時間：小数第1位まで（例「1,105.5」「1,760」）
+  function fmtHours(n){ return isFinite(n) ? n.toLocaleString('en-US',{maximumFractionDigits:1}) : '—'; }
+
+  function calculate(){
+    const v=getValues();
+    if(!v._ok) return { v, ok:false };
+    // 万円→円（小数の誤差で1円ずれないように、0.01円の単位で丸める。例：340.09万円 → 3,400,900円）
+    const toYen=(man)=>Math.round(man*1e6)/100;
+    const targetIncomeYen=toYen(v.targetIncome);
+    const annualExpenseYen=toYen(v.annualExpense);
+    const taxFactor=1-v.taxRate/100;
+    const deduction=v.blueReturn?DEDUCTION_BLUE_RETURN:0;
+    // 税・社保は「売上−経費−控除」（0未満は0）に率を掛ける：売上−経費−率×max(0,売上−経費−控除)＝希望年収 を解く
+    const needRevenue=(ded)=>{
+      if(taxFactor<=0) return 0;
+      const T=Math.max(0,targetIncomeYen);
+      return annualExpenseYen + (T<=ded ? T : (T-ded*(v.taxRate/100))/taxFactor);
+    };
+    const totalRevenue=needRevenue(deduction);
+    const taxAmount=taxFactor>0?Math.max(0,totalRevenue-annualExpenseYen-deduction)*(v.taxRate/100):0;
+    const billableFactor=1-v.nonBillableRate/100;
+    // 年間実働時間は小数第1位までに丸め、表示と時給の計算に同じ値を使う（小数の誤差を消してから丸める。例：1,105.5時間・0.05時間→0.1時間）
+    const annualHours=Math.round(Math.round(v.workDays*v.workHours*billableFactor*1e6)/1e5)/10;
+    // 時給は円に丸めてから案件単価に掛ける（表示の時給×時間＝表示の単価）。日給は「必要総売上÷稼働日数」（日給×日数＝年商）
+    const hourlyRate=annualHours>0?Math.round(totalRevenue/annualHours):NaN;
+    const dailyRate=v.workDays>0?totalRevenue/v.workDays:NaN;
+    const monthlyRevenue=totalRevenue/12;
+    const projectPrice=mulHours(hourlyRate, v.projectHours);
+    const blueDiff=(v.blueReturn && taxFactor>0)?needRevenue(0)-totalRevenue:0;
+    return { v, ok:true, targetIncomeYen, annualExpenseYen, taxAmount, totalRevenue, annualHours, hourlyRate, dailyRate, monthlyRevenue, projectPrice, blueDiff };
+  }
+
+  // 値が「—」のときは「円」を出さない
+  function syncUnits(){
+    ['hourlyRate','dailyRate','monthlyRevenue','projectPrice'].forEach(id=>{ const u=$(id).nextElementSibling; if(u && u.classList.contains('unit')) u.hidden=($(id).textContent==='—'); });
+  }
+  function renderResults(){
+    const r=calculate();
+    if(!r.ok){
+      // まちがった入力があるときは計算しない：結果はすべて「—」
+      ['hourlyRate','dailyRate','monthlyRevenue','projectPrice'].forEach(id=>{ $(id).textContent='—'; });
+      $('resultList').replaceChildren(el('li',{class:'result-row'},[ el('span',{class:'lbl',text:'入力を直してください'}) ]));
+      syncUnits(); $('projectPriceLabel').textContent='適正単価';
+      $('blueReturnDiff').hidden=true; $('blueReturnDiff').textContent='';
+      return r;
+    }
+    const rows=[
+      { label:'希望年収（手取り）', value:fmt(r.targetIncomeYen)+' 円' },
+      { label:'年間経費', value:fmt(r.annualExpenseYen)+' 円' },
+      { label:'税金・社会保険料', value:fmt(r.taxAmount)+' 円' },
+      { label:'必要総売上（年商）', value:fmt(r.totalRevenue)+' 円', hl:'hl-accent' },
+      { label:'年間実働時間', value:fmtHours(r.annualHours)+' 時間' },
+      { label:'必要時給', value:fmt(r.hourlyRate)+' 円', hl:'hl-primary' }
+    ];
+    $('resultList').replaceChildren(...rows.map(row=>el('li',{class:'result-row'+(row.hl?' '+row.hl:'')},[ el('span',{class:'lbl',text:row.label}), el('span',{class:'val',text:row.value}) ])));
+    $('hourlyRate').textContent=fmt(r.hourlyRate);
+    $('dailyRate').textContent=fmt(r.dailyRate);
+    $('monthlyRevenue').textContent=fmt(r.monthlyRevenue);
+    $('projectPrice').textContent=fmt(r.projectPrice);
+    syncUnits();
+    $('projectPriceLabel').textContent='適正単価（'+r.v.projectHours.toLocaleString('ja-JP',{maximumFractionDigits:2})+'時間分）';
+
+    const diffEl=$('blueReturnDiff');
+    if(r.v.blueReturn){ diffEl.textContent='青色申告適用で必要総売上が約 '+fmt(r.blueDiff)+' 円 軽減されています'; diffEl.hidden=false; }
+    else{ diffEl.hidden=true; diffEl.textContent=''; }
+    return r;
+  }
+
+  /* === 保存の形（版1・004「すでに使っている人に影響を出さない」）=== */
+  const DATA_VERSION=1;
+  function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
+    if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    return saved.data;
+  }
+  // 読み込みに失敗したら、元を「…_broken」に取っておき、ユーザーが何か変えるまで上書きしない
+  const brokenStores=new Set();
+  function loadStore(name){
+    let raw=null;
+    try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
+    if(raw==null) return null;
+    let data=null;
+    try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
+    if(data==null){ brokenStores.add(name); try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    return data;
+  }
+  function userChanged(){ brokenStores.clear(); }
+  function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  document.addEventListener('input', ()=>userChanged(), true);
+  document.addEventListener('change', ()=>userChanged(), true);
+  document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.preset-chip,#btnReset,#history-list button,#save-btn')) userChanged(); }, true);
+  let dataExtra={}; // 保存データの知らない項目（消さずに残す）
+  // 入力のたびに保存する。まちがった欄は前の値のまま残す（読めない値は保存しない）
+  function saveInput(){
+    const v=getValues(), o=Object.assign({}, dataExtra);
+    FIELDS.forEach(f=>{ if(v[f]!==null) o[f]=v[f]; }); o.blueReturn=v.blueReturn;
+    dataExtra=o; saveStore('data', o);
+  }
+  function update(){ renderResults(); saveInput(); }
+
+  /* === 履歴（H3）=== */
+  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
+  function setHistory(h){ saveStore('history', h); }
+  function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function autoName(r){
+    const d=new Date(), p=(n)=>String(n).padStart(2,'0');
+    return '希望年収'+r.v.targetIncome+'万円・時給'+fmt(r.hourlyRate)+'円（'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes())+'）';
+  }
+  let currentHistId=null;
+  // まちがった入力のままでは保存・エクスポートしない：エラーの欄へ移る
+  function guardInputs(kind){
+    const v=getValues();
+    if(v._ok) return true;
+    const f=FIELDS.find(k=>v[k]===null); const inp=$(f);
+    inp.scrollIntoView({block:'center',behavior:'smooth'}); inp.focus({preventScroll:true});
+    showToast(kind==='export' ? '入力を直してから書き出してください' : '入力を直してから保存してください');
+    return false;
+  }
+  const HIST_MAX=20; // 履歴の上限。ファイルから読んだ分がこれより多いときは、その数を上限にする（読み込んだ行を消さない）
+  function saveCurrent(){
+    if(!guardInputs('save')) return;
+    const r=calculate();
+    const nameInput=$('save-name');
+    const name=(nameInput.value||'').trim()||autoName(r);
+    const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, values:cleanValues(r.v) };
+    let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist);
+    nameInput.value=''; renderHistory(); /* 保存しただけでは「呼び出し中」にしない */ showToast('📌 この計算を保存しました');
+  }
+  function renderHistory(){
+    const list=$('history-list');
+    const hist=getHistory();
+    list.hidden=!hist.length;
+    list.replaceChildren(...hist.map(snap=>el('button',{type:'button',class:'hist-chip'+(snap.id===currentHistId?' on':''),title:snap.name+'（'+fmtDate(snap.savedAt)+'）','data-load':snap.id,text:snap.name})));
+    const cur=$('hist-current');
+    const snap=hist.find(s=>s.id===currentHistId);
+    if(snap){
+      cur.replaceChildren('呼び出し中：'+snap.name, '　', el('button',{type:'button','data-del':snap.id,text:'この保存を削除'}));
+      cur.hidden=false;
+    }else{ cur.replaceChildren(); cur.hidden=true; currentHistId=null; }
+  }
+  function onHistoryClick(e){
+    const t=e.target.closest('button'); if(!t) return;
+    if(t.dataset.load){
+      const id=parseInt(t.dataset.load,10);
+      const snap=getHistory().find(s=>s.id===id);
+      if(snap){ setValues(snap.values); currentHistId=id; update(); renderHistory(); showToast('保存した計算を呼び出しました'); }
+    }else if(t.dataset.del){
+      const id=parseInt(t.dataset.del,10);
+      enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
+        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
+      });
+    }
+  }
+
+  /* === Toast / Confirm（102）=== */
+  function showToast(msg){ const t=$('enu-toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200); }
   window.enuTools.toast=showToast;
-
-  // ===== confirm modal =====
-  function enuConfirm(title,desc,okLabel,cancelLabel){
-    okLabel=okLabel||'OK';cancelLabel=cancelLabel||'キャンセル';
+  function enuConfirm(title, desc, okLabel, cancelLabel){
     return new Promise(resolve=>{
-      const modal=document.getElementById('enu-confirm-modal');
-      if(!modal){resolve(window.confirm(title+'\n\n'+desc));return}
+      const modal=$('enu-confirm-modal');
+      if(!modal){ resolve(window.confirm(title + '\n\n' + desc)); return; }
       modal.querySelector('.enu-confirm-modal__title').textContent=title;
       modal.querySelector('.enu-confirm-modal__desc').textContent=desc;
       const ok=modal.querySelector('.enu-confirm-btn--ok');
       const cancel=modal.querySelector('.enu-confirm-btn--cancel');
       const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
-      ok.textContent=okLabel;cancel.textContent=cancelLabel;
-      modal.hidden=false;
-      setTimeout(()=>cancel.focus(),50);
-      function cleanup(r){
-        modal.hidden=true;
-        ok.removeEventListener('click',onOk);
-        cancel.removeEventListener('click',onCancel);
-        backdrop.removeEventListener('click',onCancel);
-        document.removeEventListener('keydown',onKey);
-        resolve(r);
-      }
-      function onOk(){cleanup(true)}
-      function onCancel(){cleanup(false)}
-      function onKey(e){if(e.key==='Escape')onCancel();if(e.key==='Enter')onOk()}
-      ok.addEventListener('click',onOk);
-      cancel.addEventListener('click',onCancel);
-      backdrop.addEventListener('click',onCancel);
-      document.addEventListener('keydown',onKey);
+      ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      modal.hidden=false; setTimeout(()=>cancel.focus(),50);
+      const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+      const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
+      const onKey=(e)=>{ if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
+      ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
   window.enuTools.confirm=enuConfirm;
 
-  // ===== data =====
-  const DATA_KEY=CFG.appId+'-data';
-  let plans=[];
-  let cardRefs=[];
-
-  function load(){
-    try{
-      const raw=localStorage.getItem(DATA_KEY);
-      if(raw){const o=JSON.parse(raw);if(Array.isArray(o)&&o.length)plans=o}
-    }catch(e){}
-    try{const u=localStorage.getItem(UNIT_KEY);if(u==='man'||u==='yen')unitMode=u}catch(e){}
-    if(!plans.length){plans=[newPlan()]}
-    // 旧データ互換：期間モード関連フィールドを補完
-    plans.forEach(p=>{
-      if(p.periodMode!=='age')p.periodMode='years';
-      if(typeof p.ageNow!=='number')p.ageNow=30;
-      if(typeof p.ageTo!=='number')p.ageTo=60;
-      if(typeof p.years!=='number')p.years=20;
-    });
-  }
-  function save(){
-    try{localStorage.setItem(DATA_KEY,JSON.stringify(plans))}catch(e){}
-  }
-  function saveUnit(){try{localStorage.setItem(UNIT_KEY,unitMode)}catch(e){}}
-
-  // ===== 計算エンジン（月次シミュレーション）=====
-  // mode: 'monthly'=毎月積立 / 'lump'=一括投入 / 'both'=併用
-  function calc(p){
-    const i=(p.rate/100)/12;
-    const m=Math.max(0,Math.round(p.years*12));
-    const L=(p.mode==='lump'||p.mode==='both')?(p.lump||0):0;
-    const P=(p.mode==='monthly'||p.mode==='both')?(p.monthly||0):0;
-    let bal=L,prin=L,simpleInt=0;
-    for(let k=1;k<=m;k++){
-      bal=bal*(1+i)+P;        // 複利：利息を元本に組み入れて積立
-      simpleInt+=prin*i;      // 単利：その月の元本に対する利息のみ（再投資しない）
-      prin+=P;                // 月末に積立を加える
-    }
-    const principal=L+P*m;
-    const compound=bal;
-    const simple=principal+simpleInt;
-    return {principal:principal,compound:compound,simple:simple,diff:compound-simple};
-  }
-
-  // 年次の推移（グラフ用）
-  function calcSeries(p){
-    const i=(p.rate/100)/12;
-    const m=Math.max(0,Math.round(p.years*12));
-    const L=(p.mode==='lump'||p.mode==='both')?(p.lump||0):0;
-    const P=(p.mode==='monthly'||p.mode==='both')?(p.monthly||0):0;
-    let bal=L,prin=L,simpleInt=0;
-    const years=[0],simple=[L],compound=[L];
-    for(let k=1;k<=m;k++){
-      bal=bal*(1+i)+P;
-      simpleInt+=prin*i;
-      prin+=P;
-      if(k%12===0){years.push(k/12);compound.push(bal);simple.push(prin+simpleInt)}
-    }
-    if(m%12!==0){years.push(m/12);compound.push(bal);simple.push(prin+simpleInt)}
-    return {years:years,simple:simple,compound:compound};
-  }
-
-  // ===== meter =====
-  function renderMeter(barSimple,barComp,r){
-    const max=Math.max(r.compound,r.simple,1);
-    barSimple.style.width=(r.simple/max*100)+'%';
-    const s=barSimple.children;
-    s[0].style.flexGrow=String(r.principal);
-    s[1].style.flexGrow=String(Math.max(0,r.simple-r.principal));
-    barComp.style.width=(r.compound/max*100)+'%';
-    const c=barComp.children;
-    c[0].style.flexGrow=String(r.principal);
-    c[1].style.flexGrow=String(Math.max(0,r.simple-r.principal));
-    c[2].style.flexGrow=String(Math.max(0,r.diff));
-  }
-
-  // メーター行を createElement で構築（DOM直書きは使わない）
-  function buildMeterRow(tag,barClass,valClass,segCount){
-    const row=document.createElement('div');row.className='meter-row';
-    const t=document.createElement('span');t.className='meter-tag';t.textContent=tag;
-    const track=document.createElement('div');track.className='meter-track';
-    const bar=document.createElement('div');bar.className='bar '+barClass;
-    const segCls=['seg-prin','seg-int','seg-magic'];
-    for(let i=0;i<segCount;i++){const s=document.createElement('span');s.className='seg '+segCls[i];bar.appendChild(s)}
-    track.appendChild(bar);
-    const val=document.createElement('span');val.className='meter-val '+valClass;
-    row.appendChild(t);row.appendChild(track);row.appendChild(val);
-    return row;
-  }
-  // 「ラベル + 数値」を createElement / textContent で構築
-  function setFig(el,label,value){
-    el.textContent=label;
-    const b=document.createElement('b');b.textContent=value;
-    el.appendChild(b);
-  }
-
-  // ===== chart（SVG・数値のみで構築。DOMParser→importNode で生成）=====
-  function buildChartEl(s){
-    const n=s.years.length-1;
-    if(n<1) return null;
-    const W=320,H=150,pl=4,pr=6,pt=10,pb=18;
-    const iw=W-pl-pr, ih=H-pt-pb;
-    const maxY=Math.max(s.compound[n],1);
-    const last=s.years[n];
-    const X=i=>(pl+iw*(s.years[i]/last));
-    const Y=v=>(pt+ih*(1-v/maxY));
-    let comp='',simp='';
-    for(let i=0;i<=n;i++){comp+=(i?' ':'')+X(i).toFixed(1)+','+Y(s.compound[i]).toFixed(1);simp+=(i?' ':'')+X(i).toFixed(1)+','+Y(s.simple[i]).toFixed(1)}
-    let area='M';
-    for(let i=0;i<=n;i++){area+=(i?' L':'')+X(i).toFixed(1)+' '+Y(s.compound[i]).toFixed(1)}
-    for(let i=n;i>=0;i--){area+=' L'+X(i).toFixed(1)+' '+Y(s.simple[i]).toFixed(1)}
-    area+=' Z';
-    const base=Y(0).toFixed(1);
-    const yrLabel=Number.isInteger(last)?last:last.toFixed(1);
-    const svgStr='<svg viewBox="0 0 '+W+' '+H+'" class="chart-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単利と複利の推移グラフ">'
-      +'<line x1="'+pl+'" y1="'+base+'" x2="'+(W-pr)+'" y2="'+base+'" stroke="var(--line)" stroke-width="1"/>'
-      +'<path d="'+area+'" fill="var(--accent)" fill-opacity="0.18"/>'
-      +'<polyline points="'+simp+'" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
-      +'<polyline points="'+comp+'" fill="none" stroke="var(--primary-dark)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'
-      +'<text x="'+pl+'" y="'+(H-5)+'" font-size="9" fill="var(--sub)">0年</text>'
-      +'<text x="'+(W-pr)+'" y="'+(H-5)+'" font-size="9" fill="var(--sub)" text-anchor="end">'+yrLabel+'年</text>'
-      +'</svg>';
-    const doc=new DOMParser().parseFromString(svgStr,'image/svg+xml');
-    return document.importNode(doc.documentElement,true);
-  }
-
-  // ===== plan card =====
-  const plansEl=document.getElementById('plans');
-
-  function modeBtn(label,value,active){
-    const b=document.createElement('button');
-    b.type='button';b.textContent=label;b.dataset.mode=value;
-    if(active)b.classList.add('active');
-    return b;
-  }
-  function field(labelText,unit,val,step,money){
-    const wrap=document.createElement('div');wrap.className='field';
-    if(labelText){const lab=document.createElement('label');lab.textContent=labelText;wrap.appendChild(lab)}
-    const iw=document.createElement('div');iw.className='input-wrap';
-    const inp=document.createElement('input');
-    if(money){
-      inp.type='text';inp.inputMode='numeric';inp.value=formatThousands(String(val));
-      attachMoneyFormat(inp);
-    }else{
-      inp.type='number';inp.inputMode='decimal';inp.min='0';inp.step=step;inp.value=val;
-    }
-    const u=document.createElement('span');u.className='unit';u.textContent=unit;
-    iw.appendChild(inp);iw.appendChild(u);
-    wrap.appendChild(iw);
-    return {wrap:wrap,input:inp};
-  }
-
-  function createPlanCard(p,idx){
-    const card=document.createElement('div');
-    card.className='plan fade-in';
-    card.dataset.id=p.id;
-
-    // top: name + duplicate + delete
-    const top=document.createElement('div');top.className='plan-top';
-    const name=document.createElement('input');
-    name.className='plan-name';name.type='text';name.maxLength=24;
-    name.placeholder='プラン'+(idx+1);name.value=p.name||'';
-    const dup=document.createElement('button');
-    dup.type='button';dup.className='plan-icon-btn plan-dup';dup.textContent='📋';dup.title='このプランを複製';dup.setAttribute('aria-label','このプランを複製');
-    const del=document.createElement('button');
-    del.type='button';del.className='plan-icon-btn plan-del';del.textContent='🗑';del.title='このプランを削除';del.setAttribute('aria-label','このプランを削除');
-    top.appendChild(name);top.appendChild(dup);top.appendChild(del);
-
-    // mode segmented
-    const seg=document.createElement('div');seg.className='mode-seg';
-    seg.appendChild(modeBtn('毎月積立','monthly',p.mode==='monthly'));
-    seg.appendChild(modeBtn('一括投入','lump',p.mode==='lump'));
-    seg.appendChild(modeBtn('併用','both',p.mode==='both'));
-
-    // fields（金額はカンマ表示）
-    const fields=document.createElement('div');fields.className='fields';
-    const fLump=field('初期投資額','円',p.lump,'10000',true);
-    const fMonthly=field('毎月の積立額','円',p.monthly,'1000',true);
-    const fRate=field('年利（利回り）','%',p.rate,'0.1');
-    fields.appendChild(fLump.wrap);
-    fields.appendChild(fMonthly.wrap);
-    fields.appendChild(fRate.wrap);
-
-    // period block（年数 / 年齢の2方式）
-    const period=document.createElement('div');period.className='period';
-    const pHead=document.createElement('div');pHead.className='period-head';
-    const pLabel=document.createElement('span');pLabel.className='period-label';pLabel.textContent='期間';
-    const pToggle=document.createElement('div');pToggle.className='period-toggle';
-    const tgYears=document.createElement('button');tgYears.type='button';tgYears.textContent='年数';
-    const tgAge=document.createElement('button');tgAge.type='button';tgAge.textContent='年齢';
-    pToggle.appendChild(tgYears);pToggle.appendChild(tgAge);
-    pHead.appendChild(pLabel);pHead.appendChild(pToggle);
-    const pBody=document.createElement('div');pBody.className='period-body';
-    const fYears=field('','年',p.years,'1');fYears.wrap.classList.add('period-years');
-    const ageNow=field('今の年齢','歳',p.ageNow,'1');
-    const ageTo=field('何歳まで','歳',p.ageTo,'1');
-    const ageRow=document.createElement('div');ageRow.className='period-age';
-    const arrow=document.createElement('span');arrow.className='period-arrow';arrow.textContent='→';
-    ageRow.appendChild(ageNow.wrap);ageRow.appendChild(arrow);ageRow.appendChild(ageTo.wrap);
-    const pCalc=document.createElement('div');pCalc.className='period-calc';
-    pBody.appendChild(fYears.wrap);pBody.appendChild(ageRow);pBody.appendChild(pCalc);
-    period.appendChild(pHead);period.appendChild(pBody);
-
-    // result
-    const result=document.createElement('div');result.className='plan-result';
-    const figs=document.createElement('div');figs.className='pr-figs';
-    const fComp=document.createElement('div');fComp.className='pr-fig';
-    const fSimple=document.createElement('div');fSimple.className='pr-fig';
-    const fDiff=document.createElement('div');fDiff.className='pr-fig diff';
-    figs.appendChild(fComp);figs.appendChild(fSimple);figs.appendChild(fDiff);
-    const meter=document.createElement('div');meter.className='meter';
-    meter.appendChild(buildMeterRow('単利','bar-s','val-s',2));
-    meter.appendChild(buildMeterRow('複利','bar-c','val-c',3));
-    const chart=document.createElement('div');chart.className='plan-chart';
-    const cap=document.createElement('div');cap.className='chart-cap';cap.textContent='📈 年数が経つほど、複利（濃い線）が単利（薄い線）から離れていきます';
-    result.appendChild(figs);result.appendChild(meter);result.appendChild(chart);result.appendChild(cap);
-
-    card.appendChild(top);card.appendChild(seg);card.appendChild(fields);card.appendChild(period);card.appendChild(result);
-
-    function applyMode(){
-      fLump.wrap.style.display=(p.mode==='lump'||p.mode==='both')?'':'none';
-      fMonthly.wrap.style.display=(p.mode==='monthly'||p.mode==='both')?'':'none';
-    }
-    applyMode();
-
-    function applyPeriodMode(){
-      const isAge=p.periodMode==='age';
-      tgYears.classList.toggle('active',!isAge);
-      tgAge.classList.toggle('active',isAge);
-      fYears.wrap.style.display=isAge?'none':'';
-      ageRow.style.display=isAge?'':'none';
-      pCalc.style.display=isAge?'':'none';
-    }
-    function updatePeriodCalc(){
-      if(p.periodMode==='age')pCalc.textContent='＝ '+p.years+'年間で計算します';
-    }
-    applyPeriodMode();updatePeriodCalc();
-
-    function readInputs(){
-      p.name=name.value.slice(0,24);
-      p.monthly=moneyVal(fMonthly.input);
-      p.lump=moneyVal(fLump.input);
-      p.rate=Math.min(100,num(fRate.input.value,0));
-      if(p.periodMode==='age'){
-        p.ageNow=Math.min(120,Math.max(0,Math.round(num(ageNow.input.value,0))));
-        p.ageTo=Math.min(120,Math.max(0,Math.round(num(ageTo.input.value,0))));
-        p.years=Math.max(0,Math.min(100,p.ageTo-p.ageNow));
-      }else{
-        p.years=Math.min(100,Math.max(0,num(fYears.input.value,0)));
-      }
-      updatePeriodCalc();
-    }
-
-    function refresh(){
-      const r=calc(p);
-      setFig(fComp,'複利',fmt(r.compound));
-      setFig(fSimple,'単利',fmt(r.simple));
-      setFig(fDiff,'差','+'+fmt(r.diff));
-      renderMeter(meter.querySelector('.bar-s'),meter.querySelector('.bar-c'),r);
-      meter.querySelector('.val-s').textContent=fmt(r.simple);
-      meter.querySelector('.val-c').textContent=fmt(r.compound);
-      const chartEl=buildChartEl(calcSeries(p));
-      if(chartEl){chart.replaceChildren(chartEl)}
-      else{const e=document.createElement('div');e.className='chart-empty';e.textContent=p.periodMode==='age'?'「何歳まで」を今の年齢より大きくしてください':'期間を入力すると推移グラフが表示されます';chart.replaceChildren(e)}
-    }
-    card._refresh=refresh;
-
-    [fMonthly.input,fLump.input,fRate.input,fYears.input,ageNow.input,ageTo.input].forEach(inp=>{
-      inp.addEventListener('input',()=>{readInputs();refresh();updateSummary();save()});
-    });
-    name.addEventListener('input',()=>{readInputs();save()});
-    tgYears.addEventListener('click',()=>{if(p.periodMode==='years')return;p.periodMode='years';applyPeriodMode();readInputs();refresh();updateSummary();save()});
-    tgAge.addEventListener('click',()=>{if(p.periodMode==='age')return;p.periodMode='age';applyPeriodMode();readInputs();refresh();updateSummary();save()});
-    seg.querySelectorAll('button').forEach(b=>{
-      b.addEventListener('click',()=>{
-        p.mode=b.dataset.mode;
-        seg.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
-        applyMode();readInputs();refresh();updateSummary();save();
-      });
-    });
-    dup.addEventListener('click',()=>{
-      const at=plans.indexOf(p);
-      const baseName=p.name||('プラン'+(at+1));
-      const copy=Object.assign({},p,{id:uid(),name:baseName+'のコピー'});
-      plans.splice(at+1,0,copy);
-      renderPlans();updateSummary();save();
-      showToast('プランを複製しました');
-    });
-    del.addEventListener('click',async()=>{
-      if(plans.length<=1){showToast('プランは1つ以上必要です');return}
-      const label=p.name||('プラン'+(plans.indexOf(p)+1));
-      const ok=await enuConfirm('プランの削除','「'+label+'」を削除します。よろしいですか？','削除する','キャンセル');
-      if(!ok)return;
-      plans=plans.filter(x=>x!==p);
-      renderPlans();updateSummary();save();
-      showToast('プランを削除しました');
-    });
-
-    return card;
-  }
-
-  function renderPlans(){
-    plansEl.textContent='';
-    cardRefs=[];
-    plans.forEach((p,idx)=>{
-      const card=createPlanCard(p,idx);
-      plansEl.appendChild(card);
-      card._refresh();
-      cardRefs.push(card._refresh);
-    });
-  }
-
-  function refreshAll(){cardRefs.forEach(fn=>fn());updateSummary()}
-
-  // ===== summary =====
-  function updateSummary(){
-    let principal=0,compound=0,simple=0;
-    plans.forEach(p=>{const r=calc(p);principal+=r.principal;compound+=r.compound;simple+=r.simple});
-    const diff=compound-simple;
-    document.getElementById('summary-label').textContent=
-      plans.length>=2 ? '💴 合計（各プラン満期時点）' : '💴 結果';
-    document.getElementById('sum-comp').textContent=fmt(compound);
-    document.getElementById('sum-simple').textContent=fmt(simple);
-    document.getElementById('sum-diff').textContent='+'+fmt(diff);
-    const note=document.getElementById('sum-diff-note');
-    const pctMore=simple>0?(diff/simple*100):0;
-    note.textContent= diff>0 ? ('複利は単利より +'+pct(pctMore)+'% 多い') : '';
-    renderMeter(document.getElementById('bar-simple'),document.getElementById('bar-comp'),
-      {principal:principal,compound:compound,simple:simple,diff:diff});
-    document.getElementById('val-simple').textContent=fmt(simple);
-    document.getElementById('val-comp').textContent=fmt(compound);
-  }
-
-  // ===== notices =====
+  /* === 注意書き（101）=== */
   function applyStorageType(){
     const type=CFG.storageType||'local';
-    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w=>{
-      if(w.dataset.storage!==type)w.style.display='none';
-    });
+    document.querySelectorAll('.enu-notice-wrap[data-storage]').forEach(w=>{ if(w.dataset.storage!==type) w.style.display='none'; });
   }
   function initNotices(){
     const K=_key('notice_minimized');
-    const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
-    const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
-    const help=document.getElementById('enu-help-link');
-    if(help){help.href=CFG.helpUrl||'#';if(CFG.helpOpenNewTab!==false){help.target='_blank';help.rel='noopener'}}
-    const more=document.getElementById('fukuri-more');
-    if(more){more.href=(CFG.helpUrl||'#')+'#fukuri';if(CFG.helpOpenNewTab!==false){more.target='_blank';more.rel='noopener'}}
+    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list=get();
-    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});
-    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{const w=b.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.add('is-mini');const l=get();if(!l.includes(id)){l.push(id);set(l)}}));
-    document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{const w=m.closest('.enu-notice-wrap'),id=w.dataset.noticeId;w.classList.remove('is-mini');set(get().filter(x=>x!==id))}));
+    document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
+    document.querySelectorAll('.enu-notice-wrap .enu-close-btn').forEach(b=>b.addEventListener('click',()=>{
+      const w=b.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.add('is-mini');
+      const l=get(); if(!l.includes(id)){ l.push(id); set(l); }
+    }));
+    document.querySelectorAll('.enu-notice-mini').forEach(m=>m.addEventListener('click',()=>{
+      const w=m.closest('.enu-notice-wrap'), id=w.dataset.noticeId; w.classList.remove('is-mini'); set(get().filter(x=>x!==id));
+    }));
   }
 
-  // ===== share (簡易版) =====
-  function buildShareText(){
-    const lines=[];
-    lines.push('複利シミュレーター｜単利と複利、差はこんなに開く');
-    lines.push('');
-    plans.forEach((p,idx)=>{
-      const r=calc(p);
-      const label=p.name||('プラン'+(idx+1));
-      const modeTxt=p.mode==='monthly'?('毎月'+yen(p.monthly)):p.mode==='lump'?('一括'+yen(p.lump)):('初期'+yen(p.lump)+'＋毎月'+yen(p.monthly));
-      const periodTxt=p.periodMode==='age'?(p.ageNow+'→'+p.ageTo+'歳・'+p.years+'年'):(p.years+'年');
-      lines.push('▼ '+label+'（'+modeTxt+'／'+periodTxt+'／年利'+p.rate+'%）');
-      lines.push('　複利 '+yen(r.compound)+'／単利 '+yen(r.simple)+'／差 +'+yen(r.diff));
+  /* === 免責事項・プライバシーポリシー・ヘルプのリンク／バージョン（004）=== */
+  const ENU_LEGAL_URLS={
+    disclaimer:'https://enu-tools.pages.dev/desk/disclaimer/',
+    privacy:'https://enu-tools.pages.dev/desk/privacy/'
+  };
+  function initVersion(){ const v=$('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
+  function initLegal(){
+    const urls={ disclaimer:CFG.disclaimerUrl||ENU_LEGAL_URLS.disclaimer, privacy:CFG.privacyUrl||ENU_LEGAL_URLS.privacy, help:CFG.helpUrl };
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+  }
+
+  /* === アクションボタン（102）=== */
+  async function handleSimpleShare(){
+    const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
+    try{
+      if(navigator.share){ await navigator.share(shareData); }
+      else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
+    }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+  }
+  function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
+  function appGetData(){ return { values:cleanValues(getValues()), history:getHistory() }; }
+  function appValidateData(data){ return !!(data && data.values && typeof data.values==='object'); }
+  // ファイルの中の値が読めるか（読めない値があれば読み込まない）
+  // 読める行だけ選ぶ（004：前の版のファイルも断らない。今は入れられない値・おかしい値の行は読み込まず、知らせる）
+  function pickReadable(data){
+    const valuesOk=validValues(data.values, true);
+    const hist=Array.isArray(data.history)?data.history:[];
+    const histOk=hist.filter(h=>h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && validValues(h.values));
+    return { values: valuesOk?data.values:null, history: data.history==null?null:histOk, skipped:(valuesOk?0:1)+(hist.length-histOk.length) };
+  }
+  function appApplyData(r){
+    if(r.values){ dataExtra=Object.assign({}, r.values); setValues(r.values); }
+    if(r.history) setHistory(r.history);
+    currentHistId=null; renderHistory(); update();
+  }
+  function handleExport(){
+    if(!guardInputs('export')) return;
+    const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('📤 JSONをダウンロードしました');
+  }
+  function handleImport(){
+    const input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
+    input.addEventListener('change', async (e)=>{
+      const f=e.target.files[0]; if(!f) return;
+      try{
+        const p=JSON.parse(await f.text());
+        if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
+        if(!p.app_id) throw new Error('古い形式のファイルです');
+        if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
+        if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
+        const data=migrate({ v:p.data_version||1, data:p.data }); // インポートも migrate() を通す
+        if(!appValidateData(data) || (data.history!=null && !Array.isArray(data.history))) throw new Error('データ形式が違います');
+        const r=pickReadable(data);
+        if(!r.values && !(r.history && r.history.length)) throw new Error('ファイルの中に読めない値があります');
+        const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+        if(!ok) return;
+        userChanged(); appApplyData(r); showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+      }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
     });
-    if(plans.length>=2){
-      let c=0,s=0;plans.forEach(p=>{const r=calc(p);c+=r.compound;s+=r.simple});
-      lines.push('');
-      lines.push('＝合計（各プラン満期時点）：複利 '+yen(c)+'／単利 '+yen(s)+'／差 +'+yen(c-s));
-    }
-    lines.push('');
-    lines.push(location.href);
-    return lines.join('\n');
+    input.click();
   }
-  async function handleShare(){
-    const text=buildShareText();
-    try{
-      if(navigator.share){await navigator.share({title:CFG.appName,text:text});return}
-    }catch(e){if(e&&e.name==='AbortError')return}
-    try{
-      await navigator.clipboard.writeText(text);
-      showToast('📋 結果をコピーしました');
-    }catch(e){
-      const ta=document.createElement('textarea');
-      ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
-      document.body.appendChild(ta);ta.select();
-      try{document.execCommand('copy');showToast('📋 結果をコピーしました')}
-      catch(e2){showToast('コピーできませんでした')}
-      document.body.removeChild(ta);
-    }
+  function initButtons(){
+    const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare, 'enu-btn-export':handleExport, 'enu-btn-import':handleImport };
+    Object.entries(map).forEach(([id,fn])=>{ const b=$(id); if(b) b.addEventListener('click',fn); });
   }
 
-  // ===== init =====
+  /* === アイコン・PWA（003）=== */
+  const ICON_EMOJI='🧳';
+  function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function makeIcon(size, emojiScale, rounded, bg){
+    const c=document.createElement('canvas'); c.width=size; c.height=size;
+    const ctx=c.getContext('2d'); ctx.fillStyle=bg;
+    if(rounded){ roundRectPath(ctx,0,0,size,size,size*0.22); ctx.fill(); } else { ctx.fillRect(0,0,size,size); }
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font=Math.round(size*emojiScale)+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+    ctx.fillText(ICON_EMOJI, size/2, size/2 + size*0.025);
+    return c.toDataURL('image/png');
+  }
+  function setMetaName(name, content){ let m=document.querySelector('meta[name="'+name+'"]'); if(!m){ m=document.createElement('meta'); m.setAttribute('name',name); document.head.appendChild(m); } m.setAttribute('content',content); }
+  function setLink(rel, href, type){ let l=document.querySelector('link[rel="'+rel+'"]'); if(!l){ l=document.createElement('link'); l.setAttribute('rel',rel); document.head.appendChild(l); } l.setAttribute('href',href); if(type) l.setAttribute('type',type); }
+  function setupPWA(){ // 文字（フォント）を読み終えてからアイコンを描く
+    const ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    ready.then(drawPWA, drawPWA);
+  }
+  function drawPWA(){
+    const SHORT='レート計算機';
+    const bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f3faf8';
+    document.title=CFG.appName;
+    setMetaName('theme-color', bg);
+    setMetaName('apple-mobile-web-app-capable','yes');
+    setMetaName('apple-mobile-web-app-status-bar-style','default');
+    setMetaName('apple-mobile-web-app-title', SHORT);
+    try{
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="'+bg+'"/><text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,Twemoji Mozilla,sans-serif">'+ICON_EMOJI+'</text></svg>';
+      setLink('icon', 'data:image/svg+xml,'+encodeURIComponent(svg), 'image/svg+xml');
+      setLink('apple-touch-icon', makeIcon(180,0.55,true,bg));
+      const path=location.pathname;
+      const manifest={ id:path, name:CFG.appName, short_name:SHORT, start_url:path, scope:path, display:'standalone', orientation:'portrait', background_color:bg, theme_color:bg,
+        icons:[ {src:makeIcon(192,0.55,true,bg),sizes:'192x192',type:'image/png',purpose:'any'},
+                {src:makeIcon(192,0.50,false,bg),sizes:'192x192',type:'image/png',purpose:'maskable'},
+                {src:makeIcon(512,0.55,true,bg),sizes:'512x512',type:'image/png',purpose:'any'},
+                {src:makeIcon(512,0.50,false,bg),sizes:'512x512',type:'image/png',purpose:'maskable'} ] };
+      setLink('manifest', 'data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
+    }catch(e){}
+  }
+
+  /* === 初期化 === */
   function init(){
-    load();
-    // 単位トグルの状態反映
-    const ut=document.getElementById('unit-toggle');
-    ut.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.unit===unitMode));
-    ut.querySelectorAll('button').forEach(b=>{
-      b.addEventListener('click',()=>{
-        unitMode=b.dataset.unit;
-        ut.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
-        saveUnit();refreshAll();
-      });
-    });
-    renderPlans();
-    updateSummary();
-    initNotices();
-    applyStorageType();
-    const cy=document.getElementById('enu-copy');
-    if(cy)cy.textContent='© '+new Date().getFullYear()+' enu(エヌ) All rights reserved.';
-    document.getElementById('add-plan').addEventListener('click',()=>{
-      plans.push(newPlan());
-      renderPlans();updateSummary();save();
-    });
-    document.getElementById('enu-btn-print').addEventListener('click',()=>window.print());
-    document.getElementById('enu-btn-share2').addEventListener('click',handleShare);
+    applyStorageType(); initNotices(); initLegal(); initVersion(); initButtons();
+    $('copyYear').textContent=new Date().getFullYear();
+
+    setValues(DEFAULTS);
+    const saved=loadStore('data');
+    if(saved && typeof saved==='object') dataExtra=saved;
+    if(saved) setValues(saved);
+
+    FIELDS.forEach(f=>$(f).addEventListener('input',update));
+    // 呼び出したあとで入力を変えたら「呼び出し中」を消す
+    const clearCur=()=>{ if(currentHistId!=null){ currentHistId=null; renderHistory(); } };
+    $('input-card').addEventListener('input',clearCur);
+    $('input-card').addEventListener('change',clearCur);
+    $('projectHours').addEventListener('input',clearCur);
+    $('blueReturn').addEventListener('change',update);
+    document.querySelectorAll('.preset-chip[data-hours]').forEach(btn=>btn.addEventListener('click',()=>{ $('projectHours').value=parseFloat(btn.dataset.hours); update(); }));
+    $('btnReset').addEventListener('click',()=>{ setValues(DEFAULTS); update(); if(currentHistId!=null){ currentHistId=null; renderHistory(); } showToast('初期値に戻しました'); });
+    const ft=$('formulaToggle'), fb=$('formulaBody');
+    ft.addEventListener('click',()=>{ const open=fb.hidden; fb.hidden=!open; ft.setAttribute('aria-expanded', open?'true':'false'); });
+    $('save-btn').addEventListener('click',saveCurrent);
+    $('history-list').addEventListener('click',onHistoryClick);
+    $('hist-current').addEventListener('click',onHistoryClick);
+
+    renderHistory(); renderResults(); setupPWA();
   }
 
-  if(document.readyState!=='loading')init();
-  else document.addEventListener('DOMContentLoaded',init);
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
-
-<!-- ===== favicon / PWA（アイコン・ホーム画面追加）===== -->
+<!-- enu-a2hs -->
+<div class="enu-a2hs" id="enu-a2hs" role="dialog" aria-modal="true" aria-labelledby="enu-a2hs-ttl" hidden>
+  <div class="enu-a2hs-card">
+    <div class="enu-a2hs-grip" aria-hidden="true"></div>
+    <div class="enu-a2hs-row">
+      <span class="enu-a2hs-ico" aria-hidden="true">📲</span>
+      <div>
+        <div class="enu-a2hs-ttl" id="enu-a2hs-ttl">ホーム画面に置けます</div>
+        <p class="enu-a2hs-sub"><span class="nb">アイコンからすぐ開けて、</span><span class="nb">全画面で使えます。</span></p>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-ios" hidden><li>下の「共有」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+        <ol class="enu-a2hs-steps" id="enu-a2hs-android" hidden><li>右上の「︙」を押す</li><li><span class="nb">「ホーム画面に追加」</span><span class="nb">を選ぶ</span></li></ol>
+      </div>
+    </div>
+    <div class="enu-a2hs-btns">
+      <button type="button" class="enu-a2hs-later" id="enu-a2hs-later">あとで</button>
+      <button type="button" class="enu-a2hs-go" id="enu-a2hs-go">わかりました</button>
+    </div>
+  </div>
+</div>
 <script>
+/* ホーム画面の案内（2回目に開いたときだけ・スマホだけ） */
 (function(){
-  'use strict';
-  var ICON='📈';
-  var APP_NAME='複利シミュレーター';
-  var SHORT_NAME='複利シミュ';
-  var EMOJI_FONT="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif";
-
-  function getBg(){
-    var v='';
-    try{v=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()}catch(e){}
-    return v||'#faf7f0';
+  var P='enu_freelance-rate-calc';
+  var box=document.getElementById('enu-a2hs'); if(!box) return;
+  function get(k){ try{ return localStorage.getItem(P+k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(P+k,v); }catch(e){} }
+  var standalone=(window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
+  var iOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  var touch=(navigator.maxTouchPoints||0)>0 && window.innerWidth<900;
+  var prompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); prompt=e; });
+  // 開いた回数（同じ回の読み直しでは増やさない）
+  var opens=parseInt(get('_opens')||'0',10); if(!isFinite(opens)) opens=0;
+  var counted=false; try{ counted=!!sessionStorage.getItem(P+'_counted'); }catch(e){}
+  if(!counted){ opens+=1; set('_opens',String(opens)); try{ sessionStorage.setItem(P+'_counted','1'); }catch(e){} }
+  var go=document.getElementById('enu-a2hs-go'), later=document.getElementById('enu-a2hs-later');
+  function close(){ box.hidden=true; }
+  function laterFn(){ set('_a2hs_hide',String(Date.now()+14*24*60*60*1000)); close(); }   // 2週間ほど出さない
+  function done(){ set('_a2hs_hide',String(Date.now()+3650*24*60*60*1000)); close(); }
+  function show(){
+    var ios=document.getElementById('enu-a2hs-ios'), an=document.getElementById('enu-a2hs-android');
+    if(prompt && !iOS){
+      ios.hidden=true; an.hidden=true; go.textContent='ホーム画面に置く';
+      go.onclick=function(){ try{ prompt.prompt(); prompt.userChoice.then(done,done); }catch(e){ done(); } prompt=null; };
+    }else{
+      ios.hidden=!iOS; an.hidden=iOS; go.textContent='わかりました'; go.onclick=done;
+    }
+    later.onclick=laterFn;
+    box.onclick=function(e){ if(e.target===box) laterFn(); };
+    box.hidden=false;
   }
-  function setMeta(name,content){
-    var m=document.querySelector('meta[name="'+name+'"]');
-    if(!m){m=document.createElement('meta');m.setAttribute('name',name);document.head.appendChild(m)}
-    m.setAttribute('content',content);
+  function maybe(){
+    if(standalone || !touch || opens<2) return;
+    var until=parseInt(get('_a2hs_hide')||'0',10);
+    if(isFinite(until) && Date.now()<until) return;
+    setTimeout(show,1200);
   }
-  function setLink(rel,attrs){
-    var l=document.querySelector('link[rel="'+rel+'"]');
-    if(!l){l=document.createElement('link');l.setAttribute('rel',rel);document.head.appendChild(l)}
-    Object.keys(attrs).forEach(function(k){l.setAttribute(k,attrs[k])});
-    return l;
-  }
-  function faviconURI(bg){
-    var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
-      +'<rect width="100" height="100" rx="22" ry="22" fill="'+bg+'"/>'
-      +'<text x="50" y="50" font-size="60" text-anchor="middle" dominant-baseline="central" font-family="'+EMOJI_FONT+'">'+ICON+'</text>'
-      +'</svg>';
-    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
-  }
-  function drawIcon(size,bg,ratio,rounded){
-    return new Promise(function(resolve){
-      var c=document.createElement('canvas');c.width=size;c.height=size;
-      var ctx=c.getContext('2d');
-      if(rounded){
-        var r=size*0.22;
-        ctx.beginPath();
-        ctx.moveTo(r,0);
-        ctx.lineTo(size-r,0);ctx.arcTo(size,0,size,r,r);
-        ctx.lineTo(size,size-r);ctx.arcTo(size,size,size-r,size,r);
-        ctx.lineTo(r,size);ctx.arcTo(0,size,0,size-r,r);
-        ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
-        ctx.closePath();ctx.fillStyle=bg;ctx.fill();
-      }else{
-        ctx.fillStyle=bg;ctx.fillRect(0,0,size,size);
-      }
-      ctx.font=(size*ratio)+'px '+EMOJI_FONT;
-      ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText(ICON,size/2,size/2+size*0.025);  // emoji 視覚中心補正
-      resolve(c.toDataURL('image/png'));  // data URI（blob URLはiOSで取得失敗するため不可）
-    });
-  }
-  function run(){
-    var bg=getBg();
-    setMeta('theme-color',bg);
-    setLink('icon',{type:'image/svg+xml',href:faviconURI(bg)});
-    document.fonts.ready.then(function(){
-      drawIcon(180,bg,0.55,true).then(function(url){setLink('apple-touch-icon',{href:url})});
-      Promise.all([
-        drawIcon(192,bg,0.55,true),   // any
-        drawIcon(192,bg,0.50,false),  // maskable（角丸なし）
-        drawIcon(512,bg,0.55,true),   // any
-        drawIcon(512,bg,0.50,false)   // maskable（角丸なし）
-      ]).then(function(u){
-        var manifest={
-          id:location.pathname,
-          name:APP_NAME,
-          short_name:SHORT_NAME,
-          start_url:location.pathname,
-          scope:location.pathname,
-          display:'standalone',
-          orientation:'portrait',
-          background_color:bg,
-          theme_color:bg,
-          icons:[
-            {src:u[0],sizes:'192x192',type:'image/png',purpose:'any'},
-            {src:u[1],sizes:'192x192',type:'image/png',purpose:'maskable'},
-            {src:u[2],sizes:'512x512',type:'image/png',purpose:'any'},
-            {src:u[3],sizes:'512x512',type:'image/png',purpose:'maskable'}
-          ]
-        };
-        setLink('manifest',{href:'data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest))});
-      });
-    });
-  }
-  if(document.readyState!=='loading')run();
-  else document.addEventListener('DOMContentLoaded',run);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !box.hidden) laterFn(); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(maybe,600); });
+  else setTimeout(maybe,600);
 })();
 </script>
+<!-- /enu-a2hs -->
 </body>
 </html>
-
-
