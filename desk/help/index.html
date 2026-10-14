@@ -2,8 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="enu-family" content="desk">
+<!-- 系統：デスク用（運用者向けの印。画面の文には出さない） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>ヘルプ｜使い方ガイド</title>
+<title>ヘルプ・使い方ガイド - enu-tools</title>
 <meta name="theme-color" content="#faf7f3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -845,6 +847,22 @@
   .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
   .footer-legal a:hover{color:var(--primary);}
   .footer-legal span{margin:0 4px;opacity:.6}
+
+  /* === 2026-10-14 決定：四角を減らす（一覧はグループごとに1枚の枠・項目は線で区切る／中は ⚠️ の注意だけ箱） === */
+  .topic-list { gap: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .topic-card, .topic-card:last-of-type { border: none; border-radius: 0; border-bottom: 1px solid var(--border); background: transparent; }
+  .topic-list .topic-card:last-child { border-bottom: none; }
+  .topic-card:hover { background: var(--bg); border-color: var(--border); }
+  .topic-card .topic-icon, .topic-card.alt .topic-icon, .topic-card.info .topic-icon, .topic-card.pdf .topic-icon, .topic-card.print .topic-icon, .topic-card.share .topic-icon { background: none; }
+  .section-icon, .section-icon.alt, .section-icon.info { background: none; }
+  .steps li { background: none; border-radius: 0; margin-bottom: 0; padding: 8px 0 8px 40px; border-bottom: 1px dotted var(--border); }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before { left: 0; }
+  .note.hint { background: none; border: none; border-left: 2px solid var(--border); border-radius: 0; padding: 2px 0 2px 12px; color: var(--sub); }
+  .note.hint .label { color: var(--sub); }
+  .scene-card { background: none; border: none; border-top: 1px solid var(--border); border-radius: 0; padding: 10px 0; }
+  .transfer-card, .transfer-card.new { background: none; border: none; border-radius: 0; padding: 0; }
+  .transfer-card .stage, .transfer-card.new .stage { background: none; color: var(--primary); padding: 0; border-radius: 0; }
 </style>
 </head>
 <body>
@@ -974,7 +992,7 @@
         <li>アプリ名を確認して、右上の <strong>「追加」</strong> をタップしたら完了です。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 ヒント</span>Chrome の「ホーム画面に追加」機能は iOS 16.4 以降で利用できます。iPhone・iPad の OS バージョンが古い場合は Safari からの追加をおすすめします。
       </div>
 
@@ -986,7 +1004,7 @@
         <li>名前を確認して <strong>「追加」</strong> または <strong>「インストール」</strong> をタップしたら完了です。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 ヒント</span>機種やブラウザのバージョンによって表示が少し異なる場合があります。「ホーム画面」「インストール」のいずれかの言葉を探してみてください。
       </div>
     </section>
@@ -1002,7 +1020,7 @@
         <h2>保存版の選び方・切り替え方<span class="sub-title">ローカル保存版とGoogle保存版</span></h2>
       </div>
 
-      <p>本アプリは <strong>ローカル保存版</strong> と <strong>Google保存版</strong> の2つから、データの保存方法を選べます。最初の画面でお好きな方を選んでください。あとから切り替えることもできます。</p>
+      <p>データの保存方法には、<strong>ローカル保存版</strong> と <strong>Google保存版</strong> があります。どちらが使えるかは、アプリによって違います（Google保存版がないアプリもあります）。両方あるアプリでは、最初の画面でお好きな方を選べ、あとから切り替えることもできます。</p>
 
       <h3 class="sub-head">📌 2つの違い</h3>
       <div class="scene-grid">
@@ -1035,7 +1053,7 @@
         <li>最初の選択画面に戻るので、使いたい保存版を選び直します。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 安心ポイント</span>2つの保存版のデータは <strong>それぞれ独立して保管</strong> されます。切り替えても、もう一方のデータが消えることはありません。元の保存版を選び直せば、そのデータがそのまま表示されます。
       </div>
 
@@ -1087,19 +1105,20 @@
         ・ブラウザの「履歴・キャッシュ・サイトデータ」を削除した<br>
         ・シークレットモード／プライベートブラウズで使った<br>
         ・別のブラウザや別の端末で開いた<br>
-        ・端末を変えた（機種変更など）
+        ・端末を変えた（機種変更など）<br>
+        ・しばらく使わなかったとき（Safariは約7日）
       </div>
 
       <h3 class="sub-head">📝 大切なデータを守るには</h3>
       <p>消えてしまうと困るデータは、こまめにバックアップを取っておくと安心です。</p>
       <ol class="steps">
-        <li>ページ最下部のツールバーから <strong>📤 エクスポート</strong> ボタンをタップします。</li>
+        <li>結果の保存のすぐ下の「データ：📤 エクスポート・📥 インポート」から、<strong>📤 エクスポート</strong> ボタンをタップします。</li>
         <li>JSONファイルが保存されるので、メールやクラウドに保管しておきます。</li>
         <li>復元したいときは <strong>📥 インポート</strong> ボタンから読み込みます。</li>
       </ol>
 
-      <div class="note">
-        <span class="label">💡 ヒント</span>長く使いたいデータや、複数の端末で使いたいデータは <strong>☁️ Google保存版</strong> に切り替えるのもおすすめです。切り替え方は <strong>⇄ 保存版の選び方・切り替え方</strong> をご覧ください。
+      <div class="note hint">
+        <span class="label">💡 ヒント</span>長く使いたいデータや、複数の端末で使いたいデータは、Google保存版があるアプリなら <strong>☁️ Google保存版</strong> に切り替えるのもおすすめです。切り替え方は <strong>⇄ 保存版の選び方・切り替え方</strong> をご覧ください。
       </div>
     </section>
   </div>
@@ -1114,7 +1133,7 @@
         <h2>データのバックアップ・復元方法<span class="sub-title">（エクスポート／インポート）</span></h2>
       </div>
 
-      <p>本アプリのデータは <strong>お使いの端末内（ローカル）</strong> または <strong>Googleドライブ</strong> に保存されます。<strong>JSONファイル</strong>を使ってデータを保存・復元することができます。</p>
+      <p>本アプリのデータは <strong>お使いの端末内（ローカル）</strong> または <strong>Googleドライブ</strong> に保存されます。<strong>JSONファイル</strong>を使ってデータを保存・復元することができます。エクスポート・インポートのボタンがないアプリもあります。</p>
 
       <!-- 場面別の説明 -->
       <h3 class="sub-head">📌 こんなときに使えます</h3>
@@ -1151,9 +1170,9 @@
           <h4>データを保存する（エクスポート）</h4>
           <ol class="steps">
             <li>本アプリを開きます。</li>
-            <li>ページ最下部のツールバーを表示します。</li>
+            <li>結果の保存のすぐ下にある「データ：」の行を表示します。</li>
             <li><strong>📤 エクスポート</strong> ボタンをタップします。</li>
-            <li>JSONファイルが保存されます。メールやクラウド（Google Drive・iCloudなど）に保存しておくと安心です。</li>
+            <li>JSONファイルが保存されます。メールやクラウド（Googleドライブ・iCloudなど）に保存しておくと安心です。</li>
           </ol>
         </div>
 
@@ -1162,7 +1181,7 @@
           <h4>データを読み込む（インポート）</h4>
           <ol class="steps android">
             <li>本アプリを開きます。</li>
-            <li>ページ最下部のツールバーを表示します。</li>
+            <li>結果の保存のすぐ下にある「データ：」の行を表示します。</li>
             <li><strong>📥 インポート</strong> ボタンをタップします。</li>
             <li>保存しておいたJSONファイルを選んで読み込みます。</li>
           </ol>
@@ -1173,8 +1192,8 @@
         <span class="label">⚠️ ご注意</span>JSONファイルは大切なデータです。クラウドや別の場所にもバックアップを取っておくことをおすすめします。機種変更の際は、新端末にインポートが完了するまで旧端末のデータは消さないでください。
       </div>
 
-      <div class="note">
-        <span class="label">💡 ヒント</span>インポートを行うと、現在のデータが上書きされます。心配な場合は、先に現在のデータをエクスポートしておきましょう。
+      <div class="note hint">
+        <span class="label">💡 ヒント</span>インポートすると、今の入力は読み込んだ内容に置きかわります。読み込めない行は、読み込まずにお知らせします。心配な場合は、先にエクスポートしておきましょう。
       </div>
     </section>
   </div>
@@ -1193,7 +1212,7 @@
 
       <h3 class="sub-head">📝 操作手順</h3>
       <ol class="steps pdf-color">
-        <li>ページ最下部のツールバーから <strong>📄 PDF / 印刷</strong> ボタンをタップします。</li>
+        <li>結果の下にある <strong>📄 PDF / 印刷</strong> ボタンをタップします。</li>
         <li>印刷ダイアログが開きます。</li>
         <li>出力先（プリンター選択）で目的に合わせて選びます。<br>
           ・<strong>📄 PDFとして保存したい</strong> → <strong>「PDFとして保存」</strong> を選択<br>
@@ -1203,12 +1222,12 @@
         <li><strong>「保存」</strong> または <strong>「印刷」</strong> をタップしたら完了です。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 ヒント</span>端末によって「PDFとして保存」が「PDFに保存」「PDFで保存」と表示されることがあります。同じ機能なのでそれを選んでください。
       </div>
 
       <div class="note">
-        <span class="label">⚠️ ご注意</span>スマホから印刷する場合は、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは <strong>クラウド印刷</strong> 対応プリンターが必要です。プリンターがない環境では、いったんPDFに保存して、後で印刷することもできます。
+        <span class="label">⚠️ ご注意</span>スマホから印刷する場合は、iPhoneは <strong>AirPrint</strong> 対応プリンター、Androidは、<strong>端末の印刷機能</strong>に対応したプリンター（プリンターのメーカーのアプリなど）が必要です。プリンターがない環境では、いったんPDFに保存して、後で印刷することもできます。
       </div>
     </section>
   </div>
@@ -1227,12 +1246,12 @@
 
       <h3 class="sub-head">📝 操作手順</h3>
       <ol class="steps share-color">
-        <li>ページ最下部のツールバーから <strong>🔗 シェア</strong> ボタンをタップします。</li>
+        <li>結果の下にある <strong>🔗 シェア</strong> ボタンをタップします。</li>
         <li>シェアメニュー（共有シート）が開きます。</li>
         <li>シェアしたい <strong>アプリや相手</strong> を選んだら完了です。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 ヒント</span>パソコンなどシェアメニューに対応していない環境では、代わりに <strong>URLが自動でクリップボードにコピー</strong> されます。そのままメールやチャットに貼り付けてご利用ください。
       </div>
 
@@ -1252,7 +1271,7 @@
         <h2>Google保存版のデータについて<span class="sub-title">Googleでログインして使うタイプ</span></h2>
       </div>
 
-      <p>本アプリは、入力したデータを <strong>ご自身のGoogleドライブ</strong> に保存する仕組みです。運営者（enu）はあなたのデータを閲覧できません。</p>
+      <p>Google保存版は、対応しているアプリだけで使えます。入力したデータを <strong>ご自身のGoogleドライブ</strong> に保存する仕組みです。運営者（enu）はあなたのデータを閲覧できません。データの扱いは、<a href="https://enu-tools.pages.dev/desk/privacy/google/" target="_blank" rel="noopener">プライバシーポリシー（Googleドライブに保存する本アプリ用）</a>をご覧ください。</p>
 
       <h3 class="sub-head">📌 データはどこに保存されている？</h3>
       <div class="scene-grid">
@@ -1279,7 +1298,7 @@
         </div>
       </div>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報には一切アクセスできない設計です。
       </div>
 
@@ -1287,9 +1306,9 @@
       <p>大切なデータは定期的にコピーしておくと安心です。</p>
       <ol class="steps info-color">
         <li><a href="https://drive.google.com" target="_blank" rel="noopener" class="info-link">Googleドライブ</a> を開きます。</li>
-        <li>該当のスプレッドシート（例：<code>test-tools-hhk-kakeibo_data</code>）を開きます。</li>
+        <li>該当のスプレッドシートを開きます。</li>
         <li>メニューの <strong>ファイル → コピーを作成</strong> をクリックします。</li>
-        <li>ファイル名を <strong>「kakeibo_backup_20260515」</strong> のように日付入りで保存します。<br><span style="font-size: 11px; color: var(--sub);">※ アプリで使うファイルとは別名にするのが大事。元の名前のままだと、アプリが間違ってバックアップ側を読みに行く可能性があります。</span></li>
+        <li>ファイル名を <strong>「backup_20260515」</strong> のように日付入りで保存します。<br><span style="font-size: 11px; color: var(--sub);">※ アプリで使うファイルとは別名にするのが大事。元の名前のままだと、アプリが間違ってバックアップ側を読みに行く可能性があります。</span></li>
       </ol>
 
       <h3 class="sub-head">▶ うっかり壊した・編集してしまった時の復元</h3>
@@ -1388,7 +1407,7 @@
         <li>本アプリのページに戻り、もう一度ログインボタンを押します。今度は同意画面が再度表示されます。</li>
       </ol>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 安心ポイント</span>本アプリが要求する権限は <strong>「このアプリが作成したファイルだけ」</strong> へのアクセスです。あなたのGoogleドライブの他のファイルや個人情報にはアクセスできない設計です。
       </div>
 
@@ -1416,7 +1435,7 @@
         </a>
       </div>
 
-      <div class="note">
+      <div class="note hint">
         <span class="label">💡 ヒント</span>お問い合わせの際は、お使いの<strong>端末・OS・ブラウザ</strong>と、できれば<strong>困っている画面のスクリーンショット</strong>を添えていただけると、スムーズに対応できます。
       </div>
 
@@ -1430,9 +1449,9 @@
   <footer>
     <hr class="footer-divider">
     <div class="footer-credit">
-      <a href="https://enu-tools.pages.dev/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+      <a href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
     </div>
-    <nav class="footer-legal" aria-label="このサイトについて"><a href="https://enu-tools.pages.dev/disclaimer/" target="_blank" rel="noopener">免責事項</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/help/" target="_blank" rel="noopener">ヘルプ</a></nav>
+    <nav class="footer-legal" aria-label="このサイトについて"><a href="https://enu-tools.pages.dev/desk/disclaimer/" target="_blank" rel="noopener">免責事項</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/help/" target="_blank" rel="noopener">ヘルプ</a></nav>
     <div class="footer-copy">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.</div>
   </footer>
 
