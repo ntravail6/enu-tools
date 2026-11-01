@@ -5,13 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="8つの質問に答えるだけで、あなたに合いそうなクレジットカードの“タイプ”を診断する参考コンテンツです。5タイプのバランスをチャートで表示します。">
 <title>クレカ診断</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="クレカ診断">
+<meta property="og:description" content="8つの質問に答えるだけで、あなたに合いそうなクレジットカードの“タイプ”を診断する参考コンテンツです。5タイプのバランスをチャートで表示します。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/credit-card-judge/">
+<meta name="twitter:card" content="summary">
 
 <!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
 <meta name="theme-color" content="#fcf9ee">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="クレカ診断">
-<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+<link rel="apple-touch-icon" id="appleTouchIcon">
 
 <!-- フォント（enu 4種セット） -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +43,8 @@
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
   .hidden{display:none !important}
+  h2[tabindex="-1"]:focus{outline:none}  /* 画面が変わったとき、見出しへ読み上げを移すため（見た目は変えない） */
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   /* ヘッダー（質問・結果の画面） */
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
@@ -66,7 +73,7 @@
   .note-text + .note-text{margin-top:8px}
 
   /* ボタン */
-  .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:6px;font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
+  .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:6px;font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
   .btn-fill{background:var(--primary);color:#fff}
   .btn-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .btn-line{background:transparent;color:var(--primary-dark)}
@@ -85,7 +92,7 @@
   .progress-fill{height:100%;background:var(--primary);border-radius:999px;width:0}
   .q-text{font-size:1rem;font-weight:700;margin:16px 0 12px;line-height:1.6}
   .opt-list{display:flex;flex-direction:column;gap:8px}
-  .opt{text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
+  .opt{line-height:1.5;text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
   .opt:hover{border-color:var(--primary)}
   .opt .dot{flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--primary)}
   .opt.selected{border-color:var(--primary);background:var(--primary-soft)}
@@ -106,6 +113,7 @@
   .result-sub{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:.875rem}
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
   .saved-at{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
   /* タイプ別バランス（レーダーチャート）・相性チップ */
   .radar-wrap{margin:16px 0 0}
   .match-caption{font-size:.875rem;color:var(--primary-dark);font-weight:700;display:flex;align-items:center;justify-content:flex-start;gap:6px;margin-bottom:4px}
@@ -117,7 +125,7 @@
 
   /* PDF / 印刷・シェア（102 B4） */
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
@@ -127,12 +135,12 @@
 
   /* フッター（004） */
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
-  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid var(--line);border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -194,6 +202,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="note-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <!-- 最初のページ（表紙型） -->
   <section class="cover" id="cover">
@@ -257,7 +266,7 @@
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -458,6 +467,9 @@
     }
   };
 
+  // 画面が変わったら、見出しに読み上げ・キーボードの位置を移す（画面の見た目は変わらない）
+  function focusHeading(h){ if(!h) return; h.setAttribute('tabindex', '-1'); try{ h.focus({ preventScroll:true }); }catch(e){} }
+
   /* ===== 設問データ（各選択肢が複数タイプに加点） ===== */
   // 点の配分（2026-10-13 見直し）：全65,536通りの答え方で、5タイプがどれも約2割になり、同点が少なくなるようにした（前は節約タイプが約5割・同点が約2割）
   var QUESTIONS = [
@@ -585,17 +597,18 @@
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておく（保存はユーザーが診断・記録・削除などをしたときだけなので、それまで上書きしない）
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name) + '_broken') == null) localStorage.setItem(_key(name) + '_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す（毎回上書きしない）
   function loadStore(name){
     var raw = null;
     try{ raw = localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw == null) return null;
     var data = null;
     try{ data = migrate(JSON.parse(raw)); }catch(e){ data = null; }
-    if(data == null){ try{ localStorage.setItem(_key(name) + '_broken', raw); }catch(e){} }
+    if(data == null) keepBroken(name, raw);
     return data;
   }
-  function saveStore(name, data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){ /* プライベートモード等。動作は継続 */ } }
-  function saveResult(scores, winnerType){ saveStore('result', { scores:scores, type:winnerType, at:new Date().toISOString() }); }
+  function saveStore(name, data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; /* プライベートモード等。動作は継続 */ } }
+  function saveResult(scores, winnerType){ return saveStore('result', { scores:scores, type:winnerType, at:new Date().toISOString() }); }
   // 2026-10-13 より前の点の配分で保存した結果の範囲（各タイプの最高点・5つの合計の最小〜最大）。前回の結果をそのまま見られるように残す
   var OLD_LIMIT = { max:{ save:14, travel:10, status:9, simple:13, net:9 }, lo:15, hi:22 };
   function loadResult(){
@@ -659,10 +672,11 @@
     var qSplitIdx = q.q.indexOf(' ');
     var qEmoji = qSplitIdx >= 0 ? q.q.slice(0, qSplitIdx) : '';
     var qBody  = qSplitIdx >= 0 ? q.q.slice(qSplitIdx + 1) : q.q;
-    card.appendChild(el('h2', { class:'q-text' }, [
+    var qHead = el('h2', { class:'q-text', attrs:{ id:'q-heading' } }, [
       qEmoji ? el('span', { attrs:{ 'aria-hidden':'true' }, text:qEmoji + ' ' }) : null,
       nbFill(el('span'), qBody)
-    ]));
+    ]);
+    card.appendChild(qHead);
 
     var optButtons = [];
     var nextBtn;
@@ -671,18 +685,18 @@
       optButtons.forEach(function(b, i){
         var sel = (i === oi);
         b.classList.toggle('selected', sel);
-        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+        b.setAttribute('aria-checked', sel ? 'true' : 'false');
       });
       if(nextBtn) nextBtn.disabled = false;
       updateProgress();
     }
 
-    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':qBody } });
+    var list = el('div', { class:'opt-list', attrs:{ role:'radiogroup', 'aria-labelledby':'q-heading' } });
     q.opts.forEach(function(opt, oi){
       var sel = state.answers[idx] === oi;
       var btn = el('button', {
         class:'opt' + (sel ? ' selected' : ''),
-        attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
+        attrs:{ type:'button', role:'radio', 'aria-checked': sel ? 'true' : 'false' },
         on:{ click:function(){ selectAt(oi); } }
       }, [
         el('span', { class:'dot' }),
@@ -708,6 +722,7 @@
     ]));
 
     main.appendChild(card);
+    focusHeading(qHead);
   }
 
   function goBack(){ if(state.qIndex > 0){ state.qIndex--; renderQuestion(); } }
@@ -721,8 +736,9 @@
   function finishQuiz(){
     var scores = scoreFromAnswers(state.answers);
     var result = computeResult(scores, state.answers, null);
-    saveResult(scores, result.winner.type);
+    var saved = saveResult(scores, result.winner.type);
     renderResult(result, false, null);
+    if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります');
   }
   function showSavedResult(prev){ renderResult(computeResult(prev.scores, null, prev.type), true, prev.at); }
 
@@ -751,6 +767,7 @@
       feats
     ]));
 
+    card.appendChild(el('p', { class:'result-disclaimer', text:'※ 参考のための診断で、商品のおすすめではありません。条件は各社の公式情報でご確認ください。' }));
     if(fromSaved && formatDate(savedAt)){
       card.appendChild(el('p', { class:'saved-at', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
     }
@@ -759,6 +776,7 @@
       el('button', { class:'btn btn-line', text:'最初に戻る', attrs:{ type:'button' }, on:{ click:renderCover } })
     ]));
     main.appendChild(card);
+    focusHeading(card.querySelector('.result-type'));
 
     main.appendChild(el('div', { class:'card' }, [
       nbFill(el('h2', { class:'section-title' }), '✅ カード選びの前に'),
@@ -782,12 +800,16 @@
     clearTimeout(showToast._t); showToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2200);
   }
   window.enuTools.toast = showToast;
+  var sharing = false;
   async function handleSimpleShare(){
+    if(sharing) return;
+    sharing = true;
     var shareData = { title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name !== 'AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing = false; }
   }
   function initButtons(){
     document.getElementById('enu-btn-print').addEventListener('click', function(){ window.print(); });
@@ -832,7 +854,7 @@
       privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy,
       help: CFG.helpUrl
     };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener noreferrer'; });
   }
 
   /* ===== PWA / アイコン（003準拠：--bg を getComputedStyle で取得） ===== */
