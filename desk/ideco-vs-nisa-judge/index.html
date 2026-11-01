@@ -6,6 +6,11 @@
 <meta name="description" content="10の質問に答えるだけで、iDeCo と NISA のどちらを優先的に活用するのが向いているか、傾向をタイプ判定する参考コンテンツです。">
 <meta name="theme-color" content="#f5faf8">
 <title>iDeCo vs NISA優先度判定</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="iDeCo vs NISA優先度判定">
+<meta property="og:description" content="10の質問に答えるだけで、iDeCo と NISA のどちらを優先的に活用するのが向いているか、傾向をタイプ判定する参考コンテンツです。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/ideco-vs-nisa-judge/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -27,6 +32,8 @@
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
   .hidden{display:none !important}
+  h2[tabindex="-1"]:focus{outline:none}  /* 画面が変わったとき、見出しへ読み上げを移すため（見た目は変えない） */
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   /* ===== ヘッダー（質問・結果の画面） ===== */
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
@@ -54,7 +61,7 @@
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
 
   /* ===== ボタン ===== */
-  .btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
+  .btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
   .btn-fill{background:var(--primary);color:#fff}
   .btn-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .btn-line{background:transparent;color:var(--primary-dark)}
@@ -74,7 +81,7 @@
   .progress-fill{height:100%;background:var(--primary);border-radius:999px;width:0}
   .q-text{font-size:1rem;font-weight:700;margin:16px 0 12px;line-height:1.6}
   .opt-list{display:flex;flex-direction:column;gap:8px}
-  .opt{text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
+  .opt{line-height:1.5;text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
   .opt:hover{border-color:var(--primary)}
   .opt .dot{flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--primary)}
   .opt.selected{border-color:var(--primary);background:var(--primary-soft)}
@@ -102,6 +109,7 @@
   .reason-why{margin-left:26px;margin-top:4px;font-size:.75rem;color:var(--primary-dark);line-height:1.65}
   .reason-why::before{content:'→ '}
   .saved-at{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
 
   /* ===== ざっくりした違い ===== */
   .compare-section{display:flex;flex-direction:column;gap:8px;padding:12px 0}
@@ -122,7 +130,7 @@
 
   /* ===== 本文の最後（PDF・シェア／参照リンク） ===== */
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
@@ -140,12 +148,12 @@
 
   /* ===== フッター（004） ===== */
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
-  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid var(--line);border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -214,6 +222,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="note-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <!-- ヘッダー（質問・結果の画面だけ） -->
   <header class="app-header hidden" id="appHeader">
@@ -265,7 +274,7 @@
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -447,24 +456,28 @@
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておく（保存はユーザーが診断・記録・削除などをしたときだけなので、それまで上書きしない）
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す（毎回上書きしない）
   function loadStore(name){
     let raw=null;
     try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw==null) return null;
     let data=null;
     try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
-    if(data==null){ try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    if(data==null) keepBroken(name, raw);
     return data;
   }
-  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; } }
 
-  function saveResult(answers){ saveStore('result', { answers:answers.slice(), at:new Date().toISOString() }); }
+  function saveResult(answers){ return saveStore('result', { answers:answers.slice(), at:new Date().toISOString() }); }
   function loadResult(){
     const d=loadStore('result');
     if(!d || !Array.isArray(d.answers) || d.answers.length!==QUESTIONS.length) return null;
     if(d.answers.some((oi,i)=> oi==null || !QUESTIONS[i].opts[oi])) return null;
     return d;
   }
+
+  // 画面が変わったら、見出しに読み上げ・キーボードの位置を移す（画面の見た目は変わらない）
+  function focusHeading(h){ if(!h) return; h.setAttribute('tabindex', '-1'); try{ h.focus({ preventScroll:true }); }catch(e){} }
 
   /* ===== 状態 ===== */
   const state={ qIndex:0, answers:new Array(QUESTIONS.length).fill(null) };
@@ -522,19 +535,20 @@
     card.appendChild(el('div',{class:'progress-head'},[ el('span',{text:'質問 '+(idx+1)+' / '+QUESTIONS.length}), pctText ]));
     card.appendChild(el('div',{class:'progress-track'},[fill]));
     updateProgress();
-    card.appendChild(el('h2',{class:'q-text'}, nbs(jaParts(q.q))));
+    const qHead=el('h2',{class:'q-text',attrs:{id:'q-heading'}}, nbs(jaParts(q.q)));
+    card.appendChild(qHead);
 
     const optButtons=[]; let nextBtn;
     function selectAt(oi){
       state.answers[idx]=oi;
-      optButtons.forEach((b,i)=>{ const sel=(i===oi); b.classList.toggle('selected',sel); b.setAttribute('aria-pressed',sel?'true':'false'); });
+      optButtons.forEach((b,i)=>{ const sel=(i===oi); b.classList.toggle('selected',sel); b.setAttribute('aria-checked',sel?'true':'false'); });
       if(nextBtn) nextBtn.disabled=false;
       updateProgress();
     }
-    const list=el('div',{class:'opt-list',attrs:{role:'group','aria-label':plain(q.q)}});
+    const list=el('div',{class:'opt-list',attrs:{role:'radiogroup','aria-labelledby':'q-heading'}});
     q.opts.forEach((opt,oi)=>{
       const sel=state.answers[idx]===oi;
-      const btn=el('button',{class:'opt'+(sel?' selected':''),attrs:{type:'button','aria-pressed':sel?'true':'false'},on:{click:()=>selectAt(oi)}},
+      const btn=el('button',{class:'opt'+(sel?' selected':''),attrs:{type:'button',role:'radio','aria-checked':sel?'true':'false'},on:{click:()=>selectAt(oi)}},
         [ el('span',{class:'dot'}), el('span',{}, nbs(jaParts(opt.t))) ]);
       optButtons.push(btn); list.appendChild(btn);
     });
@@ -548,12 +562,13 @@
     card.appendChild(el('div',{class:'q-nav'},[backBtn,nextBtn]));
     card.appendChild(el('div',{class:'btn-row'},[ el('button',{class:'btn btn-plain',text:'最初に戻る',attrs:{type:'button'},on:{click:renderCover}}) ]));
     main.appendChild(card);
+    focusHeading(qHead);
   }
   function goBack(){ if(state.qIndex>0){ state.qIndex--; renderQuestion(); } }
   function goNext(){
     if(state.answers[state.qIndex]===null) return;
     if(state.qIndex<QUESTIONS.length-1){ state.qIndex++; renderQuestion(); }
-    else{ saveResult(state.answers); renderResult(state.answers.slice(), null); }
+    else{ const saved=saveResult(state.answers); renderResult(state.answers.slice(), null); if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります'); }
   }
 
   /* ===== 結果 ===== */
@@ -598,6 +613,7 @@
       });
       card.appendChild(sec);
     }
+    card.appendChild(el('p',{class:'result-disclaimer',text:'※ この結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。'}));
     if(formatDate(savedAt)) card.appendChild(el('p',{class:'saved-at',text:'前回の診断結果（'+formatDate(savedAt)+'）'}));
     card.appendChild(el('div',{class:'btn-row'},[
       el('button',{class:'btn btn-fill',text:'もう一度診断する',attrs:{type:'button'},on:{click:startQuiz}}),
@@ -626,6 +642,7 @@
     ref.appendChild(el('div',{class:'collapse'},[head,body]));
     main.appendChild(ref);
     toTop();
+    focusHeading(card.querySelector('.result-type'));
   }
 
   /* ===== トースト ===== */
@@ -668,12 +685,16 @@
   }
 
   /* ===== ボタン：PDF / 印刷・シェア（102） ===== */
+  let sharing=false;
   async function handleSimpleShare(){
+    if(sharing) return;
+    sharing=true;
     const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text+'\n'+shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing=false; }
   }
   function initButtons(){
     const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare };
