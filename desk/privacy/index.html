@@ -2,10 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="enu-family" content="desk">
-<!-- 系統：デスク用（運用者向けの印。画面の文には出さない） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>プライバシーポリシー（この端末に保存する本アプリ用） - enu-tools</title>
+<title>プライバシーポリシー（保存先を選べるツール用） - enu-tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -16,7 +14,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;color:var(--text);background:var(--bg);line-height:1.8;padding:max(32px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(40px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));max-width:680px;margin:0 auto}
   h1{font-size:1.3rem;margin-bottom:8px}
-  h2{font-size:1.02rem;font-weight:700;margin-top:30px;margin-bottom:10px;padding-bottom:4px;border-top:1px solid var(--line);padding-top:14px;scroll-margin-top:16px}
+  h2{font-size:1.02rem;font-weight:700;margin-top:30px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid var(--line);scroll-margin-top:16px}
   h3{font-weight:700;padding-left:8px;border-left:3px solid #e0d2c0}
   strong{font-weight:inherit;background:linear-gradient(transparent 62%,#f1e2cc 62%)}
   h3{font-size:.9rem;margin-top:14px;margin-bottom:4px}
@@ -42,52 +40,69 @@
 <body>
 
 <h1>プライバシーポリシー</h1>
-<p class="meta">enu-tools（この端末に保存する本アプリ用）</p>
+<p class="meta">enu-tools（保存先を選べるツール用）</p>
 
-<p>enu（エヌ）が運営しています。お使いになる方の情報を大切に取り扱います。このページでは、この端末に保存する本アプリが、どんな情報を扱い、どこに保存し、何に使っているかをご説明します。</p>
 
-<h2>基本方針</h2>
-<p>入力された内容が、運営者に送られることはありません。入力された内容は、お使いの端末のブラウザの中にだけ保存されます。</p>
+<h2 id="intro">1. はじめに</h2>
+<p>本ページは、enu（エヌ）が個人で運営するWebツール（以下「本ツール」）のうち、<strong>保存先を「この端末」か「Googleドライブ」から選べるツール</strong>における、情報の取り扱いについて説明するものです。</p>
 
-<h2>取り扱う情報</h2>
-<p>氏名・住所・電話番号などの個人情報は、入力をお願いしていません。</p>
-
-<h2>外部サービスの利用</h2>
-<p>次の2つのサービスを使います。どちらも、入力された内容は送りません。</p>
+<h2 id="info">2. 取り扱う情報</h2>
+<p>本ツールは、氏名・住所・電話番号などの<strong>個人情報の入力を求めません</strong>。ご入力いただいた内容の扱いは、次のとおりです。</p>
+<p>保存先は、本ツールの最初の画面で選べます。</p>
+<h3>この端末に保存する場合</h3>
 <ul>
-  <li><strong>Cloudflare</strong>：ページを届けるため。接続のときに、アクセスの記録が残ることがあります。</li>
-  <li><strong>Google Fonts</strong>：文字を表示するため。表示のときに、お使いの端末から Google に接続します。</li>
+  <li>ご入力いただいた内容は、<strong>お使いの端末のブラウザ内にのみ</strong>保存されます。</li>
+  <li>運営者のサーバーなど、外部には送信されません。</li>
+</ul>
+<h3>Googleドライブに保存する場合</h3>
+<ul>
+  <li>ご入力いただいた内容は、<strong>ご自身のGoogleドライブ</strong>に保存されます。</li>
+  <li>本ツールはご自身のGoogleアカウントに直接アクセスし、運営者のサーバーを経由しません。</li>
+  <li>運営者は、そのデータを<strong>閲覧できません</strong>。</li>
+  <li>本ツールがGoogleドライブで扱えるのは、<strong>本ツールが作ったファイルだけ</strong>です。ほかのファイルにはアクセスしません。</li>
 </ul>
 
-<h2>端末に保存される設定</h2>
-<p>表示の設定（案内の最小化など）を、お使いの端末のブラウザに保存します。ブラウザの設定から削除できます。</p>
-
-<h2>データの削除</h2>
-<p>データを消したいときは、ブラウザのサイトデータを削除してください。保存した内容は、すべて消えます。</p>
-
-<h2>取得・提供していない情報</h2>
+<h2 id="services">3. 利用している外部サービス</h2>
 <ul>
-  <li>アクセス解析は入れていません。どのページをご覧になったかを集めることはありません。</li>
-  <li>入力された内容を、第三者に渡したり、売ったりすることはありません。</li>
+  <li>Cloudflare, Inc.（本ツールの配信。接続時にアクセスログが記録されることがあります）</li>
+  <li>Google LLC（文字の表示に使う Google Fonts の配信。表示の際、お使いの端末からGoogleに接続されます）</li>
+  <li>Google LLC（Googleでのログイン、Googleドライブへの保存）</li>
+</ul>
+<p>アクセス解析として Cloudflare Web Analytics を使っています。ページの閲覧数や、使われているブラウザ・端末の種類など、サイトの利用状況を集計するためのもので、個人を特定する目的では使いません。</p>
+
+<h2 id="google-data">4. Googleから受け取る情報について</h2>
+<p>本ツールによるGoogleから受け取った情報の使用および他のアプリへの転送は、<a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API サービスのユーザーデータに関するポリシー</a>（限定使用の要件を含む）に準拠します。</p>
+
+<h2 id="settings">5. 端末に保存される設定</h2>
+<ul>
+  <li>表示の設定（案内の最小化など）を、お使いの端末のブラウザに保存します。</li>
+  <li>ブラウザの設定から削除できます。</li>
 </ul>
 
-<h2>未成年の利用について</h2>
-<p>年齢による制限は設けていません。本アプリは、お名前や連絡先をお聞きする作りにはなっていません。</p>
+<h2 id="delete">6. データの削除</h2>
+<ul>
+  <li><strong>この端末に保存したデータ</strong>：ブラウザのサイトデータを削除すると、保存した内容はすべて消えます。</li>
+  <li><strong>Googleドライブに保存したデータ</strong>：Googleドライブ上のファイルを削除すると消えます。</li>
+  <li>本ツールとの連携は、<a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Googleアカウントのアクセス権の設定</a>から解除できます。解除すると、本ツールから保存先にアクセスできなくなります（データ自体はドライブに残ります）。</li>
+</ul>
 
-<h2>本ポリシーの変更</h2>
-<p>この内容を変えるときは、このページを書きかえ、下の最終更新日を新しくします。大きな変更があるときは、本アプリの中でもお知らせします。</p>
+<h2 id="third">7. 第三者への提供</h2>
+<p>運営者は、ご入力いただいた内容を受け取らないため、第三者に提供することはありません。</p>
 
-<h2>お問い合わせ</h2>
-<p>このページについてのご質問は、<a href="https://enu-tools.pages.dev/desk/help/#contact">ヘルプの「お問い合わせ」</a>（公式LINE）から、どうぞ。</p>
+<h2 id="revise">8. 本ポリシーの変更</h2>
+<p>本ポリシーを変更する場合は、本ページでお知らせします。</p>
+
+<h2 id="contact">9. お問い合わせ</h2>
+<p>本ページに関するお問い合わせは、<a href="https://enu-tools.pages.dev/desk/help/#contact">ヘルプの「お問い合わせ」</a>（公式LINE）からご連絡ください。</p>
 
 <hr>
-<p class="meta">最終更新日：2026年10月14日</p>
-<p class="links">ほかの種類の本アプリのプライバシーポリシー：<a href="https://enu-tools.pages.dev/desk/privacy/google/">Googleドライブに保存する本アプリ用</a> ／ <a href="https://enu-tools.pages.dev/desk/privacy/dual/">保存先を選べる本アプリ用</a></p>
+<p class="meta">最終更新日：2026年10月10日</p>
+<p class="links">ほかの種類のツールのプライバシーポリシー：<a href="https://enu-tools.pages.dev/desk/privacy/">この端末に保存するツール用</a> ／ <a href="https://enu-tools.pages.dev/desk/privacy/google/">Googleドライブに保存するツール用</a></p>
 
 <footer>
   <hr class="footer-divider">
   <div class="footer-credit"><a href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a></div>
-  <nav class="footer-legal" aria-label="このサイトについて"><a href="https://enu-tools.pages.dev/desk/disclaimer/" target="_blank" rel="noopener">免責事項</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/help/" target="_blank" rel="noopener">ヘルプ</a></nav>
+  <nav class="footer-legal" aria-label="このサイトについて"><a href="https://enu-tools.pages.dev/desk/disclaimer/" target="_blank" rel="noopener">免責事項</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/privacy/dual/" target="_blank" rel="noopener">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="https://enu-tools.pages.dev/desk/help/" target="_blank" rel="noopener">ヘルプ</a></nav>
   <div class="footer-copy">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.</div>
 </footer>
 <script>(function(){var y=document.getElementById('copyYear');if(y)y.textContent=new Date().getFullYear();})();</script>
