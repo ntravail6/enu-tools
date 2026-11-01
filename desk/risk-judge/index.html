@@ -5,13 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="9つの質問に答えるだけで、あなたの「リスク許容度（どのくらいの値動きを受け入れられるか）」の傾向をタイプ判定する参考コンテンツです。">
 <title>リスク許容度診断</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="リスク許容度診断">
+<meta property="og:description" content="9つの質問に答えるだけで、あなたの「リスク許容度（どのくらいの値動きを受け入れられるか）」の傾向をタイプ判定する参考コンテンツです。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/risk-judge/">
+<meta name="twitter:card" content="summary">
 
 <!-- iOS / PWA メタ（アイコン・色は 003 準拠で JS が --bg から動的設定） -->
 <meta name="theme-color" content="#faf6f2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="リスク診断">
-<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+<link rel="apple-touch-icon" id="appleTouchIcon">
 
 <!-- フォント（enu 4種セット） -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +43,8 @@
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
   .hidden{display:none !important}
+  h2[tabindex="-1"]:focus{outline:none}  /* 画面が変わったとき、見出しへ読み上げを移すため（見た目は変えない） */
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   /* ヘッダー（質問・結果の画面） */
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
@@ -66,7 +73,7 @@
   .note-text + .note-text{margin-top:8px}
 
   /* ボタン */
-  .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:6px;font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
+  .btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:6px;font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
   .btn-fill{background:var(--primary);color:#fff}
   .btn-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .btn-line{background:transparent;color:var(--primary-dark)}
@@ -85,7 +92,7 @@
   .progress-fill{height:100%;background:var(--primary);border-radius:999px;width:0}
   .q-text{font-size:1rem;font-weight:700;margin:16px 0 12px;line-height:1.6}
   .opt-list{display:flex;flex-direction:column;gap:8px}
-  .opt{text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
+  .opt{line-height:1.5;text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
   .opt:hover{border-color:var(--primary)}
   .opt .dot{flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--primary)}
   .opt.selected{border-color:var(--primary);background:var(--primary-soft)}
@@ -106,11 +113,12 @@
   .result-sub{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:.875rem}
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
   .saved-at{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
   .result-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
 
   /* PDF / 印刷・シェア（102 B4） */
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
@@ -120,12 +128,12 @@
 
   /* フッター（004） */
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
-  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid var(--line);border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -190,6 +198,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="note-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <!-- 最初のページ（表紙型） -->
   <section class="cover" id="cover">
@@ -253,7 +262,7 @@
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -323,13 +332,16 @@
     window.scrollTo(0, 0);
   }
 
+  // 画面が変わったら、見出しに読み上げ・キーボードの位置を移す（画面の見た目は変わらない）
+  function focusHeading(h){ if(!h) return; h.setAttribute('tabindex', '-1'); try{ h.focus({ preventScroll:true }); }catch(e){} }
+
   /* ===== 設問データ ===== */
   var QUESTIONS = [
     {
       q:'⏳ 投資に回すお金を使う予定の時期は？',
       opts:[
-        { t:'すぐ〜数年以内に使う予定がある', s:0 },
-        { t:'5年くらい先に使うかも', s:1 },
+        { t:'すぐ〜4年以内に使う予定がある', s:0 },
+        { t:'5〜9年くらい先に使うかも', s:1 },
         { t:'10年以上は先になりそう', s:2 },
         { t:'当分使う予定はなく、長く育てたい', s:3 }
       ]
@@ -383,8 +395,8 @@
       q:'📊 いま投資に回せるのは、貯金・資産のどれくらい？',
       opts:[
         { t:'ごく一部（ほとんどは現金で持っておきたい）', s:0 },
-        { t:'1〜2割くらい', s:1 },
-        { t:'3〜5割くらい', s:2 },
+        { t:'1〜3割くらい', s:1 },
+        { t:'3割より多く半分未満', s:2 },
         { t:'半分以上／積極的に回したい', s:3 }
       ]
     },
@@ -412,28 +424,28 @@
   var RESULT_TYPES = [
     {
       min:0, max:5, emoji:'🪨', type:'安定重視型', risk:12,
-      comment:'値動きで気持ちが揺れやすく、まずは「減らさないこと」を大切にしたいタイプ。生活防衛資金をしっかり確保しつつ、リスクの低い運用や少額からの積立で、無理なく経験を積むのが心地よさそうです。',
-      howto:'安全性の高い運用を中心に、まずは少額・長期・分散で「慣れる」ことから。生活防衛資金の確保を最優先に。'
+      comment:'今の状況では、まず「減らさないこと」を大切にする考え方が合いそうなタイプ。生活防衛資金をしっかり確保しつつ、リスクの低い運用や少額からの積立で、無理なく経験を積む進め方もあります。',
+      howto:'安全性の高い運用を中心に、まずは少額・長期・分散で「慣れる」ことから始める考え方があります。生活防衛資金は、投資より先に整えておくと安心です。'
     },
     {
       min:6, max:10, emoji:'🌱', type:'やや安定型', risk:32,
-      comment:'できれば安定を保ちながら、少しずつ増やしていきたいタイプ。値下がりへの不安はありつつも、長期目線でコツコツ続けられそう。守りを土台に、ほんの少しだけ攻めを混ぜるバランスが合いそうです。',
-      howto:'安定資産を多めに、リスク資産は控えめに。積立で時間を味方につけるのがおすすめ。'
+      comment:'今の状況では、安定を保ちながら少しずつ増やしていく考え方が合いそうなタイプ。長期目線でコツコツ続ける進め方があります。守りを土台に、ほんの少しだけ攻めを混ぜるバランスも、ひとつの方法です。',
+      howto:'安定資産を多めに、リスク資産は控えめにする考え方があります。積立で時間を味方につける方法もあります。'
     },
     {
       min:11, max:16, emoji:'⚖️', type:'バランス型', risk:52,
-      comment:'安全も成長も、どちらもバランスよく取り入れたいタイプ。ある程度の値動きは受け止めつつ、長期の資産形成をねらえそう。守りと攻めの配分を自分なりに決めておくと、迷いにくくなります。',
+      comment:'今の状況では、安全も成長も、どちらもバランスよく取り入れる考え方が合いそうなタイプ。ある程度の値動きを受け止めつつ、長期の資産形成をねらう進め方があります。守りと攻めの配分を自分なりに決めておくと、迷いにくくなります。',
       howto:'安定資産とリスク資産をバランスよく。配分のルールを決めて、定期的に見直すと続けやすい。'
     },
     {
       min:17, max:21, emoji:'🌶️', type:'やや積極型', risk:72,
-      comment:'多少の値動きは投資の一部と捉え、リターンを積極的にねらいたいタイプ。長期目線で続けられる土台がありそう。一点に集中しすぎないよう投資先を分けて、「攻めながら守る」意識があると安心です。',
+      comment:'今の状況では、多少の値動きは投資の一部と捉え、リターンを積極的にねらう考え方も合いそうなタイプ。一点に集中しすぎないよう投資先を分けて、「攻めながら守る」意識があると安心です。',
       howto:'リスク資産を多めにしつつ、分散は忘れずに。下落局面でも計画を崩さないことが大切。'
     },
     {
       min:22, max:27, emoji:'🚀', type:'積極型', risk:90,
-      comment:'値動きを前向きに受け止め、大きな成長をねらいたいタイプ。リスクへの耐性も高めです。その分、過度な集中や生活資金との混同には注意。攻めの姿勢を活かしつつ、土台となる守りも忘れずに。',
-      howto:'成長性の高い運用を主役に。ただし生活防衛資金は別で確保し、分散とリスク管理は徹底を。'
+      comment:'今の状況では、値動きを受け止めながら、大きな成長をねらう考え方も合いそうなタイプ。その分、過度な集中や生活資金との混同には注意が要ります。攻めの姿勢を活かしつつ、土台となる守りも忘れずに。',
+      howto:'成長性の高い運用を中心にする考え方があります。ただし生活防衛資金は別で確保し、分散とリスク管理も大切です。'
     }
   ];
 
@@ -456,20 +468,22 @@
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておく（保存はユーザーが診断・記録・削除などをしたときだけなので、それまで上書きしない）
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name) + '_broken') == null) localStorage.setItem(_key(name) + '_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す（毎回上書きしない）
   function loadStore(name){
     var raw = null;
     try{ raw = localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw == null) return null;
     var data = null;
     try{ data = migrate(JSON.parse(raw)); }catch(e){ data = null; }
-    if(data == null){ try{ localStorage.setItem(_key(name) + '_broken', raw); }catch(e){} }
+    if(data == null) keepBroken(name, raw);
     return data;
   }
-  function saveStore(name, data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){ /* プライベートモード等。動作は継続 */ } }
-  function saveResult(score, typeObj){ saveStore('result', { score:score, type:typeObj.type, at:new Date().toISOString() }); }
+  function saveStore(name, data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; /* プライベートモード等。動作は継続 */ } }
+  function saveResult(score, typeObj){ return saveStore('result', { score:score, type:typeObj.type, at:new Date().toISOString() }); }
   function loadResult(){
     var d = loadStore('result');
-    if(!d || !Number.isInteger(d.score) || d.score < 0 || d.score > MAX_SCORE) return null; // 範囲外（0〜27以外）は読まない
+    if(!d) return null;
+    if(!Number.isInteger(d.score) || d.score < 0 || d.score > MAX_SCORE){ try{ keepBroken('result', localStorage.getItem(_key('result'))); }catch(e){} return null; } // 範囲外（0〜27以外）は読まず、元を取っておく
     return d;
   }
 
@@ -511,7 +525,9 @@
     card.appendChild(el('div', { class:'progress-track' }, [ fill ]));
     updateProgress();
 
-    card.appendChild(nbFill(el('h2', { class:'q-text' }), q.q));
+    var qHead = nbFill(el('h2', { class:'q-text' }), q.q);
+    qHead.id = 'q-heading';
+    card.appendChild(qHead);
 
     var optButtons = [];
     var nextBtn;
@@ -520,18 +536,18 @@
       optButtons.forEach(function(b, i){
         var sel = (i === oi);
         b.classList.toggle('selected', sel);
-        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+        b.setAttribute('aria-checked', sel ? 'true' : 'false');
       });
       if(nextBtn) nextBtn.disabled = false;
       updateProgress();
     }
 
-    var list = el('div', { class:'opt-list', attrs:{ role:'group', 'aria-label':q.q } });
+    var list = el('div', { class:'opt-list', attrs:{ role:'radiogroup', 'aria-labelledby':'q-heading' } });
     q.opts.forEach(function(opt, oi){
       var sel = state.answers[idx] === oi;
       var btn = el('button', {
         class:'opt' + (sel ? ' selected' : ''),
-        attrs:{ type:'button', 'aria-pressed': sel ? 'true' : 'false' },
+        attrs:{ type:'button', role:'radio', 'aria-checked': sel ? 'true' : 'false' },
         on:{ click:function(){ selectAt(oi); } }
       }, [ el('span', { class:'dot' }), nbFill(el('span'), opt.t) ]);
       optButtons.push(btn);
@@ -551,6 +567,7 @@
     ]));
 
     main.appendChild(card);
+    focusHeading(qHead);
   }
 
   function goBack(){ if(state.qIndex > 0){ state.qIndex--; renderQuestion(); } }
@@ -568,8 +585,9 @@
       if(oi != null) score += QUESTIONS[i].opts[oi].s;
     }
     var typeObj = typeFromScore(score);
-    saveResult(score, typeObj);
+    var saved = saveResult(score, typeObj);
     renderResult(typeObj, false);
+    if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります');
   }
   function showSavedResult(prev){ renderResult(typeFromScore(prev.score), true, prev.at); }
 
@@ -582,6 +600,7 @@
       el('div', { class:'result-label', text:'あなたのタイプは' }),
       typeTitle('result-type', typeObj.type)
     ]));
+    var resultHead = card.querySelector('.result-type');
 
     var fill = el('div', { class:'meter-fill' });
     fill.style.width = typeObj.risk + '%';
@@ -595,6 +614,7 @@
       nbFill(el('h3', { class:'sub-title' }), '✨ リスクとの付き合い方のイメージ（参考）'),
       el('p', { text:typeObj.howto })
     ]));
+    card.appendChild(el('p', { class:'result-disclaimer', text:'※ この結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。' }));
     if(fromSaved && formatDate(savedAt)){
       card.appendChild(el('p', { class:'saved-at', text:'前回の診断結果（' + formatDate(savedAt) + '）' }));
     }
@@ -608,6 +628,7 @@
       nbFill(el('h2', { class:'section-title' }), '📚 リスク許容度とは（解説）'),
       el('p', { class:'note-text', text:'リスク許容度とは「どのくらいの値動き・損失までなら受け入れられるか」の度合いのこと。年齢・投資できる期間・収入の安定性・貯蓄（生活防衛資金）・経験・家族構成・性格などによって、人それぞれ変わります。' })
     ]));
+    focusHeading(resultHead);
 
   }
 
@@ -623,12 +644,16 @@
     clearTimeout(showToast._t); showToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2200);
   }
   window.enuTools.toast = showToast;
+  var sharing = false;
   async function handleSimpleShare(){
+    if(sharing) return;
+    sharing = true;
     var shareData = { title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name !== 'AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing = false; }
   }
   function initButtons(){
     document.getElementById('enu-btn-print').addEventListener('click', function(){ window.print(); });
@@ -673,7 +698,7 @@
       privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy,
       help: CFG.helpUrl
     };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href = urls[a.dataset.legal] || '#'; a.target = '_blank'; a.rel = 'noopener noreferrer'; });
   }
 
   /* ===== PWA / アイコン（003準拠：--bg を getComputedStyle で取得） ===== */
