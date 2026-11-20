@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="お金の順番と言葉を、診断・ロードマップ・用語辞典でやさしく整理。一般的な目安であり、投資・税金の助言ではありません。">
 <title>お金の基礎ガイド</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="お金の基礎ガイド">
+<meta property="og:description" content="お金の順番と言葉を、診断・ロードマップ・用語辞典でやさしく整理。一般的な目安であり、投資・税金の助言ではありません。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/money-basic-guide/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -15,6 +21,7 @@
   --bg:#f5faf8; --bg-soft:#fafdfb; --line:#dceae5;
   /* つまずきポイントの色（値は前と同じ。直書きをやめて変数に） */
   --warn-bg:#fef6df; --warn-text:#8a5a14;
+  --ink-link:#47796b;  /* 文字・リンク用の濃い緑（#6FA092 は白地で 2.95:1。主ボタンの白文字の色は変えない） */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -25,11 +32,12 @@ body{
 .page-wrapper{max-width:960px;margin:0 auto;width:100%}
 .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
 .hidden{display:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
 /* ヘッダー */
 .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
-.app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--primary-dark);line-height:1.3}
+.app-title{font-size:1.5rem;font-weight:700;letter-spacing:.02em;color:var(--ink-link);line-height:1.3}
 .app-sub{font-size:.75rem;color:var(--sub);margin-top:2px}
 
 /* 選んでいる場所（004） */
@@ -56,9 +64,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 
 /* タブ */
 .tab-bar{position:sticky;top:0;z-index:200;display:flex;gap:6px;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:16px}
-.tab-btn{flex:1 1 auto;min-width:0;font-family:inherit;cursor:pointer;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:.875rem;font-weight:600;transition:background .15s,color .15s,border-color .15s}
+.tab-btn{flex:1 1 auto;min-width:0;min-height:44px;font-family:inherit;cursor:pointer;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:.875rem;font-weight:600;transition:background .15s,color .15s,border-color .15s}
 .tab-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
-.tab-btn:not(.active):hover{border-color:var(--primary);color:var(--primary-dark)}
+.tab-btn:not(.active):hover{border-color:var(--primary);color:var(--ink-link)}
 
 .intro-text{font-size:.875rem;color:var(--sub);margin-bottom:16px;text-wrap:balance}
 
@@ -66,17 +74,17 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .diag-q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
 .diag-q-text{font-size:.875rem;font-weight:600;color:var(--text);margin-bottom:12px}
 .diag-opts{display:flex;gap:8px}
-.diag-opt{flex:1;font-family:inherit;cursor:pointer;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);font-size:.875rem;font-weight:600;transition:background .15s,color .15s,border-color .15s}
+.diag-opt{flex:1;min-height:44px;font-family:inherit;cursor:pointer;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);font-size:.875rem;font-weight:600;transition:background .15s,color .15s,border-color .15s}
 .diag-opt.sel-yes{background:var(--primary);border-color:var(--primary);color:#fff}
 .diag-opt.sel-no{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-primary{display:block;width:100%;font-family:inherit;cursor:pointer;padding:12px 24px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-size:.875rem;font-weight:600;transition:background .15s}
 .btn-primary:hover{background:var(--primary-dark)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.btn-sub{display:inline-block;font-family:inherit;cursor:pointer;padding:9px 18px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--primary-dark);font-size:.875rem;font-weight:600;transition:background .15s}
+.btn-sub{display:inline-block;min-height:44px;font-family:inherit;cursor:pointer;padding:9px 18px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--ink-link);font-size:.875rem;font-weight:600;transition:background .15s}
 .btn-sub:hover{background:var(--primary-soft)}
 .diag-result{background:var(--card);border:1px solid var(--primary);border-radius:14px;padding:20px;margin-top:16px}
-.diag-result .res-step{font-size:.75rem;font-weight:700;color:var(--primary-dark);letter-spacing:.08em}
-.diag-result .res-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:4px 0 8px}
+.diag-result .res-step{font-size:.75rem;font-weight:700;color:var(--ink-link);letter-spacing:.08em}
+.diag-result .res-title{font-size:1rem;font-weight:700;color:var(--ink-link);margin:4px 0 8px}
 .diag-result .res-msg{font-size:.875rem;color:var(--text);line-height:1.85;margin-bottom:16px}
 
 /* ロードマップ */
@@ -90,16 +98,18 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .step-check input,.cl-item input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
 .step-check label{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;cursor:pointer;border:2px solid var(--line);background:var(--card);font-size:.875rem;color:transparent;transition:background .15s,border-color .15s,color .15s}
 .step.done .step-check label{background:var(--primary);border-color:var(--primary);color:#fff}
+.step-check label,.cl-item label.cl-box{position:relative}
+.step-check label::before,.cl-item label.cl-box::before{content:"";position:absolute;inset:-11px}  /* 押せる範囲を44pxに（見た目の四角は変えない） */
 .step-check input:focus-visible + label,.cl-item input:focus-visible + label{outline:2px solid var(--primary);outline-offset:2px}
 .step-body{flex:1;min-width:0}
 .step-num{font-size:.75rem;font-weight:700;color:var(--sub);letter-spacing:.08em}
-.step-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin:2px 0 8px}
+.step-title{font-size:1rem;font-weight:700;color:var(--ink-link);margin:2px 0 8px}
 .step-desc{font-size:.875rem;color:var(--text);line-height:1.8;margin-bottom:12px}
 .step-action{background:var(--primary-soft);border-radius:10px;padding:10px 12px;font-size:.875rem;color:var(--text);line-height:1.7}
-.step-action b{color:var(--primary-dark)}
+.step-action b{color:var(--ink-link)}
 .step-pitfall{font-size:.875rem;color:var(--warn-text);background:var(--warn-bg);border-radius:10px;padding:10px 12px;margin-top:8px;line-height:1.7}
 .tool{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
-.collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left;font-size:.875rem;font-weight:700;color:var(--primary-dark)}
+.collapse-head{display:block;width:100%;min-height:44px;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left;font-size:.875rem;font-weight:700;color:var(--ink-link)}
 .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
 .collapse-arrow::before{content:"▸"}
 .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
@@ -129,55 +139,58 @@ input[aria-invalid="true"]{border-color:#c0666a}
 .calc-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .calc-out-item{border-top:1px solid var(--line);padding-top:10px}
 .calc-out-item .lbl{font-size:.75rem;color:var(--sub)}
-.calc-out-item .val{font-size:1.375rem;font-weight:700;color:var(--primary-dark);margin-top:2px}
+.calc-out-item .val{font-size:1.375rem;font-weight:700;color:var(--ink-link);margin-top:2px}
+
+.result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:16px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
+.print-only{display:none}
 
 /* 用語辞典 */
 .glossary-tools{position:sticky;top:59px;/* 実際はJSでタブの高さを入れる */z-index:100;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:16px}
 .search-box{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:1rem;background:var(--bg-soft);color:var(--text)}
 .cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chip{font-family:inherit;cursor:pointer;font-size:.75rem;font-weight:600;padding:5px 13px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--sub);transition:background .15s,color .15s,border-color .15s}
+.chip{font-family:inherit;cursor:pointer;font-size:.75rem;font-weight:600;padding:5px 13px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--sub);transition:background .15s,color .15s,border-color .15s}
 .chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
-.chip:not(.active):hover{border-color:var(--primary);color:var(--primary-dark)}
+.chip:not(.active):hover{border-color:var(--primary);color:var(--ink-link)}
 .term{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
 .term-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-.term-name{font-size:1rem;font-weight:700;color:var(--primary-dark)}
-.term-cat{font-size:.6875rem;font-weight:600;padding:1px 9px;border-radius:10px;background:var(--primary-soft);color:var(--primary-dark)}
+.term-name{font-size:1rem;font-weight:700;color:var(--ink-link)}
+.term-cat{font-size:.6875rem;font-weight:600;padding:1px 9px;border-radius:10px;background:var(--primary-soft);color:var(--ink-link)}
 .term-desc{font-size:.875rem;color:var(--text);line-height:1.8}
 .term-note{font-size:.75rem;color:var(--sub);line-height:1.7;margin-top:6px}
 .term-tip{font-size:.875rem;color:var(--text);line-height:1.75;background:var(--primary-soft);border-radius:10px;padding:10px 12px;margin-top:8px}
-.term-tip b{color:var(--primary-dark)}
+.term-tip b{color:var(--ink-link)}
 .no-result{color:var(--sub);font-size:.875rem;padding:24px 0}
 
 /* === enu アクションボタン（102）=== */
 .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-.enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+.enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
 .enu-tb-fill{background:var(--primary);color:#fff}
 .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
-.enu-tb-line{background:transparent;color:var(--primary-dark)}
+.enu-tb-line{background:transparent;color:var(--ink-link)}
 .enu-tb-line:hover{background:var(--primary-soft)}
 .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
 .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* 📎 参照リンク（004） */
 .enu-refs{margin:24px 0 0}
-.enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+.enu-refs summary{font-size:.875rem;font-weight:700;color:var(--ink-link);cursor:pointer;list-style:none}
 .enu-refs summary::-webkit-details-marker{display:none}
 .enu-refs summary::after{content:" ▸";color:var(--sub);font-weight:400}
 .enu-refs[open] summary::after{content:" ▾"}
 .enu-refs-n{font-weight:400;color:var(--sub);font-size:.875rem}
 .enu-refs ul{margin:8px 0 0;padding-left:1.2em;font-size:.875rem}
 .enu-refs li{margin-bottom:6px}
-.enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+.enu-refs a{color:var(--ink-link);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
 .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
 /* フッター（004） */
 .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
 .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
 .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
-.brand-link:hover{color:var(--primary-dark)}
+.brand-link:hover{color:var(--ink-link)}
 .footer-legal{margin:8px 0;font-size:.6875rem;color:var(--sub);display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
 .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
-.footer-legal a:hover{color:var(--primary-dark)}
+.footer-legal a:hover{color:var(--ink-link)}
 .footer-legal span{margin:0 4px;opacity:.6}
 .copyright{font-size:.6875rem;color:var(--sub)}
 .footer-ver{margin-left:8px;white-space:nowrap}
@@ -189,6 +202,9 @@ input[aria-invalid="true"]{border-color:#c0666a}
   .glossary-tools{top:55px}
 }
 @media print{
+  @page{margin:12mm}
+  .print-only{display:block}
+  .collapse-body[hidden]{display:block}
   body{background:#fff;padding:0}
   .enu-notice-area,.tab-bar,.glossary-tools,.page-actions,.enu-refs,.footer-legal,.enu-toast,.btn-primary,.btn-sub{display:none !important}
   .step,.term,.diag-q,.diag-result{break-inside:avoid}
@@ -207,16 +223,16 @@ input[aria-invalid="true"]{border-color:#c0666a}
 .enu-a2hs-grip{width:36px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
 .enu-a2hs-row{display:flex;gap:14px;align-items:flex-start}
 .enu-a2hs-ico{font-size:24px;line-height:1.2;flex:none}
-.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--primary-dark);line-height:1.5}
+.enu-a2hs-ttl{font-size:1rem;font-weight:700;color:var(--ink-link);line-height:1.5}
 .enu-a2hs-sub{font-size:.75rem;color:var(--sub);margin:4px 0 0;line-height:1.7}
 .enu-a2hs-steps{list-style:none;counter-reset:a;margin:12px 0 0;padding:0}
 .enu-a2hs-steps[hidden]{display:none}
 .enu-a2hs-steps li{counter-increment:a;position:relative;padding-left:24px;font-size:.75rem;line-height:1.8;color:var(--text)}
-.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.enu-a2hs-steps li::before{content:counter(a);position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary-soft);color:var(--ink-link);font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 .enu-a2hs-btns{display:flex;gap:10px;margin-top:16px}
 .enu-a2hs-btns button{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;padding:0 8px;font-family:inherit;font-size:.875rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .enu-a2hs-later{background:var(--card);border:1px solid var(--line);color:var(--sub)}
-.enu-a2hs-later:hover{color:var(--primary-dark);border-color:var(--primary)}
+.enu-a2hs-later:hover{color:var(--ink-link);border-color:var(--primary)}
 .enu-a2hs-go{flex-grow:1.5 !important;background:var(--primary);border:1px solid var(--primary);color:#fff}
 .enu-a2hs-go:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
 .enu-a2hs .nb{display:inline-block}
@@ -225,13 +241,14 @@ input[aria-invalid="true"]{border-color:#c0666a}
 </style>
 </head>
 <body>
+<noscript><div class="diag-q"><p class="intro-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 <div class="page-wrapper">
 
   <header class="app-header">
     <div class="app-icon">📗</div>
     <div>
       <h1 class="app-title"><span class="nb">お金の</span><span class="nb">基礎ガイド</span></h1>
-      <p class="app-sub"><span class="nb">お金の「順番」と「言葉」が、</span><span class="nb">これ1つでわかる</span></p>
+      <p class="app-sub"><span class="nb">お金を「貯める・増やす」</span><span class="nb">順番と言葉が、</span><span class="nb">これ1つでわかる</span></p>
     </div>
   </header>
 
@@ -247,7 +264,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
     <div class="enu-notice-wrap" data-notice-id="disclaimer">
       <div class="enu-notice enu-notice-disclaim">
         <span class="enu-icon">📝</span>
-        <span class="enu-body">結果は目安です（<strong>2026年10月時点</strong>）。</span>
+        <span class="enu-body">結果は一般的な目安で、投資・税金の助言ではありません。制度は変わります（<strong>2026年10月時点</strong>）。判断は公式情報や専門家（ファイナンシャルプランナー・税理士など）にもご確認ください。</span>
         <button type="button" class="enu-close-btn" aria-label="最小化">×</button>
       </div>
       <button type="button" class="enu-notice-mini enu-notice-mini-disclaim" aria-label="免責を表示" title="免責を表示">📝</button>
@@ -255,22 +272,22 @@ input[aria-invalid="true"]{border-color:#c0666a}
   </div>
 
   <!-- タブ -->
-  <nav class="tab-bar">
-    <button type="button" class="tab-btn active" data-tab="diag"><span class="nb">🩺 診断</span></button>
-    <button type="button" class="tab-btn" data-tab="roadmap"><span class="nb">🗺️ ロードマップ</span></button>
-    <button type="button" class="tab-btn" data-tab="glossary"><span class="nb">📖 用語辞典</span></button>
+  <nav class="tab-bar" role="tablist" aria-label="ガイドの切り替え">
+    <button type="button" class="tab-btn active" data-tab="diag" role="tab" id="tabbtn-diag" aria-controls="tab-diag" aria-selected="true"><span class="nb">🩺 診断</span></button>
+    <button type="button" class="tab-btn" data-tab="roadmap" role="tab" id="tabbtn-roadmap" aria-controls="tab-roadmap" aria-selected="false"><span class="nb">🗺️ ロードマップ</span></button>
+    <button type="button" class="tab-btn" data-tab="glossary" role="tab" id="tabbtn-glossary" aria-controls="tab-glossary" aria-selected="false"><span class="nb">📖 用語辞典</span></button>
   </nav>
 
   <!-- 診断 -->
-  <section id="tab-diag">
+  <section id="tab-diag" role="tabpanel" aria-labelledby="tabbtn-diag">
     <p class="intro-text"><span class="nb">4問の「はい / いいえ」で、</span><span class="nb">お金の現在地が</span><span class="nb">わかります 🩺</span></p>
     <div id="diagQuestions"></div>
     <button type="button" class="btn-primary" id="diagBtn" disabled>診断する</button>
-    <div id="diagResult"></div>
+    <div id="diagResult" aria-live="polite"></div>
   </section>
 
   <!-- ロードマップ -->
-  <section id="tab-roadmap" class="hidden">
+  <section id="tab-roadmap" class="hidden" role="tabpanel" aria-labelledby="tabbtn-roadmap">
     <p class="intro-text"><span class="nb">お金を整える</span><span class="nb">4ステップ。</span><br><span class="nb">できたらチェックを</span><span class="nb">入れましょう。</span></p>
     <div class="progress-bar-wrap">
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -280,7 +297,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   </section>
 
   <!-- 用語辞典 -->
-  <section id="tab-glossary" class="hidden">
+  <section id="tab-glossary" class="hidden" role="tabpanel" aria-labelledby="tabbtn-glossary">
     <div class="glossary-tools">
       <input type="text" class="search-box" id="searchBox" placeholder="🔍 用語を検索（例：複利、NISA）" aria-label="用語を検索">
       <div class="cat-chips" id="catChips"></div>
@@ -288,6 +305,9 @@ input[aria-invalid="true"]{border-color:#c0666a}
     <div id="termList"></div>
     <div class="no-result hidden" id="noResult">該当する用語が見つかりませんでした 🙏</div>
   </section>
+
+  <p class="result-disclaimer">※ このガイドは一般的な目安で、投資・税金の助言ではありません。投資には値下がりすることもあります。制度は変わるため、判断は公式情報や専門家（ファイナンシャルプランナー・税理士など）にもご確認ください（<strong>2026年10月時点</strong>）。</p>
+  <p class="result-disclaimer print-only">出典：金融庁「NISAを知る」、財務省「NISAのつみたて投資枠の拡充（令和8年度改正）」、iDeCo公式サイト・iDeCoの制度改正について（国民年金基金連合会）、国税庁 No.1463、金融庁「金融経済教育について」、J-FLEC公式サイト。</p>
 
   <div class="page-actions enu-toolbar">
     <button type="button" class="enu-tb-btn enu-tb-fill" id="enu-btn-print" aria-label="PDFに保存または印刷">📄 PDF / 印刷</button>
@@ -297,19 +317,19 @@ input[aria-invalid="true"]{border-color:#c0666a}
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（7件）</span></summary>
     <ul>
-      <li><a href="https://www.fsa.go.jp/policy/nisa2/know/" target="_blank" rel="noopener">NISAを知る</a><span class="enu-refs-src">金融庁</span></li>
-      <li><a href="https://www.mof.go.jp/tax_policy/summary/income/nisa_2.pdf" target="_blank" rel="noopener">NISAのつみたて投資枠の拡充<span class="nb">（令和8年度改正）</span></a><span class="enu-refs-src">財務省</span></li>
-      <li><a href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener">iDeCo公式サイト</a><span class="enu-refs-src">国民年金基金連合会</span></li>
-      <li><a href="https://www.ideco-koushiki.jp/library/2022kaisei/" target="_blank" rel="noopener">iDeCoの制度改正について</a><span class="enu-refs-src">国民年金基金連合会</span></li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener">No.1463 株式等を譲渡したときの課税<span class="nb">（申告分離課税）</span></a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.fsa.go.jp/teach/kyouiku.html" target="_blank" rel="noopener">金融経済教育について</a><span class="enu-refs-src">金融庁</span></li>
-      <li><a href="https://www.j-flec.go.jp/" target="_blank" rel="noopener">J-FLEC公式サイト</a><span class="enu-refs-src">金融経済教育推進機構</span></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/know/" target="_blank" rel="noopener noreferrer">NISAを知る</a><span class="enu-refs-src">金融庁</span></li>
+      <li><a href="https://www.mof.go.jp/tax_policy/summary/income/nisa_2.pdf" target="_blank" rel="noopener noreferrer">NISAのつみたて投資枠の拡充<span class="nb">（令和8年度改正）</span></a><span class="enu-refs-src">財務省</span></li>
+      <li><a href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener noreferrer">iDeCo公式サイト</a><span class="enu-refs-src">国民年金基金連合会</span></li>
+      <li><a href="https://www.ideco-koushiki.jp/library/2022kaisei/" target="_blank" rel="noopener noreferrer">iDeCoの制度改正について</a><span class="enu-refs-src">国民年金基金連合会</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm" target="_blank" rel="noopener noreferrer">No.1463 株式等を譲渡したときの課税<span class="nb">（申告分離課税）</span></a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.fsa.go.jp/teach/kyouiku.html" target="_blank" rel="noopener noreferrer">金融経済教育について</a><span class="enu-refs-src">金融庁</span></li>
+      <li><a href="https://www.j-flec.go.jp/" target="_blank" rel="noopener noreferrer">J-FLEC公式サイト</a><span class="enu-refs-src">金融経済教育推進機構</span></li>
     </ul>
   </details>
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -335,6 +355,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   const DATA_VERSION = 1;
   function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
     if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    if(saved.v>DATA_VERSION) return null; // 新しい版のデータは、読まずに _broken に残す（古いアプリで上書きして壊さない）
     return saved.data;
   }
   // 読めないときは、元のデータを …_broken に取っておく（ユーザーが何か変えるまで上書きしない）
@@ -346,16 +367,18 @@ input[aria-invalid="true"]{border-color:#c0666a}
     if(d==null){ try{ if(!localStorage.getItem(_key(name)+'_broken')) localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
     return d;
   }
-  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; } }
+  let _saveFailShown=false;
+  function noteSave(ok){ if(!ok && !_saveFailShown){ _saveFailShown=true; showToast('⚠️ この端末には保存できません。入力は残らないので、ページを閉じる前にご注意ください', 6000); } }
   function loadIndexList(name){ const d=loadStore(name); return Array.isArray(d)?d.filter(n=>Number.isInteger(n)):[]; }
   // 番号の一覧を保存する。番号でない（知らない）項目は消さずに残す
-  function saveIndexList(name,list){ const d=loadStore(name); const extra=Array.isArray(d)?d.filter(n=>!Number.isInteger(n)):[]; saveStore(name, extra.concat(list)); }
+  function saveIndexList(name,list){ const d=loadStore(name); const extra=Array.isArray(d)?d.filter(n=>!Number.isInteger(n)):[]; return saveStore(name, extra.concat(list)); }
 
   // === Toast ===
-  function showToast(msg){
+  function showToast(msg, ms){
     const t=document.getElementById('enu-toast'); if(!t) return;
     t.textContent=msg; t.classList.add('show');
-    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'), 2200);
+    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'), ms||2200);
   }
   window.enuTools.toast = showToast;
 
@@ -366,7 +389,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   }
   function initNotices(){
     const K=_key('notice_minimized');
-    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const get=()=>{ try{ const v=JSON.parse(localStorage.getItem(K)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } };
     const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list=get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
@@ -387,7 +410,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   function initVersion(){ const el=document.getElementById('appVersion'); if(el && CFG.appVersion) el.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
     const urls = { disclaimer: CFG.disclaimerUrl || ENU_LEGAL_URLS.disclaimer, privacy: CFG.privacyUrl || ENU_LEGAL_URLS.privacy, help: CFG.helpUrl };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
   }
 
   // === Simple share (102) ===
@@ -412,7 +435,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
     { num:'STEP 2', icon:'💸', title:'固定費を見直す',
       desc:'通信費・保険・サブスクなど毎月かかる固定費は、一度見直せば節約効果がずっと続きます。',
       action:'スマホの料金プランを確認。使っていないサブスクを1つ解約するだけでも効果があります。',
-      pitfall:'食費などの変動費から削ろうとして続かないパターン。先に固定費を削るのが鉄則です。',
+      pitfall:'食費などの変動費から削ろうとして続かないパターン。先に固定費から見直すほうが、続きやすいといわれます。',
       tool:'checklist' },
     { num:'STEP 3', icon:'🛟', title:'生活防衛資金を貯める',
       desc:'病気や失業など「もしも」に備えるお金で、生活費の3〜6か月分が目安です（収入が不安定な人は多めに）。',
@@ -420,8 +443,8 @@ input[aria-invalid="true"]{border-color:#c0666a}
       pitfall:'「投資の方が増えるから」と防衛資金より投資を優先しがち。まずは守りを固めましょう。',
       tool:'emergency' },
     { num:'STEP 4', icon:'🌱', title:'投資を始める',
-      desc:'防衛資金が貯まったら、余裕資金でNISA・iDeCoを使って長期・積立・分散で。',
-      action:'まずはNISAの口座開設から。少額（月1,000円〜）でも始めてみるのが大切です。',
+      desc:'防衛資金が貯まったら、余裕資金でNISA・iDeCoを使って長期・積立・分散で。投資は値下がりすることもあります。',
+      action:'NISAは、制度の内容を公式サイトで確かめてから検討する選択肢のひとつです。少額（たとえば月1,000円）から始められる金融機関もあります。',
       pitfall:'一気に大金を入れたくなりますが、まずは少額で「値動きに慣れる」ことから始めましょう。' }
   ];
 
@@ -437,11 +460,11 @@ input[aria-invalid="true"]{border-color:#c0666a}
   // ===== 用語辞典（💬enuのひとこと付き） =====
   const TERMS = [
     { name:'手取り／額面', cat:'家計', desc:'「額面」は税金や社会保険料が引かれる前の総支給額。「手取り」は実際に口座へ振り込まれる金額です。',
-      tip:'ボーナスや昇給は「額面」で語られがち。手取りは思ったより増えないので、額面の約8割を目安に考えると現実的です。' },
+      tip:'ボーナスや昇給は「額面」で語られがち。手取りは思ったより増えないので、おおよそ7〜8割になることが多いと考えておくと現実的です。実際は給与明細で確認しましょう。' },
     { name:'固定費／変動費', cat:'家計', desc:'「固定費」は家賃・通信費・保険など毎月ほぼ一定の支出。「変動費」は食費・娯楽費など月によって変わる支出です。',
-      tip:'経理目線だと、まず狙うべきは「通信費」と「保険」。この2つだけで月1万円浮く人も多いです。' },
+      tip:'経理目線だと、まず見直しやすいのは「通信費」と「保険」。減らせる額は人によって差があります。' },
     { name:'生活防衛資金', cat:'家計', desc:'病気・失業・急な出費など「もしも」に備えるお金。投資に回す前に、まずここを確保すると安心です。',
-      tip:'会社員は生活費の3か月分、自営業・フリーランスは6か月〜1年分が安心の目安です。' },
+      tip:'会社員は生活費の3か月分、自営業・フリーランスは6か月分以上が安心の目安です。' },
     { name:'複利', cat:'投資', desc:'利息が元本に組み込まれ、その合計に対してさらに利息がつく仕組み。期間が長いほど雪だるま式に増えます。',
       tip:'「早く始めるほど有利」なのは複利のおかげ。1年でも早く始める価値があります。' },
     { name:'単利', cat:'投資', desc:'最初の元本に対してのみ利息がつく仕組み。複利と違い、利息が元本に組み込まれません。',
@@ -461,10 +484,10 @@ input[aria-invalid="true"]{border-color:#c0666a}
     { name:'所得控除', cat:'税金', desc:'所得から一定額を差し引ける仕組み。課税の対象が減るので、結果的に税金が軽くなります。',
       tip:'会社員でも使える控除は意外と多いです（医療費・ふるさと納税など）。知らないと損をする部分です。' },
     { name:'NISA', cat:'税金', desc:'投資で得た利益が非課税になる制度。通常かかる約20%の税金がかからないのが大きな魅力です。',
-      note:'こどもNISA（通称）：2027年から、0〜17歳もつみたて投資枠を使えます。年60万円・非課税で持てるのは600万円まで、18歳で通常のNISAに移ります。',
+      note:'こどもNISA（通称）：2027年から、0〜17歳もつみたて投資枠を使えます。年60万円・非課税で持てるのは600万円までです。成長投資枠は使えず、原則17歳までは引き出せません（12歳以降は一定の条件で可能）。制度の詳細は公式ページでご確認ください。',
       tip:'迷ったら、まずNISAのつみたて投資枠から。少額・自動でコツコツが、初心者には一番続きます。' },
     { name:'iDeCo', cat:'税金', desc:'自分で掛金を出して運用する私的年金制度。掛金が全額所得控除になるなど税制優遇が大きいのが特徴です。',
-      tip:'節税効果は大きい反面、原則60歳まで引き出せません。余裕資金で、が鉄則です。' },
+      tip:'節税効果は大きい反面、原則60歳まで引き出せません。余裕資金で行うのが一般的です。' },
     { name:'源泉徴収／年末調整', cat:'税金', desc:'「源泉徴収」は給与から税金が天引きされること。「年末調整」は1年の正しい税額を会社が精算する手続きです。',
       tip:'会社員は年末調整でほぼ完結しますが、医療費控除などは、自分で確定申告をする必要があります。' }
   ];
@@ -474,7 +497,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   const DIAG_Q = [
     '毎月の収支を、|だいたい把握している',
     '固定費|（通信・保険・サブスク）を|見直したことがある',
-    '生活費の3か月分以上の|貯金がある',
+    '生活費の3か月分以上|（フリーランスは6か月以上）の|貯金がある',
     'NISAやiDeCoなどで|投資を始めている'
   ];
   const DIAG_RES = [
@@ -486,7 +509,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
   const DIAG_ALL = { step:'ALL CLEAR', title:'🎉 全ステップ クリア！', msg:'お金の土台はしっかり。年に一度、固定費や資産配分を見直すとさらに安心です。' };
 
   function switchTab(tab){
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.toggle('active',b.dataset.tab===tab); b.setAttribute('aria-selected', String(b.dataset.tab===tab)); });
     ['diag','roadmap','glossary'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hidden',t!==tab));
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -503,11 +526,11 @@ input[aria-invalid="true"]{border-color:#c0666a}
 
     DIAG_Q.forEach((q,i)=>{
       const card=document.createElement('div'); card.className='diag-q';
-      const txt=document.createElement('div'); txt.className='diag-q-text';
+      const txt=document.createElement('div'); txt.className='diag-q-text'; txt.id='diag-q-'+i;
       (`Q${i+1}. `+q).split('|').forEach(t=>{ const sp=document.createElement('span'); sp.className='nb'; sp.textContent=t; txt.appendChild(sp); });   // 言葉の途中で折らない（004）
-      const opts=document.createElement('div'); opts.className='diag-opts';
-      const yes=document.createElement('button'); yes.className='diag-opt'; yes.type='button'; yes.textContent='はい';
-      const no=document.createElement('button'); no.className='diag-opt'; no.type='button'; no.textContent='いいえ';
+      const opts=document.createElement('div'); opts.className='diag-opts'; opts.setAttribute('role','group'); opts.setAttribute('aria-labelledby',txt.id);
+      const yes=document.createElement('button'); yes.className='diag-opt'; yes.type='button'; yes.textContent='はい'; yes.setAttribute('aria-pressed','false');
+      const no=document.createElement('button'); no.className='diag-opt'; no.type='button'; no.textContent='いいえ'; no.setAttribute('aria-pressed','false');
       yes.addEventListener('click',()=>{answers[i]=true;yes.classList.add('sel-yes');no.classList.remove('sel-no');yes.setAttribute('aria-pressed','true');no.setAttribute('aria-pressed','false');checkReady();});
       no.addEventListener('click',()=>{answers[i]=false;no.classList.add('sel-no');yes.classList.remove('sel-yes');no.setAttribute('aria-pressed','true');yes.setAttribute('aria-pressed','false');checkReady();});
       opts.appendChild(yes); opts.appendChild(no);
@@ -566,7 +589,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
         const cur=getDone();
         if(input.checked){el.classList.add('done');if(!cur.includes(i))cur.push(i);}
         else{el.classList.remove('done');const idx=cur.indexOf(i);if(idx>-1)cur.splice(idx,1);}
-        setDone(cur); updateProgress();
+        noteSave(setDone(cur)); updateProgress();
       });
     });
     updateProgress();
@@ -618,7 +641,7 @@ input[aria-invalid="true"]{border-color:#c0666a}
         const cur=get();
         if(input.checked){item.classList.add('checked');if(!cur.includes(i))cur.push(i);}
         else{item.classList.remove('checked');const idx=cur.indexOf(i);if(idx>-1)cur.splice(idx,1);}
-        set(cur);
+        noteSave(set(cur));
       });
     });
   }
@@ -795,12 +818,16 @@ input[aria-invalid="true"]{border-color:#c0666a}
     initVersion();
     initButtons();
     document.getElementById('copyYear').textContent=new Date().getFullYear();
-    initTabs(); initDiag(); initRoadmap(); initGlossary();
-    initStickyTop();
+    [initTabs, initDiag, initRoadmap, initGlossary, initStickyTop].forEach(f=>{ try{ f(); }catch(e){ /* 1つの部品が動かなくても、ほかは動かす */ } });
     // アイコンの絵文字は、文字の読み込みを待ってから描く（003）
     const fr=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
     fr.then(initPWA,initPWA);
   }
+
+  // 想定外のエラーが起きたときは、1回だけ知らせる
+  let _errShown=false;
+  function _onErr(){ if(_errShown) return; _errShown=true; showToast('うまく動かないときは、ページを再読み込みしてください', 6000); }
+  window.addEventListener('error',_onErr); window.addEventListener('unhandledrejection',_onErr);
 
   // すぐ描く（この script より上に必要な要素はそろっている）。DOMContentLoaded まで待つと、質問のない画面が一度出てから質問が出て、画面が動く
   init();

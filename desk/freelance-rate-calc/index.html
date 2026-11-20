@@ -11,16 +11,19 @@
 <meta property="og:title" content="フリーランスレート計算機">
 <meta property="og:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/freelance-rate-calc/">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="enu-tools">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="フリーランスレート計算機">
 <meta name="twitter:description" content="希望年収から、必要な売上・時給・案件単価を逆算するフリーランス特化のレート計算機。">
 
+<link rel="canonical" href="https://enu-tools.pages.dev/desk/freelance-rate-calc/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
+  html{scroll-padding-top:90px}
   :root{
     /* 901 Palette: 11. ターコイズ */
     --primary:#7BB5B0; --primary-light:#B8DDDA; --primary-dark:#4F8A85;
@@ -38,6 +41,7 @@
   }
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
   .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
@@ -53,8 +57,9 @@
   .field{min-width:0}
   .field-label{display:block;font-size:.875rem;font-weight:600;color:var(--sub);margin-bottom:5px}
   .field-help{display:block;font-size:.75rem;color:var(--sub);margin-top:4px;opacity:.9}
-  input[type="text"],input[type="number"]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
-  input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  input[type="text"],input[type="number"]{width:100%;padding:10px 12px;border:1px solid #8aa8a4;border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text);font-family:inherit}
+  input:focus{border-color:var(--primary-dark);box-shadow:0 0 0 3px var(--primary-soft)}
+  input:focus-visible{outline:2px solid var(--primary-dark);outline-offset:1px}
   button:focus-visible,a:focus-visible,summary:focus-visible,label:focus-within{outline:2px solid var(--primary);outline-offset:2px}
   .input-suffix{position:relative}
   .input-suffix input{padding-right:52px;-moz-appearance:textfield}
@@ -64,13 +69,13 @@
   input[aria-invalid="true"]{border-color:#c0666a}
 
   .check-block{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
-  .check-row{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;color:var(--text);cursor:pointer}
+  .check-row{display:flex;align-items:center;gap:8px;min-height:44px;font-size:.875rem;font-weight:600;color:var(--text);cursor:pointer}
   .check-row input{width:18px;height:18px;accent-color:var(--primary);flex-shrink:0}
   .check-block .field-help{margin-left:26px}
   .blue-diff{display:block;font-size:.75rem;color:var(--primary-dark);font-weight:700;margin:4px 0 0 26px}
   .blue-diff[hidden]{display:none}
   .reset-row{margin-top:16px}
-  .btn-line{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--sub);color:var(--sub);transition:color .15s,border-color .15s}
+  .btn-line{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;min-height:44px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--sub);color:var(--sub);transition:color .15s,border-color .15s}
   .btn-line:hover{border-color:var(--primary-dark);color:var(--primary-dark)}
 
   /* 結果 */
@@ -81,6 +86,14 @@
   .summary-main .unit{font-size:.875rem;font-weight:600;margin-left:3px}
   .summary-main .unit[hidden]{display:none}
   .daily-note{margin:-6px 0 12px}
+  .result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
+  .hist-limit{margin:0 0 10px}
+  /* 結果の主な3つ（入力欄の上に固定。入れて・見て・また変える、をスクロールなしで） */
+  .top-summary{position:sticky;top:8px;z-index:20;padding:10px 14px;box-shadow:0 2px 10px rgba(44,42,36,.10)}
+  .top-summary .summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px;margin-bottom:0}
+  .top-summary .summary-item{padding-left:8px}
+  .top-summary .summary-main{font-size:1.125rem;white-space:normal;overflow-wrap:anywhere}
+  @media (max-height:480px){.top-summary{position:static}}
   .result-list{list-style:none}
   .result-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 8px;border-bottom:1px solid var(--line);font-size:.875rem}
   .result-row:last-child{border-bottom:none}
@@ -93,7 +106,7 @@
 
   /* 折りたたみ（▸／▾）*/
   .breakdown{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
-  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-head{display:flex;align-items:center;width:100%;min-height:44px;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
   .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
   .collapse-arrow::before{content:"▸"}
   .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
@@ -103,20 +116,20 @@
 
   /* 📎 参照リンク（004） */
   .enu-refs{margin:24px 0 0}
-  .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none}
+  .enu-refs summary{font-size:.875rem;font-weight:700;color:var(--primary-dark);cursor:pointer;list-style:none;padding:12px 0}
   .enu-refs summary::-webkit-details-marker{display:none}
   .enu-refs summary::after{content:" ▸";color:var(--sub);font-weight:400}
   .enu-refs[open] summary::after{content:" ▾"}
   .enu-refs-n{font-weight:400;color:var(--sub);font-size:.875rem}
   .enu-refs ul{margin:8px 0 0;padding-left:1.2em;font-size:.875rem}
-  .enu-refs li{margin-bottom:6px}
-  .enu-refs a{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+  .enu-refs li{margin-bottom:0}
+  .enu-refs a{display:inline-block;padding:10px 0;color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
   .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
   /* 案件単価 */
   .project-calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px 24px;align-items:center}
   .preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}  /* 3つを同じ幅で1段に（2＋1 にしない） */
-  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 4px;white-space:nowrap;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
+  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 4px;min-height:44px;white-space:nowrap;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
   .preset-chip:hover{background:var(--primary-light)}
   .project-output{border-left:3px solid var(--accent);padding:2px 0 2px 14px}
   .project-output .summary-main{color:var(--accent-dark)}
@@ -125,14 +138,14 @@
   .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
   .save-row input{flex:1 1 auto;min-width:0}
   .save-row .save-btn{flex-shrink:0}
-  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn{padding:10px 18px;min-height:44px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
   .save-btn:hover{background:var(--primary-dark)}
   .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
   .hist-chips[hidden]{display:none}
-  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;min-height:44px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
   .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
-  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .hist-current button:hover{color:var(--primary-dark)}
   .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
@@ -144,7 +157,7 @@
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -160,21 +173,22 @@
   .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
   .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
   .enu-notice .enu-body{flex:1;min-width:0}
-  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;margin:-14px -12px -14px -10px;opacity:.45;color:inherit;transition:opacity .15s}
   .enu-notice .enu-close-btn:hover{opacity:1}
-  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;position:relative}
+  .enu-notice-mini::after{content:"";position:absolute;inset:-7px}  /* 見た目は30pxのまま、押せる範囲を44pxに */
   .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
   .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
   /* === enu アクションボタン（102）=== */
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
   .enu-tb-line:hover{background:var(--primary-soft)}
   .enu-tb-data{font-size:.75rem;color:var(--sub)}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .enu-tb-text:hover{color:var(--primary-dark)}
   .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -186,17 +200,23 @@
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
   .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;min-height:44px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
   .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
   @media (max-width:650px){
     .app-title{font-size:1.25rem}
     .app-sub{font-size:.6875rem}
+    .top-summary{padding:8px 10px}
+    .top-summary .summary-main{font-size:.9375rem}
+    .top-summary .summary-main .unit{font-size:.75rem;margin-left:1px}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
-    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.reset-row,.preset-row,.save-card,.enu-refs{display:none !important}
+    .top-summary{position:static;box-shadow:none}
+    .result-row.hl-accent,.result-row.hl-primary{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-confirm-modal,.reset-row,.preset-row,.save-card,.enu-refs,.enu-confirm-modal{display:none !important}
     .card{break-inside:avoid}
     .collapse-body[hidden]{display:block}
   }
@@ -229,6 +249,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="field-help">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <header class="app-header">
     <div class="app-icon">🧳</div>
@@ -257,6 +278,15 @@
     </div>
   </div>
 
+  <!-- 結果の主な3つ（上に固定） -->
+  <div class="card top-summary" id="top-summary" role="group" aria-label="結果の主な3つ">
+    <div class="summary-grid">
+      <div class="summary-item"><div class="summary-label">必要時給</div><div class="summary-main"><span id="hourlyRate">-</span><span class="unit">円</span></div></div>
+      <div class="summary-item"><div class="summary-label">必要日給</div><div class="summary-main"><span id="dailyRate">-</span><span class="unit">円</span></div></div>
+      <div class="summary-item"><div class="summary-label">月額売上</div><div class="summary-main"><span id="monthlyRevenue">-</span><span class="unit">円</span></div></div>
+    </div>
+  </div>
+
   <!-- 入力 -->
   <div class="card" id="input-card">
     <h2 class="section-title">✏️ 入力項目</h2>
@@ -269,7 +299,7 @@
       <div class="field">
         <label class="field-label" for="workDays">年間稼働日数</label>
         <div class="input-suffix"><input type="text" id="workDays" inputmode="decimal"><span class="suffix">日</span></div>
-        <span class="field-help">休日・有給を除いた実働日数</span>
+        <span class="field-help">休日・有給を除いた稼働日数</span>
       </div>
       <div class="field">
         <label class="field-label" for="workHours">1日の稼働時間</label>
@@ -284,7 +314,7 @@
       <div class="field">
         <label class="field-label" for="taxRate">税・社会保険料率</label>
         <div class="input-suffix"><input type="text" id="taxRate" inputmode="decimal"><span class="suffix">%</span></div>
-        <span class="field-help">所得税・住民税・国保・年金の合計（売上−経費−控除に掛けます）</span>
+        <span class="field-help">所得税・住民税・国保・年金の合計（売上−経費−控除に掛けます）。個人事業税・消費税は含みません。25%は目安で、所得により大きく変わります。</span>
       </div>
       <div class="field">
         <label class="field-label" for="nonBillableRate">非稼働時間率</label>
@@ -305,13 +335,9 @@
   <!-- 結果 -->
   <div class="card" id="result-card">
     <h2 class="section-title">💴 計算結果</h2>
-    <div class="summary-grid">
-      <div class="summary-item"><div class="summary-label">必要時給</div><div class="summary-main"><span id="hourlyRate">-</span><span class="unit">円</span></div></div>
-      <div class="summary-item"><div class="summary-label">必要日給</div><div class="summary-main"><span id="dailyRate">-</span><span class="unit">円</span></div></div>
-      <div class="summary-item"><div class="summary-label">月額売上</div><div class="summary-main"><span id="monthlyRevenue">-</span><span class="unit">円</span></div></div>
-    </div>
-    <p class="field-help daily-note"><span class="nb">必要日給は、非稼働の時間も含めた1日分</span><span class="nb">（必要総売上÷年間稼働日数）です。</span></p>
+    <p class="field-help daily-note"><span class="nb">必要日給は、非稼働の時間も含めた1日分</span><span class="nb">（必要総売上÷年間稼働日数）です。</span><span class="nb">時給×1日の稼働時間とは一致しません。</span></p>
     <ul class="result-list" id="resultList"></ul>
+    <p class="result-disclaimer">※ この結果は目安で、税務の助言ではありません（2026年10月時点）。実際の金額や手続きは、税理士などの専門家にご確認ください。</p>
 
     <div class="breakdown">
       <button type="button" class="collapse-head" id="formulaToggle" aria-expanded="false" aria-controls="formulaBody">
@@ -321,8 +347,8 @@
         <ul class="formula-list">
           <li><span class="nb">税・社会保険料 =</span> <span class="nb">( 必要総売上 − 年間経費 − 控除 ) × 税率</span><span class="nb">（0未満は0）</span></li>
           <li><span class="nb">必要総売上 =</span> <span class="nb">年間経費 +</span> <span class="nb">( 希望年収 − 控除 × 税率 )</span> <span class="nb">÷ ( 1 − 税率 )</span><span class="nb">（希望年収が控除以下なら</span><span class="nb">年間経費 + 希望年収）</span></li>
-          <li><span class="nb">年間実働時間 =</span> <span class="nb">年間稼働日数 × 1日の稼働時間</span> <span class="nb">× ( 1 − 非稼働時間率 )</span></li>
-          <li><span class="nb">必要時給 =</span> <span class="nb">必要総売上 ÷ 年間実働時間</span></li>
+          <li><span class="nb">年間稼働時間 =</span> <span class="nb">年間稼働日数 × 1日の稼働時間</span> <span class="nb">× ( 1 − 非稼働時間率 )</span></li>
+          <li><span class="nb">必要時給 =</span> <span class="nb">必要総売上 ÷ 年間稼働時間</span></li>
           <li><span class="nb">必要日給 =</span> <span class="nb">必要総売上 ÷ 年間稼働日数</span><span class="nb">（非稼働の時間も含めた1日分）</span></li>
           <li><span class="nb">月額売上 =</span> <span class="nb">必要総売上 ÷ 12</span></li>
         </ul>
@@ -333,7 +359,7 @@
   <!-- 補助：案件単価 -->
   <div class="card">
     <h2 class="section-title">💼 案件単価の試算</h2>
-    <p class="section-note">必要時給を元に、案件にかかる時間から適正な単価を逆算します。</p>
+    <p class="section-note">必要時給を元に、案件にかかる時間から目安の単価を逆算します。</p>
     <div class="project-calc">
       <div class="field">
         <label class="field-label" for="projectHours">案件の所要時間</label>
@@ -346,7 +372,7 @@
         </div>
       </div>
       <div class="project-output" aria-live="polite">
-        <div class="summary-label" id="projectPriceLabel">適正単価</div>
+        <div class="summary-label" id="projectPriceLabel">目安の単価</div>
         <div class="summary-main"><span id="projectPrice">-</span><span class="unit">円</span></div>
       </div>
     </div>
@@ -359,6 +385,7 @@
       <input type="text" id="save-name" placeholder="保存名（省略可）">
       <button type="button" class="save-btn" id="save-btn">保存</button>
     </div>
+    <p class="field-help hist-limit">20件まで保存できます。超えると、古いものから消えます。</p>
     <div class="hist-chips" id="history-list" hidden></div>
     <p class="hist-current" id="hist-current" hidden></p>
     <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
@@ -372,13 +399,13 @@
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（1件）</span></summary>
     <ul>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener noreferrer">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
     </ul>
   </details>
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -408,6 +435,7 @@
     helpUrl:'https://enu-tools.pages.dev/desk/help/', helpOpenNewTab:true, dataVersion:1 // ＝ DATA_VERSION（エクスポートの data_version）
   };
   const CFG=ENU_CONFIG;
+  const SMOOTH=(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth';   // 動きを減らす設定のときはなめらかに動かさない
   window.enuTools=window.enuTools||{};
   const _key=(s)=>'enu_'+CFG.appId+'_'+s;
   const $=(id)=>document.getElementById(id);
@@ -501,10 +529,11 @@
   }
   // 入力欄の値。まちがった欄は null（知らせずに別の値に読みかえない）
   function getValues(){
-    const v={}; let ok=true;
-    FIELDS.forEach(f=>{ const r=readField(f,$(f).value); v[f]=r.v; setFieldError($(f), r.err); if(r.err) ok=false; });
+    const v={}; let ok=true, mainOk=true;
+    FIELDS.forEach(f=>{ const r=readField(f,$(f).value); v[f]=r.v; setFieldError($(f), r.err); if(r.err){ ok=false; if(f!=='projectHours') mainOk=false; } });
     v.blueReturn=$('blueReturn').checked;
     v._ok=ok;
+    v._mainOk=mainOk;   // 案件の所要時間の入力だけがまちがいのときは、主な結果（時給・日給・月額）は出す
     return v;
   }
   function setValues(data){
@@ -540,7 +569,7 @@
 
   function calculate(){
     const v=getValues();
-    if(!v._ok) return { v, ok:false };
+    if(!v._mainOk) return { v, ok:false };
     // 万円→円（小数の誤差で1円ずれないように、0.01円の単位で丸める。例：340.09万円 → 3,400,900円）
     const toYen=(man)=>Math.round(man*1e6)/100;
     const targetIncomeYen=toYen(v.targetIncome);
@@ -562,7 +591,7 @@
     const hourlyRate=annualHours>0?Math.round(totalRevenue/annualHours):NaN;
     const dailyRate=v.workDays>0?totalRevenue/v.workDays:NaN;
     const monthlyRevenue=totalRevenue/12;
-    const projectPrice=mulHours(hourlyRate, v.projectHours);
+    const projectPrice=v.projectHours==null ? NaN : mulHours(hourlyRate, v.projectHours);   // 所要時間が空・まちがいのときは「—」
     const blueDiff=(v.blueReturn && taxFactor>0)?needRevenue(0)-totalRevenue:0;
     return { v, ok:true, targetIncomeYen, annualExpenseYen, taxAmount, totalRevenue, annualHours, hourlyRate, dailyRate, monthlyRevenue, projectPrice, blueDiff };
   }
@@ -577,7 +606,7 @@
       // まちがった入力があるときは計算しない：結果はすべて「—」
       ['hourlyRate','dailyRate','monthlyRevenue','projectPrice'].forEach(id=>{ $(id).textContent='—'; });
       $('resultList').replaceChildren(el('li',{class:'result-row'},[ el('span',{class:'lbl',text:'入力を直してください'}) ]));
-      syncUnits(); $('projectPriceLabel').textContent='適正単価';
+      syncUnits(); $('projectPriceLabel').textContent='目安の単価';
       $('blueReturnDiff').hidden=true; $('blueReturnDiff').textContent='';
       return r;
     }
@@ -586,7 +615,7 @@
       { label:'年間経費', value:fmt(r.annualExpenseYen)+' 円' },
       { label:'税金・社会保険料', value:fmt(r.taxAmount)+' 円' },
       { label:'必要総売上（年商）', value:fmt(r.totalRevenue)+' 円', hl:'hl-accent' },
-      { label:'年間実働時間', value:fmtHours(r.annualHours)+' 時間' },
+      { label:'年間稼働時間', value:fmtHours(r.annualHours)+' 時間' },
       { label:'必要時給', value:fmt(r.hourlyRate)+' 円', hl:'hl-primary' }
     ];
     $('resultList').replaceChildren(...rows.map(row=>el('li',{class:'result-row'+(row.hl?' '+row.hl:'')},[ el('span',{class:'lbl',text:row.label}), el('span',{class:'val',text:row.value}) ])));
@@ -595,7 +624,7 @@
     $('monthlyRevenue').textContent=fmt(r.monthlyRevenue);
     $('projectPrice').textContent=fmt(r.projectPrice);
     syncUnits();
-    $('projectPriceLabel').textContent='適正単価（'+r.v.projectHours.toLocaleString('ja-JP',{maximumFractionDigits:2})+'時間分）';
+    $('projectPriceLabel').textContent=r.v.projectHours==null ? '目安の単価' : '目安の単価（'+r.v.projectHours.toLocaleString('ja-JP',{maximumFractionDigits:2})+'時間分）';
 
     const diffEl=$('blueReturnDiff');
     if(r.v.blueReturn){ diffEl.textContent='青色申告適用で必要総売上が約 '+fmt(r.blueDiff)+' 円 軽減されています'; diffEl.hidden=false; }
@@ -607,37 +636,53 @@
   const DATA_VERSION=1;
   function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
     if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    if(saved.v>DATA_VERSION) return null; // 新しい版のデータは、読まずに _broken に残す（古いアプリで上書きして壊さない）
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておき、ユーザーが何か変えるまで上書きしない
-  const brokenStores=new Set();
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す
+  const _brokenStore={}; let _userChanged=false;
   function loadStore(name){
     let raw=null;
     try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw==null) return null;
-    let data=null;
-    try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
-    if(data==null){ brokenStores.add(name); try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
-    return data;
+    try{ const d=migrate(JSON.parse(raw)); if(d==null) throw new Error('unknown'); return d; }
+    catch(e){ keepBroken(name, raw); _brokenStore[name]=true; return null; }
   }
-  function userChanged(){ brokenStores.clear(); }
-  function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
-  document.addEventListener('input', ()=>userChanged(), true);
-  document.addEventListener('change', ()=>userChanged(), true);
-  document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.preset-chip,#btnReset,#history-list button,#save-btn')) userChanged(); }, true);
+  function userChanged(){ _userChanged=true; }
+  // 保存できたら true、できなかったら false
+  function saveStore(name,data){
+    if(_brokenStore[name] && !_userChanged) return true;
+    delete _brokenStore[name];
+    try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; }
+  }
+  ['input','change'].forEach(function(t){ document.addEventListener(t,function(e){ if(e.isTrusted) _userChanged=true; },true); });
+  document.addEventListener('click', e=>{ if(e.isTrusted && e.target.closest && e.target.closest('.preset-chip,#btnReset,#history-list button,#save-btn')) _userChanged=true; }, true);
   let dataExtra={}; // 保存データの知らない項目（消さずに残す）
   // 入力のたびに保存する。まちがった欄は前の値のまま残す（読めない値は保存しない）
   function saveInput(){
     const v=getValues(), o=Object.assign({}, dataExtra);
     FIELDS.forEach(f=>{ if(v[f]!==null) o[f]=v[f]; }); o.blueReturn=v.blueReturn;
-    dataExtra=o; saveStore('data', o);
+    dataExtra=o;
+    const ok=saveStore('data', o);
+    if(!ok && !_saveFailShown){ _saveFailShown=true; showToast('⚠️ この端末には保存できません。入力は残らないので、📤エクスポートでバックアップしてください', 6000); }
+    return ok;
   }
+  let _saveFailShown=false;
   function update(){ renderResults(); saveInput(); }
 
   /* === 履歴（H3）=== */
-  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
-  function setHistory(h){ saveStore('history', h); }
-  function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  // 履歴の行は1つずつ確かめる（壊れた行・id が重なった行があっても、起動時に落ちないように。読めない行は _broken に残す）
+  function isHistRow(h){ return !!(h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && isFinite(h.id) && h.values && typeof h.values==='object'); }
+  function getHistory(){
+    const h=loadStore('history'); if(!Array.isArray(h)) return [];
+    const seen=new Set(), ok=[];
+    h.forEach(r=>{ if(isHistRow(r) && !seen.has(r.id)){ seen.add(r.id); ok.push(r); } });
+    if(ok.length!==h.length){ try{ keepBroken('history', JSON.stringify({ v:DATA_VERSION, data:h })); }catch(e){} }
+    return ok;
+  }
+  function setHistory(h){ return saveStore('history', h); }
+  function fmtDate(iso){ const d=new Date(iso); if(isNaN(d.getTime())) return ''; const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
   function autoName(r){
     const d=new Date(), p=(n)=>String(n).padStart(2,'0');
     return '希望年収'+r.v.targetIncome+'万円・時給'+fmt(r.hourlyRate)+'円（'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes())+'）';
@@ -648,7 +693,7 @@
     const v=getValues();
     if(v._ok) return true;
     const f=FIELDS.find(k=>v[k]===null); const inp=$(f);
-    inp.scrollIntoView({block:'center',behavior:'smooth'}); inp.focus({preventScroll:true});
+    inp.scrollIntoView({block:'center',behavior:SMOOTH}); inp.focus({preventScroll:true});
     showToast(kind==='export' ? '入力を直してから書き出してください' : '入力を直してから保存してください');
     return false;
   }
@@ -658,15 +703,17 @@
     const r=calculate();
     const nameInput=$('save-name');
     const name=(nameInput.value||'').trim()||autoName(r);
-    const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, values:cleanValues(r.v) };
-    let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist);
+    let hid=Date.now(); const cur=getHistory(); while(cur.some(s=>s.id===hid)) hid++;   // 同じ id を作らない
+    const snap={ id:hid, savedAt:new Date().toISOString(), name:name, values:cleanValues(r.v) };
+    let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim);
+    if(!setHistory(hist)){ showToast('⚠️ この端末には保存できませんでした。この計算は残っていません', 6000); return; }
     nameInput.value=''; renderHistory(); /* 保存しただけでは「呼び出し中」にしない */ showToast('📌 この計算を保存しました');
   }
   function renderHistory(){
     const list=$('history-list');
     const hist=getHistory();
     list.hidden=!hist.length;
-    list.replaceChildren(...hist.map(snap=>el('button',{type:'button',class:'hist-chip'+(snap.id===currentHistId?' on':''),title:snap.name+'（'+fmtDate(snap.savedAt)+'）','data-load':snap.id,text:snap.name})));
+    list.replaceChildren(...hist.map(snap=>el('button',{type:'button',class:'hist-chip'+(snap.id===currentHistId?' on':''),title:snap.name+(fmtDate(snap.savedAt)?'（'+fmtDate(snap.savedAt)+'）':''),'data-load':snap.id,text:snap.name})));
     const cur=$('hist-current');
     const snap=hist.find(s=>s.id===currentHistId);
     if(snap){
@@ -683,13 +730,13 @@
     }else if(t.dataset.del){
       const id=parseInt(t.dataset.del,10);
       enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
-        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
+        if(ok){ if(!setHistory(getHistory().filter(s=>s.id!==id))){ showToast('⚠️ この端末には保存できませんでした。削除は反映されていません', 6000); return; } currentHistId=null; renderHistory(); showToast('削除しました'); }
       });
     }
   }
 
   /* === Toast / Confirm（102）=== */
-  function showToast(msg){ const t=$('enu-toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+  function showToast(msg, ms){ const t=$('enu-toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),ms||2200); }
   window.enuTools.toast=showToast;
   function enuConfirm(title, desc, okLabel, cancelLabel){
     return new Promise(resolve=>{
@@ -701,10 +748,11 @@
       const cancel=modal.querySelector('.enu-confirm-btn--cancel');
       const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
       ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      const opener=document.activeElement;   // 閉じたら、開く前のボタンへフォーカスを戻す
       modal.hidden=false; setTimeout(()=>cancel.focus(),50);
-      const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+      const cleanup=(r)=>{ modal.hidden=true; try{ if(opener && opener.isConnected) opener.focus(); }catch(e){} ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
       const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
-      const onKey=(e)=>{ if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
+      const onKey=(e)=>{ if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===cancel ? ok : cancel).focus(); } if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
       ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
@@ -738,39 +786,54 @@
   function initVersion(){ const v=$('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
     const urls={ disclaimer:CFG.disclaimerUrl||ENU_LEGAL_URLS.disclaimer, privacy:CFG.privacyUrl||ENU_LEGAL_URLS.privacy, help:CFG.helpUrl };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
   }
 
   /* === アクションボタン（102）=== */
+  let sharing=false;
   async function handleSimpleShare(){
+    if(sharing) return;
+    sharing=true;
     const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing=false; }
   }
   function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
   function appGetData(){ return { values:cleanValues(getValues()), history:getHistory() }; }
   function appValidateData(data){ return !!(data && data.values && typeof data.values==='object'); }
   // ファイルの中の値が読めるか（読めない値があれば読み込まない）
   // 読める行だけ選ぶ（004：前の版のファイルも断らない。今は入れられない値・おかしい値の行は読み込まず、知らせる）
+  const IMPORT_MAX_BYTES=2*1024*1024, IMPORT_MAX_HIST=100;   // 読み込みの上限（ファイルの大きさ・履歴の行数）
   function pickReadable(data){
     const valuesOk=validValues(data.values, true);
     const hist=Array.isArray(data.history)?data.history:[];
-    const histOk=hist.filter(h=>h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && validValues(h.values));
-    return { values: valuesOk?data.values:null, history: data.history==null?null:histOk, skipped:(valuesOk?0:1)+(hist.length-histOk.length) };
+    const seen=new Set();
+    const histAll=hist.filter(h=>{ if(!(isHistRow(h) && validValues(h.values)) || seen.has(h.id)) return false; seen.add(h.id); return true; });
+    const histOk=histAll.slice(0,IMPORT_MAX_HIST);   // 読み込む履歴は最新の100行まで
+    // 履歴の行がすべて読めないときは、今の履歴を残す（空で上書きしない）
+    const keepCurrent = data.history!=null && hist.length>0 && histOk.length===0;
+    return { values: valuesOk?data.values:null, history: (data.history==null||keepCurrent)?null:histOk, skipped:(valuesOk?0:1)+(hist.length-histAll.length)+(histAll.length-histOk.length) };
   }
+  // 知らない項目は消さずに残すが、長すぎるものは残さない
+  function cleanExtra(v){ const o={}; Object.keys(v).forEach(k=>{ const x=v[k]; if(typeof x==='string' ? x.length<=200 : (typeof x==='number' || typeof x==='boolean')) o[k]=x; }); return o; }
   function appApplyData(r){
-    if(r.values){ dataExtra=Object.assign({}, r.values); setValues(r.values); }
-    if(r.history) setHistory(r.history);
-    currentHistId=null; renderHistory(); update();
+    let ok=true;
+    if(r.values){ dataExtra=cleanExtra(r.values); setValues(r.values); }
+    if(r.history) ok=setHistory(r.history);
+    currentHistId=null; renderHistory(); renderResults();
+    if(!saveInput()) ok=false;
+    return ok;
   }
   function handleExport(){
     if(!guardInputs('export')) return;
     const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
+    a.href=url; const _d=new Date(), _p=(n)=>String(n).padStart(2,'0');
+    a.download=safeFileName(CFG.appName||CFG.appId)+'_'+_d.getFullYear()+'-'+_p(_d.getMonth()+1)+'-'+_p(_d.getDate())+'.json';   // 日本の日付（UTCでずれない）
     document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     showToast('📤 JSONをダウンロードしました');
   }
@@ -779,18 +842,24 @@
     input.addEventListener('change', async (e)=>{
       const f=e.target.files[0]; if(!f) return;
       try{
-        const p=JSON.parse(await f.text());
+        if(f.size>IMPORT_MAX_BYTES) throw new Error('ファイルが大きすぎます（2MBまで）');
+        let p; try{ p=JSON.parse(await f.text()); }catch(_){ throw new Error('JSONファイルとして読めませんでした。このツールで書き出したファイルを選んでください'); }
         if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
         if(!p.app_id) throw new Error('古い形式のファイルです');
         if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
         if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
-        const data=migrate({ v:p.data_version||1, data:p.data }); // インポートも migrate() を通す
+        const data=migrate({ v:(p.data_version==null?1:p.data_version), data:p.data }); // インポートも migrate() を通す
         if(!appValidateData(data) || (data.history!=null && !Array.isArray(data.history))) throw new Error('データ形式が違います');
         const r=pickReadable(data);
         if(!r.values && !(r.history && r.history.length)) throw new Error('ファイルの中に読めない値があります');
-        const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+        const nowN=getHistory().length;
+        const msg='今のデータを、ファイルの内容で上書きします。'+(r.history ? '履歴は '+r.history.length+'件 に置き換わります（今は '+nowN+'件）。' : '')+'よろしいですか？';
+        const ok=await enuConfirm('📥 データのインポート',msg,'インポート','キャンセル');
         if(!ok) return;
-        userChanged(); appApplyData(r); showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+        userChanged();
+        const saved=appApplyData(r);
+        if(!saved){ showToast('⚠️ この端末には保存できませんでした。読み込んだ内容は、画面を閉じると残りません', 6000); return; }
+        showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:SMOOTH});
       }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
     });
     input.click();
@@ -865,9 +934,14 @@
     $('history-list').addEventListener('click',onHistoryClick);
     $('hist-current').addEventListener('click',onHistoryClick);
 
-    renderHistory(); renderResults(); setupPWA();
+    try{ renderHistory(); }catch(e){ /* 履歴が読めなくても、計算は動かす */ }
+    renderResults(); setupPWA();
   }
 
+  // 想定外のエラーが起きたときは、1回だけ知らせる（入力は保存されている）
+  let _errShown=false;
+  function _onErr(){ if(_errShown) return; _errShown=true; showToast('うまく動かないときは、ページを再読み込みしてください。入力した内容は保存されています', 6000); }
+  window.addEventListener('error',_onErr); window.addEventListener('unhandledrejection',_onErr);
   if(document.readyState!=='loading') init();
   else document.addEventListener('DOMContentLoaded', init);
 })();
@@ -922,6 +996,7 @@
     later.onclick=laterFn;
     box.onclick=function(e){ if(e.target===box) laterFn(); };
     box.hidden=false;
+    try{ go.focus({preventScroll:true}); }catch(e){}
   }
   function maybe(){
     if(standalone || !touch || opens<2) return;

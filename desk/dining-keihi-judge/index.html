@@ -6,6 +6,11 @@
 <meta name="description" content="飲食代が経費になるかをいくつかの質問で診断します。個人事業主向け。">
 <meta name="theme-color" content="#faf4f3">
 <title>飲食代経費診断</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="飲食代経費診断">
+<meta property="og:description" content="飲食代が経費になるかをいくつかの質問で診断します。個人事業主向け。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/dining-keihi-judge/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -30,6 +35,8 @@
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
   .hidden{display:none !important}
+  h2[tabindex="-1"]:focus{outline:none}  /* 画面が変わったとき、見出しへ読み上げを移すため（見た目は変えない） */
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   /* ===== ヘッダー（質問・結果・記録の画面） ===== */
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
@@ -57,7 +64,7 @@
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
 
   /* ===== ボタン ===== */
-  .btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
+  .btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:10px 20px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s,border-color .15s}
   .btn-fill{background:var(--primary);color:#fff}
   .btn-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .btn-line{background:transparent;color:var(--primary-dark)}
@@ -76,7 +83,7 @@
   .progress-fill{height:100%;background:var(--primary);border-radius:999px;width:0}
   .q-text{font-size:1rem;font-weight:700;margin:16px 0 12px;line-height:1.6}
   .opt-list{display:flex;flex-direction:column;gap:8px}
-  .opt{text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
+  .opt{min-height:44px;text-align:left;width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.875rem;color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;display:flex;align-items:center;gap:12px}
   .opt:hover{border-color:var(--primary);background:var(--primary-soft)}
   .opt .opt-icon{font-size:1rem;flex:0 0 auto}
 
@@ -98,6 +105,7 @@
   .result-sec{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:.875rem}
   .result-sec .memo{margin-top:6px;color:var(--sub);font-size:.75rem}
   .saved-at{font-size:.75rem;color:var(--sub);margin-top:12px}
+  .result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
 
   /* ===== 記録 ===== */
   .log-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:12px}
@@ -112,7 +120,7 @@
   input[aria-invalid="true"]{border-color:#c0666a}
   .log-part{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
   .log-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-  .filter-btn{font-family:inherit;font-size:.75rem;font-weight:600;padding:5px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;transition:background .15s}
+  .filter-btn{font-family:inherit;font-size:.75rem;font-weight:600;padding:5px 12px;min-height:44px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;transition:background .15s}
   .filter-btn:hover,.filter-btn.on{background:var(--primary-soft)}
   .filter-btn.on{color:var(--primary-dark);font-weight:700}
   .log-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.875rem}
@@ -120,18 +128,18 @@
   .log-cat{font-weight:700;flex-shrink:0;color:var(--primary-dark)}
   .log-memo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub)}
   .log-amt{font-weight:700;flex-shrink:0;white-space:nowrap}
-  .log-del{font-family:inherit;background:none;border:none;cursor:pointer;color:var(--sub);font-size:.75rem;padding:2px 6px;flex-shrink:0;transition:color .15s}
+  .log-del{font-family:inherit;background:none;border:none;cursor:pointer;color:var(--sub);font-size:.75rem;padding:2px 6px;min-width:44px;min-height:44px;flex-shrink:0;transition:color .15s}
   .log-del:hover{color:var(--ng-fg)}
   .log-total{display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;font-size:.875rem}
   .log-total .total-label{color:var(--sub)}
   .log-total .total-val{font-weight:700}
   .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .enu-tb-text:hover{color:var(--primary-dark)}
 
   /* ===== 本文の最後（PDF・シェア／参照リンク） ===== */
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
@@ -149,12 +157,12 @@
 
   /* ===== フッター（004） ===== */
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
-  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid var(--line);border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -187,7 +195,7 @@
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
   .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6;white-space:pre-line}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;min-height:44px;border-radius:10px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
   .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
@@ -201,6 +209,7 @@
     .log-amt{margin-left:auto}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-refs,.btn-row,.enu-confirm-modal,.log-form,.ra-data,.log-del,.log-filter{display:none !important}
     .card{break-inside:avoid}
@@ -235,6 +244,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="note-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <!-- ヘッダー（質問・結果・記録の画面だけ） -->
   <header class="app-header hidden" id="appHeader">
@@ -277,16 +287,16 @@
     <details class="enu-refs">
       <summary>📎 参照リンク<span class="enu-refs-n">（3件）</span></summary>
       <ul>
-        <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm" target="_blank" rel="noopener">No.2210 必要経費の知識</a><span class="enu-refs-src">国税庁</span></li>
-        <li><a href="https://biz.moneyforward.com/tax_return/basic/78585/" target="_blank" rel="noopener">個人事業主はカフェ代を経費にできる？</a><span class="enu-refs-src">マネーフォワード</span></li>
-        <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm" target="_blank" rel="noopener">No.5265 交際費等の範囲と<span class="nb">損金不算入額の</span><span class="nb">計算（法人向け）</span></a><span class="enu-refs-src">国税庁</span></li>
+        <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm" target="_blank" rel="noopener noreferrer">No.2210 必要経費の知識</a><span class="enu-refs-src">国税庁</span></li>
+        <li><a href="https://biz.moneyforward.com/tax_return/basic/78585/" target="_blank" rel="noopener noreferrer">個人事業主はカフェ代を経費にできる？</a><span class="enu-refs-src">マネーフォワード</span></li>
+        <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm" target="_blank" rel="noopener noreferrer">No.5265 交際費等の範囲と<span class="nb">損金不算入額の</span><span class="nb">計算（法人向け）</span></a><span class="enu-refs-src">国税庁</span></li>
       </ul>
     </details>
   </div>
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -348,14 +358,30 @@
     noticeArea.classList.toggle('hidden', !inner);
     pageEnd.classList.toggle('hidden', !(screen==='result' || screen==='records'));
   }
+  // 区切り文字の「あと」で分ける（正規表現の後読みは、古い iOS で画面が空白になるため使わない）
+  function splitAfter(str, chars){ const out=[]; let cur=''; for(const c of String(str)){ cur+=c; if(chars.includes(c)){ out.push(cur); cur=''; } } if(cur) out.push(cur); return out; }
   function clr(node){ while(node.firstChild) node.removeChild(node.firstChild); }
   function toTop(){ window.scrollTo(0,0); }
+  // 画面が変わったら、見出しに読み上げ・キーボードの位置を移す（見た目は変わらない）
+  function focusHeading(h){ if(!h) return; h.setAttribute('tabindex','-1'); try{ h.focus({ preventScroll:true }); }catch(e){} }
 
   /* ===== 質問ツリー ===== */
   const Q = {
     q_who: { text:'誰と飲食しましたか？', opts:[
       { icon:'🧍', label:'ひとりで', next:'q_purpose' },
-      { icon:'🤝', label:'客先・取引先', next:'q_guest_type' }
+      { icon:'🤝', label:'客先・取引先と', next:'q_guest_type' },
+      { icon:'👥', label:'従業員・スタッフと', next:'q_staff' },
+      { icon:'🧑‍🤝‍🧑', label:'友人・同業者と', next:'q_friend' }
+    ]},
+    q_staff: { text:'どんな食事でしたか？', opts:[
+      { icon:'🗂️', label:'仕事の打合せ', receipt:'mtg_staff' },
+      { icon:'🍻', label:'慰労・食事会', receipt:'staff_party' },
+      { icon:'🏠', label:'私的な食事', result:'private' }
+    ]},
+    q_friend: { text:'どんな食事でしたか？', opts:[
+      { icon:'🗂️', label:'仕事の打合せ', receipt:'mtg_friend' },
+      { icon:'🍻', label:'仕事関係の懇親', receipt:'social_friend' },
+      { icon:'🏠', label:'私的な食事', result:'private' }
     ]},
     q_purpose: { text:'目的は何ですか？', opts:[
       { icon:'🏠', label:'私用', result:'private' },
@@ -408,9 +434,26 @@
       tip:'相手先名・打合せ内容をレシートの裏に記載しておきましょう。',
       memo:'自分のみが現地にいるオンライン打合せの場合も会議費として処理できると考えられます。',
       caution:true, cautionText:'自分のみが現地にいるオンライン打合せへの会議費計上は、税理士によって見解が異なる場合があります。' },
+    mtg_staff: { ok:true, emoji:'✅', cat:'会議費', reason:'従業員・スタッフとの打合せのため',
+      tip:'誰と・何の打合せかを記録しておきましょう。',
+      memo:'打合せの内容が説明できることが前提です。',
+      caution:true, cautionText:'食事をともなう社内の打合せは、会議費として認められるかどうかが、内容や金額によって異なります。' },
+    staff_party: { ok:true, emoji:'✅', cat:'福利厚生費', reason:'従業員・スタッフの慰労のため',
+      tip:'参加者と目的（慰労会など）を記録しておきましょう。',
+      memo:'参加が一部の人だけの場合や、金額が高い場合は、給与として扱われることがあります。',
+      caution:true, cautionText:'福利厚生費として認められる範囲は、参加者や金額によって異なります。' },
+    mtg_friend: { ok:true, emoji:'✅', cat:'会議費', reason:'仕事の打合せ（友人・同業者）のため',
+      tip:'誰と・何の打合せかを記録しておきましょう。',
+      memo:'仕事の話が中心だったことが説明できることが前提です。',
+      caution:true, cautionText:'友人との食事は、仕事の打合せだったと説明できるかが重要で、見解が分かれることがあります。' },
+    social_friend: { ok:true, emoji:'✅', cat:'接待交際費', reason:'仕事関係の人との懇親のため',
+      tip:'相手の氏名・関係・目的を記録しておきましょう。',
+      memo:'事業との関係を説明できることが前提です。',
+      caution:true, cautionText:'仕事関係の懇親が接待交際費になるかは、相手との関係や目的によって異なります。' },
     entertain: { ok:true, emoji:'✅', cat:'接待交際費', reason:'取引先の接待・慰労のため',
       tip:'相手の氏名・会社名・目的をレシートの裏に記載しておきましょう。' }
   };
+  const MEMO_MAX = 100, IMPORT_MAX_BYTES = 1024*1024, IMPORT_MAX_LOGS = 5000;   // メモの長さ・取り込みの上限
   const NO_RECEIPT = '_no_receipt';
   function getResult(id){
     const noReceipt = String(id).endsWith(NO_RECEIPT);
@@ -427,21 +470,22 @@
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておく（保存はユーザーが診断・記録・削除などをしたときだけなので、それまで上書きしない）
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す（毎回上書きしない）
   function loadStore(name){
     let raw=null;
     try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw==null) return null;
     let data=null;
     try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
-    if(data==null){ try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    if(data==null) keepBroken(name, raw);
     return data;
   }
-  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
+  function saveStore(name,data){ try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; } }
 
   function isLog(l){ return l && typeof l==='object' && typeof l.c==='string' && isFinite(Number(l.a)); }
   function getLogs(){ const l=loadStore('logs'); return Array.isArray(l) ? l.filter(isLog) : []; }
-  function setLogs(l){ saveStore('logs', l); }
-  function saveResult(id){ saveStore('result', { id:id, at:new Date().toISOString() }); }
+  function setLogs(l){ return saveStore('logs', l); }
+  function saveResult(id){ return saveStore('result', { id:id, at:new Date().toISOString() }); }
   function loadResult(){ const r=loadStore('result'); return (r && typeof r.id==='string' && getResult(r.id)) ? r : null; }
 
   /* ===== 状態 ===== */
@@ -503,8 +547,9 @@
     card.appendChild(el('div',{class:'progress-head'},[ el('span',{text:'ステップ '+(state.stepCount+1)}), el('span',{text:pct+'%'}) ]));
     const fill=el('div',{class:'progress-fill'}); fill.style.width=pct+'%';
     card.appendChild(el('div',{class:'progress-track'},[fill]));
-    card.appendChild(el('h2',{class:'q-text',text:qNode.text}));
-    const list=el('div',{class:'opt-list',attrs:{role:'group','aria-label':qNode.text}});
+    const qHead=el('h2',{class:'q-text',text:qNode.text,attrs:{id:'q-heading'}});
+    card.appendChild(qHead);
+    const list=el('div',{class:'opt-list',attrs:{role:'group','aria-labelledby':'q-heading'}});
     qNode.opts.forEach(opt=>{
       list.appendChild(el('button',{class:'opt',attrs:{type:'button'},on:{click:()=>onOptClick(opt)}},[
         el('span',{class:'opt-icon',text:opt.icon,attrs:{'aria-hidden':'true'}}),
@@ -517,6 +562,7 @@
     row.appendChild(el('button',{class:'btn btn-plain',text:'最初に戻る',attrs:{type:'button'},on:{click:renderCover}}));
     card.appendChild(row);
     mainEl.appendChild(card);
+    focusHeading(qHead);
   }
   function onOptClick(opt){
     state.history.push({ qid:state.current, stepCount:state.stepCount });
@@ -527,7 +573,7 @@
     else if(opt.useOk) id=state.pendingResult;
     else if(opt.useNoReceipt) id=state.pendingResult+NO_RECEIPT;
     else if(opt.next){ renderQuestion(opt.next); return; }
-    if(id){ saveResult(id); renderResult(id, null); }
+    if(id){ const saved=saveResult(id); renderResult(id, null); if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります', 6000); }
   }
   function goBack(){
     if(!state.history.length) return;
@@ -549,23 +595,26 @@
       el('div',{class:'result-emoji',text:res.emoji,attrs:{'aria-hidden':'true'}}),
       el('p',{class:'result-label',text:'判定結果'}),
       el('div',{class:'result-head'},[ el('span',{class:'result-badge '+(res.ok?'badge-ok':'badge-ng'),text:res.ok?(res.noReceiptWarn?'経費OK（条件つき）':'経費OK'):'経費NG'}) ]),
-      el('h2',{class:'result-cat'}, nbs(res.catSub ? [res.cat, ...('（'+res.catSub+'）').split(/(?<=・)/)] : [res.cat]))
+      el('h2',{class:'result-cat'}, nbs(res.catSub ? [res.cat, ...splitAfter('（'+res.catSub+'）','・')] : [res.cat]))
     ]));
     card.appendChild(el('p',{class:'result-reason',text:res.reason}));
 
     if(res.noReceiptWarn){
       card.appendChild(el('p',{class:'result-note note-receipt'},[
-        document.createTextNode('領収書・レシートがなくても、出金伝票などで支払いを証明できれば、経費にできる場合があります。ただし、本則課税の場合は、消費税の仕入税額控除にインボイスなどの保存が必要です。'),
-        el('span',{class:'note-sub'}, nbs(['なお、','基準期間の課税売上高が','1億円以下などの事業者は、','税込1万円未満なら','帳簿の保存だけでよい','特例（少額特例・','2029年9月30日まで）があります。']))
+        document.createTextNode('原則は、領収書などの書類が必要です。書類がない場合でも、出金伝票などで支払いの事実を示せるときは、経費として認められることがあります。ただし、本則課税の場合、消費税の仕入税額控除にはインボイスなどの保存が必要です。'),
+        el('span',{class:'note-sub'}, nbs(['なお、','一定の金額以下の取引には、','帳簿の保存だけでよい','特例（少額特例）があります。','対象になる条件は、','国税庁のページで','ご確認ください。']))
       ]));
     }
     if(res.caution){
       card.appendChild(el('p',{class:'result-note note-caution'},[ el('b',{text:'税理士にご確認ください'}), document.createTextNode(res.cautionText) ]));
+    }else if(res.ok){
+      card.appendChild(el('p',{class:'result-note note-caution'},[ el('b',{text:'状況によって見解が分かれることがあります'}), document.createTextNode('仕事との関係を説明できることが前提です。迷うときは、税理士にご確認ください。') ]));
     }
 
     const tip=el('div',{class:'result-sec'},[ el('h3',{class:'sub-title',text:res.ok?'✏️ 記録のポイント':'✏️ ポイント'}), el('p',{text:res.tip}) ]);
     if(res.memo) tip.appendChild(res.memo.includes('|') ? el('p',{class:'memo'}, nbs(res.memo.split('|'))) : el('p',{class:'memo',text:res.memo}));   // 「|」はひとまとまりの区切り（言葉の途中で折り返さない）
     card.appendChild(tip);
+    card.appendChild(el('p',{class:'result-disclaimer',text:'※ この結果は目安で、税務の助言ではありません（2026年10月時点）。税務の判断は、税理士などの専門家にご確認ください。'}));
     const savedDate=formatDate(savedAt);   // 保存の日時が読めないときは、この行を出さない（診断4つと同じ）
     if(savedDate) card.appendChild(el('p',{class:'saved-at',text:'前回の診断結果（'+savedDate+'）'}));
     card.appendChild(el('div',{class:'btn-row'},[
@@ -576,6 +625,7 @@
 
     mainEl.appendChild(buildLogCard(res.ok ? res.cat : null));
     toTop();
+    focusHeading(card.querySelector('.result-cat'));
   }
 
   /* ===== 記録だけの画面 ===== */
@@ -598,7 +648,7 @@
     if(cat){
       card.appendChild(el('h2',{class:'section-title',text:'📌 この飲食代を記録'}));
       const date=el('input',{attrs:{type:'date',id:'log-date'}}); date.value=todayISO();
-      const memo=el('input',{attrs:{type:'text',id:'log-memo',placeholder:'例）〇〇カフェ・ランチMTG'}});
+      const memo=el('input',{attrs:{type:'text',id:'log-memo',maxlength:String(MEMO_MAX),placeholder:'例）〇〇カフェ・ランチMTG'}});
       const amt=el('input',{attrs:{type:'text',id:'log-amt',placeholder:'例）1,200',inputmode:'decimal',autocomplete:'off'}});
       const amtBox=el('div',{class:'input-suffix'},[ amt, el('span',{class:'suffix',text:'円'}) ]);
       const amtField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'金額',attrs:{for:'log-amt'}}), amtBox ]);
@@ -666,8 +716,8 @@
     setAmtError(amtInp, amtBox, err);
     if(!dm || err){ (dm ? amtInp : dateInp).focus(); showToast('入力を直してから保存してください'); return; }
     const logs=getLogs();
-    logs.unshift({ d:Number(dm[1])+'/'+Number(dm[2])+'/'+Number(dm[3]), c:cat, m:(memoInp.value||'').trim()||'未入力', a:v });   // 1円単位だけ受け付ける（amtError）
-    setLogs(logs);
+    logs.unshift({ d:Number(dm[1])+'/'+Number(dm[2])+'/'+Number(dm[3]), c:cat, m:(memoInp.value||'').trim().slice(0,MEMO_MAX)||'未入力', a:v });   // 1円単位だけ受け付ける（amtError）
+    if(!setLogs(logs)){ showToast('⚠️ この端末には保存できませんでした。記録は残っていません', 6000); return; }
     if(currentFilter && currentFilter!==cat) currentFilter='';   // 記録したものが一覧に見えるように
     memoInp.value=''; amtInp.value='';
     renderLogs(document.getElementById('log-area'), true);
@@ -710,16 +760,17 @@
   async function deleteLog(index, area, withForm){
     const ok=await enuConfirm('記録の削除','この記録を削除します。よろしいですか？','削除','キャンセル');
     if(!ok) return;
-    const logs=getLogs(); logs.splice(index,1); setLogs(logs);
+    const logs=getLogs(); logs.splice(index,1);
+    if(!setLogs(logs)){ showToast('⚠️ この端末には保存できませんでした。削除は反映されていません', 6000); return; }
     renderLogs(area, withForm);
     showToast('削除しました');
   }
 
   /* ===== トースト・確認 ===== */
-  function showToast(msg){
+  function showToast(msg, ms){
     const t=document.getElementById('enu-toast'); if(!t) return;
     t.textContent=msg; t.classList.add('show');
-    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200);
+    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),ms||2200);
   }
   window.enuTools.toast=showToast;
   function enuConfirm(title, desc, okLabel, cancelLabel){
@@ -728,15 +779,16 @@
       if(!modal){ resolve(window.confirm(title+'\n\n'+desc)); return; }
       modal.querySelector('.enu-confirm-modal__title').textContent=title;
       const descEl=modal.querySelector('.enu-confirm-modal__desc'); clr(descEl);
-      String(desc).split('\n').forEach((line,i)=>{ if(i) descEl.appendChild(document.createElement('br')); line.split(/(?<=[、。？])/).forEach(t=>descEl.appendChild(el('span',{class:'nb',text:t}))); });   // 「よろしいですか？」などの途中で折らない
+      String(desc).split('\n').forEach((line,i)=>{ if(i) descEl.appendChild(document.createElement('br')); splitAfter(line,'、。？').forEach(t=>descEl.appendChild(el('span',{class:'nb',text:t}))); });   // 「よろしいですか？」などの途中で折らない
       const ok=modal.querySelector('.enu-confirm-btn--ok');
       const cancel=modal.querySelector('.enu-confirm-btn--cancel');
       const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
       ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      const opener=document.activeElement;
       modal.hidden=false; setTimeout(()=>cancel.focus(),50);
-      const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+      const cleanup=(r)=>{ modal.hidden=true; try{ if(opener && opener.isConnected) opener.focus(); }catch(e){} ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
       const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
-      const onKey=(e)=>{ if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
+      const onKey=(e)=>{ if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===cancel ? ok : cancel).focus(); } else if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
       ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
@@ -746,7 +798,7 @@
   function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
   function appValidateData(data){ return !!(data && Array.isArray(data.logs)); }
   // 1件ずつ、手入力と同じ範囲か確かめる（本当にある日付・科目・メモ・1〜1,000,000円の整数）
-  const LOG_CATS=['雑費','会議費','接待交際費'];
+  const LOG_CATS=['雑費','会議費','接待交際費','福利厚生費'];
   function isRealDate(t){
     const m=typeof t==='string' && t.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
     if(!m) return false;
@@ -755,7 +807,7 @@
   }
   function isValidLog(l){
     return isLog(l) && isRealDate(l.d) && LOG_CATS.includes(l.c)
-      && (l.m==null || typeof l.m==='string') && Number.isInteger(l.a) && l.a>=1 && l.a<=1000000;
+      && (l.m==null || (typeof l.m==='string' && l.m.length<=MEMO_MAX)) && Number.isInteger(l.a) && l.a>=1 && l.a<=1000000;
   }
   function handleExport(){
     const payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:{ logs:getLogs() } };
@@ -770,6 +822,7 @@
     input.addEventListener('change', async (e)=>{
       const f=e.target.files[0]; if(!f) return;
       try{
+        if(f.size>IMPORT_MAX_BYTES) throw new Error('ファイルが大きすぎます（1MBまで）');
         const p=JSON.parse(await f.text());
         if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
         if(!p.app_id) throw new Error('古い形式のファイルです');
@@ -778,11 +831,13 @@
         const data=migrate({ v:p.data_version, data:p.data });
         if(!appValidateData(data)) throw new Error('データ形式が違います');
         // 読めない行（ありえない日付・範囲外の金額など）は、その行だけ読み込まず、あとで知らせる
+        if(data.logs.length>IMPORT_MAX_LOGS) throw new Error('記録が多すぎます（'+IMPORT_MAX_LOGS+'件まで）');
         const good=data.logs.filter(isValidLog), skipped=data.logs.length-good.length;
         if(data.logs.length && !good.length) throw new Error('ファイルの中に読めない値があります');
         const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
         if(!ok) return;
-        setLogs(good); currentFilter='';
+        if(!setLogs(good)) throw new Error('この端末には保存できませんでした。今のデータはそのままです');
+        currentFilter='';
         renderLogs(document.getElementById('log-area'), !!document.getElementById('log-memo'));
         showToast(skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました');
       }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
@@ -797,7 +852,7 @@
   }
   function initNotices(){
     const K=_key('notice_minimized');
-    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const get=()=>{ try{ const v=JSON.parse(localStorage.getItem(K)||'[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } };
     const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list=get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
@@ -818,16 +873,20 @@
   function initVersion(){ const v=document.getElementById('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
     const urls={ ...ENU_LEGAL_URLS, help:CFG.helpUrl };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
   }
 
   /* ===== ボタン：PDF / 印刷・シェア（102） ===== */
+  let sharing=false;
   async function handleSimpleShare(){
+    if(sharing) return;
+    sharing=true;
     const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text+'\n'+shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing=false; }
   }
   function initButtons(){
     const map={ 'enu-btn-print':()=>window.print(), 'enu-btn-share2':handleSimpleShare };

@@ -185,9 +185,12 @@
     .app-sub{font-size:.6875rem}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.enu-refs,.btn-row,.q-nav{display:none !important}
     .card{break-inside:avoid}
+    .collapse-body[hidden]{display:block !important}  /* 折りたたみの中身も印刷に出す */
+    .collapse-arrow{display:none}
     /* メーター・進み具合の棒は、背景の印刷がオフでも出す（色を保つ＋線で描く） */
     .meter-track,.meter-fill,.progress-track,.progress-fill,.compare-tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .meter-track{border:1px solid var(--primary)}
@@ -345,7 +348,7 @@
     ]},
     { q:'💼 いまの働き方に|近いのは？', k:'働き方', opts:[
       { t:'学生 ／|専業主婦／主夫 ／|扶養内パートなど', s:0, r:'課税所得がほぼないと、iDeCoの所得控除メリットが活きにくい' },
-      { t:'公務員', s:2, r:'2026年12月から掛金の上限が月5.4万円に上がり、会社員と同じくiDeCoも活用しやすい' },
+      { t:'公務員', s:2, r:'2026年12月から掛金の上限が月5.4万円に上がり、会社員に近い水準でiDeCoも活用しやすい' },
       { t:'会社員', s:2, r:'勤め先の制度に応じて、iDeCoも活用しやすい働き方' },
       { t:'自営業 ／|フリーランス', s:3, r:'iDeCoの掛金上限が高めで、節税メリットを大きく取りやすい' }
     ]},
@@ -541,14 +544,20 @@
     const optButtons=[]; let nextBtn;
     function selectAt(oi){
       state.answers[idx]=oi;
-      optButtons.forEach((b,i)=>{ const sel=(i===oi); b.classList.toggle('selected',sel); b.setAttribute('aria-checked',sel?'true':'false'); });
+      optButtons.forEach((b,i)=>{ const sel=(i===oi); b.classList.toggle('selected',sel); b.setAttribute('aria-checked',sel?'true':'false'); b.setAttribute('tabindex',sel?'0':'-1'); });
       if(nextBtn) nextBtn.disabled=false;
       updateProgress();
     }
     const list=el('div',{class:'opt-list',attrs:{role:'radiogroup','aria-labelledby':'q-heading'}});
     q.opts.forEach((opt,oi)=>{
       const sel=state.answers[idx]===oi;
-      const btn=el('button',{class:'opt'+(sel?' selected':''),attrs:{type:'button',role:'radio','aria-checked':sel?'true':'false'},on:{click:()=>selectAt(oi)}},
+      const btn=el('button',{class:'opt'+(sel?' selected':''),attrs:{type:'button',role:'radio','aria-checked':sel?'true':'false',tabindex:(sel||(state.answers[idx]===null&&oi===0))?'0':'-1'},on:{click:()=>selectAt(oi),keydown:(e)=>{
+        const d=(e.key==='ArrowDown'||e.key==='ArrowRight')?1:(e.key==='ArrowUp'||e.key==='ArrowLeft')?-1:0;
+        if(!d) return;
+        e.preventDefault();
+        const ni=(oi+d+q.opts.length)%q.opts.length;
+        selectAt(ni); optButtons[ni].focus();
+      }}},
         [ el('span',{class:'dot'}), el('span',{}, nbs(jaParts(opt.t))) ]);
       optButtons.push(btn); list.appendChild(btn);
     });
@@ -562,13 +571,14 @@
     card.appendChild(el('div',{class:'q-nav'},[backBtn,nextBtn]));
     card.appendChild(el('div',{class:'btn-row'},[ el('button',{class:'btn btn-plain',text:'最初に戻る',attrs:{type:'button'},on:{click:renderCover}}) ]));
     main.appendChild(card);
+    toTop();
     focusHeading(qHead);
   }
   function goBack(){ if(state.qIndex>0){ state.qIndex--; renderQuestion(); } }
   function goNext(){
     if(state.answers[state.qIndex]===null) return;
     if(state.qIndex<QUESTIONS.length-1){ state.qIndex++; renderQuestion(); }
-    else{ const saved=saveResult(state.answers); renderResult(state.answers.slice(), null); if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります'); }
+    else{ const saved=saveResult(state.answers); renderResult(state.answers.slice(), null); if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります', 6000); }
   }
 
   /* ===== 結果 ===== */
@@ -613,7 +623,7 @@
       });
       card.appendChild(sec);
     }
-    card.appendChild(el('p',{class:'result-disclaimer',text:'※ この結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。'}));
+    card.appendChild(el('p',{class:'result-disclaimer',text:'※ この結果は目安で、投資の助言ではありません（2026年10月時点）。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。'}));
     if(formatDate(savedAt)) card.appendChild(el('p',{class:'saved-at',text:'前回の診断結果（'+formatDate(savedAt)+'）'}));
     card.appendChild(el('div',{class:'btn-row'},[
       el('button',{class:'btn btn-fill',text:'もう一度診断する',attrs:{type:'button'},on:{click:startQuiz}}),
@@ -646,10 +656,10 @@
   }
 
   /* ===== トースト ===== */
-  function showToast(msg){
+  function showToast(msg, ms){
     const t=document.getElementById('enu-toast'); if(!t) return;
     t.textContent=msg; t.classList.add('show');
-    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200);
+    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),ms||2200);
   }
   window.enuTools.toast=showToast;
 
@@ -660,7 +670,7 @@
   }
   function initNotices(){
     const K=_key('notice_minimized');
-    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const get=()=>{ try{ const v=JSON.parse(localStorage.getItem(K)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } };
     const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list=get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });

@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#faf6f1">
+<meta name="description" content="iDeCoの掛金で、所得税と住民税がどれくらい軽くなるかを試算します。登録不要、入力した内容は端末の中だけで計算します。">
 <title>iDeCo節税シミュレーター</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="iDeCo節税シミュレーター">
+<meta property="og:description" content="iDeCoの掛金で、所得税と住民税がどれくらい軽くなるかを試算します。登録不要、入力した内容は端末の中だけで計算します。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/ideco-tax-saving-sim/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -20,6 +26,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
   body{
     font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
     color:var(--text);line-height:1.7;
@@ -50,7 +57,7 @@
 
   .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .seg.seg-2{grid-template-columns:repeat(2,1fr)}
-  .seg button{font-family:inherit;font-size:.875rem;font-weight:600;cursor:pointer;padding:9px 4px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);transition:background .15s,color .15s;line-height:1.4}
+  .seg button{font-family:inherit;font-size:.875rem;font-weight:600;cursor:pointer;padding:9px 4px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--sub);transition:background .15s,color .15s;line-height:1.4}
   .seg button:hover{background:var(--primary-soft)}
   .seg button.active{background:var(--primary);border-color:var(--primary);color:#fff}
 
@@ -71,6 +78,8 @@
   button:focus-visible,a:focus-visible,summary:focus-visible,input[type=range]:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 
   input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;background:linear-gradient(90deg,var(--primary) var(--p,50%),var(--line) var(--p,50%));outline:none;margin:6px 0}
+  /* 押せる範囲を44pxに（見た目の線は6pxのまま） */
+  input[type=range]{height:44px;padding:19px 0;margin:-13px 0;background-clip:content-box}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--primary);cursor:pointer}
   input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--primary);cursor:pointer}
   input[type=range]:disabled{opacity:.45}
@@ -91,9 +100,10 @@
   .stat-row.accent .s-val{color:var(--primary-dark)}
   .calm{font-size:.875rem;line-height:1.7;margin-top:16px}
   .calm b{color:var(--primary-dark)}
+  .result-premise,.result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードが消えるため） */
 
   .collapse{border-top:1px solid var(--line);padding-top:12px;margin-top:16px}
-  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-head{display:block;width:100%;min-height:44px;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark)}
   .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
   .collapse-arrow::before{content:"▸"}
@@ -119,14 +129,14 @@
   .save-row input{flex:1 1 auto;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg-soft);color:var(--text)}
   .save-row input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
   .save-row .save-btn{flex-shrink:0}
-  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn{padding:10px 18px;min-height:44px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
   .save-btn:hover{background:var(--primary-dark)}
   .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
   .hist-chips[hidden]{display:none}
-  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;min-height:44px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
   .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
-  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .hist-current button:hover{color:var(--warn)}
   .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
@@ -175,13 +185,13 @@
   .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
   /* === enu アクションボタン（102）=== */
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
   .enu-tb-line:hover{background:var(--primary-soft)}
   .enu-tb-data{font-size:.75rem;color:var(--sub)}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .enu-tb-text:hover{color:var(--primary-dark)}
   .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -193,7 +203,7 @@
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
   .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;min-height:44px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
   .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
@@ -202,6 +212,7 @@
     .app-sub{font-size:.6875rem}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.save-card,.enu-refs,.enu-confirm-modal{display:none !important}
     .card{break-inside:avoid}
@@ -240,6 +251,7 @@
 </style>
 </head>
 <body>
+<noscript><div class="card"><p class="field-help">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 <div class="page-wrapper">
 
   <header class="app-header">
@@ -384,7 +396,7 @@
     <p class="section-note">入力を変えるたびにリアルタイムで更新されます。</p>
 
     <p class="rh-label">1年あたりの節税額（所得税＋住民税）</p>
-    <div class="rh-main"><span data-unit-for="res-yearly-saving">¥</span><span id="res-yearly-saving">0</span></div>
+    <div class="rh-main" aria-live="polite" aria-atomic="true"><span data-unit-for="res-yearly-saving">¥</span><span id="res-yearly-saving">0</span></div>
     <p class="rh-break" id="res-saving-break"></p>
     <p class="rh-month" id="res-month-saving"></p>
 
@@ -401,6 +413,8 @@
     <p class="field-help">累計節税額は、同じ条件で続けた場合の概算です。</p>
 
     <p class="calm" id="res-calm"></p>
+    <p class="result-disclaimer">※ 受け取り時に課税されます。手数料は別にかかり、元本割れすることもあります。</p>
+    <p class="result-disclaimer">※ この結果は目安で、税務の助言ではありません（<strong>2026年10月時点</strong>）。実際の金額や手続きは、税理士などの専門家にご確認ください。</p>
 
     <div class="collapse">
       <button type="button" class="collapse-head" id="assum-toggle" aria-expanded="false" aria-controls="assum-body">
@@ -431,6 +445,7 @@
     </div>
     <div class="hist-chips" id="history-list"></div>
     <p class="hist-current" id="hist-current" hidden></p>
+    <p class="hist-current" id="hist-note" role="status" hidden></p>
     <p class="ra-data enu-tb-data"><span class="nb">データ：</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-export" aria-label="データをエクスポート">📤 エクスポート</button>・</span><span class="nb"><button type="button" class="enu-tb-text" id="enu-btn-import" aria-label="データをインポート">📥 インポート</button></span></p>
   </section>
 
@@ -442,16 +457,16 @@
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（4件）</span></summary>
     <ul>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm" target="_blank" rel="noopener">No.2260 所得税の税率</a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.nta.go.jp/users/gensen/2026kiso/index.htm" target="_blank" rel="noopener"><span class="nb">令和8年度</span><span class="nb">税制改正による</span><span class="nb">所得税の</span><span class="nb">基礎控除の</span><span class="nb">引上げ等について</span></a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener">iDeCo公式サイト</a><span class="enu-refs-src">国民年金基金連合会</span></li>
-      <li><a href="https://www.ideco-koushiki.jp/library/2022kaisei/" target="_blank" rel="noopener">iDeCoの制度改正について</a><span class="enu-refs-src">国民年金基金連合会</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm" target="_blank" rel="noopener noreferrer">No.2260 所得税の税率</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.nta.go.jp/users/gensen/2026kiso/index.htm" target="_blank" rel="noopener noreferrer"><span class="nb">令和8年度</span><span class="nb">税制改正による</span><span class="nb">所得税の</span><span class="nb">基礎控除の</span><span class="nb">引上げ等について</span></a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.ideco-koushiki.jp/" target="_blank" rel="noopener noreferrer">iDeCo公式サイト</a><span class="enu-refs-src">国民年金基金連合会</span></li>
+      <li><a href="https://www.ideco-koushiki.jp/library/2022kaisei/" target="_blank" rel="noopener noreferrer">iDeCoの制度改正について</a><span class="enu-refs-src">国民年金基金連合会</span></li>
     </ul>
   </details>
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -560,9 +575,11 @@
   }
   var moneyErr = {}; // 欄ごとのエラー（key → 文）
   // 3つの金額の欄を読み直す（読めた値だけ state に入れる）
-  function readAllMoney(){
+  // lenientKey：いま打っている欄。打っている途中（空欄・「1.」など）でまちがいに見えても、エラーは出さず、前の結果を保つ（欄を離れたときに出す）
+  function readAllMoney(lenientKey){
     Object.keys(MONEY).forEach(function(key){
       var r=readMoney(key, $(MONEY[key]).value);
+      if(key===lenientKey && r.err) return;
       moneyErr[key]=r.err;
       if(!r.err) state[key]=r.v;
       setFieldError($(MONEY[key]), r.err);
@@ -587,17 +604,17 @@
   }
   function bindMoney(id, key){
     var el=$(id);
-    el.addEventListener('input', function(){ refreshAll(); });
-    // 入力を終えたら、読める形（カンマ区切り）にそろえる
-    el.addEventListener('change', function(){ var r=readMoney(key, this.value); if(!r.err && r.v!==null && this.value.trim()!=='') this.value=r.v.toLocaleString('ja-JP',{maximumFractionDigits:2}); });
+    el.addEventListener('input', function(){ refreshAll(key); });
+    // 入力を終えたら、読める形（カンマ区切り）にそろえ、まちがいがあればここで欄の下に出す
+    el.addEventListener('change', function(){ var r=readMoney(key, this.value); if(!r.err && r.v!==null && this.value.trim()!=='') this.value=r.v.toLocaleString('ja-JP',{maximumFractionDigits:2}); refreshAll(); });
   }
   function reformStarted(){ return new Date() >= REFORM_DATE; }
 
   // ===== Toast / Confirm =====
-  function toast(msg){
+  function toast(msg, ms){
     var t=$('enu-toast');if(!t)return;
     t.textContent=msg;t.classList.add('show');
-    clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},2200);
+    clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},ms||2200);
   }
   window.enuTools.toast = toast;
   function enuConfirm(title, desc, okLabel, cancelLabel){
@@ -610,10 +627,11 @@
       var cancel=modal.querySelector('.enu-confirm-btn--cancel');
       var backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
       ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      var opener=document.activeElement;
       modal.hidden=false; setTimeout(function(){cancel.focus()},50);
-      function cleanup(r){ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); }
+      function cleanup(r){ modal.hidden=true; try{ if(opener && opener.isConnected) opener.focus(); }catch(e){} ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); }
       function onOk(){cleanup(true)} function onCancel(){cleanup(false)}
-      function onKey(e){ if(e.key==='Escape')onCancel(); if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }
+      function onKey(e){ if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===cancel ? ok : cancel).focus(); } if(e.key==='Escape')onCancel(); if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }
       ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
@@ -643,7 +661,7 @@
   function initVersion(){ var v=$('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
     var urls={ disclaimer:CFG.disclaimerUrl||ENU_LEGAL_URLS.disclaimer, privacy:CFG.privacyUrl||ENU_LEGAL_URLS.privacy, help:CFG.helpUrl };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(function(a){ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
   }
 
   // ===== 税の計算 =====
@@ -781,7 +799,7 @@
       renderBlank('入力を直してください。');
       drawChart(0, 0, 0, '入力を直すと、ここにグラフが表示されます。');
       buildAssumptions(); syncUnits();
-      saveStore('data', state); return;
+      saveData(); return;
     }
     var taxable = estimateTaxable(), taxableJ = estimateTaxableJumin();
     var sv = savingFor(state.contrib, taxable, taxableJ);
@@ -809,7 +827,7 @@
       $('res-rate').textContent      = marginalRate(taxable);
       drawChart(0, 0, 0, $('in-endage').disabled ? 'この年齢では掛金を出せないため、グラフはありません。' : '');
       buildAssumptions(); syncUnits();
-      saveStore('data', state); return;
+      saveData(); return;
     }
     if(lim<=0){
       // 企業年金の掛金が多く、iDeCoに出せる額が0円：年齢で出せないときと同じく、数字は「—」にして理由の文だけ。グラフは描かない
@@ -818,7 +836,7 @@
       $('res-rate').textContent      = marginalRate(taxable);
       drawChart(0, 0, 0, '掛金が0円のため、グラフはありません。');
       buildAssumptions(); syncUnits();
-      saveStore('data', state); return;
+      saveData(); return;
     }
 
     $('res-yearly-saving').textContent = yen(yearlySaving);
@@ -838,7 +856,7 @@
       // 課税所得0円を直接入れたときは、住民税の節税が分からないので比べる文を出さない（「変わりません」と言い切らない）
       cmpEl.textContent = '';
     }else if(state.contrib>=lim){
-      setRich(cmpEl, ['掛金は上限の ', {b:'¥'+yen(lim)+'/月'}, ' をフル活用中。これ以上の節税枠はありません。']);
+      setRich(cmpEl, ['掛金はiDeCoの上限 ', {b:'¥'+yen(lim)+'/月'}, ' です。これ以上は掛けられません。']);
     }else if(Math.round(saveMax)-yearlySaving<=0){
       // 税がかからない所得などで、上限にしても節税額が増えないとき
       setRich(cmpEl, ['掛金を上限の ', {b:'¥'+yen(lim)+'/月'}, ' にしても、年間の節税額は変わりません。']);
@@ -851,21 +869,24 @@
 
     var calmEl = $('res-calm');
     // 60歳より前に積立を終える人には「原則60歳まで」、60歳を過ぎて積み立てる人・60歳以上の人には年齢を入れない言い方
-    var lead = (state.age<60 && state.endAge<=60) ? '原則60歳まで引き出せないから、' : '原則として途中で引き出せないから、';
+    var lead = (state.age<60 && state.endAge<=60) ? '原則60歳まで引き出せません。' : '原則として途中では引き出せません。';
     if(state.mode==='taxable' && taxable===0){
       // 課税所得0円を直接入れたときは、住民税の節税が分からないので「税金も毎年 ¥0 軽くなります」と言い切らない
-      setRich(calmEl, [lead+years+'年で ', {b:'¥'+yen(principal)}, ' が着実に積み上がります。']);
+      setRich(calmEl, [lead+years+'年で ', {b:'¥'+yen(principal)}, ' を積み立てる計画です。']);
+    }else if(yearlySaving===0){
+      // 節税額が0円のときは「軽くなります」と読める文にしない
+      setRich(calmEl, [lead+years+'年で ', {b:'¥'+yen(principal)}, ' を積み立てる計画です。今の条件では節税額は0円です。']);
     }else{
       setRich(calmEl, [
         lead+years+'年で ',
-        {b:'¥'+yen(principal)}, ' が着実に積み上がり、税金も毎年 ',
-        {b:'¥'+yen(yearlySaving)}, ' 軽くなります。'
+        {b:'¥'+yen(principal)}, ' を積み立てる計画で、税金は毎年およそ ',
+        {b:'¥'+yen(yearlySaving)}, ' 軽くなる見込みです。'
       ]);
     }
 
     buildAssumptions(); syncUnits();
     drawChart(fv, years, mr);
-    saveStore('data', state);
+    saveData();
   }
   function buildAssumptions(){
     var assum = [];
@@ -961,8 +982,10 @@
   }
 
   // ===== UI更新（依存関係の反映）=====
+  var SLIDER_UNIT={ 'in-age':'歳', 'in-endage':'歳まで', 'in-contrib':'円', 'in-rate':'%' };
   function setSliderFill(el){
     var min=+el.min, max=+el.max, v=+el.value;
+    if(SLIDER_UNIT[el.id]) el.setAttribute('aria-valuetext', (el.id==='in-contrib' ? yen(v) : v)+SLIDER_UNIT[el.id]);
     el.style.setProperty('--p', (max>min ? ((v-min)/(max-min))*100 : 0)+'%');
   }
   function setActive(segId, attr, val){
@@ -999,7 +1022,7 @@
     var selfNote = state.job==='self' ? '、国民年金基金・付加保険料との合算' : '';
     $('contrib-hint').textContent = lim<=0
       ? '企業年金の掛金が多く、iDeCoに出せる額が月5,000円に届きません。'
-      : '上限は月¥'+yen(lim)+'（'+when+selfNote+'）。月5,000円から1,000円単位。';
+      : '上限は月¥'+yen(lim)+'（'+when+selfNote+'）。'+(contribLimit()>lim ? '1,000円未満は切り捨てています。' : '')+'月5,000円から1,000円単位。';
     // 出せる額が5,000円に届かないときは、動かせないスライダーを出さない（文だけ）
     cEl.hidden = lim<=0; $('contrib-ends').hidden = lim<=0;
     setSliderFill(cEl);
@@ -1056,8 +1079,8 @@
     setActive('seg-mode','mode',state.mode);
   }
 
-  function refreshAll(){
-    readAllMoney(); // 金額の欄を読み、まちがいは欄のすぐ下に（004）
+  function refreshAll(lenientKey){
+    readAllMoney(lenientKey); // 金額の欄を読み、まちがいは欄のすぐ下に（004）
     syncModeDependent();
     syncJobDependent();
     render();
@@ -1067,22 +1090,27 @@
   var DATA_VERSION = 1;
   function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
     if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    if(saved.v>DATA_VERSION) return null; // 新しい版のデータは、読まずに _broken に残す（古いアプリで上書きして壊さない）
     return saved.data;
   }
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(_){} } // 最初に壊れた分だけ残す（毎回上書きしない）
   function loadStore(name){
     var raw=null; try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw==null) return null;
     try{ var d=migrate(JSON.parse(raw)); if(d==null) throw new Error('unknown'); return d; }
     catch(e){ // 読めない保存データは …_broken に取っておき、ユーザーが何か変えるまで上書きしない（004）
-      try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(_){}
+      keepBroken(name, raw);
       _brokenStore[name]=true; return null;
     }
   }
   function saveStore(name,data){
-    if(_brokenStore[name] && !_userChanged) return;
+    if(_brokenStore[name] && !_userChanged) return true;
     delete _brokenStore[name];
-    try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){}
+    try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; }
   }
+  var _saveFailShown=false;
+  function saveFailToast(){ toast('⚠️ この端末には保存できません。入力は残らないので、📤エクスポートでバックアップしてください', 6000); }
+  function saveData(){ if(!saveStore('data', state) && !_saveFailShown){ _saveFailShown=true; saveFailToast(); } }
   var _brokenStore={}; var _userChanged=false;
   ['input','change'].forEach(function(t){ document.addEventListener(t,function(e){ if(e.isTrusted) _userChanged=true; },true); });
   document.addEventListener('click',function(e){ if(e.isTrusted && e.target.closest && e.target.closest('button')) _userChanged=true; },true);
@@ -1102,8 +1130,15 @@
   }
 
   // ===== 📌 履歴（102 H3）=====
-  function getHistory(){ var h=loadStore('history'); return Array.isArray(h)?h:[]; }
-  function setHistory(h){ saveStore('history', h); }
+  function isHistRow(h){ return !!(h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && h.state && typeof h.state==='object'); }
+  // 履歴の行は1つずつ確かめる（壊れた行があっても履歴が使えるように。読めない行は _broken に残す）
+  function getHistory(){
+    var h=loadStore('history'); if(!Array.isArray(h)) return [];
+    var ok=h.filter(isHistRow);
+    if(ok.length!==h.length){ try{ keepBroken('history', JSON.stringify({ v:DATA_VERSION, data:h })); }catch(e){} }
+    return ok;
+  }
+  function setHistory(h){ return saveStore('history', h); }
   function fmtDate(iso){ var d=new Date(iso); var p=function(n){return String(n).padStart(2,'0')}; return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
   function autoName(){
     var d=new Date(), p=function(n){return String(n).padStart(2,'0')};
@@ -1120,10 +1155,11 @@
     var key=keys.filter(function(k){ return !!moneyErr[k]; })[0];
     if(!key) return true;
     if(used.indexOf(key)<0){
-      if(key==='corp'){ state.job='employee'; state.pension='yes'; }
-      if(key==='deduction'){ state.mode='gross'; }
-      setActive('seg-job','job',state.job); setActive('seg-pension','pension',state.pension); setActive('seg-mode','mode',state.mode); // 欄の文字は変えない
-      refreshAll();
+      // 今は表示していない欄のまちがい：職業などの選択は書き換えず、文で知らせる
+      var hint = key==='corp' ? '「企業年金の掛金」の入力にまちがいがあります。職業を「会社員」、企業年金を「あり」にすると、欄が表示されます。'
+                              : '「その他の所得控除」の入力にまちがいがあります。所得の入力方法を「年収から概算」にすると、欄が表示されます。';
+      toast('⚠️ '+hint+(kind==='export' ? '直してから書き出してください' : '直してから保存してください'), 7000);
+      return false;
     }
     var inp=$(MONEY[key]);
     inp.scrollIntoView({block:'center',behavior:'smooth'}); inp.focus({preventScroll:true});
@@ -1136,7 +1172,8 @@
     var nameInput=$('save-name');
     var name=(nameInput.value||'').trim()||autoName();
     var snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, state:JSON.parse(JSON.stringify(state)) };
-    var hist=getHistory(); var lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist);
+    var hist=getHistory(); var lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim);
+    if(!setHistory(hist)){ saveFailToast(); return; }
     nameInput.value=''; currentHistId=null; renderHistory(); toast('📌 この試算を保存しました');
   }
   function renderHistory(){
@@ -1161,7 +1198,12 @@
     if(t.dataset.load){
       var id=parseInt(t.dataset.load,10);
       var snap=getHistory().filter(function(s){return s.id===id})[0];
-      if(snap){ applyState(snap.state); currentHistId=id; syncInputs(); refreshAll(); renderHistory(); toast('保存した試算を呼び出しました'); }
+      if(snap){
+        var wasOld = !!(snap.state && snap.state.regime==='old' && reformStarted());
+        applyState(snap.state); currentHistId=id; syncInputs(); refreshAll(); renderHistory(); toast('保存した試算を呼び出しました');
+        // 12月分からの制度に切り替わったあとに、旧制度の試算を呼び出したときは、新制度で計算し直して1行で知らせる
+        var hn=$('hist-note'); hn.textContent = wasOld ? 'この試算は2026年11月分までの制度で保存されています。12月分からの制度で計算し直しました。' : ''; hn.hidden=!wasOld;
+      }
     }else if(t.dataset.del){
       var did=parseInt(t.dataset.del,10);
       enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(function(ok){
@@ -1172,7 +1214,7 @@
 
   // ===== 簡易シェア・エクスポート・インポート（102）=====
   function handleSimpleShare(){
-    var shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
+    var shareData={ title:CFG.appName, text:'iDeCoの節税額を試算できるシミュレーター', url:location.href };
     if(navigator.share){
       navigator.share(shareData).catch(function(e){ if(e && e.name!=='AbortError') toast('シェアできませんでした'); });
     }else if(navigator.clipboard && navigator.clipboard.writeText){
@@ -1198,23 +1240,30 @@
     return true;
   }
   // 読める行だけ選ぶ（004：前の版のファイルも断らない。今は入れられない値・おかしい値の行は読み込まず、知らせる）
+  var IMPORT_MAX_BYTES=1024*1024, IMPORT_MAX_HIST=200;   // 読み込みの上限（ファイルの大きさ・履歴の行数）
   function pickReadable(data){
     var stOk=stateReadable(data.state, true);
     var hist=Array.isArray(data.history)?data.history:[];
-    var histOk=hist.filter(function(h){ return h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && stateReadable(h.state); });
-    return { state: stOk?data.state:null, history: data.history==null?null:histOk, skipped:(stOk?0:1)+(hist.length-histOk.length) };
+    var histAll=hist.filter(function(h){ return h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && stateReadable(h.state); });
+    var histOk=histAll.slice(0,IMPORT_MAX_HIST);   // 読み込む履歴は最新の200行まで
+    // 履歴の行がすべて読めないときは、今の履歴を残す（空で上書きしない）
+    var keepCurrent = data.history!=null && hist.length>0 && histOk.length===0;
+    return { state: stOk?data.state:null, history: (data.history==null||keepCurrent)?null:histOk, skipped:(stOk?0:1)+(hist.length-histAll.length)+(histAll.length-histOk.length) };
   }
   function appApplyData(r){
     if(r.state) applyState(r.state);
-    if(r.history) setHistory(r.history);
+    var ok=true;
+    if(r.history) ok=setHistory(r.history);
     currentHistId=null; syncInputs(); refreshAll(); renderHistory();
+    return ok;
   }
   function handleExport(){
     if(!guardInputs('export')) return;
     var payload={ app_id:CFG.appId, app_name:CFG.appName, data_version:DATA_VERSION, storage_type:CFG.storageType||'local', exported_at:new Date().toISOString(), data:appGetData() };
     var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     var url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=safeFileName(CFG.appName||CFG.appId)+'_'+new Date().toISOString().slice(0,10)+'.json';
+    a.href=url; var dn=new Date(), pd=function(n){return String(n).padStart(2,'0')};
+    a.download=safeFileName(CFG.appName||CFG.appId)+'_'+dn.getFullYear()+'-'+pd(dn.getMonth()+1)+'-'+pd(dn.getDate())+'.json';
     document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     toast('📤 JSONをダウンロードしました');
   }
@@ -1222,21 +1271,24 @@
     var input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
     input.addEventListener('change', function(e){
       var f=e.target.files[0]; if(!f) return;
+      var fail=function(m){ var e=new Error(m); e.enuMsg=true; return e; };   // 画面に出してよい日本語の文だけ印をつける（ブラウザ内部の英語は出さない）
+      if(f.size>IMPORT_MAX_BYTES){ toast('⚠️ ファイルが大きすぎます（1MBまで）'); return; }
       f.text().then(function(txt){
-        var p=JSON.parse(txt);
-        if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
-        if(!p.app_id) throw new Error('古い形式のファイルです');
-        if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
-        if(p.data_version>DATA_VERSION) throw new Error('新しい版のファイルです。アプリを再読み込みしてください');
+        var p; try{ p=JSON.parse(txt); }catch(_){ throw fail('JSONファイルとして読めませんでした。このツールで書き出したファイルを選んでください'); }
+        if(!p || typeof p!=='object') throw fail('JSONの形式が正しくありません');
+        if(!p.app_id) throw fail('古い形式のファイルです');
+        if(p.app_id!==CFG.appId) throw fail('別のアプリのファイルです');
+        if(p.data_version>DATA_VERSION) throw fail('新しい版のファイルです。アプリを再読み込みしてください');
         p.data=migrate({ v:(p.data_version==null?1:p.data_version), data:p.data });
-        if(!appValidateData(p.data) || (p.data.history!=null && !Array.isArray(p.data.history))) throw new Error('データ形式が違います');
+        if(!appValidateData(p.data) || (p.data.history!=null && !Array.isArray(p.data.history))) throw fail('データ形式が違います');
         var r=pickReadable(p.data);
-        if(!r.state && !(r.history && r.history.length)) throw new Error('ファイルの中に読めない値があります');
+        if(!r.state && !(r.history && r.history.length)) throw fail('ファイルの中に読めない値があります');
         return enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル').then(function(ok){
           if(!ok) return;
-          appApplyData(r); toast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+          if(!appApplyData(r)){ toast('⚠️ この端末には保存できませんでした。読み込んだ内容は、画面を閉じると残りません', 6000); return; }
+          toast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
         });
-      }).catch(function(err){ toast('⚠️ '+((err&&err.message)||'ファイルが読み込めません')); });
+      }).catch(function(err){ toast('⚠️ '+((err&&err.enuMsg&&err.message)||'ファイルが読み込めません')); });
     });
     input.click();
   }
@@ -1261,7 +1313,7 @@
     $('in-contrib').addEventListener('input',function(){ state.contrib=+this.value; contribWish=state.contrib; $('val-contrib').textContent=yen(state.contrib); setSliderFill(this); render(); });
     $('in-rate').addEventListener('input',function(){ state.rate=+this.value; $('val-rate').textContent=(+state.rate).toFixed(1); setSliderFill(this); render(); });
     // 呼び出したあとで入力を変えたら「呼び出し中」を消す
-    var clearCur=function(){ if(currentHistId!=null){ currentHistId=null; renderHistory(); } };
+    var clearCur=function(){ $('hist-note').hidden=true; if(currentHistId!=null){ currentHistId=null; renderHistory(); } };
     $('input-card').addEventListener('input', clearCur);
     $('input-card').addEventListener('click', function(e){ if(e.target.closest('.seg button')) clearCur(); });
     var at=$('assum-toggle'), ab=$('assum-body');
@@ -1284,8 +1336,12 @@
     bind();
     refreshAll();
     var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(render,150); });
-    renderHistory();
+    try{ renderHistory(); }catch(e){ /* 履歴が読めなくても、計算は動かす */ }
   }
+  // 想定外のエラーが起きたときは、1回だけ知らせる（入力は保存されている）
+  var _errShown=false;
+  function _onErr(){ if(_errShown) return; _errShown=true; toast('うまく動かないときは、ページを再読み込みしてください。入力した内容は保存されています', 6000); }
+  window.addEventListener('error',_onErr); window.addEventListener('unhandledrejection',_onErr);
 
   // この script は画面の部品のあとにあるので、待たずにすぐ作る。DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に
   // 結果のない画面がいったん描かれ、結果が入ったときに下の部品がずれていた（portfolio と同じ原因）

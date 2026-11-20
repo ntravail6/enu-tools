@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#faf6f4">
+<meta name="description" content="会社員とフリーランスの手取りを、収入や前提を入れて横並びで比べる概算シミュレーターです。">
 <title>会社員 vs フリーランス比較シミュレーター</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="会社員 vs フリーランス比較シミュレーター">
+<meta property="og:description" content="会社員とフリーランスの手取りを、収入や前提を入れて横並びで比べる概算シミュレーターです。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/employee-vs-freelance-sim/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -27,6 +33,8 @@
   .page-wrapper{max-width:960px;margin:0 auto;width:100%}
   .nb{display:inline-block}  /* ひとまとまりの言葉。途中で折り返さない（004「改行」） */
   .hidden{display:none !important}
+  h2[tabindex="-1"]:focus{outline:none}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 
   .app-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
   .app-icon{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,var(--primary-light),var(--primary-soft))}
@@ -53,17 +61,17 @@
 
   /* 切りかえ（収入から／手取りから・年額／月額）*/
   .seg-toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg-soft)}
-  .seg-toggle button{border:none;background:transparent;color:var(--sub);font-family:inherit;font-weight:600;font-size:.875rem;padding:7px 14px;cursor:pointer;transition:background .15s,color .15s}
+  .seg-toggle button{border:none;background:transparent;color:var(--sub);font-family:inherit;font-weight:600;font-size:.875rem;padding:7px 14px;min-height:44px;cursor:pointer;transition:background .15s,color .15s}
   .seg-toggle button + button{border-left:1px solid var(--line)}
   .seg-toggle button.active{background:var(--primary);color:#fff}
   .mode-row{margin-bottom:14px}
 
   .preset-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
+  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:7px 14px;min-height:44px;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
   .preset-chip:hover{background:var(--primary-light)}
 
   /* 折りたたみ（▸／▾）*/
-  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-head{display:block;width:100%;min-height:44px;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
   .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
   .collapse-arrow::before{content:"▸"}
   .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
@@ -91,8 +99,8 @@
   .summary-box .who{font-size:.875rem;color:var(--sub);font-weight:700}
   .summary-box .amount{font-size:1.375rem;font-weight:700;color:var(--primary-dark);line-height:1.3;margin:2px 0;white-space:nowrap}
   .summary-box .rate{font-size:.75rem;color:var(--sub)}
-  .summary-box.winner{border-color:var(--primary);background:var(--primary-soft)}
   .diff-note{font-size:.875rem;color:var(--text);margin-bottom:4px}
+  .result-premise,.result-disclaimer{font-size:.75rem;color:var(--sub);margin-top:12px}  /* 画面にも印刷にも出す（印刷では上の注意カードと前提の欄が消えるため） */
   .diff-note strong{color:var(--primary-dark)}
 
   .sub-block{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
@@ -142,14 +150,14 @@
   .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
   .save-row input{flex:1 1 auto;min-width:0}
   .save-row .save-btn{flex-shrink:0}
-  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn{padding:10px 18px;min-height:44px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
   .save-btn:hover{background:var(--primary-dark)}
   .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
   .hist-chips[hidden]{display:none}
-  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;min-height:44px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
   .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
-  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .hist-current button:hover{color:var(--primary-dark)}
   .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
   .page-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
@@ -173,7 +181,7 @@
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark)}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
@@ -197,13 +205,13 @@
   .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
 
   /* === enu アクションボタン（102）=== */
-  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+  .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
   .enu-tb-line:hover{background:var(--primary-soft)}
   .enu-tb-data{font-size:.75rem;color:var(--sub)}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .enu-tb-text:hover{color:var(--primary-dark)}
   .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -215,7 +223,7 @@
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
   .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;min-height:44px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
   .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
@@ -229,6 +237,7 @@
     .preset-chip{padding:7px 4px;white-space:nowrap}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.preset-row,.mode-row,.assump,.disp-wrap,.save-card,.enu-refs,.toggle-wrap,.enu-confirm-modal{display:none !important}
     .card{break-inside:avoid}
@@ -266,12 +275,13 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="note-text">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <header class="app-header">
     <div class="app-icon">🆚</div>
     <div>
       <h1 class="app-title"><span class="nb">会社員 vs&nbsp;</span><span class="nb">フリーランス</span><span class="nb">比較シミュレーター</span></h1>
-      <p class="app-sub"><span class="nb">同じ収入でも手取りはこんなに違う。</span><span class="nb">年金・保険・税金を</span><span class="nb">横並びで比較</span></p>
+      <p class="app-sub"><span class="nb">手取りを横並びで比べます。</span><span class="nb">年金・保険・税金の</span><span class="nb">内訳つき</span></p>
     </div>
   </header>
 
@@ -378,6 +388,9 @@
           <li>※ 単身・扶養なし、基礎控除と社会保険料控除だけの概算です。</li>
           <li>※ 住民税の非課税（合計所得45万円以下）と、国保の均等割の軽減（7・5・2割・令和8年度の基準）を入れています。</li>
           <li>※ 国民年金の保険料の免除・納付猶予は入れていません（売上が少ないと手取りがマイナスになることがあります）。</li>
+          <li>※ フリーランスの個人事業税・消費税は入れていません（業種や売上によってかかることがあり、入れると手取りは下がります）。</li>
+          <li>※ 住民税の調整控除は入れていません（約2,500円の差です）。会社員の社会保険は、標準報酬月額の等級や賞与を使わない概算です（実際とは最大で約2万円ずれることがあります）。</li>
+          <li>※ 青色申告特別控除の65万円は、複式簿記と電子申告などの条件を満たした場合です。経費率15%・65万円は初期値の一例です。</li>
         </ul>
       </div>
     </div>
@@ -420,6 +433,9 @@
       <div class="legend" id="legend"></div>
     </div>
 
+    <p class="result-premise" id="resultPremise"></p>
+    <p class="result-disclaimer">※ 手取りだけの比較です。会社負担の保険料、将来の年金額、賞与・退職金、傷病時の給付などは含みません。どちらが良いかを示すものではありません。この結果は目安で、税務の助言ではありません。税の判断は、税理士などの専門家にご確認ください。</p>
+
     <div class="breakdown" id="cmpCard">
       <button type="button" class="collapse-head" id="cmpToggle" aria-expanded="false" aria-controls="cmpBody">
         <span class="sub-title">📋 項目別 比較</span><span class="collapse-arrow" aria-hidden="true"></span>
@@ -455,18 +471,18 @@
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（6件）</span></summary>
     <ul>
-      <li><a href="https://www.nta.go.jp/publication/pamph/koho/kurashi/index.htm" target="_blank" rel="noopener">暮らしの税情報（令和8年度版）</a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" target="_blank" rel="noopener">No.1410 給与所得控除</a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener">No.1199 基礎控除</a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
-      <li><a href="https://www.kyoukaikenpo.or.jp/lp/2026hokenryou/" target="_blank" rel="noopener">令和8年度 保険料率のお知らせ</a><span class="enu-refs-src">協会けんぽ</span></li>
-      <li><a href="https://www.nenkin.go.jp/section/faq/kokunen/seido/hokenryo/seidosetsumei/20150331.html" target="_blank" rel="noopener">国民年金保険料の金額</a><span class="enu-refs-src">日本年金機構</span></li>
+      <li><a href="https://www.nta.go.jp/publication/pamph/koho/kurashi/index.htm" target="_blank" rel="noopener noreferrer">暮らしの税情報（令和8年度版）</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" target="_blank" rel="noopener noreferrer">No.1410 給与所得控除</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" target="_blank" rel="noopener noreferrer">No.1199 基礎控除</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm" target="_blank" rel="noopener noreferrer">No.2072 青色申告特別控除</a><span class="enu-refs-src">国税庁</span></li>
+      <li><a href="https://www.kyoukaikenpo.or.jp/lp/2026hokenryou/" target="_blank" rel="noopener noreferrer">令和8年度 保険料率のお知らせ</a><span class="enu-refs-src">協会けんぽ</span></li>
+      <li><a href="https://www.nenkin.go.jp/section/faq/kokunen/seido/hokenryo/seidosetsumei/20150331.html" target="_blank" rel="noopener noreferrer">国民年金保険料の金額</a><span class="enu-refs-src">日本年金機構</span></li>
     </ul>
   </details>
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -781,7 +797,6 @@ function renderEmpty(){
   $('periodNote').classList.toggle('hidden',period!=='month');
   ['empTake','freeTake'].forEach(id=>{ $(id).textContent='—'; });
   ['empRate','freeRate'].forEach(id=>{ $(id).textContent='手取り率 —'; });
-  $('boxEmp').classList.remove('winner'); $('boxFree').classList.remove('winner');
   $('revHeadline').classList.add('hidden');
   const dn=$('diffNote'); dn.classList.remove('hidden'); dn.replaceChildren('入力を直してください。');
   ['barEmp','barFree','legend','cmpTableBody','cmpCards'].forEach(id=>$(id).replaceChildren());
@@ -834,9 +849,9 @@ function render(e,f,scaleMax,headline){
   const rateText=(x,D)=> D.take<0 ? '手取り率 —' : '手取り率 '+(x.gross>0?(x.take/x.gross*100).toFixed(1):'0')+'%';
   $('empRate').textContent=rateText(e,E);
   $('freeRate').textContent=rateText(f,F);
-  // 逆算は手取りをそろえる計算なので、どちらも強調しない
-  $('boxEmp').classList.toggle('winner',mode==='forward' && E.take>F.take);
-  $('boxFree').classList.toggle('winner',mode==='forward' && F.take>E.take);
+  // どちらが得かを色で示さない（手取りだけの比較で、どちらが良いかを示すものではないため）
+  { const aoOpt=$('aoiro').options[$('aoiro').selectedIndex];
+    $('resultPremise').textContent='前提：概算（2026年10月時点）。単身・扶養なし、経費率'+$('keihiRate').value+'%、青色申告特別控除'+(aoOpt?aoOpt.text:'')+'（初期値は一例です）。個人事業税・消費税・住民税の調整控除は入れていません。会社員の社会保険は等級・賞与を使わない概算です。'; }
 
   const rh=$('revHeadline'), dn=$('diffNote');
   if(mode==='reverse'){
@@ -921,10 +936,12 @@ function render(e,f,scaleMax,headline){
   }));
 }
 
+// 区切り文字の「あと」で分ける（正規表現の後読みは、古い iOS で動かなくなるため使わない）
+function splitAfter(str, chars){ const out=[]; let cur=''; for(const c of String(str)){ cur+=c; if(chars.includes(c)){ out.push(cur); cur=''; } } if(cur) out.push(cur); return out; }
 // 「健康保険・介護保険」のように「・」でつないだ名前は、「・」のあとでだけ折り返す（言葉の途中で折れない）
 function lblNb(l){
   if(l.indexOf('・')<0) return [l];
-  return l.split(/(?<=・)/).map(t=>el('span',{class:'nb',text:t}));
+  return splitAfter(l,'・').map(t=>el('span',{class:'nb',text:t}));
 }
 
 // 補足の文：配列のときは、ひとつずつを言葉のまとまり（nb）にする
@@ -944,21 +961,23 @@ function drawBar(id,segs,scaleMax){
 const DATA_VERSION=1;
 function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
   if(!saved || typeof saved!=='object' || saved.v==null) return null;
+  if(saved.v>DATA_VERSION) return null; // 新しい版のデータは、読まずに _broken に残す（古いアプリで上書きして壊さない）
   return saved.data;
 }
+function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(_){} } // 最初に壊れた分だけ残す（毎回上書きしない）
 function loadStore(name){
   let raw=null; try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
   if(raw==null) return null;
   try{ const d=migrate(JSON.parse(raw)); if(d==null) throw new Error('unknown'); return d; }
   catch(e){ // 読めない保存データは …_broken に取っておき、ユーザーが何か変えるまで上書きしない（004）
-    try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(_){}
+    keepBroken(name, raw);
     _brokenStore[name]=true; return null;
   }
 }
 function saveStore(name,data){
-  if(_brokenStore[name] && !_userChanged) return;
+  if(_brokenStore[name] && !_userChanged) return true;
   delete _brokenStore[name];
-  try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){}
+  try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; }
 }
 const _brokenStore={}; let _userChanged=false;
 ['input','change'].forEach(function(t){ document.addEventListener(t,function(e){ if(e.isTrusted) _userChanged=true; },true); });
@@ -973,7 +992,7 @@ function getInput(){
 }
 function applyInput(d){
   if(!d || typeof d!=='object') return;
-  extraInput=Object.assign({}, d);
+  extraInput={}; Object.keys(d).forEach(k=>{ const v=d[k]; if(typeof v==='string' ? v.length<=200 : (typeof v==='number' || typeof v==='boolean')) extraInput[k]=v; }); // 知らない項目は残すが、長すぎるものは残さない
   if(d.over40!=null) $('over40').checked=!!d.over40;
   INPUT_IDS.forEach(k=>{ if(d[k]!=null && $(k)) $(k).value=d[k]; });
   if(d.period==='year'||d.period==='month') period=d.period;
@@ -981,12 +1000,20 @@ function applyInput(d){
   YEN_IDS.forEach(id=>fmtComma($(id)));
   applyMode(); applyRevType(); applyRevDir(); applyPeriod(); applyOver40();
 }
-function saveInput(){ saveStore('data', getInput()); }
+let _saveFailShown=false;
+function saveInput(){ if(!saveStore('data', getInput()) && !_saveFailShown){ _saveFailShown=true; showToast('⚠️ この端末には保存できません。入力は残らないので、📤エクスポートでバックアップしてください', 6000); } }
 function applyOver40(){ $('kokuhoKaigoField').classList.toggle('hidden',!$('over40').checked); }
 
 /* === 履歴（H3）=== */
-function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
-function setHistory(h){ saveStore('history', h); }
+function isHistRow(h){ return !!(h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number'); }
+// 履歴の行は1つずつ確かめる（壊れた行があっても、起動時に落ちないように。読めない行は _broken に残す）
+function getHistory(){
+  const h=loadStore('history'); if(!Array.isArray(h)) return [];
+  const ok=h.filter(isHistRow);
+  if(ok.length!==h.length){ try{ keepBroken('history', JSON.stringify({ v:DATA_VERSION, data:h })); }catch(e){} }
+  return ok;
+}
+function setHistory(h){ return saveStore('history', h); }
 function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
 function manYen(n){ return (Math.round(n/1000)/10).toLocaleString()+'万円'; }
 function autoName(){
@@ -1023,7 +1050,8 @@ function saveCurrent(){
   const nameInput=$('save-name');
   const name=(nameInput.value||'').trim()||autoName();
   const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, input:getInput() };
-  let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist);
+  let hist=getHistory(); const lim=Math.max(HIST_MAX,hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim);
+  if(!setHistory(hist)){ showToast('⚠️ この端末には保存できませんでした。この比較は残っていません', 6000); return; }
   nameInput.value=''; currentHistId=null; renderHistory(); showToast('📌 この比較を保存しました');
 }
 function renderHistory(){
@@ -1050,7 +1078,7 @@ function onHistoryClick(e){
   }else if(t.dataset.del){
     const id=parseInt(t.dataset.del,10);
     enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
-      if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
+      if(ok){ if(!setHistory(getHistory().filter(s=>s.id!==id))){ showToast('⚠️ この端末には保存できませんでした。削除は反映されていません', 6000); return; } currentHistId=null; renderHistory(); showToast('削除しました'); }
     });
   }
 }
@@ -1075,7 +1103,7 @@ function applyPeriod(){
 }
 
 /* === Toast / Confirm（102）=== */
-function showToast(msg){const t=$('enu-toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2200);}
+function showToast(msg, ms){const t=$('enu-toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),ms||2200);}
 window.enuTools.toast=showToast;
 function enuConfirm(title, desc, okLabel, cancelLabel){
   return new Promise(resolve=>{
@@ -1087,10 +1115,11 @@ function enuConfirm(title, desc, okLabel, cancelLabel){
     const cancel=modal.querySelector('.enu-confirm-btn--cancel');
     const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
     ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+    const opener=document.activeElement;
     modal.hidden=false; setTimeout(()=>cancel.focus(),50);
-    const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+    const cleanup=(r)=>{ modal.hidden=true; try{ if(opener && opener.isConnected) opener.focus(); }catch(e){} ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
     const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
-    const onKey=(e)=>{ if(e.key==='Escape')onCancel(); if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } };
+    const onKey=(e)=>{ if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===cancel ? ok : cancel).focus(); } if(e.key==='Escape')onCancel(); if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } };
     ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
   });
 }
@@ -1103,7 +1132,7 @@ function applyStorageType(){
 }
 function initNotices(){
   const K=_key('notice_minimized');
-  const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return[]}};
+  const get=()=>{try{const v=JSON.parse(localStorage.getItem(K)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}};
   const set=(l)=>{try{localStorage.setItem(K,JSON.stringify(l))}catch(e){}};
   const list=get();
   document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{if(list.includes(w.dataset.noticeId))w.classList.add('is-mini')});
@@ -1119,14 +1148,18 @@ const ENU_LEGAL_URLS={
 function initVersion(){ const v=$('appVersion'); if(v && CFG.appVersion) v.textContent='ver.'+CFG.appVersion; }
 function initLegal(){
   const urls={ disclaimer:CFG.disclaimerUrl||ENU_LEGAL_URLS.disclaimer, privacy:CFG.privacyUrl||ENU_LEGAL_URLS.privacy, help:CFG.helpUrl };
-  document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+  document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
 }
 
 /* === アクションボタン（102）=== */
+let sharing=false;
 async function handleSimpleShare(){
+  if(sharing) return;
+  sharing=true;
   const sd={title:CFG.appName,text:CFG.appName,url:location.href};
   try{ if(navigator.share){await navigator.share(sd);} else {await navigator.clipboard.writeText(sd.text+'\n'+sd.url);showToast('リンクをコピーしました');} }
   catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+  finally{ sharing=false; }
 }
 function safeFileName(s){ return String(s||'data').replace(/[^\w぀-ゟ゠-ヿ一-龯ー-]/g,''); }
 function appGetData(){ return { input:getInput(), history:getHistory() }; }
@@ -1149,16 +1182,22 @@ function inputReadable(d, loose){
   return true;
 }
 // 読める行だけ選ぶ（004：前の版のファイルも断らない。今は入れられない値・おかしい値の行は読み込まず、知らせる）
+const IMPORT_MAX_BYTES=2*1024*1024, IMPORT_MAX_HIST=100;   // 読み込みの上限（ファイルの大きさ・履歴の行数）
 function pickReadable(data){
   const inputOk=inputReadable(data.input, true);
   const hist=Array.isArray(data.history)?data.history:[];
-  const histOk=hist.filter(h=>h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && inputReadable(h.input));
-  return { input: inputOk?data.input:null, history: data.history==null?null:histOk, skipped:(inputOk?0:1)+(hist.length-histOk.length) };
+  const histAll=hist.filter(h=>isHistRow(h) && inputReadable(h.input));
+  const histOk=histAll.slice(0,IMPORT_MAX_HIST);   // 読み込む履歴は最新の100行まで
+  // 履歴の行がすべて読めないときは、今の履歴を残す（空で上書きしない）
+  const keepCurrent = data.history!=null && hist.length>0 && histOk.length===0;
+  return { input: inputOk?data.input:null, history: (data.history==null||keepCurrent)?null:histOk, skipped:(inputOk?0:1)+(hist.length-histAll.length)+(histAll.length-histOk.length) };
 }
 function appApplyData(r){
+  let ok=true;
   if(r.input) applyInput(r.input);
-  if(r.history) setHistory(r.history);
+  if(r.history) ok=setHistory(r.history);
   currentHistId=null; renderHistory(); calc();
+  return ok;
 }
 function handleExport(){
   if(!guardInputs('export')) return;
@@ -1174,7 +1213,8 @@ function handleImport(){
   input.addEventListener('change', async (e)=>{
     const f=e.target.files[0]; if(!f) return;
     try{
-      const p=JSON.parse(await f.text());
+      if(f.size>IMPORT_MAX_BYTES) throw new Error('ファイルが大きすぎます（2MBまで）');
+      let p; try{ p=JSON.parse(await f.text()); }catch(_){ throw new Error('JSONファイルとして読めませんでした。このツールで書き出したファイルを選んでください'); }
       if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
       if(!p.app_id) throw new Error('古い形式のファイルです');
       if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
@@ -1183,9 +1223,13 @@ function handleImport(){
       if(!appValidateData(p.data) || (p.data.history!=null && !Array.isArray(p.data.history))) throw new Error('データ形式が違います');
       const r=pickReadable(p.data);
       if(!r.input && !(r.history && r.history.length)) throw new Error('ファイルの中に読めない値があります');
-      const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
+      const nowN=getHistory().length;
+      const msg='今のデータを、ファイルの内容で上書きします。'+(r.history ? '履歴は '+r.history.length+'件 に置き換わります（今は '+nowN+'件）。' : '')+'よろしいですか？';
+      const ok=await enuConfirm('📥 データのインポート',msg,'インポート','キャンセル');
       if(!ok) return;
-      appApplyData(r); showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+      const saved=appApplyData(r);
+      if(!saved){ showToast('⚠️ この端末には保存できませんでした。読み込んだ内容は、画面を閉じると残りません', 6000); return; }
+      showToast(r.skipped ? '📥 インポートしました。読み込めなかった行があります' : '📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
     }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
   });
   input.click();
@@ -1262,9 +1306,13 @@ function init(){
   $('history-list').addEventListener('click',onHistoryClick);
   $('hist-current').addEventListener('click',onHistoryClick);
 
-  renderHistory();
+  try{ renderHistory(); }catch(e){ /* 履歴が読めなくても、計算は動かす */ }
   calc();
 }
+// 想定外のエラーが起きたときは、1回だけ知らせる（入力は保存されている）
+let _errShown=false;
+function _onErr(){ if(_errShown) return; _errShown=true; showToast('うまく動かないときは、ページを再読み込みしてください。入力した内容は保存されています', 6000); }
+window.addEventListener('error',_onErr); window.addEventListener('unhandledrejection',_onErr);
 // この script は画面の部品のあとにあるので、待たずにすぐ作る。DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に
 // 結果のない画面がいったん描かれ、結果が入ったときに下の部品がずれていた（portfolio と同じ原因）
 init();

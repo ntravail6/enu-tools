@@ -168,10 +168,12 @@
     .app-sub{font-size:.6875rem}
   }
   @media print{
+    @page{margin:12mm}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.page-actions,.result-actions,.q-foot,.enu-refs,.enu-toast{display:none !important}
     .card{break-inside:avoid}
-    .progress-track,.progress-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .progress-track,.progress-fill,.feat-chip{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .radar-svg{break-inside:avoid}
   }
 
 
@@ -377,7 +379,8 @@
       return arr.join(' ');
     }
 
-    var svg = svgEl('svg', { viewBox:'0 0 280 250', class:'radar-svg', role:'img', 'aria-label':'タイプ別バランスのレーダーチャート' });
+    var radarText = 'タイプ別バランスのレーダーチャート（いちばん高いタイプを100とした割合）：' + TYPE_ORDER.map(function(k){ return TYPES[k].short + ' ' + (maxScore > 0 ? Math.round((result.scores[k] || 0) / maxScore * 100) : 0); }).join('、');
+    var svg = svgEl('svg', { viewBox:'0 0 280 250', class:'radar-svg', role:'img', 'aria-label':radarText });
 
     // 背景リング（外周＋中間）
     [1, 0.5].forEach(function(f){
@@ -437,31 +440,31 @@
   var TYPES = {
     save: {
       emoji:'🪙', type:'高還元・節約タイプ', short:'節約',
-      comment:'毎日のお買い物やお支払いを、コツコツお得にしたいあなた。派手な特典より「ポイント還元率」や「キャッシュバック」を重視するタイプです。よく使うお店やサービスで還元が高くなるカードと相性が良さそう。',
-      howto:'「基本の還元率」「よく行くお店での優待」を軸に選ぶのがおすすめ。普段使いの1枚に集約すると、ポイントもたまりやすくなります。',
+      comment:'毎日のお買い物やお支払いを、コツコツお得にしたい人に多い傾向のタイプです。派手な特典より「ポイント還元率」や「キャッシュバック」を重視する考え方で、よく使うお店やサービスで還元が高くなるカードと相性が良さそう。',
+      howto:'「基本の還元率」「よく行くお店での優待」を軸に選ぶ考え方があります。普段使いの1枚に集約すると、ポイントもたまりやすくなります。',
       feats:['高めの基本還元率','よく使うお店での上乗せ','ポイントの使いやすさ']
     },
     travel: {
       emoji:'✈️', type:'旅行・マイルタイプ', short:'旅行',
-      comment:'旅行や移動が多く、特典で“次の旅”をお得にしたいあなた。ポイントよりマイルや旅行関連の優待に魅力を感じるタイプです。航空会社や旅行サービスと相性の良いカードが候補に。',
+      comment:'旅行や移動が多く、特典で“次の旅”をお得にしたい人に多い傾向のタイプです。ポイントよりマイルや旅行関連の優待に魅力を感じる考え方で、航空会社や旅行サービスと相性の良いカードが候補になりそう。',
       howto:'「マイルの貯まりやすさ」「空港ラウンジ・旅行保険」などの旅行特典を軸に。よく使う航空会社・サービスに合わせると効率的です。',
       feats:['マイル還元','空港ラウンジ・旅行保険','海外での使いやすさ']
     },
     status: {
       emoji:'👑', type:'ステータス・優待タイプ', short:'優待',
-      comment:'上質な体験や特別感を大切にしたいあなた。年会費以上の価値を、優待やサービス・ステータスに見いだすタイプです。ゴールド／プラチナ系など、特典が充実したカードが候補に。',
+      comment:'上質な体験や特別感を大切にしたい人に多い傾向のタイプです。年会費以上の価値を、優待やサービス・ステータスに見いだす考え方で、ゴールド／プラチナ系など、特典が充実したカードが候補になりそう。',
       howto:'「優待・コンシェルジュ・ラウンジ」などの体験価値と、年会費のバランスを軸に。自分が実際に使う特典が多いカードを選ぶと“元が取れ”やすいです。',
       feats:['上質な優待・体験','専用サービス','充実した付帯保険']
     },
     simple: {
       emoji:'🍃', type:'シンプル・年会費無料タイプ', short:'シンプル',
-      comment:'余計な機能より「手軽さ」を大事にしたいあなた。年会費無料で、迷わずシンプルに使える1枚が心地よいタイプです。はじめての1枚や、サブの1枚にもぴったり。',
-      howto:'「年会費無料」「使い方のわかりやすさ」を軸に。ポイントが自動でつく・管理がラクなど、続けやすさで選ぶと失敗しにくいです。',
+      comment:'余計な機能より「手軽さ」を大事にしたい人に多い傾向のタイプです。年会費無料で、迷わずシンプルに使える1枚が心地よい考え方で、はじめての1枚や、サブの1枚にも向きそう。',
+      howto:'「年会費無料」「使い方のわかりやすさ」を軸に。ポイントが自動でつく・管理がラクなど、続けやすさで選ぶ考え方があります。',
       feats:['年会費無料','シンプルな仕組み','申し込みのしやすさ']
     },
     net: {
       emoji:'🛒', type:'ネット・サブスクタイプ', short:'ネット',
-      comment:'ネットショッピングやサブスクをよく使うあなた。特定のサービスでの還元や、ネット決済の便利さに魅力を感じるタイプです。よく使うECサイトやサブスクと相性の良いカードが候補に。',
+      comment:'ネットショッピングやサブスクをよく使う人に多い傾向のタイプです。特定のサービスでの還元や、ネット決済の便利さに魅力を感じる考え方で、よく使うECサイトやサブスクと相性の良いカードが候補になりそう。',
       howto:'「よく使うネットサービスでの還元」「ナンバーレスなどの安心感」を軸に。利用先に特化したカードだと、ポイントが一気にたまりやすいです。',
       feats:['ネットサービスでの高還元','サブスク・定期決済に便利','ネット決済の安心感']
     }
@@ -686,6 +689,7 @@
         var sel = (i === oi);
         b.classList.toggle('selected', sel);
         b.setAttribute('aria-checked', sel ? 'true' : 'false');
+        b.setAttribute('tabindex', sel ? '0' : '-1');
       });
       if(nextBtn) nextBtn.disabled = false;
       updateProgress();
@@ -696,8 +700,14 @@
       var sel = state.answers[idx] === oi;
       var btn = el('button', {
         class:'opt' + (sel ? ' selected' : ''),
-        attrs:{ type:'button', role:'radio', 'aria-checked': sel ? 'true' : 'false' },
-        on:{ click:function(){ selectAt(oi); } }
+        attrs:{ type:'button', role:'radio', 'aria-checked': sel ? 'true' : 'false', tabindex: (sel || (state.answers[idx] === null && oi === 0)) ? '0' : '-1' },
+        on:{ click:function(){ selectAt(oi); }, keydown:function(e){
+          var d = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowUp' || e.key === 'ArrowLeft') ? -1 : 0;
+          if(!d) return;
+          e.preventDefault();
+          var ni = (oi + d + q.opts.length) % q.opts.length;
+          selectAt(ni); optButtons[ni].focus();
+        } }
       }, [
         el('span', { class:'dot' }),
         el('span', {}, [
@@ -738,7 +748,7 @@
     var result = computeResult(scores, state.answers, null);
     var saved = saveResult(scores, result.winner.type);
     renderResult(result, false, null);
-    if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります');
+    if(!saved) showToast('この端末には保存できませんでした。この結果は、画面を閉じると見られなくなります', 6000);
   }
   function showSavedResult(prev){ renderResult(computeResult(prev.scores, null, prev.type), true, prev.at); }
 
@@ -794,10 +804,10 @@
   }
 
   /* ===== Toast・シェア（102 簡易シェア） ===== */
-  function showToast(msg){
+  function showToast(msg, ms){
     var t = document.getElementById('enu-toast'); if(!t) return;
     t.textContent = msg; t.classList.add('show');
-    clearTimeout(showToast._t); showToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    clearTimeout(showToast._t); showToast._t = setTimeout(function(){ t.classList.remove('show'); }, ms || 2200);
   }
   window.enuTools.toast = showToast;
   var sharing = false;
@@ -824,7 +834,7 @@
   }
   function initNotices(){
     var K = _key('notice_minimized');
-    var get = function(){ try{ return JSON.parse(localStorage.getItem(K) || '[]'); }catch(e){ return []; } };
+    var get = function(){ try{ var v = JSON.parse(localStorage.getItem(K) || '[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } };
     var set = function(l){ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     var list = get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(function(w){ if(list.indexOf(w.dataset.noticeId) !== -1) w.classList.add('is-mini'); });
