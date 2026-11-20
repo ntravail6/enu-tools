@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fa">
 <title>投資比較シミュレーター</title>
+<meta name="description" content="投資の利回り・手数料・積み方の違いを、並べて比べるシミュレーターです。結果は目安で、投資の助言ではありません。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="投資比較シミュレーター">
+<meta property="og:description" content="投資の利回り・手数料・積み方の違いを、並べて比べるシミュレーターです。結果は目安で、投資の助言ではありません。">
+<meta property="og:url" content="https://enu-tools.pages.dev/desk/versus-sim/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
@@ -17,6 +23,7 @@
     --series-a:#5f7d92; --series-b:#c4878f; --series-c:#8a9a7b; --series-d:#c2a35a;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
   body{
     font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;
     background:var(--bg);color:var(--text);line-height:1.7;
@@ -38,7 +45,7 @@
   .preset-card{display:flex;flex-direction:column;gap:10px}
   .preset-label{font-size:.875rem;font-weight:600;color:var(--sub)}
   .preset-row{display:flex;flex-wrap:wrap;gap:8px}
-  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
+  .preset-chip{font-family:inherit;font-size:.875rem;font-weight:600;padding:8px 16px;min-height:44px;border-radius:10px;cursor:pointer;background:var(--primary-soft);border:1px solid var(--primary-light);color:var(--primary-dark);transition:background .15s}
   .preset-chip:hover{background:var(--primary-light)}
 
   /* プランの並び：3＋1 のような半端な段にしない（スマホ1列／中くらい2列／PCは数ぶん横並び） */
@@ -49,9 +56,9 @@
   .plan-card{min-width:0;margin-bottom:0;display:flex;flex-direction:column}
   .plan-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
   .plan-badge{font-size:.875rem;font-weight:700}
-  .plan-remove{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:.75rem;cursor:pointer;padding:2px 6px;font-family:inherit}
+  .plan-remove{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:.75rem;cursor:pointer;padding:12px 8px;font-family:inherit}
   .plan-remove:hover{color:var(--series-b)}
-  .add-plan-btn{display:block;width:100%;margin:16px 0;padding:11px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;transition:background .15s}
+  .add-plan-btn{display:block;width:100%;margin:16px 0;padding:11px;min-height:44px;border-radius:10px;border:1px dashed var(--primary);background:var(--primary-soft);color:var(--primary-dark);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;transition:background .15s}
   .add-plan-btn:hover{background:var(--primary-light)}
   .add-plan-btn:disabled{opacity:.45;cursor:not-allowed}
 
@@ -69,9 +76,11 @@
   .fund-custom{margin-top:8px}
   .method-toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .method-toggle input{position:absolute;opacity:0;pointer-events:none}
-  .method-toggle label{flex:1;text-align:center;padding:9px 4px;font-size:.875rem;font-weight:600;color:var(--sub);cursor:pointer;background:var(--bg-soft);transition:background .15s,color .15s}
+  .method-toggle label{flex:1;text-align:center;padding:9px 4px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:.875rem;font-weight:600;color:var(--sub);cursor:pointer;background:var(--bg-soft);transition:background .15s,color .15s}
   .method-toggle label:first-of-type{border-right:1px solid var(--line)}
   .method-toggle input:checked + label{background:var(--primary);color:#fff}
+  .method-toggle input:focus-visible + label{outline:2px solid var(--primary);outline-offset:-3px}
+  .toggle-wrap{min-height:44px}
 
   .settings-row{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
   .settings-row .field{flex:1 1 180px;margin-bottom:0}
@@ -91,6 +100,7 @@
   .rank-item{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.875rem;padding:3px 0}
   .rank-medal{flex-shrink:0;width:20px;text-align:center}
   .rank-name{flex:1 1 150px;min-width:0;overflow-wrap:anywhere}
+  .rank-prin{font-size:.75rem;color:var(--sub);white-space:nowrap}
   .rank-val{margin-left:auto}
   .rank-val{font-weight:700;color:var(--primary-dark);white-space:nowrap}
 
@@ -102,6 +112,7 @@
   .result-fix{font-size:.875rem;color:#a33;margin:0}
   .result-fix[hidden]{display:none}
   .tax-note{margin-top:16px}
+  .print-only{display:none}
   .tax-note[hidden],.ranking:empty{display:none}
   .summary-item{border-left:3px solid;padding:2px 0 2px 14px}
   .summary-fund{font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:2px;word-break:break-word}
@@ -132,7 +143,7 @@
   .save-row{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;margin-bottom:10px}
   .save-row input{flex:1 1 auto;min-width:0}
   .save-row .save-btn{flex-shrink:0}
-  .save-btn{padding:10px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+  .save-btn{padding:10px 18px;min-height:44px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
   .save-btn:hover{background:var(--primary-dark)}
   .breakdown{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
   .sub-title{font-size:.875rem;font-weight:700;color:var(--primary-dark)}
@@ -141,10 +152,10 @@
 .ra-data{font-size:.75rem;color:var(--sub);margin-top:12px}
   .hist-chips{display:flex;flex-wrap:wrap;gap:6px}
   .hist-chips[hidden]{display:none}
-  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-chip{font-family:inherit;font-size:.75rem;padding:6px 12px;min-height:44px;border-radius:10px;border:1px solid var(--primary);background:transparent;color:var(--text);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hist-chip:hover,.hist-chip.on{background:var(--primary-soft)}
   .hist-current{font-size:.75rem;color:var(--sub);margin-top:10px}
-  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 2px}
+  .hist-current button{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .hist-current button:hover{color:var(--series-b)}
 
   .goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -152,7 +163,7 @@
   .goal-result .gr-label{font-size:.75rem;color:var(--sub)}
   .goal-result .gr-val{font-size:1.375rem;font-weight:700;color:var(--primary-dark);margin-top:3px}
 
-  .collapse-head{display:block;width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
+  .collapse-head{display:block;width:100%;min-height:44px;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:0;text-align:left}
   .collapse-arrow{color:var(--sub);font-size:.875rem;margin-left:.25em} /* 文字のすぐ後ろ（「📎 参照リンク ▸」と同じ） */
   .collapse-arrow::before{content:"▸"}
   .collapse-head[aria-expanded="true"] .collapse-arrow::before{content:"▾"}
@@ -172,7 +183,7 @@
   .enu-refs-src{font-size:.6875rem;color:var(--sub);margin-left:4px;white-space:nowrap}
 
   .app-footer{text-align:center;padding-bottom:24px;margin-top:24px}
-  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
+  .footer-divider{margin:0 auto 12px;width:100%;height:0;border-top:1px solid var(--line);border-top:1px solid color-mix(in srgb, var(--sub) 30%, transparent)}
   .brand-link{display:table;margin:0 auto;line-height:1.4;font-size:.6875rem;color:var(--sub);text-decoration:none;font-family:inherit;transition:color .15s}
   .brand-link:hover{color:var(--primary-dark)}
   .copyright{font-size:.6875rem;color:var(--sub);margin-top:8px}
@@ -188,27 +199,27 @@
   .enu-notice{font-family:'Quicksand','Arial Rounded MT Bold','Kosugi Maru',sans-serif;border-radius:10px;padding:11px 14px;font-size:.75rem;line-height:1.75;gap:8px;align-items:flex-start;border:1px solid}
   .enu-notice .enu-icon{font-size:1rem;line-height:1.4;flex-shrink:0}
   .enu-notice .enu-body{flex:1;min-width:0}
-  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:4px 6px;margin:-4px -6px -4px 0;opacity:.45;color:inherit;transition:opacity .15s}
+  .enu-notice .enu-close-btn{font-family:inherit;flex-shrink:0;background:transparent;border:none;cursor:pointer;font-size:1rem;line-height:1;min-width:44px;min-height:44px;padding:4px 6px;margin:-14px -14px -14px 0;opacity:.45;color:inherit;transition:opacity .15s}
   .enu-notice .enu-close-btn:hover{opacity:1}
-  .enu-notice-mini{font-family:inherit;width:30px;height:30px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+  .enu-notice-mini{font-family:inherit;width:44px;height:44px;border-radius:50%;border:1px solid;cursor:pointer;font-size:12px;line-height:1;padding:1px 0 0;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
   .enu-notice-mini:hover{box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .enu-notice-info,.enu-notice-mini-info{background:#eef4f9;border-color:#c5d8ea;color:#355a7a}
   .enu-notice-warn,.enu-notice-mini-warn{background:#fef6df;border-color:#f0d896;color:#8a5a14}
   .enu-notice-disclaim,.enu-notice-mini-disclaim{background:#f7f1ec;border-color:#e3d6ca;color:#6b5546}
   .footer-legal{margin:8px 0;color:var(--sub);font-size:.6875rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer-legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;display:inline-block;padding:10px 2px}
   .footer-legal a:hover{color:var(--primary-dark);}
   .footer-legal span{margin:0 4px;opacity:.6}
   .footer-ver{margin-left:8px;white-space:nowrap}
 
   /* === enu アクションボタン（102）=== */
-    .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
+    .enu-tb-btn{font-family:inherit;font-size:.875rem;font-weight:600;padding:9px 18px;min-height:44px;border-radius:10px;cursor:pointer;border:1px solid var(--primary);transition:background .15s,color .15s}
   .enu-tb-fill{background:var(--primary);color:#fff}
   .enu-tb-fill:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
   .enu-tb-line{background:transparent;color:var(--primary-dark)}
   .enu-tb-line:hover{background:var(--primary-soft)}
   .enu-tb-data{font-size:.75rem;color:var(--sub)}
-  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:0 4px}
+  .enu-tb-text{font-family:inherit;font-size:.75rem;background:none;border:none;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:12px 6px}
   .enu-tb-text:hover{color:var(--primary-dark)}
   .enu-toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#2d2820;color:#fff;padding:10px 18px;border-radius:999px;font-size:.875rem;font-weight:700;font-family:inherit;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 32px);text-align:center}
   .enu-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -220,7 +231,7 @@
   .enu-confirm-modal__title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
   .enu-confirm-modal__desc{font-size:.875rem;color:var(--text);margin-bottom:20px;line-height:1.6}
   .enu-confirm-modal__actions{display:flex;gap:8px;justify-content:flex-end}
-  .enu-confirm-btn{padding:9px 18px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+  .enu-confirm-btn{padding:9px 18px;min-height:44px;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
   .enu-confirm-btn--cancel{background:transparent;border-color:var(--line);color:var(--sub)}
   .enu-confirm-btn--ok{background:var(--primary);border-color:var(--primary);color:#fff}
 
@@ -234,6 +245,8 @@
   @media (max-width:600px){
   }
   @media print{
+    @page{margin:12mm}
+    .print-only{display:block;font-size:.75rem;color:var(--sub);margin-top:12px}
     body{background:#fff;padding:0}
     .enu-notice-area,.footer-legal,.enu-toolbar,.enu-toast,.preset-card,.add-plan-btn,.plan-remove,.save-card,.goal-card,.enu-refs,.toggle-wrap,.enu-confirm-modal{display:none !important}
     .card{box-shadow:none;break-inside:avoid}
@@ -274,6 +287,7 @@
 </head>
 <body>
 <div class="page-wrapper">
+  <noscript><div class="card"><p class="field-help">このツールを使うには、ブラウザの JavaScript を有効にしてください。</p></div></noscript>
 
   <header class="app-header">
     <div class="app-icon">📊</div>
@@ -345,9 +359,10 @@
   <div class="card">
     <h2 class="section-title">💴 シミュレーション結果</h2>
     <p class="result-fix" id="result-fix" hidden><span class="nb">赤い文字の欄を直すと、</span><span class="nb">結果が出ます</span></p>
-    <div class="ranking" id="ranking"></div>
+    <div class="ranking" id="ranking" role="status" aria-live="polite"></div>
     <div class="summary-grid" id="summary"></div>
-    <p class="field-help tax-note" id="tax-note"><span class="nb">税金は引いていません</span><span class="nb">（NISAなら非課税、</span><span class="nb">課税口座なら</span><span class="nb">利益に約20%）</span></p>
+    <p class="field-help tax-note" id="tax-note"><span class="nb">税金は引いていません</span><span class="nb">（NISAなら非課税、</span><span class="nb">課税口座なら</span><span class="nb">利益に約20%）。</span><span class="nb">毎年同じ利回りで</span><span class="nb">増えた場合の計算です。</span><span class="nb">実際の値動きは</span><span class="nb">反映していません。</span><span class="nb">積立は毎月末に</span><span class="nb">払い込む計算です</span></p>
+    <p class="print-only">結果は目安で、投資の助言ではありません。投資の判断はご自身で行い、必要に応じて専門家にご相談ください。</p>
     <div class="breakdown">
     <button type="button" class="collapse-head" id="breakdown-toggle" aria-expanded="false">
         <span class="sub-title">📋 年ごとの内訳</span><span class="collapse-arrow" aria-hidden="true"></span>
@@ -416,15 +431,15 @@
   <details class="enu-refs">
     <summary>📎 参照リンク<span class="enu-refs-n">（2件）</span></summary>
     <ul>
-      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener">つみたてシミュレーター</a><span class="enu-refs-src">金融庁</span></li>
-      <li><a href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener">NISA特設ウェブサイト</a><span class="enu-refs-src">金融庁</span></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/tsumitate-simulator/" target="_blank" rel="noopener noreferrer">つみたてシミュレーター</a><span class="enu-refs-src">金融庁</span></li>
+      <li><a href="https://www.fsa.go.jp/policy/nisa2/" target="_blank" rel="noopener noreferrer">NISA特設ウェブサイト</a><span class="enu-refs-src">金融庁</span></li>
     </ul>
   </details>
 
 
   <div class="app-footer">
     <div class="footer-divider"></div>
-    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener">🌷 by enu（エヌ）</a>
+    <a class="brand-link" href="https://enu-tools.pages.dev/desk/home/" target="_blank" rel="noopener noreferrer">🌷 by enu（エヌ）</a>
     <nav class="footer-legal" aria-label="このサイトについて"><a href="" class="enu-legal-link" data-legal="disclaimer">免責事項</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="privacy">プライバシーポリシー</a><span aria-hidden="true">・</span><a href="" class="enu-legal-link" data-legal="help" id="enu-help-link">ヘルプ</a></nav>
     <div class="copyright">© <span id="copyYear">2026</span> enu（エヌ） All rights reserved.<span class="footer-ver" id="appVersion"></span></div>
   </div>
@@ -567,10 +582,10 @@
   }
 
   // === Toast ===
-  function showToast(msg){
+  function showToast(msg, ms){
     const t=document.getElementById('enu-toast'); if(!t) return;
     t.textContent=msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 2200);
+    clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'), ms||2200);
   }
   window.enuTools.toast = showToast;
 
@@ -585,10 +600,11 @@
       const cancel=modal.querySelector('.enu-confirm-btn--cancel');
       const backdrop=modal.querySelector('.enu-confirm-modal__backdrop');
       ok.textContent=okLabel||'OK'; cancel.textContent=cancelLabel||'キャンセル';
+      const opener=document.activeElement;
       modal.hidden=false; setTimeout(()=>cancel.focus(),50);
-      const cleanup=(r)=>{ modal.hidden=true; ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
+      const cleanup=(r)=>{ modal.hidden=true; try{ if(opener && opener.isConnected) opener.focus(); }catch(e){} ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel); backdrop.removeEventListener('click',onCancel); document.removeEventListener('keydown',onKey); resolve(r); };
       const onOk=()=>cleanup(true), onCancel=()=>cleanup(false);
-      const onKey=(e)=>{ if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
+      const onKey=(e)=>{ if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===cancel ? ok : cancel).focus(); } if(e.key==='Escape') onCancel(); else if(e.key==='Enter'){ e.preventDefault(); if(document.activeElement===ok) onOk(); else if(document.activeElement===cancel) onCancel(); } }; // Enter は選んでいるボタンを押す
       ok.addEventListener('click',onOk); cancel.addEventListener('click',onCancel); backdrop.addEventListener('click',onCancel); document.addEventListener('keydown',onKey);
     });
   }
@@ -601,7 +617,7 @@
   }
   function initNotices(){
     const K=_key('notice_minimized');
-    const get=()=>{ try{ return JSON.parse(localStorage.getItem(K)||'[]'); }catch(e){ return []; } };
+    const get=()=>{ try{ const v=JSON.parse(localStorage.getItem(K)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } };
     const set=(l)=>{ try{ localStorage.setItem(K, JSON.stringify(l)); }catch(e){} };
     const list=get();
     document.querySelectorAll('.enu-notice-wrap[data-notice-id]').forEach(w=>{ if(list.includes(w.dataset.noticeId)) w.classList.add('is-mini'); });
@@ -622,16 +638,19 @@
   function initVersion(){ const el=document.getElementById('appVersion'); if(el && CFG.appVersion) el.textContent='ver.'+CFG.appVersion; }
   function initLegal(){
     const urls = { ...ENU_LEGAL_URLS, help: CFG.helpUrl };
-    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener'; });
+    document.querySelectorAll('.enu-legal-link[data-legal]').forEach(a=>{ a.href=urls[a.dataset.legal]||'#'; a.target='_blank'; a.rel='noopener noreferrer'; });
   }
 
   // === Simple share (102) ===
+  let sharing=false;
   async function handleSimpleShare(){
+    if(sharing) return; sharing=true;
     const shareData={ title:CFG.appName, text:CFG.appName, url:location.href };
     try{
       if(navigator.share){ await navigator.share(shareData); }
       else{ await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url); showToast('リンクをコピーしました'); }
     }catch(e){ if(e && e.name!=='AbortError') showToast('シェアできませんでした'); }
+    finally{ sharing=false; }
   }
 
   // ============================================================
@@ -677,7 +696,7 @@
   const plansEl=document.getElementById('plans');
 
   function planLetter(i){ let s=''; i=Math.floor(i); do{ s=String.fromCharCode(65+i%26)+s; i=Math.floor(i/26)-1; }while(i>=0); return s; } // A〜Z のあとは AA, AB…（27以上で「プラン[」にならない）
-  function defaultPlanA(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'lump',amount:1000000,rate:5,fee:0,years:20}; }
+  function defaultPlanA(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'lump',amount:7200000,rate:5,fee:0,years:20}; }
   function defaultPlanB(){ return {fundSel:'オルカン（全世界株式）',fundCustom:'',method:'dca',amount:30000,rate:5,fee:0,years:20}; }
   const NUM_FIELDS=['amount','rate','fee','years'];
   // 読み込んだプランの足りない項目を補う（知らない項目は消さない）。数字は範囲に丸めず、そのまま残す（まちがいは欄の下に出す）
@@ -731,6 +750,7 @@
 
   // === Plan card（createElementで構築）===
   function buildPlanCard(plan, index, raw){
+    const pid=(f)=>'pf-'+f+'-'+index;
     const color=planColor(index);
     const removable=plans.length>MIN_PLANS;
 
@@ -738,34 +758,34 @@
     if(removable) headKids.push(el('button',{type:'button',class:'plan-remove','data-remove':index,'aria-label':'このプランを削除',text:'× 削除'}));
     const head=el('div',{class:'plan-head'},headKids);
 
-    const sel=el('select',{class:'pf','data-field':'fund'});
+    const sel=el('select',{class:'pf','data-field':'fund',id:pid('fund')});
     FUND_OPTIONS.forEach(f=> sel.appendChild(el('option',{value:f,text:FUND_SHORT[f]||f})));
     sel.appendChild(el('option',{value:'__other__',text:'その他'}));
     sel.value = (FUND_OPTIONS.includes(plan.fundSel)||plan.fundSel==='__other__') ? plan.fundSel : '__other__';
-    const custom=el('input',{type:'text',class:'fund-custom pf','data-field':'fundCustom',placeholder:'銘柄名を入力'});
+    const custom=el('input',{type:'text',class:'fund-custom pf','data-field':'fundCustom',placeholder:'銘柄名を入力','aria-label':'銘柄名（その他の銘柄）'});
     custom.value=plan.fundCustom||''; custom.hidden = sel.value!=='__other__';
-    const fundField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'銘柄（名前のみ）'}), sel, custom ]);
+    const fundField=el('div',{class:'field'},[ el('label',{class:'field-label','for':pid('fund'),text:'銘柄（名前のみ）'}), sel, custom ]);
 
     const ml=el('input',{type:'radio',class:'pf','data-field':'method',name:'method-'+index,value:'lump',id:'m-l-'+index}); ml.checked=plan.method==='lump';
     const md=el('input',{type:'radio',class:'pf','data-field':'method',name:'method-'+index,value:'dca',id:'m-d-'+index}); md.checked=plan.method==='dca';
-    const toggle=el('div',{class:'method-toggle'},[ ml, el('label',{for:'m-l-'+index,text:'一括投資'}), md, el('label',{for:'m-d-'+index,text:'積立投資'}) ]);
-    const methodField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'投資方法'}), toggle ]);
+    const toggle=el('div',{class:'method-toggle',role:'group','aria-labelledby':pid('method-l')},[ ml, el('label',{for:'m-l-'+index,text:'一括投資'}), md, el('label',{for:'m-d-'+index,text:'積立投資'}) ]);
+    const methodField=el('div',{class:'field'},[ el('label',{class:'field-label',id:pid('method-l'),text:'投資方法'}), toggle ]);
 
-    const amt=el('input',{type:'text',class:'pf','data-field':'amount',inputmode:'numeric'}); amt.value=(typeof plan.amount==='number')?commaStr(plan.amount):String(plan.amount);
+    const amt=el('input',{type:'text',class:'pf','data-field':'amount',inputmode:'numeric',id:pid('amount')}); amt.value=(typeof plan.amount==='number')?commaStr(plan.amount):String(plan.amount);
     const amtField=el('div',{class:'field'},[
-      el('label',{class:'field-label amount-label',text: plan.method==='lump'?'一括投資額':'毎月の積立額'}),
+      el('label',{class:'field-label amount-label','for':pid('amount'),text: plan.method==='lump'?'一括投資額':'毎月の積立額'}),
       el('div',{class:'input-suffix'},[ amt, el('span',{class:'suffix',text:'円'}) ])
     ]);
 
-    const rate=el('input',{type:'text',class:'pf','data-field':'rate',inputmode:'decimal'}); rate.value=plan.rate;
-    const rateField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'想定利回り（年率）'}), el('div',{class:'input-suffix'},[ rate, el('span',{class:'suffix',text:'%'}) ]) ]);
+    const rate=el('input',{type:'text',class:'pf','data-field':'rate',inputmode:'decimal',id:pid('rate')}); rate.value=plan.rate;
+    const rateField=el('div',{class:'field'},[ el('label',{class:'field-label','for':pid('rate'),text:'想定利回り（年率）'}), el('div',{class:'input-suffix'},[ rate, el('span',{class:'suffix',text:'%'}) ]) ]);
 
-    const fee=el('input',{type:'text',class:'pf','data-field':'fee',inputmode:'decimal'}); fee.value=plan.fee;
-    const feeField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'信託報酬（年率）'}), el('div',{class:'input-suffix'},[ fee, el('span',{class:'suffix',text:'%'}) ]) ]);
+    const fee=el('input',{type:'text',class:'pf','data-field':'fee',inputmode:'decimal',id:pid('fee')}); fee.value=plan.fee;
+    const feeField=el('div',{class:'field'},[ el('label',{class:'field-label','for':pid('fee'),text:'信託報酬（年率）'}), el('div',{class:'input-suffix'},[ fee, el('span',{class:'suffix',text:'%'}) ]) ]);
 
-    const yr=el('input',{type:'text',class:'pf','data-field':'years',inputmode:'numeric'}); yr.value=plan.years;
+    const yr=el('input',{type:'text',class:'pf','data-field':'years',inputmode:'numeric',id:pid('years')}); yr.value=plan.years;
     if(raw){ if(raw.amount!=null) amt.value=raw.amount; if(raw.rate!=null) rate.value=raw.rate; if(raw.fee!=null) fee.value=raw.fee; if(raw.years!=null) yr.value=raw.years; } // 作り直す前に入っていた文字（まちがいも消さない）
-    const yrField=el('div',{class:'field'},[ el('label',{class:'field-label',text:'運用期間'}), el('div',{class:'input-suffix'},[ yr, el('span',{class:'suffix',text:'年'}) ]) ]);
+    const yrField=el('div',{class:'field'},[ el('label',{class:'field-label','for':pid('years'),text:'運用期間'}), el('div',{class:'input-suffix'},[ yr, el('span',{class:'suffix',text:'年'}) ]) ]);
 
     return el('div',{class:'card plan-card','data-index':index},[ head, fundField, methodField, amtField, rateField, feeField, yrField ]);
   }
@@ -894,14 +914,15 @@
     const rk=document.getElementById('ranking'); rk.textContent='';
     const h=document.createElement('h3'); const h1=document.createElement('span'); h1.className='nb'; h1.textContent='結果ランキング'; const h2=document.createElement('span'); h2.className='nb'; h2.textContent='（最終評価額の高い順）'; h.append(h1,h2); rk.appendChild(h);
     const medals=['🥇','🥈','🥉'];
-    const order=sims.map((s,i)=>({i:i,fv:s.finalValue,shown:yen(s.finalValue)})).sort((a,b)=>b.fv-a.fv);
+    const order=sims.map((s,i)=>({i:i,fv:s.finalValue,pr:s.principal,shown:yen(s.finalValue)})).sort((a,b)=>b.fv-a.fv);
     order.forEach((o)=>{
       const rank=order.filter(x=>x.fv>o.fv && x.shown!==o.shown).length; // 順位は金額そのもので比べる。画面に出る金額が同じ（「約○兆円」も）なら同じ順位
       const row=document.createElement('div'); row.className='rank-item';
       const med=document.createElement('span'); med.className='rank-medal'; med.textContent=medals[rank]||(rank+1)+'.';
       const nm=document.createElement('span'); nm.className='rank-name'; [ 'プラン'+planLetter(o.i)+'　', ...fundName(plans[o.i]).split(/(?=（)/), '（'+methodLabel(plans[o.i].method)+'）' ].forEach(t=>{ const sp=document.createElement('span'); sp.className='nb'; sp.textContent=t; nm.appendChild(sp); });
+      const prin=document.createElement('span'); prin.className='rank-prin'; prin.textContent='元本 '+yen(o.pr);
       const val=document.createElement('span'); val.className='rank-val'; val.textContent=yen(o.fv);
-      row.append(med,nm,val); rk.appendChild(row);
+      row.append(med,nm,prin,val); rk.appendChild(row);
     });
 
     const grid=document.getElementById('summary'); grid.textContent=''; grid.dataset.n=String(sims.length);
@@ -975,8 +996,9 @@
 
   // === Persistence (input) ===
   let dataExtra={}; // 保存データの知らない項目（消さずに残す）
+  let _saveFailShown=false;
   function saveInput(){
-    saveStore('data', Object.assign({}, dataExtra, { plans:plans, inflation:document.getElementById('inflation-rate').value }));
+    if(!saveStore('data', Object.assign({}, dataExtra, { plans:plans, inflation:document.getElementById('inflation-rate').value })) && !_saveFailShown){ _saveFailShown=true; showToast(SAVE_FAIL_MSG, 6000); }
   }
   function restoreInput(){
     const s=loadStore('data');
@@ -992,23 +1014,33 @@
   const DATA_VERSION = 1;
   function migrate(saved){ // 版1では、そのまま返すだけ。データの形を変えたら、ここに「版1→版2」を足す
     if(!saved || typeof saved!=='object' || saved.v==null) return null;
+    if(saved.v>DATA_VERSION) return null; // 新しい版のデータは読まずに _broken に残す
     return saved.data;
   }
   // 読み込みに失敗したら、元を「…_broken」に取っておき、ユーザーが何か変えるまで上書きしない
   const brokenStores=new Set();
+  function keepBroken(name, raw){ try{ if(localStorage.getItem(_key(name)+'_broken')==null) localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} } // 最初に壊れた分だけ残す
   function loadStore(name){
     let raw=null;
     try{ raw=localStorage.getItem(_key(name)); }catch(e){ return null; }
     if(raw==null) return null;
     let data=null;
     try{ data=migrate(JSON.parse(raw)); }catch(e){ data=null; }
-    if(data==null){ brokenStores.add(name); try{ localStorage.setItem(_key(name)+'_broken', raw); }catch(e){} }
+    if(data==null){ brokenStores.add(name); keepBroken(name, raw); }
     return data;
   }
   function userChanged(){ brokenStores.clear(); }
-  function saveStore(name,data){ if(brokenStores.has(name)) return; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); }catch(e){} }
-  function getHistory(){ const h=loadStore('history'); return Array.isArray(h)?h:[]; }
-  function setHistory(h){ saveStore('history', h); }
+  function saveStore(name,data){ if(brokenStores.has(name)) return true; try{ localStorage.setItem(_key(name), JSON.stringify({ v:DATA_VERSION, data:data })); return true; }catch(e){ return false; } }
+  const SAVE_FAIL_MSG='⚠️ 保存できませんでした。ブラウザの保存が使えない状態です。書き出しで残せます';
+  function isHistRow(h){ return !!(h && typeof h==='object' && typeof h.name==='string' && typeof h.id==='number' && Array.isArray(h.plans) && !isNaN(new Date(h.savedAt).getTime())); }
+  // 履歴の行は1つずつ確かめる（壊れた行があっても落ちないように。読めない行は _broken に残す）
+  function getHistory(){
+    const h=loadStore('history'); if(!Array.isArray(h)) return [];
+    const ok=h.filter(isHistRow);
+    if(ok.length!==h.length){ try{ keepBroken('history', JSON.stringify({ v:DATA_VERSION, data:h })); }catch(e){} }
+    return ok;
+  }
+  function setHistory(h){ return saveStore('history', h); }
   function fmtDate(iso){ const d=new Date(iso); const p=(n)=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
   function autoName(){
     const names=plans.map(fundName).join(' / ');
@@ -1024,7 +1056,7 @@
     const nameInput=document.getElementById('save-name');
     const name=(nameInput.value||'').trim()||autoName();
     const snap={ id:Date.now(), savedAt:new Date().toISOString(), name:name, plans:JSON.parse(JSON.stringify(plans)), inflation:document.getElementById('inflation-rate').value };
-    let hist=getHistory(); const lim=Math.max(20, hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); setHistory(hist); // 上限より多く読み込んだあとも今ある件数を保つ（いちばん古い1件だけ落とす）
+    let hist=getHistory(); const lim=Math.max(20, hist.length); hist.unshift(snap); if(hist.length>lim) hist=hist.slice(0,lim); if(!setHistory(hist)){ showToast(SAVE_FAIL_MSG, 6000); return; } // 上限より多く読み込んだあとも今ある件数を保つ（いちばん古い1件だけ落とす）
     nameInput.value=''; renderHistory(); showToast('📌 この比較を保存しました');
   }
   let currentHistId=null;
@@ -1060,7 +1092,7 @@
     }else if(t.dataset.del){
       const id=parseInt(t.dataset.del,10);
       enuConfirm('保存の削除','この保存を削除します。よろしいですか？','削除','キャンセル').then(ok=>{
-        if(ok){ setHistory(getHistory().filter(s=>s.id!==id)); currentHistId=null; renderHistory(); showToast('削除しました'); }
+        if(ok){ if(!setHistory(getHistory().filter(s=>s.id!==id))){ showToast(SAVE_FAIL_MSG, 6000); return; } currentHistId=null; renderHistory(); showToast('削除しました'); }
       });
     }
   }
@@ -1097,26 +1129,30 @@
     if(!cur && data.plans!=null) dropped++; // プランの項目がない（保存だけの）ファイルは、読めない行として数えない
     if(Array.isArray(data.history)){
       hist=[];
-      data.history.forEach(h=>{
+      data.history.slice(0,IMPORT_MAX_HIST).forEach(h=>{
         if(!h || typeof h!=='object' || !Array.isArray(h.plans) || typeof h.name!=='string' || typeof h.id!=='number' || isNaN(new Date(h.savedAt).getTime()) || !inflationReadable(h.inflation)){ dropped++; return; }
         const r=readablePlans(h.plans); dropped+=r.dropped;
         if(r.plans.length<MIN_PLANS){ if(!r.dropped) dropped++; return; }
         hist.push(Object.assign({},h,{plans:r.plans}));
       });
+      if(data.history.length>IMPORT_MAX_HIST) dropped+=data.history.length-IMPORT_MAX_HIST;
     }else if(data.history!=null) dropped++;
     if(!cur && !(hist && hist.length)) return null;
     return { data:data, cur:cur, hist:hist, dropped:dropped };
   }
+  const IMPORT_MAX_BYTES=2*1024*1024, IMPORT_MAX_HIST=100;   // 読み込みの上限（ファイルの大きさ・履歴の行数）
   function appApplyData(c){
+    let ok=true;
     if(c.cur){
       dataExtra=Object.assign({}, c.data); delete dataExtra.plans; delete dataExtra.inflation; delete dataExtra.history;
       plans=c.cur.plans.map(normalizePlan);
       document.getElementById('inflation-rate').value=(c.cur.inflation!=null)?c.cur.inflation:0;
       checkField(document.getElementById('inflation-rate'));
     }
-    if(c.hist) setHistory(c.hist);
+    if(c.hist) ok=setHistory(c.hist);
     currentHistId=null;
     renderPlans(); renderHistory(); recalc();
+    return ok;
   }
   function handleExport(){
     const bad=firstError(PLAN_INPUTS);
@@ -1133,7 +1169,8 @@
     input.addEventListener('change', async (e)=>{
       const f=e.target.files[0]; if(!f) return;
       try{
-        const p=JSON.parse(await f.text());
+        if(f.size>IMPORT_MAX_BYTES) throw new Error('ファイルが大きすぎます（2MBまで）');
+        let p; try{ p=JSON.parse(await f.text()); }catch(_){ throw new Error('JSONファイルとして読めませんでした。このツールで書き出したファイルを選んでください'); }
         if(!p || typeof p!=='object') throw new Error('JSONの形式が正しくありません');
         if(!p.app_id) throw new Error('古い形式のファイルです');
         if(p.app_id!==CFG.appId) throw new Error('別のアプリのファイルです');
@@ -1144,7 +1181,9 @@
         if(!c) throw new Error('ファイルの中に読めない値があります');
         const ok=await enuConfirm('📥 データのインポート','今のデータを、ファイルの内容で上書きします。よろしいですか？','インポート','キャンセル');
         if(!ok) return;
-        userChanged(); appApplyData(c); showToast(c.dropped?'📥 インポートしました。読み込めなかった行があります':'📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
+        userChanged(); const saved=appApplyData(c);
+        if(!saved){ showToast(SAVE_FAIL_MSG, 6000); return; }
+        showToast(c.dropped?'📥 インポートしました。読み込めなかった行があります':'📥 インポートしました'); window.scrollTo({top:0,behavior:'smooth'});
       }catch(err){ showToast('⚠️ '+(err.message||'ファイルが読み込めません')); }
     });
     input.click();
@@ -1301,8 +1340,14 @@
 
     let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(recalc,150); });
 
-    renderHistory(); recalc(); calcGoal(); setupPWA();
+    try{ renderHistory(); }catch(e){ /* 履歴が読めなくても、計算は動かす */ }
+    recalc(); calcGoal(); setupPWA();
   }
+
+  // 想定外のエラーが起きたときは、1回だけ知らせる（入力は保存されている）
+  let _errShown=false;
+  function _onErr(){ if(_errShown) return; _errShown=true; showToast('うまく動かないときは、ページを再読み込みしてください。入力した内容は保存されています', 6000); }
+  window.addEventListener('error',_onErr); window.addEventListener('unhandledrejection',_onErr);
 
   // この script は画面の部品のあとにあるので、待たずにすぐ作る。DOMContentLoaded を待つと、新しく開いたとき（文字の読み込み待ち）に
   // プランのない画面がいったん描かれ、プランが入ったときに下の部品がずれていた（portfolio と同じ原因）
